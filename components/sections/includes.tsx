@@ -6,20 +6,20 @@ import { motion } from 'framer-motion'
 
 const items = [
   { title: 'Sistema de Ingresos Diarios para Periodistas', desc: 'El método completo para crear tu periódico en IG y Facebook y monetizarlo desde cero.' },
-  { title: 'IA en el Periodismo Actual — Clase exclusiva', desc: 'Aprende a usar ChatGPT, Claude y otras IAs para producir noticias 10x más rápido.' },
-  { title: 'Canva para Periodistas Digitales', desc: '+100 templates profesionales para publicar en IG, Facebook, Stories y Reels.' },
-  { title: 'CRM Privado — Acceso gratuito de por vida', desc: 'Prompts exclusivos, clases gratuitas y actualizaciones constantes dentro de mi CRM personal.' },
-  { title: '+50 Prompts periodísticos para copiar y pegar', desc: 'IA lista para usar en titulares virales, artículos y contenido para redes. Sin curva de aprendizaje.' },
-  { title: 'Acceso de por vida + todas las actualizaciones', desc: 'Tuyo para siempre. Cada vez que el sistema mejora, tú también recibes la actualización.' },
+  { title: 'IA para Periodistas — Micro Curso', desc: 'Usás ChatGPT y Claude para trabajar más rápido, mejor y ser más competente que tus colegas.' },
+  { title: 'Canva — Identidad visual de tu periódico', desc: '+100 diseños listos. Elegís, cambiás el nombre y en 10 minutos tenés tu medio listo.' },
+  { title: 'Leadr — 1 mes gratis', desc: 'Mi plataforma con prompts, automatizaciones copy-paste y clases de redacción con IA.' },
+  { title: '+50 Prompts periodísticos para copiar y pegar', desc: 'IA lista para usar en titulares, artículos y contenido para redes. Sin curva de aprendizaje.' },
+  { title: 'Acceso de por vida + todas las actualizaciones', desc: 'Tuyo para siempre. Cada vez que el sistema mejora, vos también recibís la actualización.' },
 ]
 
 export function IncludesSection() {
   return (
-    <section className="py-28 bg-black">
+    <section className="py-16" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, #091428 0%, #000000 70%)' }}>
       <div className="max-w-6xl mx-auto px-6">
 
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
@@ -31,7 +31,7 @@ export function IncludesSection() {
           </p>
           <h2
             className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-white"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
           >
             Todo el sistema, listo para activar hoy
           </h2>
@@ -40,13 +40,13 @@ export function IncludesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
 
           <motion.div
-            className="relative"
+            className="relative rounded-[20px]"
+            style={{ boxShadow: '0 0 0 1px rgba(99,102,241,0.4), 0 0 40px rgba(99,102,241,0.15)' }}
             initial={{ opacity: 0, x: -32 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="absolute -inset-px rounded-[20px] bg-gradient-to-br from-indigo-500/40 to-cyan-500/40 -z-10" />
             <Image
               src="/mockup.png"
               alt="Todo lo que incluye el sistema"
