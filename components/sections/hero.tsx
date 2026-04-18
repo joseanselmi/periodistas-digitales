@@ -1,19 +1,19 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import { SplineScene } from '@/components/ui/splite'
 
 export function HeroSection() {
   const reduced = useReducedMotion()
 
-  const container = {
+  const container: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: reduced ? 0 : 0.14, delayChildren: reduced ? 0 : 0.2 } },
   }
 
-  const item = {
+  const item: Variants = {
     hidden: { opacity: 0, y: reduced ? 0 : 22 },
-    visible: { opacity: 1, y: 0, transition: { duration: reduced ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] } },
+    visible: { opacity: 1, y: 0, transition: { duration: reduced ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] as any } },
   }
 
   return (

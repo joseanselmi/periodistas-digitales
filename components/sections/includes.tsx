@@ -48,11 +48,11 @@ export function IncludesSection() {
           >
             <div className="absolute -inset-px rounded-[20px] bg-gradient-to-br from-indigo-500/40 to-cyan-500/40 -z-10" />
             <Image
-              src="http://sistemadeingresosdiariosia.com/wp-content/uploads/2026/01/Checkout_11zon.webp"
+              src="/mockup.png"
               alt="Todo lo que incluye el sistema"
               width={560}
-              height={400}
-              className="rounded-[20px] shadow-[0_30px_80px_rgba(0,0,0,.6)] w-full"
+              height={800}
+              className="rounded-[20px] w-full object-contain"
               unoptimized
             />
           </motion.div>
