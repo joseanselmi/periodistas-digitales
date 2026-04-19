@@ -20,8 +20,8 @@ export default function Home() {
         <ProblemSection />
         <IncludesSection />
         <BonusSection />
-        <InstructorSection />
         <PricingSection />
+        <InstructorSection />
         <FaqSection />
         <FinalCta />
       </main>

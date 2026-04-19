@@ -5,31 +5,31 @@ import { motion } from 'framer-motion'
 const bonuses = [
   {
     num: '1',
-    title: 'IA en el Periodismo Actual — Clase exclusiva',
-    desc: 'Aprende a usar ChatGPT, Claude y las herramientas de IA más potentes para crear titulares virales, artículos en minutos y contenido que engancha. El periodista que usa IA produce 10x más y no tiene competencia.',
+    title: 'IA para Periodistas — Micro Curso',
+    desc: 'Aprendés a usar ChatGPT y Claude para tu trabajo diario: redactar más rápido, investigar mejor, crear titulares que funcionan. Aunque no crees tu periódico digital, este bono solo ya vale el precio de todo. Vas a ser más competente que el 95% de tus colegas.',
     value: '$47 USD',
   },
   {
     num: '2',
-    title: 'Canva para Periodistas Digitales',
-    desc: '+100 templates profesionales diseñados para periódicos digitales en Instagram y Facebook. Posts, Stories, Reels y carruseles. Tu medio se verá como un canal establecido desde el día 1, sin necesitar diseñador.',
+    title: 'Canva — La identidad visual de tu periódico',
+    desc: 'Más de 100 diseños profesionales listos para usar. Elegís el que más te gusta, cambiás el nombre de tu medio y listo. En 10 minutos tenés la identidad visual completa de tu periódico en Instagram y Facebook. Sin diseñador. Sin complicaciones.',
     value: '$27 USD',
   },
   {
     num: '3',
-    title: 'Acceso Gratuito a mi CRM Privado',
-    desc: 'Entra a mi CRM personal donde comparto prompts exclusivos, clases gratuitas, recursos actualizados y acceso a la comunidad cerrada. Todo lo que uso yo para gestionar mis medios digitales — tuyo sin costo adicional.',
+    title: 'Leadr — 1 mes gratis',
+    desc: 'Mi plataforma exclusiva para periodistas digitales. Accedés a prompts listos para copiar y pegar, automatizaciones que hacen el trabajo por vos, clases de redacción con IA y mucho más. Un mes completamente gratis. Va a crecer con vos.',
     value: '$97 USD',
   },
 ]
 
 export function BonusSection() {
   return (
-    <section className="py-28 bg-[#06060f] border-y border-white/[.07]">
+    <section id="bonus" className="py-16 border-y border-white/[.07]" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, #0d1a3a 0%, #060818 50%, #000000 100%)' }}>
       <div className="max-w-4xl mx-auto px-6">
 
         <motion.div
-          className="text-center mb-14"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
@@ -37,11 +37,11 @@ export function BonusSection() {
         >
           <p className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[.22em] uppercase text-indigo-400 mb-5">
             <span className="w-4 h-px bg-indigo-400" />
-            Bonos exclusivos
+            Comprando hoy obtenés bonos exclusivos
           </p>
           <h2
             className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-white"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
           >
             3 bonos que valen más{' '}
             <em className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent not-italic">
@@ -80,7 +80,7 @@ export function BonusSection() {
         </div>
 
         <motion.div
-          className="text-center mt-12"
+          className="text-center mt-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}

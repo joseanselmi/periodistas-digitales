@@ -5,15 +5,15 @@ import { motion } from 'framer-motion'
 
 const items = [
   { name: 'Sistema de Ingresos Diarios para Periodistas', price: '$47' },
-  { name: 'BONO 1 — IA en el Periodismo Actual (clase exclusiva)', price: '$47' },
-  { name: 'BONO 2 — Canva para Periodistas Digitales (+100 templates)', price: '$27' },
-  { name: 'BONO 3 — Acceso gratuito a mi CRM privado', price: '$97' },
+  { name: 'BONO 1 — IA para Periodistas (micro curso)', price: '$47' },
+  { name: 'BONO 2 — Canva (+100 diseños para tu periódico)', price: '$27' },
+  { name: 'BONO 3 — Leadr, 1 mes gratis', price: '$97' },
   { name: '+50 Prompts periodísticos para copiar y pegar', price: '$9' },
 ]
 
 export function PricingSection() {
   return (
-    <section className="py-28 bg-black text-center">
+    <section className="py-16 text-center" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 40%, #0d1a3a 0%, #060818 50%, #000000 100%)' }}>
       <div className="max-w-5xl mx-auto px-6">
 
         <motion.div
@@ -27,8 +27,8 @@ export function PricingSection() {
             Precio
           </p>
           <h2
-            className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-white mb-16"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-white mb-8"
+            
           >
             $227 en valor real.<br />Por solo $17 hoy.
           </h2>
@@ -68,7 +68,7 @@ export function PricingSection() {
             <p className="text-zinc-500 line-through text-sm mb-1">Valor total: $227 USD</p>
             <div
               className="text-[clamp(3.5rem,10vw,5.5rem)] font-bold tracking-[-0.04em] leading-none bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-2"
-              style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+              
             >
               $17 USD
             </div>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export function FinalCta() {
   return (
-    <section className="relative py-36 bg-black text-center overflow-hidden">
+    <section className="relative py-20 text-center overflow-hidden" style={{ background: 'radial-gradient(ellipse 80% 70% at 50% 50%, #0d1a3a 0%, #060818 50%, #000000 100%)' }}>
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -26,7 +26,7 @@ export function FinalCta() {
           </p>
           <h2
             className="text-[clamp(2.2rem,5vw,3.8rem)] font-semibold tracking-tight text-white mb-6 leading-[1.08]"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
           >
             Tienes el conocimiento.<br />
             Ahora activa{' '}
@@ -44,7 +44,7 @@ export function FinalCta() {
         >
           <p
             className="text-zinc-400 text-[1.15rem] max-w-lg mx-auto mb-12 leading-relaxed"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
           >
             <em>+5.500 periodistas ya crearon su medio en IG y Facebook.</em>
             <span className="block not-italic text-zinc-600 text-base mt-2">

@@ -34,7 +34,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-black text-white">{children}</body>
+      <body className="min-h-full flex flex-col bg-black text-white" style={{ fontFamily: 'var(--font-newsreader), sans-serif' }}>{children}</body>
     </html>
   );
 }

@@ -9,7 +9,7 @@ const reveal = {
 
 export function ProblemSection() {
   return (
-    <section className="py-28 bg-[#06060f] border-y border-white/[.07]">
+    <section className="py-16 border-y border-white/[.07]" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, #0d1a3a 0%, #060818 50%, #000000 100%)' }}>
       <div className="max-w-2xl mx-auto px-6 text-center">
 
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={reveal}>
@@ -36,14 +36,14 @@ export function ProblemSection() {
         >
           <span
             className="absolute -top-6 left-1/2 -translate-x-1/2 text-[90px] leading-none text-indigo-500/20 select-none"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
             aria-hidden="true"
           >
             "
           </span>
           <p
             className="text-[clamp(1.3rem,3vw,1.8rem)] font-semibold text-white tracking-tight leading-snug"
-            style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+            
           >
             "Sé hacer periodismo. No sé cómo vivir de él en internet."
           </p>

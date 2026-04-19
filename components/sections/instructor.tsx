@@ -6,14 +6,13 @@ import { motion } from 'framer-motion'
 const stats = [
   { num: '+5.500', label: 'Periodistas activos en redes' },
   { num: '+50', label: 'Países alcanzados' },
-  { num: '$17', label: 'Para entrar al sistema' },
 ]
 
 export function InstructorSection() {
   return (
-    <section className="py-28 bg-[#06060f] border-y border-white/[.07]">
+    <section className="py-16 border-y border-white/[.07]" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, #0d1a3a 0%, #060818 50%, #000000 100%)' }}>
       <div className="max-w-5xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-10 items-center">
 
           {/* Photo */}
           <motion.div
@@ -26,11 +25,11 @@ export function InstructorSection() {
             <div className="relative">
               <div className="absolute -inset-[3px] rounded-[23px] bg-gradient-to-br from-indigo-500 to-cyan-500 opacity-50 -z-10" />
               <Image
-                src="http://sistemadeingresosdiariosia.com/wp-content/uploads/2026/01/4_11zon.webp"
+                src="/jose.png"
                 alt="José Fiaccini — Fundador"
                 width={260}
                 height={340}
-                className="rounded-[20px] shadow-[0_40px_80px_rgba(0,0,0,.6)] object-cover"
+                className="rounded-[20px] shadow-[0_40px_80px_rgba(0,0,0,.6)] object-cover object-top"
                 style={{ height: 340, width: 260 }}
                 unoptimized
               />
@@ -52,7 +51,7 @@ export function InstructorSection() {
 
             <h2
               className="text-[clamp(2rem,3.5vw,2.8rem)] font-semibold text-white tracking-tight mb-1.5"
-              style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+              
             >
               José Fiaccini
             </h2>
@@ -72,7 +71,7 @@ export function InstructorSection() {
             </p>
 
             {/* Stats */}
-            <div className="flex gap-9 mt-9 flex-wrap justify-center md:justify-start">
+            <div className="flex gap-9 mt-5 flex-wrap justify-center md:justify-start">
               {stats.map((s, i) => (
                 <motion.div
                   key={s.label}
@@ -83,7 +82,7 @@ export function InstructorSection() {
                 >
                   <div
                     className="text-[1.9rem] font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent tracking-tight"
-                    style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}
+                    
                   >
                     {s.num}
                   </div>

@@ -8,9 +8,9 @@ export function StickyBar() {
 
   useEffect(() => {
     const onScroll = () => {
-      const hero = document.getElementById('hero')
-      if (!hero) return
-      setShow(window.scrollY > hero.offsetHeight * 0.55)
+      const bonus = document.getElementById('bonus')
+      if (!bonus) return
+      setShow(window.scrollY > bonus.offsetTop + bonus.offsetHeight)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)

@@ -5,12 +5,12 @@ import { CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const items = [
-  { title: 'Sistema de Ingresos Diarios para Periodistas', desc: 'El método completo para crear tu periódico en IG y Facebook y monetizarlo desde cero.' },
-  { title: 'IA para Periodistas — Micro Curso', desc: 'Usás ChatGPT y Claude para trabajar más rápido, mejor y ser más competente que tus colegas.' },
-  { title: 'Canva — Identidad visual de tu periódico', desc: '+100 diseños listos. Elegís, cambiás el nombre y en 10 minutos tenés tu medio listo.' },
-  { title: 'Leadr — 1 mes gratis', desc: 'Mi plataforma con prompts, automatizaciones copy-paste y clases de redacción con IA.' },
-  { title: '+50 Prompts periodísticos para copiar y pegar', desc: 'IA lista para usar en titulares, artículos y contenido para redes. Sin curva de aprendizaje.' },
-  { title: 'Acceso de por vida + todas las actualizaciones', desc: 'Tuyo para siempre. Cada vez que el sistema mejora, vos también recibís la actualización.' },
+  { title: 'Módulo 1 — Elegí tu nicho periodístico', desc: 'Descubrís cuál es el tema que más te apasiona y que tiene audiencia lista para seguirte en IG y Facebook.' },
+  { title: 'Módulo 2 — Creá tu periódico digital en 24hs', desc: 'Nombre, identidad visual y primera publicación. Sin saber de diseño ni tecnología.' },
+  { title: 'Módulo 3 — El sistema de contenido diario', desc: 'Cómo publicar todos los días en menos de 30 minutos usando IA y plantillas probadas.' },
+  { title: 'Módulo 4 — Monetización desde el primer mes', desc: 'Las 3 fuentes de ingreso que usa José: publicidad local, suscripciones y marcas aliadas.' },
+  { title: 'Módulo 5 — Crecimiento orgánico en redes', desc: 'El método para pasar de 0 a tu primera comunidad de lectores sin gastar en anuncios.' },
+  { title: 'Acceso de por vida + todas las actualizaciones', desc: 'Tuyo para siempre. Cada mejora del sistema llega directo a tu cuenta sin costo extra.' },
 ]
 
 export function IncludesSection() {
@@ -35,6 +35,24 @@ export function IncludesSection() {
           >
             Todo el sistema, listo para activar hoy
           </h2>
+        </motion.div>
+
+        <motion.div
+          className="flex justify-center mb-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <a
+            href="#bonus"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold text-sm px-7 py-3.5 rounded-full hover:-translate-y-[2px] hover:shadow-[0_0_28px_rgba(99,102,241,.4)] transition-all duration-200"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+            Ver los bonos incluidos
+          </a>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
