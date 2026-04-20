@@ -108,65 +108,112 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
           ))}
         </div>
 
-        {/* Grupos */}
+        {/* Grupos como tarjetas */}
         {filteredGroups.length === 0 ? (
           <p className="text-slate-500 text-sm">No hay contenido en esta categoría aún.</p>
         ) : (
-          <div className="space-y-8">
-            {filteredGroups.map(group => (
-              <div key={group.id}>
-                <h2 className="text-slate-300 font-medium text-sm mb-3 uppercase tracking-wider">
-                  {group.name}
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {group.classes
-                    .filter(c => c.status === 'published')
-                    .map(cls => {
-                      const locked = cls.plan_required === 'pro' && user.plan === 'basic'
-                      const isDone = watched.has(cls.id)
-                      return (
-                        <div
-                          key={cls.id}
-                          onClick={() => !locked && router.push(`/clase/${cls.id}`)}
-                          className={`bg-[#0F172A] border rounded-xl p-5 transition-all ${
-                            locked
-                              ? 'border-slate-800 opacity-60 cursor-not-allowed'
-                              : 'border-slate-800 hover:border-cyan-400/40 cursor-pointer'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="text-white text-sm font-medium leading-snug">
-                              {cls.title}
-                            </h3>
-                            {locked && (
-                              <svg className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                            {isDone && !locked && (
-                              <svg className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                              </svg>
-                            )}
+          <div className="space-y-4">
+            {filteredGroups.map(group => {
+              const published = group.classes.filter(c => c.status === 'published')
+              const doneCount = published.filter(c => watched.has(c.id)).length
+              const progress = published.length > 0 ? Math.round((doneCount / published.length) * 100) : 0
+              return (
+                <div key={group.id} className="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden">
+                  {/* Header de la tarjeta-grupo */}
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/60">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h2 className="text-white font-semibold text-sm">{group.name}</h2>
+                        <p className="text-slate-500 text-xs mt-0.5">{published.length} {published.length === 1 ? 'clase' : 'clases'}</p>
+                      </div>
+                    </div>
+                    {published.length > 0 && (
+                      <div className="flex items-center gap-3">
+                        <div className="hidden sm:flex items-center gap-2">
+                          <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-cyan-400 rounded-full transition-all"
+                              style={{ width: `${progress}%` }}
+                            />
                           </div>
-                          {cls.description && (
-                            <p className="text-slate-500 text-xs line-clamp-2">{cls.description}</p>
-                          )}
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              cls.plan_required === 'pro'
-                                ? 'bg-violet-500/20 text-violet-300'
-                                : 'bg-slate-700 text-slate-400'
-                            }`}>
-                              {cls.plan_required === 'pro' ? 'Pro' : 'Free'}
-                            </span>
-                          </div>
+                          <span className="text-slate-500 text-xs">{doneCount}/{published.length}</span>
                         </div>
-                      )
-                    })}
+                        {progress === 100 && (
+                          <span className="text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
+                            Completado
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Clases dentro de la tarjeta */}
+                  {published.length === 0 ? (
+                    <p className="px-6 py-5 text-slate-600 text-sm">Sin clases publicadas aún.</p>
+                  ) : (
+                    <div className="divide-y divide-slate-800/50">
+                      {published.map((cls, idx) => {
+                        const locked = cls.plan_required === 'pro' && user.plan === 'basic'
+                        const isDone = watched.has(cls.id)
+                        return (
+                          <div
+                            key={cls.id}
+                            onClick={() => !locked && router.push(`/clase/${cls.id}`)}
+                            className={`flex items-center gap-4 px-6 py-4 transition-colors ${
+                              locked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-800/40 cursor-pointer'
+                            }`}
+                          >
+                            {/* Número */}
+                            <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              isDone
+                                ? 'bg-cyan-400/15 text-cyan-400'
+                                : 'bg-slate-800 text-slate-500'
+                            }`}>
+                              {isDone ? (
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                                </svg>
+                              ) : String(idx + 1).padStart(2, '0')}
+                            </span>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium leading-snug ${isDone ? 'text-slate-400' : 'text-white'}`}>
+                                {cls.title}
+                              </p>
+                              {cls.description && (
+                                <p className="text-slate-500 text-xs mt-0.5 truncate">{cls.description}</p>
+                              )}
+                            </div>
+
+                            {/* Badges */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {cls.plan_required === 'pro' && (
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300">Pro</span>
+                              )}
+                              {locked ? (
+                                <svg className="w-4 h-4 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
