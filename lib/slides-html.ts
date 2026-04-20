@@ -88,7 +88,7 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
   })()
 
   return `
-    <div class="slide" style="display:none;width:100%;height:100%;background:${brand.surface};border-radius:16px;overflow:hidden;position:relative;flex-direction:column;">
+    <div class="slide" style="width:100%;height:100%;background:${brand.surface};border-radius:16px;overflow:hidden;position:relative;flex-direction:column;">
       <!-- Progress bar -->
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.06);">
         <div style="height:100%;width:${progress}%;background:${brand.primary};transition:width 0.3s;"></div>
