@@ -77,7 +77,7 @@ export function PricingSection() {
             </p>
 
             <a
-              href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2"
+              href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2" data-track="cta_pricing"
               className="cursor-pointer w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold text-[1.05rem] py-5 rounded-full hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_0_48px_rgba(34,197,94,.5)] transition-all duration-200"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">

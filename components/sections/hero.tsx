@@ -82,7 +82,7 @@ export function HeroSection() {
           {/* CTA */}
           <motion.div variants={item} className="flex flex-col gap-3">
             <a
-              href="#bonus"
+              href="#bonus" data-track="cta_hero"
               className="cursor-pointer inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold text-[0.95rem] px-8 py-[14px] rounded-full hover:-translate-y-[2px] hover:shadow-[0_0_36px_rgba(34,197,94,.4)] transition-all duration-200 w-full md:w-fit"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">

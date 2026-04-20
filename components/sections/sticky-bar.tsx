@@ -28,7 +28,7 @@ export function StickyBar() {
         <p className="text-xl font-bold text-green-400 tracking-tight">HOY solo $17 USD</p>
       </div>
       <a
-        href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2"
+        href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2" data-track="cta_sticky"
         className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold text-sm px-6 py-3 rounded-full hover:scale-105 hover:shadow-[0_0_24px_rgba(34,197,94,.5)] transition-all duration-200 whitespace-nowrap"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
