@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 type Group = { id: number; name: string; category: string }
+
+const CATEGORIES_LIST = ['clases', 'prompts', 'automatizaciones', 'bonus']
+
 type ClaseData = {
   id?: number
   title?: string
@@ -21,7 +24,7 @@ type ClaseData = {
 
 type Props = { groups: Group[]; clase?: ClaseData }
 
-export default function ClaseForm({ groups, clase }: Props) {
+export default function ClaseForm({ groups: initialGroups, clase }: Props) {
   const router = useRouter()
   const isEditing = !!clase?.id
 
@@ -37,6 +40,29 @@ export default function ClaseForm({ groups, clase }: Props) {
   const [generatingAudio, setGeneratingAudio] = useState(false)
   const [audioDone, setAudioDone] = useState(!!clase?.audio_urls?.length)
   const [audioError, setAudioError] = useState('')
+
+  const [groups, setGroups] = useState<Group[]>(initialGroups)
+  const [showNewGroup, setShowNewGroup] = useState(false)
+  const [newGroupName, setNewGroupName] = useState('')
+  const [newGroupCategory, setNewGroupCategory] = useState('clases')
+  const [savingGroup, setSavingGroup] = useState(false)
+
+  async function createGroup() {
+    if (!newGroupName.trim()) return
+    setSavingGroup(true)
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('groups')
+      .insert({ name: newGroupName.trim(), category: newGroupCategory, order_index: 0 })
+      .select()
+      .single()
+    setSavingGroup(false)
+    if (error || !data) return
+    setGroups(prev => [...prev, data])
+    setGroupId(String(data.id))
+    setNewGroupName('')
+    setShowNewGroup(false)
+  }
 
   async function handleGenerateAudio() {
     setGeneratingAudio(true)
@@ -87,8 +113,6 @@ export default function ClaseForm({ groups, clase }: Props) {
     router.refresh()
   }
 
-  const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
-
   return (
     <div className="text-white">
       <div className="max-w-2xl mx-auto px-6 py-8">
@@ -124,18 +148,66 @@ export default function ClaseForm({ groups, clase }: Props) {
               <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
               <select
                 value={groupId}
-                onChange={e => setGroupId(e.target.value)}
+                onChange={e => {
+                  if (e.target.value === '__new__') {
+                    setShowNewGroup(true)
+                    setGroupId('')
+                  } else {
+                    setGroupId(e.target.value)
+                    setShowNewGroup(false)
+                  }
+                }}
                 className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
               >
                 <option value="">Sin grupo</option>
-                {CATEGORIES.map(cat => (
+                {CATEGORIES_LIST.map(cat => (
                   <optgroup key={cat} label={cat.charAt(0).toUpperCase() + cat.slice(1)}>
                     {groups.filter(g => g.category === cat).map(g => (
                       <option key={g.id} value={g.id}>{g.name}</option>
                     ))}
                   </optgroup>
                 ))}
+                <option value="__new__">+ Crear nuevo grupo…</option>
               </select>
+              {showNewGroup && (
+                <div className="mt-2 p-3 bg-slate-900 border border-cyan-400/30 rounded-lg space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Nombre del grupo"
+                    value={newGroupName}
+                    onChange={e => setNewGroupName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && createGroup()}
+                    className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-3 py-2 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
+                    autoFocus
+                  />
+                  <select
+                    value={newGroupCategory}
+                    onChange={e => setNewGroupCategory(e.target.value)}
+                    className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-cyan-400 cursor-pointer"
+                  >
+                    {CATEGORIES_LIST.map(c => (
+                      <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+                    ))}
+                  </select>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={createGroup}
+                      disabled={savingGroup || !newGroupName.trim()}
+                      className="flex-1 py-1.5 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 text-[#020617] font-semibold text-xs rounded-lg transition-colors cursor-pointer"
+                    >
+                      {savingGroup ? 'Creando…' : 'Crear'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowNewGroup(false); setNewGroupName('') }}
+                      className="px-3 text-slate-400 hover:text-white text-xs cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
