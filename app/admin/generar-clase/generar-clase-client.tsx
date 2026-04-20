@@ -76,22 +76,7 @@ export default function GenerarClaseClient({ groups }: Props) {
   const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center gap-3 sticky top-0 bg-[#020617]/95 backdrop-blur z-10">
-        <Link href="/admin" className="text-slate-400 hover:text-white transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </Link>
-        <div className="w-7 h-7 rounded-lg bg-cyan-400 flex items-center justify-center">
-          <span className="text-[#020617] font-bold text-xs">L</span>
-        </div>
-        <span className="text-slate-400 text-sm">Admin</span>
-        <span className="text-slate-600">/</span>
-        <span className="text-white text-sm">Generar clase con IA</span>
-      </nav>
-
+    <div className="text-white">
       <div className="max-w-2xl mx-auto px-6 py-8">
 
         {/* STEP: FORM */}

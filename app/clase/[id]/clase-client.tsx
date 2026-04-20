@@ -102,7 +102,7 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
         ) : clase.slides_url ? (
           <div className="aspect-video rounded-xl overflow-hidden bg-slate-900 mb-6">
             <iframe
-              src={clase.slides_url}
+              src={`/api/slides?url=${encodeURIComponent(clase.slides_url)}`}
               title={clase.title}
               className="w-full h-full"
             />

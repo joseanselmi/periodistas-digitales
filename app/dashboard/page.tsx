@@ -8,10 +8,10 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Perfil del usuario (plan)
+  // Perfil del usuario (plan + is_admin)
   const { data: profile } = await supabase
     .from('users')
-    .select('plan')
+    .select('plan, is_admin')
     .eq('id', user.id)
     .single()
 
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
-      user={{ email: user.email!, plan: profile?.plan ?? 'basic' }}
+      user={{ email: user.email!, plan: profile?.plan ?? 'basic', isAdmin: profile?.is_admin ?? false }}
       groups={groups ?? []}
       watchedIds={Array.from(watchedIds)}
     />

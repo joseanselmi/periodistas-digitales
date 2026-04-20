@@ -53,39 +53,7 @@ export default function AdminClient({ classes, groups }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-[#020617]/95 backdrop-blur z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-cyan-400 flex items-center justify-center">
-            <span className="text-[#020617] font-bold text-xs">L</span>
-          </div>
-          <span className="font-semibold">Leadr</span>
-          <span className="text-slate-600">/</span>
-          <span className="text-slate-400 text-sm">Admin</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors">
-            Ver plataforma
-          </Link>
-          <Link
-            href="/admin/generar-clase"
-            className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors cursor-pointer"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Generar con IA
-          </Link>
-          <Link
-            href="/admin/nueva-clase"
-            className="bg-cyan-400 hover:bg-cyan-300 text-[#020617] font-semibold text-sm px-4 py-2 rounded-lg transition-colors cursor-pointer"
-          >
-            + Manual
-          </Link>
-        </div>
-      </nav>
-
+    <div className="text-white">
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header + stats */}
         <div className="flex items-center justify-between mb-6">
@@ -160,6 +128,17 @@ export default function AdminClient({ classes, groups }: Props) {
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/preview/${cls.id}`}
+                          target="_blank"
+                          className="flex items-center gap-1 text-slate-400 hover:text-cyan-400 text-xs transition-colors cursor-pointer"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          Preview
+                        </Link>
                         <Link
                           href={`/admin/clase/${cls.id}`}
                           className="text-slate-400 hover:text-white text-xs transition-colors cursor-pointer"

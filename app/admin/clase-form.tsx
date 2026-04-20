@@ -90,21 +90,7 @@ export default function ClaseForm({ groups, clase }: Props) {
   const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <nav className="border-b border-slate-800 px-6 py-4 flex items-center gap-3 sticky top-0 bg-[#020617]/95 backdrop-blur z-10">
-        <Link href="/admin" className="text-slate-400 hover:text-white transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </Link>
-        <div className="w-7 h-7 rounded-lg bg-cyan-400 flex items-center justify-center">
-          <span className="text-[#020617] font-bold text-xs">L</span>
-        </div>
-        <span className="text-slate-400 text-sm">Admin</span>
-        <span className="text-slate-600">/</span>
-        <span className="text-white text-sm">{isEditing ? 'Editar clase' : 'Nueva clase'}</span>
-      </nav>
-
+    <div className="text-white">
       <div className="max-w-2xl mx-auto px-6 py-8">
         <h1 className="text-xl font-semibold mb-6">{isEditing ? 'Editar clase' : 'Nueva clase'}</h1>
 
@@ -224,6 +210,19 @@ export default function ClaseForm({ groups, clase }: Props) {
             >
               {saving ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear clase'}
             </button>
+            {isEditing && clase?.id && (
+              <Link
+                href={`/preview/${clase.id}`}
+                target="_blank"
+                className="flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 text-sm transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Ver preview
+              </Link>
+            )}
             <Link href="/admin" className="text-slate-400 hover:text-white text-sm transition-colors">
               Cancelar
             </Link>
