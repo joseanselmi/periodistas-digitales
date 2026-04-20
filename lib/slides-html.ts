@@ -1,12 +1,17 @@
+export type ResourceItem = { text: string; url?: string; tag?: string }
+
 export type Slide = {
-  type: 'title' | 'content' | 'bullets' | 'quote' | 'resources'
+  type: 'title' | 'content' | 'bullets' | 'quote' | 'resources' | 'checklist' | 'practice' | 'errors' | 'exercise'
   heading?: string
   subheading?: string
   title?: string
   bullets?: string[]
+  items?: Array<string | ResourceItem>
+  steps?: string[]
+  tip?: string
+  task?: string
   quote?: string
   author?: string
-  items?: string[]
   notes?: string
 }
 
@@ -43,7 +48,7 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
         return `
           <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;">
             <h2 style="font-size:2rem;font-weight:700;color:${brand.primary};margin-bottom:1.5rem;">${slide.title ?? ''}</h2>
-            ${slide.subheading ? `<p style="font-size:1.1rem;color:${brand.text};opacity:0.8;line-height:1.7;">${slide.subheading}</p>` : ''}
+            ${slide.subheading ? `<p style="font-size:1.1rem;color:${brand.text};opacity:0.85;line-height:1.8;">${slide.subheading}</p>` : ''}
           </div>`
 
       case 'bullets':
@@ -59,6 +64,68 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
             </ul>
           </div>`
 
+      case 'checklist':
+        return `
+          <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;">
+            <h2 style="font-size:2rem;font-weight:700;color:${brand.primary};margin-bottom:2rem;">${slide.title ?? 'Qué vas a aprender'}</h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1rem;">
+              ${(slide.items ?? []).map(item => {
+                const text = typeof item === 'string' ? item : item.text
+                return `
+                <li style="display:flex;align-items:flex-start;gap:1rem;font-size:1.05rem;color:${brand.text};line-height:1.5;">
+                  <span style="width:20px;height:20px;border-radius:50%;background:${brand.primary}25;border:1.5px solid ${brand.primary};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="${brand.primary}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  ${text}
+                </li>`
+              }).join('')}
+            </ul>
+          </div>`
+
+      case 'practice':
+        return `
+          <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;overflow:auto;">
+            <h2 style="font-size:2rem;font-weight:700;color:${brand.primary};margin-bottom:1.75rem;">${slide.title ?? 'Ejemplo práctico'}</h2>
+            <ol style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.875rem;">
+              ${(slide.steps ?? []).map((step, i) => `
+                <li style="display:flex;align-items:flex-start;gap:1rem;font-size:1rem;color:${brand.text};opacity:0.9;line-height:1.5;">
+                  <span style="width:26px;height:26px;border-radius:8px;background:${brand.primary};color:${brand.bg};font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i + 1}</span>
+                  ${step}
+                </li>`).join('')}
+            </ol>
+            ${slide.tip ? `
+              <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:${brand.primary}15;border:1px solid ${brand.primary}40;border-radius:10px;font-size:0.9rem;color:${brand.text};opacity:0.9;">
+                <span style="color:${brand.primary};font-weight:600;">💡 Tip: </span>${slide.tip}
+              </div>` : ''}
+          </div>`
+
+      case 'errors':
+        return `
+          <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;">
+            <h2 style="font-size:2rem;font-weight:700;color:#F87171;margin-bottom:2rem;">${slide.title ?? 'Errores comunes'}</h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1rem;">
+              ${(slide.bullets ?? []).map(b => `
+                <li style="display:flex;align-items:flex-start;gap:1rem;font-size:1.05rem;color:${brand.text};opacity:0.9;line-height:1.5;">
+                  <span style="width:20px;height:20px;border-radius:50%;background:#EF444425;border:1.5px solid #EF4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;font-size:0.7rem;color:#EF4444;font-weight:700;">✕</span>
+                  ${b}
+                </li>`).join('')}
+            </ul>
+          </div>`
+
+      case 'exercise':
+        return `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:3rem;text-align:center;">
+            <div style="background:${brand.primary}10;border:1px solid ${brand.primary}35;border-radius:20px;padding:2.5rem 3rem;max-width:640px;width:100%;">
+              <div style="font-size:2.5rem;margin-bottom:1rem;">🎯</div>
+              <h2 style="font-size:1.75rem;font-weight:700;color:${brand.text};margin-bottom:0.75rem;">${slide.title ?? 'Tu ejercicio'}</h2>
+              ${slide.subheading ? `<p style="font-size:1rem;color:${brand.text};opacity:0.7;line-height:1.6;margin-bottom:1.5rem;">${slide.subheading}</p>` : ''}
+              ${slide.task ? `
+                <div style="background:${brand.bg};border-radius:12px;padding:1.25rem 1.5rem;border:1px solid ${brand.primary}25;">
+                  <p style="color:${brand.primary};font-size:0.95rem;font-weight:500;line-height:1.6;">${slide.task}</p>
+                </div>` : ''}
+            </div>
+          </div>`
+
       case 'quote':
         return `
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:4rem;text-align:center;">
@@ -71,14 +138,21 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
 
       case 'resources':
         return `
-          <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;">
+          <div style="padding:3.5rem 4rem;height:100%;box-sizing:border-box;overflow:auto;">
             <h2 style="font-size:2rem;font-weight:700;color:${brand.primary};margin-bottom:2rem;">${slide.title ?? 'Recursos'}</h2>
             <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.75rem;">
-              ${(slide.items ?? []).map((item, i) => `
-                <li style="display:flex;align-items:center;gap:1rem;font-size:1rem;color:${brand.text};opacity:0.85;padding:0.75rem 1rem;background:${brand.bg};border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
-                  <span style="color:${brand.primary};font-weight:700;font-size:0.85rem;">${String(i + 1).padStart(2, '0')}</span>
-                  ${item}
-                </li>`).join('')}
+              ${(slide.items ?? []).map((item, i) => {
+                const isObj = typeof item === 'object' && item !== null
+                const text = isObj ? (item as ResourceItem).text : String(item)
+                const url = isObj ? (item as ResourceItem).url : undefined
+                const tag = isObj ? (item as ResourceItem).tag : undefined
+                return `
+                <li style="display:flex;align-items:center;gap:1rem;font-size:1rem;color:${brand.text};padding:0.75rem 1rem;background:${brand.bg};border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                  <span style="color:${brand.primary};font-weight:700;font-size:0.8rem;min-width:22px;">${String(i + 1).padStart(2, '0')}</span>
+                  <span style="flex:1;opacity:0.85;">${url ? `<a href="${url}" target="_blank" style="color:${brand.text};text-decoration:underline;text-underline-offset:3px;opacity:0.85;">${text}</a>` : text}</span>
+                  ${tag ? `<span style="font-size:0.7rem;padding:0.2rem 0.6rem;background:${brand.primary}20;color:${brand.primary};border-radius:20px;white-space:nowrap;">${tag}</span>` : ''}
+                </li>`
+              }).join('')}
             </ul>
           </div>`
 

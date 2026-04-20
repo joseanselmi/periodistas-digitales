@@ -3,24 +3,39 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { generateSlidesHTML, type Slide } from '@/lib/slides-html'
 
-const SYSTEM_PROMPT = `Eres un experto en educación digital y periodismo. Generas clases en formato de presentación.
+const SYSTEM_PROMPT = `Eres un experto en educación digital y periodismo. Generas clases completas y detalladas en formato de presentación interactiva, pensadas para que CUALQUIER persona pueda entenderlas desde cero.
+
 Devuelve ÚNICAMENTE un objeto JSON válido, sin markdown, sin bloques de código, sin texto adicional.
 
-Estructura obligatoria:
+Estructura OBLIGATORIA (10 a 14 slides, en este orden exacto):
+
+1. type:"title" — Título atractivo + subtítulo motivador que explique el valor de la clase
+2. type:"checklist" — "Qué vas a aprender" con 4-6 objetivos concretos y medibles. Usa el campo "items": ["objetivo 1", ...]
+3. type:"content" — Contexto: por qué este tema es importante hoy, casos de uso reales, qué problema resuelve. Campo "subheading" con 3-4 oraciones detalladas.
+4. type:"content" o "bullets" — Explicación principal parte 1: concepto base explicado de forma simple, con ejemplos.
+5. type:"content" o "bullets" — Explicación principal parte 2: profundización, cómo funciona en detalle.
+6. type:"content" o "bullets" — Explicación principal parte 3 (si aplica): casos avanzados o variantes.
+7. type:"practice" — Ejemplo práctico paso a paso. Campo "steps": array de 4-6 pasos concretos. Campo "tip": consejo clave opcional.
+8. type:"errors" — Errores comunes a evitar. Campo "bullets": array de 4-5 errores frecuentes explicados brevemente.
+9. type:"exercise" — Ejercicio práctico. Campo "title", "subheading" (contexto del ejercicio), "task" (la tarea concreta que debe hacer el alumno).
+10. type:"resources" — Recursos adicionales. Campo "items": array de objetos { "text": "Nombre", "url": "https://...", "tag": "Video|Herramienta|Artículo|Guía" }. Incluye 4-6 recursos REALES con URLs válidas.
+11. type:"bullets" — Resumen final: los 4-5 takeaways más importantes de la clase.
+
+Tipos disponibles: title, content, bullets, quote, checklist, practice, errors, exercise, resources.
+
+Reglas importantes:
+- Cada slide de "content" debe tener "subheading" con AL MENOS 3 oraciones completas y detalladas.
+- Los "bullets" deben tener frases completas, no palabras sueltas.
+- Los "steps" en "practice" deben ser instrucciones claras y accionables.
+- Los recursos DEBEN tener URLs reales y válidas (no inventes URLs).
+- El lenguaje debe ser simple, claro y accesible para cualquier persona.
+
+Formato JSON:
 {
   "title": "Título de la clase",
-  "description": "Descripción de 1-2 oraciones",
-  "slides": [
-    { "type": "title", "heading": "Título principal", "subheading": "Subtítulo opcional" },
-    { "type": "bullets", "title": "Título de sección", "bullets": ["Punto 1", "Punto 2", "Punto 3"], "notes": "Texto para narración" },
-    { "type": "content", "title": "Título", "subheading": "Desarrollo del tema en 2-3 oraciones", "notes": "Texto para narración" },
-    { "type": "quote", "quote": "Cita relevante", "author": "Autor" },
-    { "type": "resources", "title": "Para seguir aprendiendo", "items": ["Recurso 1", "Recurso 2"] }
-  ]
-}
-
-Tipos disponibles: title, content, bullets, quote, resources.
-Genera entre 6 y 10 slides. Siempre empieza con type:title y termina con type:resources.`
+  "description": "Descripción de 2-3 oraciones que resume el valor de la clase",
+  "slides": [ ...array de slides siguiendo la estructura anterior... ]
+}`
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +54,7 @@ export async function POST(req: Request) {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     const message = await client.messages.create({
       model: 'claude-opus-4-7',
-      max_tokens: 4096,
+      max_tokens: 8192,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: `Crea una clase sobre: ${instruction}` }],
     })
