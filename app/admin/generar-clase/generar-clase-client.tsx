@@ -3,11 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import GroupSelect, { type Group } from '../components/group-select'
 
-type Group = { id: number; name: string; category: string }
 type Props = { groups: Group[] }
-
-const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
 
 type Step = 'form' | 'generating' | 'done'
 
@@ -26,7 +24,7 @@ const PIPELINE_STEPS = [
   { id: 'db', label: 'Creando clase en base de datos', detail: 'Guardando como borrador...' },
 ]
 
-export default function GenerarClaseClient({ groups: initialGroups }: Props) {
+export default function GenerarClaseClient({ groups }: Props) {
   const router = useRouter()
   const [step, setStep] = useState<Step>('form')
   const [instruction, setInstruction] = useState('')
@@ -37,12 +35,6 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
   const [error, setError] = useState('')
   const [result, setResult] = useState<{ id: number; title: string; slidesUrl: string } | null>(null)
 
-  const [groups, setGroups] = useState<Group[]>(initialGroups)
-  const [showNewGroup, setShowNewGroup] = useState(false)
-  const [newGroupName, setNewGroupName] = useState('')
-  const [newGroupCategory, setNewGroupCategory] = useState('clases')
-  const [savingGroup, setSavingGroup] = useState(false)
-
   async function handleGenerate() {
     if (!instruction.trim()) { setError('Escribí una instrucción para Claude'); return }
     setError('')
@@ -50,7 +42,6 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
     setPipelineStep(0)
 
     try {
-      // Simular progreso del pipeline mientras la API responde
       const progressInterval = setInterval(() => {
         setPipelineStep(prev => prev < 2 ? prev + 1 : prev)
       }, 2000)
@@ -79,24 +70,6 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
       setError(err instanceof Error ? err.message : 'Error generando la clase')
       setStep('form')
     }
-  }
-
-  async function createGroup() {
-    if (!newGroupName.trim()) return
-    setSavingGroup(true)
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('groups')
-      .insert({ name: newGroupName.trim(), category: newGroupCategory, order_index: 0 })
-      .select()
-      .single()
-    setSavingGroup(false)
-    if (error || !data) return
-    setGroups(prev => [...prev, data])
-    setGroupId(String(data.id))
-    setNewGroupName('')
-    setShowNewGroup(false)
   }
 
   return (
@@ -128,66 +101,11 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
-                  <select
+                  <GroupSelect
+                    groups={groups}
                     value={groupId}
-                    onChange={e => {
-                      if (e.target.value === '__new__') {
-                        setShowNewGroup(true)
-                        setGroupId('')
-                      } else {
-                        setGroupId(e.target.value)
-                        setShowNewGroup(false)
-                      }
-                    }}
-                    className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
-                  >
-                    <option value="">Sin grupo</option>
-                    {CATEGORIES.map(cat => (
-                      <optgroup key={cat} label={cat.charAt(0).toUpperCase() + cat.slice(1)}>
-                        {groups.filter(g => g.category === cat).map(g => (
-                          <option key={g.id} value={g.id}>{g.name}</option>
-                        ))}
-                      </optgroup>
-                    ))}
-                    <option value="__new__">+ Crear nuevo grupo…</option>
-                  </select>
-                  {showNewGroup && (
-                    <div className="mt-2 p-3 bg-slate-900 border border-cyan-400/30 rounded-lg space-y-2">
-                      <input
-                        type="text"
-                        placeholder="Nombre del grupo"
-                        value={newGroupName}
-                        onChange={e => setNewGroupName(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && createGroup()}
-                        className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-3 py-2 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
-                        autoFocus
-                      />
-                      <select
-                        value={newGroupCategory}
-                        onChange={e => setNewGroupCategory(e.target.value)}
-                        className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-cyan-400 cursor-pointer"
-                      >
-                        {CATEGORIES.map(c => (
-                          <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
-                        ))}
-                      </select>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={createGroup}
-                          disabled={savingGroup || !newGroupName.trim()}
-                          className="flex-1 py-1.5 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 text-[#020617] font-semibold text-xs rounded-lg transition-colors cursor-pointer"
-                        >
-                          {savingGroup ? 'Creando…' : 'Crear'}
-                        </button>
-                        <button
-                          onClick={() => { setShowNewGroup(false); setNewGroupName('') }}
-                          className="px-3 text-slate-400 hover:text-white text-xs cursor-pointer"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                    onChange={setGroupId}
+                  />
                 </div>
                 <div>
                   <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
@@ -223,7 +141,6 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
                       </div>
                     ))}
                 </div>
-                {/* Preview */}
                 <div
                   className="mt-3 rounded-lg p-3 text-xs font-medium"
                   style={{ background: brand.surface, color: brand.text, border: `1px solid ${brand.primary}30` }}
@@ -251,7 +168,7 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
           </>
         )}
 
-        {/* STEP: GENERATING — pipeline animado */}
+        {/* STEP: GENERATING */}
         {step === 'generating' && (
           <div className="py-8">
             <h2 className="text-xl font-semibold mb-2">Generando tu clase...</h2>
@@ -312,7 +229,6 @@ export default function GenerarClaseClient({ groups: initialGroups }: Props) {
             </p>
             <p className="text-slate-500 text-xs mb-8">Guardada como borrador. Revisá y publicá cuando estés listo.</p>
 
-            {/* Preview de slides */}
             <div className="bg-[#0F172A] border border-slate-800 rounded-xl overflow-hidden mb-6 aspect-video">
               <iframe src={`/api/slides?url=${encodeURIComponent(result.slidesUrl)}`} className="w-full h-full" title="Preview slides" />
             </div>
