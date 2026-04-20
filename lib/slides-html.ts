@@ -161,22 +161,23 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
       case 'diagram': {
         const nodes = slide.nodes ?? []
         const cols = nodes.length <= 3 ? nodes.length : Math.ceil(nodes.length / 2)
+        const hasText = !!slide.subheading
         return `
-          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2.5rem 3rem;gap:1.25rem;">
-            <h2 style="font-size:1.6rem;font-weight:700;color:${brand.text};text-align:center;margin-bottom:0.25rem;">${slide.title ?? ''}</h2>
-            <!-- Centro -->
-            <div style="background:${brand.primary};color:${brand.bg};padding:0.7rem 2rem;border-radius:14px;font-size:1rem;font-weight:700;text-align:center;box-shadow:0 0 24px ${brand.primary}55;">
-              ${slide.center ?? ''}
-            </div>
-            <!-- Línea conectora -->
-            <div style="width:2px;height:18px;background:linear-gradient(${brand.primary},${brand.primary}00);"></div>
-            <!-- Nodos -->
-            <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:0.75rem;width:100%;max-width:640px;">
-              ${nodes.map((n, i) => `
-                <div style="background:${brand.surface};border:1px solid ${brand.primary}40;border-radius:12px;padding:0.75rem 1rem;text-align:center;font-size:0.85rem;color:${brand.text};opacity:0.9;position:relative;">
-                  <span style="display:block;width:20px;height:20px;border-radius:50%;background:${brand.primary}20;border:1.5px solid ${brand.primary}60;color:${brand.primary};font-size:0.65rem;font-weight:700;line-height:20px;text-align:center;margin:0 auto 0.4rem;">${i + 1}</span>
-                  ${n}
-                </div>`).join('')}
+          <div style="display:flex;flex-direction:column;height:100%;padding:2.25rem 3rem;gap:1rem;box-sizing:border-box;overflow:auto;">
+            <h2 style="font-size:1.5rem;font-weight:700;color:${brand.text};flex-shrink:0;">${slide.title ?? ''}</h2>
+            ${hasText ? `<p style="font-size:0.95rem;color:${brand.text};opacity:0.75;line-height:1.65;flex-shrink:0;">${slide.subheading}</p>` : ''}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;flex:1;justify-content:center;">
+              <div style="background:${brand.primary};color:${brand.bg};padding:0.55rem 1.75rem;border-radius:12px;font-size:0.95rem;font-weight:700;text-align:center;box-shadow:0 0 20px ${brand.primary}44;flex-shrink:0;">
+                ${slide.center ?? ''}
+              </div>
+              <div style="width:2px;height:14px;background:linear-gradient(${brand.primary},${brand.primary}00);flex-shrink:0;"></div>
+              <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:0.6rem;width:100%;">
+                ${nodes.map((n, i) => `
+                  <div style="background:${brand.bg};border:1px solid ${brand.primary}35;border-radius:10px;padding:0.6rem 0.75rem;text-align:center;font-size:0.8rem;color:${brand.text};opacity:0.9;">
+                    <span style="display:block;width:18px;height:18px;border-radius:50%;background:${brand.primary}20;border:1.5px solid ${brand.primary}60;color:${brand.primary};font-size:0.6rem;font-weight:700;line-height:18px;text-align:center;margin:0 auto 0.3rem;">${i + 1}</span>
+                    ${n}
+                  </div>`).join('')}
+              </div>
             </div>
           </div>`
       }

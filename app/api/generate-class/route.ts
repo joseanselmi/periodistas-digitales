@@ -16,29 +16,34 @@ El JSON tiene esta estructura:
 }
 
 ═══════════════════════════════
-CAMPO "slides" — 11 a 14 slides VISUALES (pocas palabras, mucho impacto)
+CAMPO "slides" — 11 a 14 slides. Cada slide debe tener TODO lo que se necesita para entender ese punto.
 ═══════════════════════════════
 
+PRINCIPIO CLAVE: Cada slide combina explicación + elemento visual según lo que mejor comunique la idea.
+No hay slides con solo texto ni slides con solo un diagrama — siempre van juntos cuando sea relevante.
+
 Orden obligatorio:
-1. type:"title" — Título + subtítulo motivador (máx 10 palabras cada uno)
-2. type:"checklist" — "Qué vas a aprender": 4-6 objetivos cortos. Campo "items":["..."]
-3. type:"diagram" — Mapa conceptual del tema. Campo "center":"concepto central", "nodes":["concepto 1","concepto 2",...] (4-8 nodos). Úsalo para mostrar cómo se relacionan las ideas.
-4. type:"content" — Por qué importa (impacto real, dato o estadística). "subheading": 2-3 oraciones directas.
-5. type:"bullets" — Concepto principal parte 1. Máx 4 bullets, cada uno en 1 línea concisa.
-6. type:"bullets" — Concepto principal parte 2. Máx 4 bullets.
-7. type:"content" o "bullets" — Parte 3 si el tema lo requiere.
-8. type:"practice" — Ejemplo práctico. "steps": 4-6 pasos concretos y accionables. "tip": consejo clave.
-9. type:"errors" — Errores comunes. "bullets": 4-5 errores con consecuencia breve.
-10. type:"exercise" — Ejercicio. "title", "subheading" (contexto), "task" (tarea específica).
-11. type:"resources" — "items": 4-6 objetos { "text":"nombre", "url":"https://...", "tag":"Video|Herramienta|Artículo|Guía" }. URLs REALES y válidas.
-12. type:"bullets" — Resumen final: 4-5 takeaways de una línea cada uno.
+1. type:"title" — Título + subtítulo motivador.
+2. type:"checklist" — "Qué vas a aprender": 4-6 objetivos. Campo "items":["..."]
+3. type:"diagram" — Mapa conceptual. SIEMPRE incluir "subheading" con 1-2 oraciones explicando la relación entre los conceptos. Campo "center":"concepto central", "nodes":["nodo 1",...] (4-8 nodos).
+4. type:"content" — Por qué importa. "subheading": 3-4 oraciones con dato real, contexto, impacto.
+5. type:"bullets" — Concepto principal parte 1. 3-4 bullets de una línea cada uno, claros y directos.
+6. type:"bullets" o "content" — Parte 2 del concepto principal. Igual de concreto.
+7. type:"content" o "bullets" — Parte 3 si aplica (tema complejo).
+8. type:"practice" — Ejemplo práctico. "steps": 4-6 pasos concretos. "tip": consejo que marca la diferencia.
+9. type:"errors" — Errores comunes. "bullets": 4-5 errores con su consecuencia real.
+10. type:"exercise" — Ejercicio concreto. "subheading": contexto, "task": tarea específica paso a paso.
+11. type:"resources" — "items": 4-6 objetos { "text":"nombre descriptivo", "url":"https://...", "tag":"Video|Herramienta|Artículo|Guía" }. URLs REALES.
+12. type:"bullets" — Resumen: 4-5 takeaways accionables.
 
 Tipos disponibles: title, content, bullets, checklist, practice, errors, exercise, resources, diagram, quote.
 
 Reglas para slides:
-- POCOS textos por slide — la presentación es visual, no un libro
-- Los bullets son frases de máx 12 palabras
-- El diagrama SIEMPRE va después del checklist para dar el mapa mental del tema
+- type:"diagram" SIEMPRE tiene "subheading" explicando los conceptos del diagrama
+- type:"content" tiene "subheading" con mínimo 3 oraciones completas
+- type:"bullets" tiene bullets de frases completas (no palabras sueltas)
+- type:"practice" SIEMPRE tiene "tip"
+- Cada slide debe poder entenderse solo, sin necesitar ver el anterior
 
 ═══════════════════════════════
 CAMPO "body" — Artículo completo en HTML
