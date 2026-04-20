@@ -244,7 +244,7 @@ export default function GenerarClaseClient({ groups }: Props) {
 
             {/* Preview de slides */}
             <div className="bg-[#0F172A] border border-slate-800 rounded-xl overflow-hidden mb-6 aspect-video">
-              <iframe src={result.slidesUrl} className="w-full h-full" title="Preview slides" />
+              <iframe src={`/api/slides?url=${encodeURIComponent(result.slidesUrl)}`} className="w-full h-full" title="Preview slides" />
             </div>
 
             <div className="flex gap-3 justify-center">
