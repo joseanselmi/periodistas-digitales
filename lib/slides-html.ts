@@ -1,7 +1,7 @@
 export type ResourceItem = { text: string; url?: string; tag?: string }
 
 export type Slide = {
-  type: 'title' | 'content' | 'bullets' | 'quote' | 'resources' | 'checklist' | 'practice' | 'errors' | 'exercise'
+  type: 'title' | 'content' | 'bullets' | 'quote' | 'resources' | 'checklist' | 'practice' | 'errors' | 'exercise' | 'diagram'
   heading?: string
   subheading?: string
   title?: string
@@ -13,6 +13,8 @@ export type Slide = {
   quote?: string
   author?: string
   notes?: string
+  center?: string
+  nodes?: string[]
 }
 
 export type BrandConfig = {
@@ -155,6 +157,29 @@ function slideHtml(slide: Slide, brand: BrandConfig, index: number, total: numbe
               }).join('')}
             </ul>
           </div>`
+
+      case 'diagram': {
+        const nodes = slide.nodes ?? []
+        const cols = nodes.length <= 3 ? nodes.length : Math.ceil(nodes.length / 2)
+        return `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2.5rem 3rem;gap:1.25rem;">
+            <h2 style="font-size:1.6rem;font-weight:700;color:${brand.text};text-align:center;margin-bottom:0.25rem;">${slide.title ?? ''}</h2>
+            <!-- Centro -->
+            <div style="background:${brand.primary};color:${brand.bg};padding:0.7rem 2rem;border-radius:14px;font-size:1rem;font-weight:700;text-align:center;box-shadow:0 0 24px ${brand.primary}55;">
+              ${slide.center ?? ''}
+            </div>
+            <!-- Línea conectora -->
+            <div style="width:2px;height:18px;background:linear-gradient(${brand.primary},${brand.primary}00);"></div>
+            <!-- Nodos -->
+            <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:0.75rem;width:100%;max-width:640px;">
+              ${nodes.map((n, i) => `
+                <div style="background:${brand.surface};border:1px solid ${brand.primary}40;border-radius:12px;padding:0.75rem 1rem;text-align:center;font-size:0.85rem;color:${brand.text};opacity:0.9;position:relative;">
+                  <span style="display:block;width:20px;height:20px;border-radius:50%;background:${brand.primary}20;border:1.5px solid ${brand.primary}60;color:${brand.primary};font-size:0.65rem;font-weight:700;line-height:20px;text-align:center;margin:0 auto 0.4rem;">${i + 1}</span>
+                  ${n}
+                </div>`).join('')}
+            </div>
+          </div>`
+      }
 
       default:
         return `<div style="padding:3.5rem 4rem;"><p style="color:${brand.text};">${JSON.stringify(slide)}</p></div>`
