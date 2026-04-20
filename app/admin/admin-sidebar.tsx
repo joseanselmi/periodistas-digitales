@@ -6,7 +6,8 @@ import { useState } from 'react'
 
 export default function AdminSidebar() {
   const pathname = usePathname()
-  const clasesOpen = pathname.startsWith('/admin/clases') || pathname.startsWith('/admin/grupos') || pathname.startsWith('/admin/clase/')
+  const autoOpen = pathname.startsWith('/admin/clases') || pathname.startsWith('/admin/grupos') || pathname.startsWith('/admin/clase/')
+  const [clasesOpen, setClasesOpen] = useState(autoOpen)
 
   function isActive(href: string, exact = false) {
     if (exact) return pathname === href
@@ -36,16 +37,28 @@ export default function AdminSidebar() {
 
         {/* Clases — padre con hijos */}
         <div>
-          <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold ${
-            clasesOpen ? 'text-white' : 'text-slate-300'
-          }`}>
-            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+          <button
+            onClick={() => setClasesOpen(o => !o)}
+            className={`w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer hover:bg-slate-800/60 ${
+              clasesOpen ? 'text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span className="flex items-center gap-2.5">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              </svg>
+              Clases
+            </span>
+            <svg
+              className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${clasesOpen ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
-            Clases
-          </div>
+          </button>
 
-          {/* Hijos */}
+          {/* Hijos — colapsables */}
+          {clasesOpen && (
           <div className="ml-4 pl-3 border-l border-slate-800 mt-0.5 space-y-0.5">
             <Link
               href="/admin/clases"
@@ -77,6 +90,7 @@ export default function AdminSidebar() {
               Listar grupos
             </Link>
           </div>
+          )}
         </div>
 
         {/* ── CREACIÓN ── */}
