@@ -119,37 +119,42 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
               const progress = published.length > 0 ? Math.round((doneCount / published.length) * 100) : 0
               return (
                 <div key={group.id} className="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden">
-                  {/* Header de la tarjeta-grupo */}
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/60">
+                  {/* Header de la tarjeta-grupo — clickeable */}
+                  <div
+                    onClick={() => router.push(`/dashboard/grupo/${group.id}`)}
+                    className="flex items-center justify-between px-6 py-4 border-b border-slate-800/60 cursor-pointer hover:bg-slate-800/30 transition-colors group/header"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center group-hover/header:bg-cyan-400/20 transition-colors">
                         <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                       </div>
                       <div>
-                        <h2 className="text-white font-semibold text-sm">{group.name}</h2>
+                        <h2 className="text-white font-semibold text-sm group-hover/header:text-cyan-400 transition-colors">{group.name}</h2>
                         <p className="text-slate-500 text-xs mt-0.5">{published.length} {published.length === 1 ? 'clase' : 'clases'}</p>
                       </div>
                     </div>
-                    {published.length > 0 && (
-                      <div className="flex items-center gap-3">
-                        <div className="hidden sm:flex items-center gap-2">
-                          <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-cyan-400 rounded-full transition-all"
-                              style={{ width: `${progress}%` }}
-                            />
+                    <div className="flex items-center gap-3">
+                      {published.length > 0 && (
+                        <div className="flex items-center gap-3">
+                          <div className="hidden sm:flex items-center gap-2">
+                            <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-cyan-400 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                            </div>
+                            <span className="text-slate-500 text-xs">{doneCount}/{published.length}</span>
                           </div>
-                          <span className="text-slate-500 text-xs">{doneCount}/{published.length}</span>
+                          {progress === 100 && (
+                            <span className="text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
+                              Completado
+                            </span>
+                          )}
                         </div>
-                        {progress === 100 && (
-                          <span className="text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
-                            Completado
-                          </span>
-                        )}
-                      </div>
-                    )}
+                      )}
+                      <svg className="w-4 h-4 text-slate-600 group-hover/header:text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
                   </div>
 
                   {/* Clases dentro de la tarjeta */}
