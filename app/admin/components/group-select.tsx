@@ -6,28 +6,26 @@ import { createClient } from '@/lib/supabase/client'
 export type Group = { id: number; name: string; category: string }
 
 const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
-const CATEGORY_ICONS: Record<string, string> = {
-  clases: '📚',
-  prompts: '⚡',
-  automatizaciones: '🤖',
-  bonus: '🎁',
-}
 
 type Props = {
   groups: Group[]
   value: string
   onChange: (id: string) => void
+  filterCategory?: string
   onGroupCreated?: (group: Group) => void
 }
 
-export default function GroupSelect({ groups: initialGroups, value, onChange, onGroupCreated }: Props) {
+export default function GroupSelect({ groups: initialGroups, value, onChange, filterCategory, onGroupCreated }: Props) {
   const [open, setOpen] = useState(false)
   const [groups, setGroups] = useState<Group[]>(initialGroups)
   const [showCreate, setShowCreate] = useState(false)
   const [newName, setNewName] = useState('')
-  const [newCategory, setNewCategory] = useState('clases')
   const [saving, setSaving] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  const visibleGroups = filterCategory
+    ? groups.filter(g => g.category === filterCategory)
+    : groups
 
   const selected = groups.find(g => String(g.id) === value)
 
@@ -43,12 +41,12 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
   }, [])
 
   async function createGroup() {
-    if (!newName.trim()) return
+    if (!newName.trim() || !filterCategory) return
     setSaving(true)
     const supabase = createClient()
     const { data, error } = await supabase
       .from('groups')
-      .insert({ name: newName.trim(), category: newCategory, order_index: 0 })
+      .insert({ name: newName.trim(), category: filterCategory, order_index: 0 })
       .select()
       .single()
     setSaving(false)
@@ -68,31 +66,29 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
     setShowCreate(false)
   }
 
-  const grouped = CATEGORIES.map(cat => ({
-    cat,
-    items: groups.filter(g => g.category === cat),
-  })).filter(g => g.items.length > 0)
+  const isEmpty = visibleGroups.length === 0
 
   return (
     <div ref={ref} className="relative">
-      {/* Trigger */}
       <button
         type="button"
         onClick={() => { setOpen(o => !o); setShowCreate(false) }}
+        disabled={!filterCategory}
         className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl border text-sm transition-all cursor-pointer ${
-          open
+          !filterCategory
+            ? 'bg-slate-900/50 border-slate-800 text-slate-600 cursor-not-allowed'
+            : open
             ? 'bg-slate-800 border-cyan-400/60 text-white'
             : 'bg-[#0F172A] border-slate-700 text-white hover:border-slate-500'
         }`}
       >
         <span className="flex items-center gap-2 truncate">
-          {selected ? (
-            <>
-              <span className="text-base">{CATEGORY_ICONS[selected.category] ?? '📁'}</span>
-              <span className="truncate">{selected.name}</span>
-            </>
+          {selected && filterCategory ? (
+            <span className="truncate">{selected.name}</span>
           ) : (
-            <span className="text-slate-400">Sin grupo</span>
+            <span className="text-slate-400">
+              {!filterCategory ? 'Primero elegí un tipo' : isEmpty ? 'Sin grupos aún' : 'Elegir grupo'}
+            </span>
           )}
         </span>
         <svg
@@ -103,8 +99,7 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
         </svg>
       </button>
 
-      {/* Dropdown */}
-      {open && (
+      {open && filterCategory && (
         <div className="absolute z-50 top-full mt-1.5 left-0 right-0 bg-[#0F172A] border border-slate-700 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
           {/* Sin grupo */}
           <button
@@ -123,16 +118,9 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
             )}
           </button>
 
-          {/* Groups by category */}
-          {grouped.map(({ cat, items }) => (
-            <div key={cat}>
-              <div className="px-4 pt-2 pb-1">
-                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                  <span>{CATEGORY_ICONS[cat]}</span>
-                  {cat}
-                </span>
-              </div>
-              {items.map(g => (
+          {visibleGroups.length > 0 && (
+            <div className="border-t border-slate-800/60">
+              {visibleGroups.map(g => (
                 <button
                   key={g.id}
                   type="button"
@@ -151,9 +139,9 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
                 </button>
               ))}
             </div>
-          ))}
+          )}
 
-          {/* Divider + create */}
+          {/* Crear grupo */}
           <div className="border-t border-slate-800 mt-1">
             {!showCreate ? (
               <button
@@ -179,22 +167,6 @@ export default function GroupSelect({ groups: initialGroups, value, onChange, on
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
                   autoFocus
                 />
-                <div className="flex gap-2">
-                  {CATEGORIES.map(c => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setNewCategory(c)}
-                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
-                        newCategory === c
-                          ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/40'
-                          : 'bg-slate-800 text-slate-400 border border-transparent hover:text-white'
-                      }`}
-                    >
-                      {CATEGORY_ICONS[c]}
-                    </button>
-                  ))}
-                </div>
                 <div className="flex gap-2 pt-0.5">
                   <button
                     type="button"

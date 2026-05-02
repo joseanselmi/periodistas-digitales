@@ -35,7 +35,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-cyan-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-cyan-400 flex items-center justify-center" aria-hidden="true">
               <span className="text-[#020617] font-bold text-sm">L</span>
             </div>
             <span className="text-white font-semibold text-lg">Leadr</span>

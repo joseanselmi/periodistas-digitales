@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import DashboardClient from './dashboard-client'
+
+export const metadata: Metadata = {
+  title: 'Inicio — Leadr',
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()

@@ -5,7 +5,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import GroupSelect, { type Group } from '../components/group-select'
 
-type Props = { groups: Group[] }
+const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus'] as const
+const TIPO_CONFIG: Record<string, { label: string; accent: string }> = {
+  clases:           { label: 'Clases',            accent: 'border-cyan-400/60 bg-cyan-400/10 text-cyan-300' },
+  prompts:          { label: 'Prompts',            accent: 'border-violet-400/60 bg-violet-400/10 text-violet-300' },
+  automatizaciones: { label: 'Automatizaciones',  accent: 'border-amber-400/60 bg-amber-400/10 text-amber-300' },
+  bonus:            { label: 'Bonus',              accent: 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300' },
+}
+
+type Props = { groups: Group[]; preGroupId?: string }
 
 type Step = 'form' | 'generating' | 'done'
 
@@ -24,16 +32,20 @@ const PIPELINE_STEPS = [
   { id: 'db', label: 'Creando clase en base de datos', detail: 'Guardando como borrador...' },
 ]
 
-export default function GenerarClaseClient({ groups }: Props) {
+export default function GenerarClaseClient({ groups, preGroupId }: Props) {
   const router = useRouter()
   const [step, setStep] = useState<Step>('form')
+  const preGroup = preGroupId ? groups.find(g => String(g.id) === preGroupId) : undefined
+  const [tipo, setTipo] = useState(preGroup?.category ?? '')
   const [instruction, setInstruction] = useState('')
-  const [groupId, setGroupId] = useState('')
+  const [groupId, setGroupId] = useState(preGroupId ?? '')
   const [plan, setPlan] = useState('basic')
   const [brand, setBrand] = useState(BRAND_DEFAULTS)
   const [pipelineStep, setPipelineStep] = useState(-1)
   const [error, setError] = useState('')
-  const [result, setResult] = useState<{ id: number; title: string; slidesUrl: string } | null>(null)
+  const [result, setResult] = useState<{ id: number; title: string; slidesUrl: string | null; isPrompt: boolean } | null>(null)
+
+  const isPrompt = tipo === 'prompts'
 
   async function handleGenerate() {
     if (!instruction.trim()) { setError('Escribí una instrucción para Claude'); return }
@@ -54,6 +66,7 @@ export default function GenerarClaseClient({ groups }: Props) {
           groupId: groupId ? parseInt(groupId) : null,
           plan,
           brandColors: brand,
+          category: tipo || 'clases',
         }),
       })
 
@@ -64,7 +77,7 @@ export default function GenerarClaseClient({ groups }: Props) {
       if (!res.ok) throw new Error(data.error ?? 'Error desconocido')
 
       await new Promise(r => setTimeout(r, 800))
-      setResult({ id: data.class.id, title: data.class.title, slidesUrl: data.slidesUrl })
+      setResult({ id: data.class.id, title: data.class.title, slidesUrl: data.slidesUrl, isPrompt: data.isPrompt ?? false })
       setStep('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error generando la clase')
@@ -80,11 +93,54 @@ export default function GenerarClaseClient({ groups }: Props) {
         {step === 'form' && (
           <>
             <div className="mb-6">
-              <h1 className="text-xl font-semibold mb-1">Generar clase con IA</h1>
-              <p className="text-slate-400 text-sm">Claude crea la presentación completa a partir de tu instrucción.</p>
+              <h1 className="text-xl font-semibold mb-1">
+                {isPrompt ? 'Generar prompt con IA' : 'Generar clase con IA'}
+              </h1>
+              <p className="text-slate-400 text-sm">
+                {isPrompt
+                  ? 'Claude crea un prompt completo con variables, ejemplo real y variaciones.'
+                  : 'Claude crea la presentación completa a partir de tu instrucción.'}
+              </p>
             </div>
 
             <div className="space-y-5">
+
+              {/* Tipo */}
+              <div>
+                <label className="block text-slate-400 text-sm mb-2">Tipo *</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {CATEGORIES.map(cat => {
+                    const cfg = TIPO_CONFIG[cat]
+                    const isSelected = tipo === cat
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => { setTipo(cat); setGroupId('') }}
+                        className={`px-3 py-2.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                          isSelected
+                            ? cfg.accent
+                            : 'border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
+                        }`}
+                      >
+                        {cfg.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Grupo */}
+              <div>
+                <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
+                <GroupSelect
+                  groups={groups}
+                  value={groupId}
+                  onChange={setGroupId}
+                  filterCategory={tipo || undefined}
+                />
+              </div>
+
               {/* Instrucción */}
               <div>
                 <label className="block text-slate-400 text-sm mb-1.5">Instrucción para Claude *</label>
@@ -97,27 +153,17 @@ export default function GenerarClaseClient({ groups }: Props) {
                 />
               </div>
 
-              {/* Grupo y Plan */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
-                  <GroupSelect
-                    groups={groups}
-                    value={groupId}
-                    onChange={setGroupId}
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
-                  <select
-                    value={plan}
-                    onChange={e => setPlan(e.target.value)}
-                    className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
-                  >
-                    <option value="basic">Basic (gratis)</option>
-                    <option value="pro">Pro</option>
-                  </select>
-                </div>
+              {/* Plan */}
+              <div>
+                <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
+                <select
+                  value={plan}
+                  onChange={e => setPlan(e.target.value)}
+                  className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
+                >
+                  <option value="basic">Basic (gratis)</option>
+                  <option value="pro">Pro</option>
+                </select>
               </div>
 
               {/* Brand Identity */}
@@ -162,7 +208,7 @@ export default function GenerarClaseClient({ groups }: Props) {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Generar con Claude
+                {isPrompt ? 'Generar prompt' : 'Generar clase'}
               </button>
             </div>
           </>
@@ -171,7 +217,7 @@ export default function GenerarClaseClient({ groups }: Props) {
         {/* STEP: GENERATING */}
         {step === 'generating' && (
           <div className="py-8">
-            <h2 className="text-xl font-semibold mb-2">Generando tu clase...</h2>
+            <h2 className="text-xl font-semibold mb-2">{isPrompt ? 'Generando tu prompt...' : 'Generando tu clase...'}</h2>
             <p className="text-slate-400 text-sm mb-8">Claude está trabajando. Esto puede tardar 15-30 segundos.</p>
 
             <div className="space-y-3">
@@ -223,15 +269,26 @@ export default function GenerarClaseClient({ groups }: Props) {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold mb-2">Clase generada</h2>
+            <h2 className="text-xl font-semibold mb-2">{result.isPrompt ? 'Prompt generado' : 'Clase generada'}</h2>
             <p className="text-slate-400 text-sm mb-1">
               <span className="text-white font-medium">{result.title}</span>
             </p>
             <p className="text-slate-500 text-xs mb-8">Guardada como borrador. Revisá y publicá cuando estés listo.</p>
 
-            <div className="bg-[#0F172A] border border-slate-800 rounded-xl overflow-hidden mb-6 aspect-video">
-              <iframe src={`/api/slides?url=${encodeURIComponent(result.slidesUrl)}`} className="w-full h-full" title="Preview slides" />
-            </div>
+            {!result.isPrompt && result.slidesUrl && (
+              <div className="bg-[#0F172A] border border-slate-800 rounded-xl overflow-hidden mb-6 aspect-video">
+                <iframe src={`/api/slides?url=${encodeURIComponent(result.slidesUrl)}`} className="w-full h-full" title="Preview slides" />
+              </div>
+            )}
+            {result.isPrompt && (
+              <div className="bg-[#0F172A] border border-slate-800 rounded-xl p-5 mb-6 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  <span className="text-cyan-400 text-xs font-semibold uppercase tracking-wider">Prompt generado</span>
+                </div>
+                <p className="text-slate-400 text-sm">El prompt está listo. Entrá al detalle para verlo completo con variables y ejemplos.</p>
+              </div>
+            )}
 
             <div className="flex gap-3 justify-center">
               <Link
@@ -247,7 +304,7 @@ export default function GenerarClaseClient({ groups }: Props) {
                 Ir al admin
               </Link>
               <button
-                onClick={() => { setStep('form'); setResult(null); setPipelineStep(-1) }}
+                onClick={() => { setStep('form'); setResult(null); setPipelineStep(-1); setTipo(''); setGroupId('') }}
                 className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
               >
                 Generar otra

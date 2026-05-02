@@ -2,8 +2,13 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import GenerarClaseClient from './generar-clase-client'
 
-export default async function GenerarClasePage() {
+export default async function GenerarClasePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ grupo?: string }>
+}) {
   const supabase = await createClient()
+  const { grupo } = await searchParams
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -15,5 +20,5 @@ export default async function GenerarClasePage() {
   const { data: groups } = await supabase
     .from('groups').select('*').order('order_index')
 
-  return <GenerarClaseClient groups={groups ?? []} />
+  return <GenerarClaseClient groups={groups ?? []} preGroupId={grupo} />
 }

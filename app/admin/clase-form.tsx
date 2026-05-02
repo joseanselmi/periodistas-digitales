@@ -19,12 +19,22 @@ type ClaseData = {
   status?: string
 }
 
+const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus'] as const
+const TIPO_CONFIG: Record<string, { label: string; accent: string }> = {
+  clases:         { label: 'Clases',          accent: 'border-cyan-400/60 bg-cyan-400/10 text-cyan-300' },
+  prompts:        { label: 'Prompts',         accent: 'border-violet-400/60 bg-violet-400/10 text-violet-300' },
+  automatizaciones: { label: 'Automatizaciones', accent: 'border-amber-400/60 bg-amber-400/10 text-amber-300' },
+  bonus:          { label: 'Bonus',           accent: 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300' },
+}
+
 type Props = { groups: Group[]; clase?: ClaseData }
 
 export default function ClaseForm({ groups: initialGroups, clase }: Props) {
   const router = useRouter()
   const isEditing = !!clase?.id
 
+  const initialGroup = initialGroups.find(g => g.id === clase?.group_id)
+  const [tipo, setTipo] = useState<string>(initialGroup?.category ?? '')
   const [title, setTitle] = useState(clase?.title ?? '')
   const [description, setDescription] = useState(clase?.description ?? '')
   const [groupId, setGroupId] = useState<string>(clase?.group_id?.toString() ?? '')
@@ -95,6 +105,43 @@ export default function ClaseForm({ groups: initialGroups, clase }: Props) {
         <h1 className="text-xl font-semibold mb-6">{isEditing ? 'Editar clase' : 'Nueva clase'}</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+
+          {/* Tipo */}
+          <div>
+            <label className="block text-slate-400 text-sm mb-2">Tipo *</label>
+            <div className="grid grid-cols-4 gap-2">
+              {CATEGORIES.map(cat => {
+                const cfg = TIPO_CONFIG[cat]
+                const isSelected = tipo === cat
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => { setTipo(cat); setGroupId('') }}
+                    className={`px-3 py-2.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                      isSelected
+                        ? cfg.accent
+                        : 'border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
+                    }`}
+                  >
+                    {cfg.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Grupo */}
+          <div>
+            <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
+            <GroupSelect
+              groups={initialGroups}
+              value={groupId}
+              onChange={setGroupId}
+              filterCategory={tipo || undefined}
+            />
+          </div>
+
           {/* Título */}
           <div>
             <label className="block text-slate-400 text-sm mb-1.5">Título *</label>
@@ -118,27 +165,17 @@ export default function ClaseForm({ groups: initialGroups, clase }: Props) {
             />
           </div>
 
-          {/* Grupo y Plan en fila */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-slate-400 text-sm mb-1.5">Grupo</label>
-              <GroupSelect
-                groups={groups}
-                value={groupId}
-                onChange={setGroupId}
-              />
-            </div>
-            <div>
-              <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
-              <select
-                value={plan}
-                onChange={e => setPlan(e.target.value)}
-                className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
-              >
-                <option value="basic">Basic (gratis)</option>
-                <option value="pro">Pro</option>
-              </select>
-            </div>
+          {/* Plan */}
+          <div>
+            <label className="block text-slate-400 text-sm mb-1.5">Plan requerido</label>
+            <select
+              value={plan}
+              onChange={e => setPlan(e.target.value)}
+              className="w-full bg-[#0F172A] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer"
+            >
+              <option value="basic">Basic (gratis)</option>
+              <option value="pro">Pro</option>
+            </select>
           </div>
 
           {/* Video URL */}

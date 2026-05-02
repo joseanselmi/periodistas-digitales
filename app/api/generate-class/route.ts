@@ -3,6 +3,42 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { generateSlidesHTML, type Slide } from '@/lib/slides-html'
 
+const SYSTEM_PROMPT_PROMPT = `Eres un experto en prompt engineering y periodismo digital. Generas prompts de IA completos, listos para copiar y usar, con ejemplos reales y variaciones.
+
+Devuelve ÚNICAMENTE un objeto JSON válido, sin markdown, sin bloques de código, sin texto adicional.
+
+{
+  "type": "prompt",
+  "title": "Nombre descriptivo del prompt",
+  "description": "Para qué sirve este prompt en 2-3 oraciones",
+  "prompt": "El texto completo del prompt con [VARIABLES] en corchetes para las partes que el usuario debe personalizar",
+  "variables": [
+    {"name": "[NOMBRE_VARIABLE]", "description": "Qué es y para qué sirve", "example": "Ejemplo concreto y útil"}
+  ],
+  "example": {
+    "input": "El prompt con las variables reemplazadas por valores reales, tal como lo escribirías en ChatGPT o Claude",
+    "output": "Una respuesta completa y realista que generaría la IA. Debe ser larga y detallada para mostrar el valor del prompt."
+  },
+  "use_cases": [
+    "Cuándo usar este prompt — situación concreta 1",
+    "Situación concreta 2",
+    "Situación concreta 3",
+    "Situación concreta 4"
+  ],
+  "variations": [
+    {"title": "Para [caso específico]", "prompt": "Versión modificada del prompt para este caso"},
+    {"title": "Versión más corta", "prompt": "Variante simplificada"},
+    {"title": "Para [otro caso]", "prompt": "Otra variante útil"}
+  ]
+}
+
+Reglas:
+- El prompt principal debe ser completo, profesional y funcionar en ChatGPT, Claude o cualquier IA
+- Las variables en [CORCHETES] deben ser claras y tener ejemplos muy concretos
+- El output del ejemplo debe mostrar el verdadero poder del prompt (mínimo 150 palabras de respuesta)
+- Las variaciones deben cubrir casos de uso distintos y realmente útiles
+- Tono cercano, práctico, pensado para periodistas que aprenden IA`
+
 const SYSTEM_PROMPT = `Eres un experto en educación digital y periodismo. Generas clases completas, visuales y detalladas pensadas para que CUALQUIER persona las entienda desde cero.
 
 Devuelve ÚNICAMENTE un objeto JSON válido, sin markdown, sin bloques de código, sin texto adicional.
@@ -82,53 +118,65 @@ export async function POST(req: Request) {
       .from('users').select('is_admin').eq('id', user.id).single()
     if (!profile?.is_admin) return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
 
-    const { instruction, groupId, plan, brandColors } = await req.json()
+    const { instruction, groupId, plan, brandColors, category } = await req.json()
     if (!instruction?.trim()) return NextResponse.json({ error: 'Instrucción requerida' }, { status: 400 })
+
+    const isPrompt = category === 'prompts'
 
     // 1. Llamar a Claude
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     const message = await client.messages.create({
       model: 'claude-opus-4-7',
       max_tokens: 8192,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: `Crea una clase sobre: ${instruction}` }],
+      system: isPrompt ? SYSTEM_PROMPT_PROMPT : SYSTEM_PROMPT,
+      messages: [{
+        role: 'user',
+        content: isPrompt
+          ? `Crea un prompt de IA sobre: ${instruction}`
+          : `Crea una clase sobre: ${instruction}`
+      }],
     })
 
     const rawText = message.content[0].type === 'text' ? message.content[0].text.trim() : ''
-    // Extraer JSON aunque venga con markdown accidental
     const jsonMatch = rawText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) return NextResponse.json({ error: 'Claude no devolvió JSON válido' }, { status: 500 })
 
-    const classData = JSON.parse(jsonMatch[0]) as { title: string; description: string; slides: Slide[]; body?: string }
+    const contentData = JSON.parse(jsonMatch[0]) as { title: string; description: string; slides: Slide[]; body?: string; type?: string }
 
-    // 2. Generar HTML con brand identity
-    const brand = brandColors ?? undefined
-    const html = generateSlidesHTML(classData.slides, brand)
+    let slidesUrl: string | null = null
 
-    // 3. Subir HTML a Supabase Storage
-    const timestamp = Date.now()
-    const path = `classes/${timestamp}/index.html`
-    const { error: uploadError } = await supabase.storage
-      .from('slides')
-      .upload(path, Buffer.from(html, 'utf-8'), {
-        contentType: 'text/html',
-        upsert: false,
-      })
+    if (!isPrompt) {
+      // 2. Generar HTML con brand identity
+      const brand = brandColors ?? undefined
+      const html = generateSlidesHTML(contentData.slides, brand)
 
-    if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
+      // 3. Subir HTML a Supabase Storage
+      const timestamp = Date.now()
+      const storagePath = `classes/${timestamp}/index.html`
+      const { error: uploadError } = await supabase.storage
+        .from('slides')
+        .upload(storagePath, Buffer.from(html, 'utf-8'), {
+          contentType: 'text/html',
+          upsert: false,
+        })
 
-    const { data: { publicUrl } } = supabase.storage.from('slides').getPublicUrl(path)
+      if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
 
-    // 4. Crear clase en DB como draft
+      slidesUrl = supabase.storage.from('slides').getPublicUrl(storagePath).data.publicUrl
+    }
+
+    // 4. Crear en DB como draft
     const { data: newClass, error: dbError } = await supabase
       .from('classes')
       .insert({
-        title: classData.title,
-        description: classData.description,
+        title: contentData.title,
+        description: contentData.description,
         group_id: groupId ?? null,
         plan_required: plan ?? 'basic',
-        slides_url: publicUrl,
-        slides_json: { slides: classData.slides, body: classData.body ?? null },
+        slides_url: slidesUrl,
+        slides_json: isPrompt
+          ? contentData
+          : { slides: contentData.slides, body: contentData.body ?? null },
         status: 'draft',
       })
       .select()
@@ -136,7 +184,7 @@ export async function POST(req: Request) {
 
     if (dbError) return NextResponse.json({ error: dbError.message }, { status: 500 })
 
-    return NextResponse.json({ class: newClass, slidesUrl: publicUrl })
+    return NextResponse.json({ class: newClass, slidesUrl, isPrompt })
   } catch (err) {
     console.error('generate-class error:', err)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })

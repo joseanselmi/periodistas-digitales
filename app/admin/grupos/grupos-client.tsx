@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 type Group = {
@@ -14,15 +13,35 @@ type Group = {
 }
 
 const CATEGORIES = ['clases', 'prompts', 'automatizaciones', 'bonus']
-const CATEGORY_COLORS: Record<string, string> = {
-  clases: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/25',
-  prompts: 'bg-violet-500/15 text-violet-300 border-violet-500/25',
-  automatizaciones: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
-  bonus: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+
+const TIPO_CONFIG: Record<string, { label: string; accent: string; badge: string; dot: string }> = {
+  clases: {
+    label: 'Clases',
+    accent: 'border-cyan-500/30',
+    badge: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/25',
+    dot: 'bg-cyan-400',
+  },
+  prompts: {
+    label: 'Prompts',
+    accent: 'border-violet-500/30',
+    badge: 'bg-violet-500/15 text-violet-300 border-violet-500/25',
+    dot: 'bg-violet-400',
+  },
+  automatizaciones: {
+    label: 'Automatizaciones',
+    accent: 'border-amber-500/30',
+    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
+    dot: 'bg-amber-400',
+  },
+  bonus: {
+    label: 'Bonus',
+    accent: 'border-emerald-500/30',
+    badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+    dot: 'bg-emerald-400',
+  },
 }
 
 export default function GruposClient({ groups: initialGroups }: { groups: Group[] }) {
-  const router = useRouter()
   const [groups, setGroups] = useState(initialGroups)
   const [toast, setToast] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -62,6 +81,9 @@ export default function GruposClient({ groups: initialGroups }: { groups: Group[
     setTimeout(() => setToast(''), 3000)
   }
 
+  const tiposConGrupos = CATEGORIES.filter(cat => groups.some(g => g.category === cat))
+  const tiposSinGrupos = CATEGORIES.filter(cat => !groups.some(g => g.category === cat))
+
   return (
     <div className="text-white">
       <div className="max-w-4xl mx-auto px-6 py-8">
@@ -69,11 +91,13 @@ export default function GruposClient({ groups: initialGroups }: { groups: Group[
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-semibold">Grupos</h1>
-            <p className="text-slate-400 text-sm mt-1">{groups.length} grupos · organizan el contenido en el dashboard</p>
+            <h1 className="text-xl font-semibold">Tipos y Grupos</h1>
+            <p className="text-slate-400 text-sm mt-1">
+              {groups.length} grupos en {tiposConGrupos.length} tipos · cada grupo contiene clases
+            </p>
           </div>
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => setShowForm(o => !o)}
             className="flex items-center gap-1.5 text-xs px-3 py-2 bg-cyan-400 hover:bg-cyan-300 text-[#020617] font-semibold rounded-lg transition-colors cursor-pointer"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +109,7 @@ export default function GruposClient({ groups: initialGroups }: { groups: Group[
 
         {/* Form nuevo grupo */}
         {showForm && (
-          <div className="bg-[#0F172A] border border-cyan-400/30 rounded-xl p-5 mb-5">
+          <div className="bg-[#0F172A] border border-cyan-400/30 rounded-xl p-5 mb-6">
             <h2 className="text-white font-medium text-sm mb-4">Nuevo grupo</h2>
             <div className="grid grid-cols-3 gap-3 mb-4">
               <input
@@ -102,7 +126,9 @@ export default function GruposClient({ groups: initialGroups }: { groups: Group[
                 onChange={e => setNewCategory(e.target.value)}
                 className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-cyan-400 cursor-pointer"
               >
-                {CATEGORIES.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+                {CATEGORIES.map(c => (
+                  <option key={c} value={c}>{TIPO_CONFIG[c]?.label ?? c}</option>
+                ))}
               </select>
               <input
                 type="number"
@@ -130,64 +156,98 @@ export default function GruposClient({ groups: initialGroups }: { groups: Group[
           </div>
         )}
 
-        {/* Lista de grupos */}
+        {/* Jerarquía: Tipo → Grupos */}
         {groups.length === 0 ? (
           <div className="bg-[#0F172A] border border-slate-800 rounded-xl py-16 text-center">
             <p className="text-slate-500 text-sm">No hay grupos aún.</p>
           </div>
         ) : (
-          <div className="bg-[#0F172A] border border-slate-800 rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-800 text-left">
-                  <th className="px-5 py-3 text-slate-400 text-xs font-medium uppercase tracking-wider">Nombre</th>
-                  <th className="px-5 py-3 text-slate-400 text-xs font-medium uppercase tracking-wider">Categoría</th>
-                  <th className="px-5 py-3 text-slate-400 text-xs font-medium uppercase tracking-wider hidden sm:table-cell">Orden</th>
-                  <th className="px-5 py-3 text-slate-400 text-xs font-medium uppercase tracking-wider hidden sm:table-cell">Clases</th>
-                  <th className="px-5 py-3 text-slate-400 text-xs font-medium uppercase tracking-wider text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {groups.map(g => {
-                  const total = g.classes?.length ?? 0
-                  const published = g.classes?.filter(c => c.status === 'published').length ?? 0
-                  return (
-                    <tr key={g.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="px-5 py-4">
-                        <p className="text-white text-sm font-medium">{g.name}</p>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-xs px-2.5 py-0.5 rounded-full border capitalize ${CATEGORY_COLORS[g.category] ?? 'bg-slate-700 text-slate-300 border-slate-600'}`}>
-                          {g.category}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 hidden sm:table-cell">
-                        <span className="text-slate-400 text-sm">{g.order_index}</span>
-                      </td>
-                      <td className="px-5 py-4 hidden sm:table-cell">
-                        <span className="text-slate-400 text-sm">{published}/{total} publicadas</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center justify-end gap-3">
-                          <Link
-                            href={`/admin/grupos/${g.id}`}
-                            className="text-slate-400 hover:text-white text-xs transition-colors font-medium"
-                          >
-                            Ver detalle
-                          </Link>
-                          <button
-                            onClick={() => deleteGroup(g.id)}
-                            className="text-slate-400 hover:text-red-400 text-xs transition-colors cursor-pointer"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+          <div className="space-y-8">
+            {tiposConGrupos.map(cat => {
+              const cfg = TIPO_CONFIG[cat]
+              const gruposDeTipo = groups
+                .filter(g => g.category === cat)
+                .sort((a, b) => a.order_index - b.order_index)
+
+              return (
+                <div key={cat} id={cat}>
+                  {/* Cabecera de tipo */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
+                    <h2 className="text-white font-semibold text-base">{cfg.label}</h2>
+                    <span className="text-slate-500 text-xs">{gruposDeTipo.length} grupos</span>
+                  </div>
+
+                  {/* Grupos del tipo */}
+                  <div className={`bg-[#0F172A] border ${cfg.accent} rounded-xl overflow-hidden`}>
+                    <div className="divide-y divide-slate-800/60">
+                      {gruposDeTipo.map(g => {
+                        const total = g.classes?.length ?? 0
+                        const published = g.classes?.filter(c => c.status === 'published').length ?? 0
+                        return (
+                          <div key={g.id} className="flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition-colors">
+                            <div className="flex items-center gap-4">
+                              {/* Indicador de nivel */}
+                              <div className="flex items-center gap-2 text-slate-600 text-xs">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-white text-sm font-medium">{g.name}</p>
+                                <p className="text-slate-500 text-xs mt-0.5">
+                                  {total === 0
+                                    ? 'Sin clases'
+                                    : `${published}/${total} clases publicadas`}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="text-slate-600 text-xs hidden sm:block">orden {g.order_index}</span>
+                              <Link
+                                href={`/admin/grupos/${g.id}`}
+                                className="text-slate-400 hover:text-white text-xs transition-colors font-medium"
+                              >
+                                Ver clases
+                              </Link>
+                              <button
+                                onClick={() => deleteGroup(g.id)}
+                                className="text-slate-600 hover:text-red-400 text-xs transition-colors cursor-pointer"
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+
+            {/* Tipos vacíos (sin grupos) */}
+            {tiposSinGrupos.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+                  <h2 className="text-slate-500 font-semibold text-sm">Tipos sin grupos</h2>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tiposSinGrupos.map(cat => {
+                    const cfg = TIPO_CONFIG[cat]
+                    return (
+                      <span
+                        key={cat}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${cfg.badge}`}
+                      >
+                        {cfg.label}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

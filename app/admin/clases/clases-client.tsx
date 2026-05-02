@@ -178,29 +178,29 @@ export default function ClasesClient({ classes }: { classes: Class[] }) {
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex items-center justify-end gap-3">
+                      <div className="flex items-center justify-end gap-1">
                         <Link
                           href={`/preview/${cls.id}`}
                           target="_blank"
-                          className="text-slate-400 hover:text-cyan-400 text-xs transition-colors"
+                          className="text-slate-400 hover:text-cyan-400 text-xs transition-colors py-2 px-2"
                         >
                           Preview
                         </Link>
                         <Link
                           href={`/admin/clase/${cls.id}`}
-                          className="text-slate-400 hover:text-white text-xs transition-colors font-medium"
+                          className="text-slate-400 hover:text-white text-xs transition-colors font-medium py-2 px-2"
                         >
                           Ver detalle
                         </Link>
                         <button
                           onClick={() => toggleStatus(cls)}
-                          className="text-slate-400 hover:text-cyan-400 text-xs transition-colors cursor-pointer"
+                          className="text-slate-400 hover:text-cyan-400 text-xs transition-colors cursor-pointer py-2 px-2"
                         >
                           {cls.status === 'published' ? 'Despublicar' : 'Publicar'}
                         </button>
                         <button
                           onClick={() => deleteClass(cls.id)}
-                          className="text-slate-400 hover:text-red-400 text-xs transition-colors cursor-pointer"
+                          className="text-slate-400 hover:text-red-400 text-xs transition-colors cursor-pointer py-2 px-2"
                         >
                           Eliminar
                         </button>

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import DOMPurify from 'dompurify'
 import { createClient } from '@/lib/supabase/client'
+import PromptView, { type PromptData } from './prompt-view'
 
-type SlidesJson = { slides: unknown[]; body?: string | null } | unknown[]
+type SlidesJson = { slides: unknown[]; body?: string | null } | { type: 'prompt' } & PromptData | unknown[]
 
 type Clase = {
   id: number
@@ -17,24 +19,37 @@ type Clase = {
   groups: { id: number; name: string; category: string } | null
 }
 
+type NavClass = { id: number; title: string; plan_required: string } | null
+
 type Props = {
   clase: Clase
   userPlan: string
   alreadyWatched: boolean
+  prevClass: NavClass
+  nextClass: NavClass
 }
 
 function getBody(slides_json: SlidesJson | null): string | null {
   if (!slides_json) return null
   if (Array.isArray(slides_json)) return null
+  if ((slides_json as { type?: string }).type === 'prompt') return null
   return (slides_json as { body?: string | null }).body ?? null
 }
 
-export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched }: Props) {
+function getPromptData(slides_json: SlidesJson | null): PromptData | null {
+  if (!slides_json || Array.isArray(slides_json)) return null
+  if ((slides_json as { type?: string }).type === 'prompt') return slides_json as PromptData
+  return null
+}
+
+export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass, nextClass }: Props) {
   const [watched, setWatched] = useState(alreadyWatched)
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState('')
 
   const body = getBody(clase.slides_json)
+  const promptData = getPromptData(clase.slides_json)
+  const isPrompt = promptData !== null
 
   async function markAsWatched() {
     if (watched) return
@@ -72,19 +87,29 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
           </svg>
         </Link>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-cyan-400 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-cyan-400 flex items-center justify-center" aria-hidden="true">
             <span className="text-[#020617] font-bold text-xs">L</span>
           </div>
           <span className="font-semibold text-sm">Leadr</span>
         </div>
         {clase.groups && (
-          <span className="text-slate-500 text-sm hidden sm:block">/ {clase.groups.name}</span>
+          <nav className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500" aria-label="Breadcrumb">
+            <Link href="/dashboard" className="hover:text-slate-300 transition-colors capitalize">
+              {clase.groups.category}
+            </Link>
+            <span>/</span>
+            <Link href={`/dashboard/grupo/${clase.groups.id}`} className="hover:text-slate-300 transition-colors">
+              {clase.groups.name}
+            </Link>
+            <span>/</span>
+            <span className="text-slate-300 truncate max-w-[200px]">{clase.title}</span>
+          </nav>
         )}
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        {/* Título y badge */}
-        <div className="flex items-start justify-between gap-4 mb-6">
+      {/* Título y badge — contenedor estrecho */}
+      <div className="max-w-5xl mx-auto px-6 pt-8 pb-5">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold text-white mb-2">{clase.title}</h1>
             {clase.description && (
@@ -99,10 +124,19 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
             {clase.plan_required === 'pro' ? 'Pro' : 'Free'}
           </span>
         </div>
+      </div>
 
-        {/* Video embed */}
-        {clase.video_url && (
-          <div className="aspect-video rounded-xl overflow-hidden bg-slate-900 mb-6">
+      {/* Prompt view */}
+      {isPrompt && promptData && (
+        <div className="max-w-5xl mx-auto px-6 pb-5">
+          <PromptView data={promptData} />
+        </div>
+      )}
+
+      {/* Video embed — ancho completo */}
+      {!isPrompt && clase.video_url && (
+        <div className="px-4 pb-5">
+          <div className="aspect-video rounded-2xl overflow-hidden bg-slate-900 max-w-7xl mx-auto">
             <iframe
               src={`https://www.youtube.com/embed/${clase.video_url}`}
               title={clase.title}
@@ -111,31 +145,38 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
               className="w-full h-full"
             />
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Slides */}
-        {clase.slides_url && (
-          <div className="aspect-video rounded-xl overflow-hidden bg-slate-900 mb-6">
+      {/* Slides — ancho completo */}
+      {!isPrompt && clase.slides_url && (
+        <div className="px-4 pb-5">
+          <div className="rounded-2xl overflow-hidden bg-slate-900 w-full aspect-video">
             <iframe
               src={`/api/slides?url=${encodeURIComponent(clase.slides_url)}`}
               title={clase.title}
               className="w-full h-full"
             />
           </div>
-        )}
+        </div>
+      )}
 
-        {!clase.video_url && !clase.slides_url && (
-          <div className="aspect-video rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-6">
+      {!isPrompt && !clase.video_url && !clase.slides_url && (
+        <div className="px-4 pb-5">
+          <div className="aspect-video rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center max-w-7xl mx-auto">
             <p className="text-slate-500 text-sm">Contenido próximamente</p>
           </div>
-        )}
+        </div>
+      )}
 
+      {/* Controles + artículo — contenedor estrecho */}
+      <div className="max-w-5xl mx-auto px-6 pb-16">
         {/* Marcar como vista */}
-        <div className="flex items-center gap-4 mb-10">
+        <div className="flex items-center gap-4 mb-6">
           <button
             onClick={markAsWatched}
             disabled={watched || loading}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               watched
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 cursor-default'
                 : 'bg-cyan-400 hover:bg-cyan-300 text-[#020617]'
@@ -150,15 +191,59 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
               </>
             ) : loading ? 'Guardando...' : 'Marcar como vista'}
           </button>
-          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors">
+          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors py-2 px-1">
             Volver al dashboard
           </Link>
         </div>
 
+        {/* Navegación clase anterior / siguiente */}
+        {(prevClass || nextClass) && (
+          <div className="flex items-stretch justify-between gap-3 mb-10 border-t border-slate-800 pt-6">
+            {prevClass ? (
+              <Link
+                href={`/clase/${prevClass.id}`}
+                className="flex items-center gap-3 group min-h-[56px] px-4 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 transition-all max-w-[48%]"
+              >
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <div className="min-w-0">
+                  <p className="text-slate-500 text-xs mb-0.5">Anterior</p>
+                  <p className="text-white text-sm font-medium truncate group-hover:text-cyan-400 transition-colors leading-snug">
+                    {prevClass.title}
+                  </p>
+                </div>
+              </Link>
+            ) : <div />}
+
+            {nextClass ? (
+              <Link
+                href={`/clase/${nextClass.id}`}
+                className="flex items-center gap-3 group min-h-[56px] px-4 py-3 rounded-xl border transition-all max-w-[48%] ml-auto text-right
+                  bg-slate-800/60 hover:bg-slate-800 border-slate-800 hover:border-slate-700"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center justify-end gap-1.5 mb-0.5">
+                    <p className="text-slate-500 text-xs">Siguiente</p>
+                    {nextClass.plan_required === 'pro' && userPlan !== 'pro' && (
+                      <span className="text-xs px-1.5 py-0 rounded-full bg-violet-500/20 text-violet-300">Pro</span>
+                    )}
+                  </div>
+                  <p className="text-white text-sm font-medium truncate group-hover:text-cyan-400 transition-colors leading-snug">
+                    {nextClass.title}
+                  </p>
+                </div>
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ) : <div />}
+          </div>
+        )}
+
         {/* Contenido escrito — body generado por Claude */}
         {body && (
           <div className="border-t border-slate-800 pt-10">
-            {/* Header de sección */}
             <div className="flex items-center gap-3 mb-8">
               <div className="w-8 h-8 rounded-lg bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center">
                 <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,11 +255,9 @@ export default function ClaseClient({ clase, userPlan: _userPlan, alreadyWatched
                 <p className="text-slate-500 text-xs mt-0.5">Lectura detallada de la clase</p>
               </div>
             </div>
-
-            {/* Artículo */}
             <div
               className="prose-clase"
-              dangerouslySetInnerHTML={{ __html: body }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }}
             />
           </div>
         )}

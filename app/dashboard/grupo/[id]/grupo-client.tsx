@@ -48,7 +48,7 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
       {/* Navbar */}
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-[#020617]/95 backdrop-blur z-10">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors text-sm">
+          <Link href="/dashboard" className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors text-sm py-2 px-1 -ml-1">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
@@ -56,7 +56,7 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
           </Link>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-cyan-400 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-cyan-400 flex items-center justify-center" aria-hidden="true">
               <span className="text-[#020617] font-bold text-xs">L</span>
             </div>
             <span className="font-semibold">Leadr</span>
@@ -64,7 +64,7 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
         </div>
         <div className="flex items-center gap-3">
           {user.isAdmin && (
-            <a href="/admin" className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/25 hover:bg-violet-500/25 transition-colors font-medium">
+            <a href="/admin" className="flex items-center gap-1.5 text-xs px-3 py-2.5 rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/25 hover:bg-violet-500/25 transition-colors font-medium">
               Admin
             </a>
           )}
@@ -99,8 +99,11 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
               </div>
             )}
             {progress === 100 && (
-              <span className="text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
-                ✓ Completado
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                Completado
               </span>
             )}
           </div>
@@ -118,7 +121,11 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
                 return (
                   <div
                     key={cls.id}
+                    role="button"
+                    tabIndex={locked ? -1 : 0}
+                    aria-disabled={locked}
                     onClick={() => !locked && router.push(`/clase/${cls.id}`)}
+                    onKeyDown={e => { if (!locked && (e.key === 'Enter' || e.key === ' ')) router.push(`/clase/${cls.id}`) }}
                     className={`flex items-center gap-4 px-6 py-5 transition-colors group ${
                       locked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-800/40 cursor-pointer'
                     }`}
