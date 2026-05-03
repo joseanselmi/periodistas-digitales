@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { HOTMART_PRO_URL } from '@/lib/plans'
 
 type Class = {
   id: number
@@ -119,6 +120,31 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
         </div>
       </div>
 
+      {/* Banner upgrade — solo para usuarios Basic */}
+      {user.plan === 'basic' && (
+        <div className="bg-gradient-to-r from-violet-500/10 to-cyan-400/10 border-b border-violet-500/20">
+          <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <svg className="w-4 h-4 text-violet-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <p className="text-sm text-slate-300 truncate">
+                <span className="text-white font-medium">Algunas clases son Pro.</span>
+                {' '}Desbloqueá todo el contenido con un plan Pro.
+              </p>
+            </div>
+            <a
+              href={HOTMART_PRO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 px-4 py-1.5 bg-violet-500 hover:bg-violet-400 text-white text-xs font-semibold rounded-lg transition-colors"
+            >
+              Ver planes
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Contenido — todas las secciones */}
       <main className="max-w-5xl mx-auto px-6 py-10 space-y-16">
         {TIPOS.map(tipo => {
@@ -216,9 +242,18 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
                                 <span className="text-xs px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 flex-shrink-0">Pro</span>
                               )}
                               {locked && (
-                                <svg className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
-                                </svg>
+                                <a
+                                  href={HOTMART_PRO_URL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={e => e.stopPropagation()}
+                                  className="flex-shrink-0 flex items-center gap-1 px-2 py-0.5 bg-violet-500/20 hover:bg-violet-500/40 text-violet-300 text-xs rounded-full transition-colors"
+                                >
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+                                  </svg>
+                                  Pro
+                                </a>
                               )}
                             </div>
                           )
