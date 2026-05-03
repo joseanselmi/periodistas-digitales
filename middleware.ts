@@ -2,6 +2,14 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') ?? ''
+  const isLeadrDomain = hostname.includes('leadr.cloud') || hostname.includes('leadr.vercel')
+
+  // Raíz de leadr.cloud → landing de Leadr
+  if (isLeadrDomain && request.nextUrl.pathname === '/') {
+    return NextResponse.rewrite(new URL('/leadr-home', request.url))
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
