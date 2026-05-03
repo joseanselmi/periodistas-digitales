@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const HOTMART_TOKEN = process.env.HOTMART_WEBHOOK_TOKEN
+const HOTMART_TOKEN = process.env.HOTMART_WEBHOOK_TOKEN?.trim()
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
@@ -11,7 +11,7 @@ const CANCEL_EVENTS = ['PURCHASE_REFUNDED', 'PURCHASE_CHARGEBACK', 'SUBSCRIPTION
 
 export async function POST(req: Request) {
   // 1. Verificar firma de Hotmart
-  const token = req.headers.get('x-hotmart-hottok')
+  const token = req.headers.get('x-hotmart-hottok')?.trim()
   if (!HOTMART_TOKEN || token !== HOTMART_TOKEN) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
