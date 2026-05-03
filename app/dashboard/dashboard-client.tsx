@@ -24,7 +24,7 @@ type Group = {
 }
 
 type Props = {
-  user: { email: string; plan: string; isAdmin: boolean }
+  user: { email: string; plan: string; isAdmin: boolean; planExpiresAt?: string | null }
   groups: Group[]
   watchedIds: number[]
 }
@@ -67,13 +67,20 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
               Admin
             </Link>
           )}
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-            user.plan === 'pro'
-              ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
-              : 'bg-slate-700 text-slate-300'
-          }`}>
-            {user.plan === 'pro' ? 'Pro' : 'Basic'}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+              user.plan === 'pro'
+                ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
+                : 'bg-slate-700 text-slate-300'
+            }`}>
+              {user.plan === 'pro' ? 'Pro' : 'Basic'}
+            </span>
+            {user.plan === 'pro' && user.planExpiresAt && (
+              <span className="text-xs text-slate-500 hidden sm:block">
+                vence {new Date(user.planExpiresAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
+              </span>
+            )}
+          </div>
           <span className="text-slate-400 text-sm hidden sm:block">{user.email}</span>
           <button onClick={handleLogout} className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer">
             Salir
