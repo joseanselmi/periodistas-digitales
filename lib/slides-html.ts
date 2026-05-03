@@ -218,37 +218,85 @@ export function generateSlidesHTML(
   <title>Slides</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: ${brand.bg}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    body { background: ${brand.bg}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     #container { width: min(900px, 96vw); aspect-ratio: 16/9; position: relative; }
     .slide { display: none; width: 100%; height: 100%; }
     .slide.active { display: flex; }
-    #nav { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.75rem; align-items: center; }
-    #nav button { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: ${brand.text}; padding: 0.5rem 1.25rem; border-radius: 8px; cursor: pointer; font-size: 0.875rem; transition: background 0.2s; }
-    #nav button:hover { background: rgba(255,255,255,0.15); }
-    #nav button:disabled { opacity: 0.3; cursor: default; }
-    #counter { color: ${brand.text}; opacity: 0.5; font-size: 0.8rem; min-width: 4rem; text-align: center; }
+
+    /* Nav bar */
+    #nav { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; align-items: center; background: rgba(2,6,23,0.85); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 0.4rem 0.5rem; backdrop-filter: blur(8px); }
+    #nav button { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: ${brand.text}; padding: 0.45rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: background 0.15s; display: flex; align-items: center; gap: 0.4rem; min-height: 36px; }
+    #nav button:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+    #nav button:disabled { opacity: 0.25; cursor: default; }
+    #counter { color: ${brand.text}; opacity: 0.45; font-size: 0.75rem; min-width: 3.5rem; text-align: center; }
+
+    /* Hint inicial */
+    #hint { position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.4rem; opacity: 1; transition: opacity 0.5s; pointer-events: none; }
+    #hint.hidden { opacity: 0; }
+    #hint-text { color: ${brand.primary}; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+    #hint-arrow { width: 20px; height: 20px; border-right: 2px solid ${brand.primary}; border-bottom: 2px solid ${brand.primary}; transform: rotate(45deg); animation: bounce 1s ease-in-out infinite; opacity: 0.7; }
+    @keyframes bounce { 0%,100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(4px); } }
+
+    /* Zonas táctiles laterales */
+    #tap-prev, #tap-next { position: fixed; top: 0; bottom: 4rem; width: 20%; cursor: pointer; z-index: 10; }
+    #tap-prev { left: 0; }
+    #tap-next { right: 0; }
+
+    /* Barra de progreso */
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: ${brand.primary}; transition: width 0.3s ease; opacity: 0.7; }
+
     #audio-indicator { position: fixed; top: 1rem; right: 1rem; display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.75rem; color: ${brand.primary}; }
     #audio-indicator.visible { display: flex; }
   </style>
 </head>
 <body>
+  <div id="progress-bar"></div>
+
   <div id="container">
     ${slidesHtml}
   </div>
-  <div id="nav">
-    <button id="prev" onclick="go(-1)">← Anterior</button>
-    <span id="counter">1 / ${slides.length}</span>
-    <button id="next" onclick="go(1)">Siguiente →</button>
+
+  <!-- Zonas táctiles -->
+  <div id="tap-prev" onclick="go(-1)"></div>
+  <div id="tap-next" onclick="go(1)"></div>
+
+  <!-- Hint inicial -->
+  <div id="hint">
+    <span id="hint-text">Tocá el lado derecho o usá las flechas para avanzar</span>
+    <div id="hint-arrow"></div>
   </div>
+
+  <div id="nav">
+    <button id="prev" onclick="go(-1)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+      Anterior
+    </button>
+    <span id="counter">1 / ${slides.length}</span>
+    <button id="next" onclick="go(1)">
+      Siguiente
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
   ${hasAudio ? `<div id="audio-indicator">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
     <span id="audio-label">Reproduciendo</span>
   </div>` : ''}
+
   <script>
     let cur = 0;
     const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
     const audioUrls = ${audioData};
     let currentAudio = null;
+    let hintDismissed = false;
+
+    function dismissHint() {
+      if (hintDismissed) return;
+      hintDismissed = true;
+      document.getElementById('hint').classList.add('hidden');
+    }
+
     function playSlideAudio(index) {
       if (!audioUrls || !audioUrls[index]) return;
       if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
@@ -261,16 +309,44 @@ export function generateSlidesHTML(
       }
       currentAudio.play().catch(() => {});
     }
+
     function show(n) {
       slides[cur].classList.remove('active');
-      cur = Math.max(0, Math.min(n, slides.length - 1));
+      cur = Math.max(0, Math.min(n, total - 1));
       slides[cur].classList.add('active');
-      document.getElementById('counter').textContent = (cur+1) + ' / ' + slides.length;
+      document.getElementById('counter').textContent = (cur + 1) + ' / ' + total;
       document.getElementById('prev').disabled = cur === 0;
-      document.getElementById('next').disabled = cur === slides.length - 1;
+      document.getElementById('next').disabled = cur === total - 1;
+      document.getElementById('progress-bar').style.width = ((cur + 1) / total * 100) + '%';
       playSlideAudio(cur);
+      dismissHint();
     }
+
     function go(d) { show(cur + d); }
+
+    // Teclado
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(-1); }
+    });
+
+    // Swipe táctil
+    let touchStartX = 0, touchStartY = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        go(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    // Auto-dismiss hint después de 4 segundos
+    setTimeout(dismissHint, 4000);
+
     show(0);
   </script>
 </body>
