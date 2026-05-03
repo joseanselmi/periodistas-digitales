@@ -13,32 +13,17 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Perfil del usuario (plan + is_admin)
-  const { data: profile } = await supabase
-    .from('users')
-    .select('plan, is_admin')
-    .eq('id', user.id)
-    .single()
-
-  // Grupos con clases
-  const { data: groups } = await supabase
-    .from('groups')
-    .select('*, classes(*)')
-    .order('order_index')
-
-  // Progreso del usuario
-  const { data: progress } = await supabase
-    .from('user_progress')
-    .select('class_id')
-    .eq('user_id', user.id)
-
-  const watchedIds = new Set(progress?.map(p => p.class_id) ?? [])
+  const [{ data: profile }, { data: groups }, { data: progress }] = await Promise.all([
+    supabase.from('users').select('plan, is_admin').eq('id', user.id).single(),
+    supabase.from('groups').select('*, classes(*)').order('order_index'),
+    supabase.from('user_progress').select('class_id').eq('user_id', user.id),
+  ])
 
   return (
     <DashboardClient
       user={{ email: user.email!, plan: profile?.plan ?? 'basic', isAdmin: profile?.is_admin ?? false }}
       groups={groups ?? []}
-      watchedIds={Array.from(watchedIds)}
+      watchedIds={progress?.map(p => p.class_id) ?? []}
     />
   )
 }

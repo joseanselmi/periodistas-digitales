@@ -93,7 +93,7 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
           <span className="font-semibold text-sm">Leadr</span>
         </div>
         {clase.groups && (
-          <nav className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500" aria-label="Breadcrumb">
+          <nav className="hidden md:flex items-center gap-1.5 text-xs text-slate-500" aria-label="Breadcrumb">
             <Link href="/dashboard" className="hover:text-slate-300 transition-colors capitalize">
               {clase.groups.category}
             </Link>
@@ -111,7 +111,7 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
       <div className="max-w-5xl mx-auto px-6 pt-8 pb-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-white mb-2">{clase.title}</h1>
+            <h1 className="text-lg sm:text-2xl font-semibold text-white mb-2">{clase.title}</h1>
             {clase.description && (
               <p className="text-slate-400 text-sm leading-relaxed">{clase.description}</p>
             )}
@@ -176,7 +176,7 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
           <button
             onClick={markAsWatched}
             disabled={watched || loading}
-            className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3 sm:px-5 py-3 rounded-lg text-sm font-medium transition-all cursor-pointer whitespace-nowrap ${
               watched
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 cursor-default'
                 : 'bg-cyan-400 hover:bg-cyan-300 text-[#020617]'
