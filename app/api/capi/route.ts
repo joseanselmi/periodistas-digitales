@@ -7,7 +7,7 @@ const CAPI_URL = `https://graph.facebook.com/v19.0/${PIXEL_ID}/events`
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { event_name, event_source_url, client_user_agent, fbc, fbp } = body
+    const { event_name, event_source_url, client_user_agent, fbc, fbp, test_event_code } = body
 
     // Get real client IP from Vercel headers
     const client_ip =
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (fbc) user_data.fbc = fbc
     if (fbp) user_data.fbp = fbp
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       data: [
         {
           event_name,
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
         },
       ],
     }
+    if (test_event_code) payload.test_event_code = test_event_code
 
     const res = await fetch(`${CAPI_URL}?access_token=${CAPI_TOKEN}`, {
       method: 'POST',
