@@ -1,0 +1,68 @@
+{
+  "name": "Sistema de Ingresos Diarios — Lanzamiento",
+  "date": "2026-05-08",
+  "dailyBudget": 15,
+  "objective": "PURCHASE",
+  "pixel": "1086780383211630",
+  "landingUrl": "https://sistemadeingresosdiariosia.com",
+
+  "ads": [
+    {
+      "id": "ad-a",
+      "adSet": "Conjunto A — Intereses periodismo",
+      "awarenessLevel": "1 — Problema-consciente",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "PR"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "interests": ["periodismo", "medios digitales", "comunicación", "inteligencia artificial"]
+      },
+      "dailyBudget": 5,
+      "imageUrl": "https://v3b.fal.media/files/b/0a9916f5/rt4dRKJK0VLAWzaZdFp0H_00f85a9811894eeebc8b1c80dd31fa89.jpg",
+      "imagePrompt": "Cinematic close-up of a Latin American woman journalist in her 40s, sitting alone at a dark newsroom desk late at night, looking at her phone with a worried expression, dramatic side lighting, deep shadows, moody and tense atmosphere, photojournalism style, ultra realistic, no text, 4k",
+      "primaryText": "Las redacciones no avisan cuando ya no te necesitan.\nPrimero es una reunión sin tu criterio. Después, un proyecto asignado a alguien más joven. Luego, el silencio.\nSi lo estás notando, ya es momento de construir algo propio.",
+      "headline": "Tu criterio periodístico tiene valor real. Solo falta el sistema para cobrarlo.",
+      "cta": "VER_MAS",
+      "status": "MEJORAR_COPY",
+      "reviewScore": 8.0
+    },
+    {
+      "id": "ad-b",
+      "adSet": "Conjunto B — Lookalike compradores",
+      "awarenessLevel": "2 — Solución-consciente",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "PR", "CL"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "lookalike": "1%"
+      },
+      "dailyBudget": 5,
+      "imageUrl": "https://v3b.fal.media/files/b/0a994abd/QogJvt-5EcP28e_80G1zu_feb2eb270081495bb34cf8491c75b77d.jpg",
+      "imagePrompt": "Cinematic dark-mode editorial workspace at night. A Latin male journalist in his 35s, serious and focused expression, sitting in front of a curved ultrawide monitor displaying a professional digital newspaper interface with AI-generated article headlines in Spanish, analytics dashboard with traffic graphs, and a content calendar. The room has dark walls, dramatic blue-purple ambient lighting from the screen. On the desk: a press badge, a notebook with handwritten notes, and a coffee cup. No cash, no stock-photo smile, no generic office. Style: high-end tech brand advertisement. Shallow depth of field. photorealistic",
+      "primaryText": "La IA ya está escribiendo las noticias que tú podrías estar publicando.\nNo para reemplazarte. Para que finalmente monetices lo que sabes hacer.\nCon este sistema configuras tu periódico digital en 24 horas: contenido automatizado con IA, audiencia propia y múltiples fuentes de ingresos — sin dejar tu trabajo actual.",
+      "headline": "Tu periódico digital con IA — funcionando en 24 horas · Solo $17",
+      "cta": "SHOP_NOW",
+      "status": "MEJORAR_COPY",
+      "reviewScore": 7.0
+    },
+    {
+      "id": "ad-c",
+      "adSet": "Conjunto C — Broad Colombia 25-45",
+      "awarenessLevel": "3 — Precio y prueba social",
+      "targeting": {
+        "countries": ["CO", "EC"],
+        "ageMin": 25,
+        "ageMax": 45,
+        "broad": true
+      },
+      "dailyBudget": 5,
+      "imageUrl": "https://v3b.fal.media/files/b/0a994abd/pr0l3pLcc8AZx9-0aerir_e1ffe70691af451db2888b1e4fd71364.jpg",
+      "imagePrompt": "Cinematic dark-mode scene, top-down aerial view, wooden desk with warm lamp light. A modern laptop showing a sleek digital newspaper interface in Spanish, headlines visible, clean editorial layout, dark UI with teal accents. Beside it: an open notebook with handwritten notes, a coffee mug. Hands of a Latin-American professional in their 40s typing. NO financial charts, NO stock graphs, NO cash. The screen shows a news dashboard with article cards and reader analytics. Photorealistic, editorial aesthetic, high contrast lighting",
+      "primaryText": "Miles de periodistas en Latinoamérica ya no dependen de ninguna redacción.\nCrearon su propio medio digital con IA: publican cuando quieren, desde donde quieren, y monetizan su trabajo sin pedir permiso a nadie.\nEste es el sistema completo para hacerlo — hoy disponible a $17 (lanzamiento). Precio normal: $227.",
+      "headline": "De periodista a dueño de tu propio medio — con IA.",
+      "cta": "SHOP_NOW",
+      "status": "MEJORAR_COPY",
+      "reviewScore": 6.0
+    }
+  ]
+}
