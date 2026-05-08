@@ -1167,6 +1167,89 @@
 
     .price-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-hi), transparent); margin: 24px 0; }
 
+    /* Urgency countdown */
+    .urgency-wrap {
+        background: rgba(245,158,11,.06);
+        border: 1px solid rgba(245,158,11,.25);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .urgency-label {
+        font-size: .8rem;
+        font-weight: 600;
+        color: var(--amber);
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        margin-bottom: 10px;
+    }
+
+    .urgency-timer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .urgency-unit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .urgency-num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--amber);
+        line-height: 1;
+        min-width: 52px;
+        display: block;
+        text-align: center;
+        background: rgba(245,158,11,.1);
+        border-radius: 8px;
+        padding: 6px 8px;
+    }
+
+    .urgency-lbl {
+        font-size: .68rem;
+        color: var(--muted-hi);
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .urgency-sep {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--amber);
+        opacity: .5;
+        margin-bottom: 16px;
+    }
+
+    .urgency-sub {
+        font-size: .78rem;
+        color: var(--muted-hi);
+        margin-top: 10px;
+    }
+
+    @keyframes urgency-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .6; }
+    }
+
+    .urgency-wrap.last-hour .urgency-num {
+        animation: urgency-pulse 1s ease-in-out infinite;
+        color: #ef4444;
+        background: rgba(239,68,68,.1);
+    }
+
+    .urgency-wrap.last-hour { border-color: rgba(239,68,68,.3); background: rgba(239,68,68,.04); }
+    .urgency-wrap.last-hour .urgency-label { color: #ef4444; }
+    .urgency-wrap.last-hour .urgency-sep { color: #ef4444; }
+
     .price-original { font-size: 1rem; color: var(--muted); text-decoration: line-through; margin-bottom: 6px; }
 
     .price-main {
@@ -2030,6 +2113,28 @@
 
                 <div class="price-divider"></div>
 
+                <!-- CONTADOR DE URGENCIA -->
+                <div class="urgency-wrap" id="urgencyWrap">
+                    <div class="urgency-label">⚡ Este precio vence en:</div>
+                    <div class="urgency-timer">
+                        <div class="urgency-unit">
+                            <span class="urgency-num" id="urgHours">00</span>
+                            <span class="urgency-lbl">horas</span>
+                        </div>
+                        <span class="urgency-sep">:</span>
+                        <div class="urgency-unit">
+                            <span class="urgency-num" id="urgMinutes">00</span>
+                            <span class="urgency-lbl">min</span>
+                        </div>
+                        <span class="urgency-sep">:</span>
+                        <div class="urgency-unit">
+                            <span class="urgency-num" id="urgSeconds">00</span>
+                            <span class="urgency-lbl">seg</span>
+                        </div>
+                    </div>
+                    <div class="urgency-sub">Después el precio sube a $47 USD</div>
+                </div>
+
                 <p class="price-original">Valor total: $127 USD</p>
                 <div class="price-main">$17 USD</div>
                 <p class="price-note">Pago único &nbsp;·&nbsp; Acceso inmediato &nbsp;·&nbsp; Sin suscripción &nbsp;·&nbsp; Acceso de por vida</p>
@@ -2168,6 +2273,52 @@
      JAVASCRIPT
 ══════════════════════════════════════════════════════════ -->
 <script>
+/* ── URGENCY COUNTDOWN ── */
+(function() {
+  const DURATION_HOURS = 72
+  const STORAGE_KEY = 'sid_urgency_end'
+
+  function getEndTime() {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const end = parseInt(stored, 10)
+      if (end > Date.now()) return end
+    }
+    const end = Date.now() + DURATION_HOURS * 60 * 60 * 1000
+    localStorage.setItem(STORAGE_KEY, end.toString())
+    return end
+  }
+
+  const endTime = getEndTime()
+  const wrap = document.getElementById('urgencyWrap')
+  const elH  = document.getElementById('urgHours')
+  const elM  = document.getElementById('urgMinutes')
+  const elS  = document.getElementById('urgSeconds')
+
+  function pad(n) { return String(n).padStart(2, '0') }
+
+  function tick() {
+    const diff = endTime - Date.now()
+    if (diff <= 0) {
+      // Reiniciar al vencer (evergreen)
+      localStorage.removeItem(STORAGE_KEY)
+      location.reload()
+      return
+    }
+    const h = Math.floor(diff / 3600000)
+    const m = Math.floor((diff % 3600000) / 60000)
+    const s = Math.floor((diff % 60000) / 1000)
+    elH.textContent = pad(h)
+    elM.textContent = pad(m)
+    elS.textContent = pad(s)
+    if (h < 1) wrap.classList.add('last-hour')
+    else wrap.classList.remove('last-hour')
+  }
+
+  tick()
+  setInterval(tick, 1000)
+})();
+
 /* ── INTERSECTION OBSERVER: reveal animations ── */
 const io = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
