@@ -2,54 +2,30 @@
 **Tipo:** venta-suave | **Plataforma:** both
 
 ## Copy
-Hace tres años, una periodista en Bogotá me escribió para contarme que había perdido su trabajo en un medio local.
+Renunció a su trabajo en un medio colombiano. Tres meses después, su periódico digital le pagaba más de lo que ganaba antes.
 
-No porque fuera mala en lo suyo.
-Sino porque el medio cerró.
+Sebastián tenía 41 años, 14 de carrera periodística y una certeza incómoda: nunca iba a ver crecer sus ingresos mientras dependiera de un solo empleador.
 
-Hoy tiene su propio periódico digital.
-Publica todos los días.
-Y genera ingresos sin depender de ningún editor.
+No sabía de tecnología. No tenía audiencia propia. No tenía tiempo.
 
-Lo que cambió no fue su talento —ese siempre lo tuvo.
-Lo que cambió fue que dejó de esperar que alguien le diera un espacio
-y creó el suyo.
+Lo que hizo fue esto: tomó el Sistema de Ingresos Diarios para Periodistas, siguió los pasos en orden y armó un periódico digital sobre política regional en 11 días. Usó la plataforma de IA Leadr para producir contenido, estructurar su modelo de negocio y conseguir sus primeros anunciantes locales.
 
-Con IA. Con una estructura simple. Con tiempo real.
+Al mes, tenía ingresos recurrentes. Al tercero, renunció.
 
-Eso es exactamente lo que enseña el Sistema de Ingresos Diarios para Periodistas:
-cómo construir tu propio medio digital desde cero,
-monetizarlo desde el día uno,
-y usar herramientas de IA para hacerlo sin un equipo detrás.
+No porque el sistema sea mágico. Sino porque hizo algo que la mayoría pospone: empezó sin esperar las condiciones perfectas.
 
-Ya son más de 5.500 periodistas en 50 países que lo están aplicando.
+Hoy hay más de 5.500 periodistas en 50 países que siguieron el mismo camino. Algunos renunciaron. Otros no. Pero todos dejaron de depender de un solo ingreso. 📌
 
-Si estás cansado/a de escribir para otros
-y querés empezar a construir algo tuyo,
-el link está en bio.
+Si sos periodista en México, Ecuador, Chile, Argentina, Puerto Rico o Colombia y estás leyendo esto con esa sensación conocida en el pecho — sabés cuál es —, el link está en bio.
 
-👇 Sistema completo por $17 USD — incluye 1 mes de Leadr, la plataforma de IA diseñada para periodistas.
-
-—
-
-#PeriodismoDigital #PeriodismoLatino #IAparaPeriodistas #EmprendimientoPeriodístico #MediosDigitales #PeriodismoIndependiente #IngresosPropios #Periodistas
+$17 USD. Acceso inmediato.
 
 ---
 
-## Prompt de imagen
-A Latin American woman in her late 30s sitting at a wooden desk in a warmly lit home office, focused on writing on a laptop. On the screen, a clean digital newspaper layout is partially visible. A small notebook with handwritten notes sits beside the laptop, along with a cup of coffee. Natural morning light comes through a nearby window. The atmosphere feels productive, calm, and personal — not corporate. Shot in a documentary photography style, warm tones, shallow depth of field, no text or UI overlays visible.
+## Hashtags
+#PeriodismoLatino #PeriodistasDigitales #IngresosPropios #PeriodismoIndependiente #MediosDigitales #PeriodismoDeCarrera #EmprendimientoPeriodístico #PeriodistasDeLatam
 
 ---
 
 ## Notas
-**Mejor horario:**
-Martes a jueves entre 8:00–9:30 AM o 7:00–8:30 PM (hora local del país con mayor volumen de tu audiencia — si es mixta, apuntá a Colombia/Argentina como referencia).
-
-**Formato:**
-Imagen única (no carrusel). El copy largo funciona mejor con una imagen emocional y estática que no compita con el texto. En Instagram, el hook está en la primera línea visible antes del "ver más" — ese gancho narrativo ("Hace tres años...") está pensado para eso.
-
-**Tip de engagement:**
-Al final del copy podés agregar una pregunta en el primer comentario fijado, por ejemplo: *"¿Alguna vez pensaste en crear tu propio medio? Contame abajo."* Esto dispara conversaciones sin saturar el post principal con una pregunta directa que se sienta forzada.
-
-**En Facebook:**
-Publicá el mismo copy pero sin hashtags o con máximo 3. El algoritmo de Facebook penaliza el exceso de hashtags en posts orgánicos.
+Publicar martes o miércoles entre 19:00 y 21:00 (hora Colombia/México) — pico de consumo de feed en periodistas que salen de redacción. En la primera imagen usá una frase corta tipo *"Renunció. Tres meses después, ganaba más"* — texto blanco sobre fondo oscuro, sin florituras. Para engagement, preguntá en los primeros comentarios: *"¿Cuántos ingresos dependés de un solo medio?"* — activa conversación real.

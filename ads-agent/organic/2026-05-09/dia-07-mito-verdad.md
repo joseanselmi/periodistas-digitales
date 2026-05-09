@@ -2,80 +2,32 @@
 **Tipo:** mito-verdad | **Plataforma:** both
 
 ## Copy
----
+La IA no te va a reemplazar. Te va a reemplazar otro periodista que sí la usa.
+
+Eso no lo digo yo. Lo están viviendo colegas en Colombia, México y Argentina que ya perdieron coberturas porque alguien más entregó el doble de contenido en la mitad del tiempo.
 
 **MITO:** "La IA va a reemplazar a los periodistas."
 
-**VERDAD:** La IA no reemplaza periodistas. Reemplaza periodistas que no saben usarla.
+**REALIDAD:** La IA no tiene fuentes. No tiene olfato. No sabe leer una sala o interpretar el silencio de un funcionario. Lo que sí hace es automatizar el trabajo mecánico para que vos te concentres en lo que ningún algoritmo puede hacer.
 
----
+El problema no es la IA. Es quedarse afuera mientras el resto del gremio se adapta.
 
-Hay una diferencia enorme entre los dos.
+Más de 5.500 periodistas en 50 países ya están usando herramientas de IA para producir, distribuir y monetizar su propio medio digital.
 
-Y esa diferencia, hoy, se mide en ingresos.
+No son ingenieros. No son jóvenes de 25 años. Son periodistas con trayectoria que decidieron que sus ingresos no iban a depender solo de una redacción.
 
----
+Vos podés hacer lo mismo, sin dejar tu trabajo actual.
 
-El periodista que le tiene miedo a la IA sigue esperando que un medio lo llame.
-
-El periodista que aprendió a usarla ya tiene su propio medio, sus propias reglas y sus propios ingresos.
-
----
-
-No te pido que confíes en mí.
-
-Te pido que mires los números:
-
-Más de **5.500 periodistas en 50 países** ya construyeron su periódico digital con IA.
-
-No eran genios de la tecnología.
-
-Eran periodistas cansados de depender de otros.
-
----
-
-La IA no es el enemigo.
-
-La dependencia sí lo es.
-
----
-
-¿Vos también creías este mito antes de leer esto?
+¿Tuviste este miedo alguna vez?
 
 Contame en los comentarios. 👇
 
 ---
 
-#PeriodismoDigital #IAyPeriodismo #EmprendedorPeriodista #PeriodistaLatino #IngresosPropios #PeriodismoIndependiente #ComunidadPeriodistas
-
----
-
-## Prompt de imagen
----
-
-**Slide 1 (portada):**
-A split image divided diagonally into two halves. Left side: dark, muted tones, a stressed Latin American journalist in their 40s sitting alone at a desk, looking at a phone with a worried expression, dim lighting, analog newspaper clippings around. Right side: bright, warm lighting, the same type of journalist smiling confidently at a laptop, modern home office setup, clean desk, natural light coming through a window. No text. Photorealistic style, editorial quality, cinematic composition.
-
-**Slide 2:**
-Close-up of two hands on a laptop keyboard, one hand looks hesitant and tense, the other is relaxed and in motion typing. Dual lighting: cold blue on the hesitant side, warm golden on the active side. No text. Clean minimalist composition. Photorealistic.
-
-**Slide 3:**
-A Latin American journalist, mid-30s to 50s, sitting at a bright modern desk, looking at a screen with a calm and focused expression. On the screen a faint glow suggesting a digital dashboard. A cup of coffee nearby. Warm tones. No text. Photorealistic, editorial style.
-
-**Slide 4 (cierre):**
-Wide shot of a diverse group of Latin American journalists — different ages and genders — each looking at their own laptop in different locations (home office, café, outdoors), connected visually by a soft warm light thread linking them together. Represents community and independence. No text. Photorealistic, slightly stylized editorial feel.
+## Hashtags
+#PeriodismoDigital #PeriodismoLatam #InteligenciaArtificial #PeriodistasArgentina #PeriodistasLatam #MediosDigitales #PeriodismoIndependiente #IAparaperiodistas
 
 ---
 
 ## Notas
----
-
-**Horario recomendado:**
-Publicar entre **12:00 y 13:30 hs (hora Argentina/CDMX)** o entre **19:00 y 20:30 hs**. Son los dos picos de mayor actividad para audiencias profesionales latinoamericanas entre semana. Para día 7 del calendario, si cae martes, miércoles o jueves, mejor rendimiento garantizado.
-
-**Formato:**
-Carrusel de **4 slides**:
-- Slide 1: El mito (gancho visual fuerte)
-- Slide 2: La verdad (la vuelta de tuerca)
-- Slide 3: La prueba social (los 5.500 periodistas)
-- Slide 4
+Publicar martes o jueves entre 12:00 y 13:30 (hora local del país de mayor audiencia activa). Subir como carrusel con la palabra "MITO" en fondo oscuro y "REALIDAD" en fondo claro para reforzar el contraste visual. Respondé cada comentario en las primeras 2 horas para disparar el alcance orgánico.

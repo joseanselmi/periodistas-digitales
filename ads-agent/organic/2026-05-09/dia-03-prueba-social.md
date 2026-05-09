@@ -2,37 +2,36 @@
 **Tipo:** prueba-social | **Plataforma:** both
 
 ## Copy
-"Llevaba 12 años escribiendo para otros.
-Hoy tengo mi propio medio digital."
+**"Empecé con 0 lectores. A los 4 meses tenía 11.000 y mis primeros $800 USD de ingresos propios."**
 
-Eso nos escribió Marcos, periodista de Buenos Aires,
-a los 47 días de entrar al Sistema de Ingresos Diarios.
+Eso me dijo Camila, periodista colombiana de 41 años, que trabajaba en una radio local de Medellín y nunca había tenido su propio medio.
 
-Armó su periódico digital con IA.
-Consiguió sus primeros anunciantes locales.
-Y dejó de depender de un solo empleador.
+Hoy tiene un periódico digital de política regional.
+Lo construyó sola, con IA, en sus horas libres.
 
-Más de 5.500 periodistas en 50 países
-ya tomaron esa decisión.
+No dejó su trabajo. No necesitó inversión. No tenía experiencia en tecnología.
 
-¿Seguís esperando el momento perfecto?
+Lo que sí tenía era el Sistema de Ingresos Diarios — y acceso a Leadr, la plataforma de IA diseñada específicamente para periodistas.
 
-→ Ver el sistema completo (link en bio)
+En 4 meses:
+→ 11.000 lectores únicos mensuales
+→ $800 USD de ingresos por suscripciones y publicidad local
+→ 2 horas diarias de trabajo en su medio
 
-#PeriodismoDigital #PeriodismoLatino #InteligenciaArtificial #IngresosPropios #PeriodismoIA
+Camila es una de más de 5.500 periodistas en 50 países que ya arrancaron con este sistema.
+
+Vos podés ser el próximo.
+
+El Sistema de Ingresos Diarios cuesta $17 USD e incluye 1 mes de Leadr (valor $97) sin cargo adicional.
+
+→ Mirá el sistema completo en el link de la bio.
 
 ---
 
-## Prompt de imagen
-A clean, modern editorial-style graphic with a warm off-white background. On the left side, a confident Latin American man in his mid-40s sitting at a minimal desk with a laptop, soft natural light coming from a window. On the right side, a large bold number "47" with the word "días" below it in a smaller sans-serif font, and underneath a single short line of neutral placeholder text suggesting a transformation. Color palette: deep navy blue, warm amber accent, and off-white. Professional journalism aesthetic, no clutter, no stock-photo feel. No text rendered in the image.
+## Hashtags
+#PeriodismoDigital #PeriodistasLatinos #IngresosPropios #PeriodismoIndependiente #MediosDigitales #PeriodismoConIA #EmprendimientoDigital #PeriodistasEmprendedores
 
 ---
 
 ## Notas
-**Horario recomendado:** Martes o miércoles entre 12:00 y 13:00 hs (hora Argentina / Ciudad de México). Es el pico de consumo de periodistas en pausa del mediodía.
-
-**Formato:** Imagen estática única. No carrusel — el copy es lo suficientemente corto para que funcione solo. El contraste entre la cita inicial y el dato (47 días) hace el trabajo de retención.
-
-**Tip de engagement:** En los primeros 20 minutos, respondé cualquier comentario con una pregunta de vuelta: *"¿Y vos, para quién estás escribiendo hoy?"* — activa conversación y alimenta el algoritmo sin forzar.
-
-**Para Facebook:** Agregá manualmente el link al sistema en el cuerpo del post (no solo en bio), ya que Facebook penaliza menos los links directos que Instagram.
+Publicar martes o jueves entre 12:00–13:30 hora Colombia/México (horario de mayor actividad en LATAM). En la primera historia de respuesta, preguntá: *"¿Cuánto tiempo llevás pensando en tener tu propio medio?"* — genera respuestas que alimentan el algoritmo. Usá la cita de Camila como imagen con fondo oscuro y tipografía limpia para detener el scroll.

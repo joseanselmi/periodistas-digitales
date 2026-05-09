@@ -2,80 +2,38 @@
 **Tipo:** inspiracional | **Plataforma:** both
 
 ## Copy
----
+En 2023, el diario *El Independiente* de La Rioja, Argentina, cerró después de 40 años.
 
-En 2019, Mariana tenía un trabajo en una redacción de Buenos Aires.
+No fue una crisis de lectores. Fue una crisis de modelo.
 
-En 2021, la redacción cerró.
+Tenían audiencia. Tenían periodistas con décadas de experiencia. Tenían historias que valían la pena contar.
 
-En 2023, Mariana tenía su propio periódico digital.
-Y ganaba más que antes.
+Pero dependían de un solo ingreso: la pauta publicitaria institucional. Cuando el gobierno provincial la retiró, no hubo plan B.
 
-No te cuento esto para que suene bonito.
-Te lo cuento porque Mariana no era "especial".
-No tenía ahorros. No tenía inversores.
-No sabía nada de tecnología.
+Lo mismo pasó en Ecuador con varios medios regionales entre 2021 y 2024. En México, más de 50 redacciones cerraron en los últimos cinco años — muchas en estados donde el periodismo local era el único contrapeso al poder.
 
-Lo que tenía era una pregunta que muchos periodistas nos hacemos pero pocos decimos en voz alta:
+No cerraron por falta de talento. Cerraron porque nadie les enseñó a construir un modelo propio.
 
-*¿Y si el medio que necesito no existe todavía… porque lo tengo que crear yo?*
+Eso es lo que más me pesa de esta profesión: formamos periodistas extraordinarios para sistemas que pueden desaparecer de un día para el otro.
 
----
+Pero hay algo que cambió.
 
-El periodismo no está muriendo.
-Está cambiando de manos.
+Hoy un periodista puede crear su propio medio digital, con IA, con audiencia propia, con ingresos que no dependen de ningún jefe ni de ningún gobierno.
 
-Durante décadas, el poder de publicar estuvo en las empresas.
-Ellas ponían la plataforma, el alcance, el sueldo.
-Y también ponían las condiciones.
+No como reemplazo de tu trabajo actual. Como respaldo real. Como proyecto tuyo.
 
-Hoy eso cambió.
+Más de 5.500 periodistas en 50 países ya lo están haciendo.
 
-La IA redujo a horas lo que antes llevaba semanas.
-Las plataformas de distribución son accesibles para cualquiera.
-Y los lectores están dispuestos a pagar por periodismo que los respete.
+¿Vos conociste algún medio que cerró así, de golpe, y te marcó? 👇
 
-La pregunta ya no es si podés hacerlo.
-La pregunta es si vas a esperar a que alguien te dé permiso.
+Contame en los comentarios.
 
 ---
 
-Más de 5.500 periodistas en 50 países ya no esperaron.
-
-Algunos tienen boletines. Otros, portales locales.
-Algunos cubren nichos que los medios grandes ignoraron siempre.
-Todos tienen algo en común: decidieron que su experiencia valía más que un sueldo que dependía de que otro no cerrara la redacción.
-
----
-
-¿Vos qué pensás?
-
-¿Creés que el periodismo independiente es el camino, o todavía confiás en que las redacciones tradicionales van a sostenerse?
-
-Contame abajo. Sin filtro.
-Me interesa saber cómo lo estás viviendo vos.
-
-👇
-
----
-
-#PeriodismoDigital #PeriodismoIndependiente #PeriodistaLatino #InteligenciaArtificial #TransformaciónDigital #MediosDigitales #PeriodismoConIA #ComunidadPeriodistas
-
----
-
-## Prompt de imagen
----
-
-Editorial photography style, cinematic and warm. A Latin American woman in her late 30s sits alone at a wooden desk near a large window with natural morning light. She has dark hair pulled back, wearing a simple shirt, looking focused and calm at a laptop screen with a soft glow. On the desk: a coffee cup, a notebook with handwritten notes, and a small lamp. The room feels like a home office — intimate, real, not corporate. Bookshelves in the background slightly out of focus. The overall mood is quiet determination and new beginnings. Shallow depth of field. No text, no logos, no overlays. Color palette: warm amber, soft whites, deep browns.
+## Hashtags
+#PeriodismoLatino #PeriodismoDigital #MediosIndependientes #PeriodismoArgentina #PeriodismoMéxico #PeriodismoEcuador #IngresosPropios #PeriodistasLatam
 
 ---
 
 ## Notas
----
-
-**Mejor horario:**
-Publicar entre las **8:00 y 9:30 AM** (hora local de tu audiencia principal — ajustar según analytics, pero el horario de "antes de arrancar el día" funciona muy bien con contenido reflexivo).
-Si tu audiencia es mayoritariamente de Argentina, México o Colombia, apuntá a las **8:30 AM hora Ciudad de México / 9:30 AM hora Buenos Aires.**
-
-**Formato:**
-Imagen única editorial (no carrusel para este tipo). El copy largo funciona como gancho narrativo — Instagram lo va a
+Publicar martes entre 12:00 y 14:00 hora local (pico de consumo en feed de periodistas activos). Acompañar con imagen de archivo de una redacción vacía o una portada impresa clásica — genera contraste visual fuerte. Para aumentar engagement, José puede responder los primeros comentarios en primera persona para romper el hielo.

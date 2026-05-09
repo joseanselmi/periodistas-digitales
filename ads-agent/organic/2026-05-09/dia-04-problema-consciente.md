@@ -2,51 +2,34 @@
 **Tipo:** problema-consciente | **Plataforma:** both
 
 ## Copy
-Llevas 10 años en periodismo.
-Sabes escribir, investigar, entrevistar.
-Y aun así… no sabes si el mes que viene vas a tener trabajo.
+Te pueden cortar el sueldo mañana y no podés hacer nada.
 
-Eso no está bien.
+En Colombia despidieron a más de 200 periodistas en los últimos dos años. En México, redacciones enteras cerraron de un día para otro. En Argentina, los sueldos no le ganan a la inflación desde hace años. En Ecuador, Chile, Puerto Rico — la historia se repite.
 
-El problema no sos vos.
-El problema es que nadie te enseñó a construir algo propio.
+Trabajás duro, cubrís lo que nadie quiere cubrir, y aun así dependés de que alguien más decida si seguís o no.
 
-Te formaron para depender:
-→ De un editor que te apruebe
-→ De una redacción que te pague
-→ De una empresa que decida si seguís o no
+Y encima llegó la IA.
 
-Y mientras tanto, los sueldos no alcanzan,
-los recortes no paran,
-y la IA que supuestamente "te va a reemplazar"
-nadie te explicó cómo usarla a tu favor.
+No para ayudarte. Para justificar que un editor con menos presupuesto necesita menos periodistas.
 
-¿Cuántos periodistas conocés que están buscando trabajo ahora mismo?
+Lo peor no es el miedo a quedarse sin trabajo.
 
-Yo también los conozco. Son muchos.
+Lo peor es saber que si eso pasa, no tenés nada propio. Ningún ingreso que no dependa de una empresa que te puede soltar cuando quiera.
 
-Y la mayoría tiene exactamente las mismas habilidades que vos.
-Solo les falta una salida diferente.
+Veinticinco años de carrera y todo concentrado en un solo empleador. Un solo salario. Una sola decisión ajena.
 
-Compartí esto si te identificás. 👇
+Eso es lo que nadie te enseñó en la facultad.
+
+¿Cuántos periodistas de tu círculo están en esta situación ahora mismo? 👇
+
+Si esto te representa, compartí este post — porque hay muchos colegas que necesitan saber que no están solos.
 
 ---
 
-#PeriodismoDigital #PeriodistasLatam #InseguridadLaboral #PeriodismoYIA #ComunidadPeriodistas #PeriodismoIndependiente
-
----
-
-## Prompt de imagen
-A Latin American journalist in their late 30s, sitting alone at a dimly lit desk cluttered with notebooks, a laptop with a dim screen, and an empty coffee cup. The room feels small and slightly worn. The person has a tired, pensive expression, looking down at the screen. Soft, moody lighting with shadows. Photorealistic style, cinematic composition, shallow depth of field. No text, no logos, no overlays.
+## Hashtags
+#PeriodismoLatam #PeriodistasDeIberoamérica #CrisisDelPeriodismo #PeriodismoMéxico #PeriodismoColombia #PeriodismoArgentina #IndependenciaEconómica #PeriodistasDigitales
 
 ---
 
 ## Notas
-**Horario recomendado:**
-Martes a jueves entre 19:00 y 21:00 (hora Argentina/México). Ese es el momento en que los periodistas terminan su jornada y están en modo scrolling personal, no profesional. La vulnerabilidad del copy conecta mejor cuando el lector está fuera del modo "trabajo".
-
-**Formato:**
-Imagen única con el copy en el caption. No carrusel. El objetivo es que el texto se lea completo y la imagen genere la emoción inicial antes de leer. Si querés probar variante B: fondo oscuro con una sola pregunta en tipografía limpia ("¿Cuánto tiempo más vas a depender de que alguien te dé trabajo?") sin imagen fotográfica.
-
-**Tip de engagement:**
-La pregunta del final ("¿Cuántos periodistas conocés que están buscando trabajo ahora mismo?") está diseñada para respuestas en comentarios, no solo likes. Respondé cada comentario en las primeras 2 horas para disparar el alcance orgánico. No menciones el producto en ninguna respuesta todavía — este post es solo para abrir la herida, no para vender.
+Publicá martes o miércoles entre 19:00 y 21:00 hora local (el periodista termina su turno y abre redes). En la primera respuesta de comentarios, José puede nombrar un medio específico que cerró recientemente — eso dispara conversación real. Guardá este post para repostear en Stories con fondo negro y tipografía blanca, sin música.

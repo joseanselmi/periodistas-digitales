@@ -2,99 +2,38 @@
 **Tipo:** educativo | **Plataforma:** both
 
 ## Copy
-## COPY DEL POST
+**Slide 1**
+El 73% de los comunicadores en LATAM tarda más de 3 horas en estructurar una nota. Este prompt lo baja a 20 minutos.
 
 ---
 
-**¿Usás IA para escribir noticias pero siempre suenan igual? 🤖**
+**Slide 2**
+Copiá esto exactamente en ChatGPT o Claude:
 
-El problema no es la IA.
-Es que todos le hacen la misma pregunta.
-
-Acá va el tip que más le cambió el juego a los periodistas de nuestra comunidad:
+*"Actuá como editor jefe de un medio digital latinoamericano. Tengo esta información en bruto: [pegá tus datos/declaraciones/hechos]. Estructurá una nota periodística con: titular de impacto, bajada de dos líneas, tres subtítulos con desarrollo, y cierre con contexto regional. Tono: directo, sin tecnicismos, para lector no especializado de Colombia/México/Argentina."*
 
 ---
 
-**El truco del "rol + contexto + restricción"**
+**Slide 3**
+¿Qué obtenés?
 
-En vez de pedirle a ChatGPT:
-*"Escribí una nota sobre inflación"*
+Una estructura completa lista para editar — no para publicar sin revisar, sino para no arrancar de cero.
 
-Probá esto:
-
-👉 *"Actuá como periodista económico de Argentina. Escribí el primer párrafo de una nota sobre inflación para lectores de clase media que nunca leyeron economía antes. Sin tecnicismos. Máximo 4 oraciones."*
+La IA hace el esqueleto. Vos ponés el criterio periodístico.
 
 ---
 
-**¿Qué cambia?**
+**Slide 4**
+Esto funciona especialmente bien con temas de política local, economía cotidiana y cobertura de crisis — los tres géneros que más tiempo consumen en redacciones de Bogotá, Ciudad de México y Santiago.
 
-✅ **Rol** → le das identidad ("periodista económico de Argentina")
-✅ **Contexto** → le explicás para quién es ("lectores de clase media")
-✅ **Restricción** → le ponés límites reales ("sin tecnicismos, 4 oraciones")
-
-La IA no adivina.
-Cuanto más específico sos, mejor escribe.
+Guardá este post. El prompt lo vas a querer tener a mano el martes a las 11 de la noche con cierre a medianoche. 📌
 
 ---
 
-Guardá este post y probalo hoy mismo con cualquier tema que estés cubriendo.
-
-Después contame en los comentarios: ¿de qué temazo lo usaste? 👇
-
----
-
-*¿Querés aprender a construir tu propio periódico digital con IA y generar ingresos propios? +5.500 periodistas en 50 países ya arrancaron. El link está en la bio.*
+## Hashtags
+#PeriodismoDigital #InteligenciaArtificial #PeriodismoLatam #HerramientasParaPeriodistas #PromptsPeriodismo #PeriodismoColombia #PeriodismoMéxico #PeriodismoArgentina
 
 ---
-
-#PeriodismoDigital #IAparaperiodistas #InteligenciaArtificial #TipsdeIA #PeriodismoLatino #ChatGPT #NuevosMedias #PeriodismoIndependiente #IngresosDiarios
-
----
-
-## PROMPT DE IMAGEN
-
----
-
-**Opción A — Imagen única:**
-
-A Latin American journalist in their early 40s sitting at a modern wooden desk, looking at a laptop screen with a focused and confident expression, warm morning light coming through a large window, notebook and coffee cup on the desk, minimalist home office setup, shallow depth of field, editorial photography style, natural tones with soft warm highlights, no text visible anywhere in the scene
-
----
-
-**Opción B — Carrusel (cover slide):**
-
-Clean flat lay of a journalist's workspace: open laptop, a pen resting on a blank notebook, a small coffee cup, and soft natural side lighting on a light beige or warm white surface, top-down aerial shot, minimalist composition, editorial aesthetic, muted warm color palette, no screens showing content, no text or logos anywhere
-
----
-
-## NOTAS DE PUBLICACIÓN
-
----
-
-**Formato recomendado:** Carrusel de 5 slides
-
-| Slide | Contenido |
-|---|---|
-| 1 | Hook — "¿Usás IA pero siempre suena igual?" |
-| 2 | El prompt malo (antes) |
-| 3 | El prompt mejorado (después) |
-| 4 | Desglose del truco: Rol / Contexto / Restricción |
-| 5 | CTA + mención del Sistema de Ingresos Diarios |
-
----
-
-**Mejor horario:**
-- 📅 Martes a jueves
-- 🕗 7:30 - 9:00 AM (hora local de tu mercado principal)
-- 🕐 O 12:30 PM como segunda ventana
-
----
-
-**Tip de engagement:**
-
-Terminá la slide 5 
-
-## Prompt de imagen
-
 
 ## Notas
+Publicar martes o miércoles entre 8:00 y 9:30 AM (hora Colombia/México). En la primera Story del día reforzá con "¿Ya guardaste el prompt de hoy?" y un sticker de encuesta Sí/No para medir engagement real. El slide 2 funcioná mejor con fondo oscuro y texto en blanco — hace que el prompt se lea como código y detiene el scroll naturalmente.
