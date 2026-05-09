@@ -4,65 +4,69 @@
 ## Copy
 ---
 
-Hace tres años, Martina tenía 47 años, 20 de experiencia en medios regionales y un editor que le dijo que "ya no había presupuesto para su sección".
+En 2019, Mariana tenía un trabajo en una redacción de Buenos Aires.
 
-No la despidieron con un discurso bonito.
-Le cortaron el contrato por WhatsApp.
+En 2021, la redacción cerró.
 
-Estuvo seis meses mandando CV a redacciones que ya no contratan como antes.
-Seis meses escuchando "estamos en proceso de reestructuración".
+En 2023, Mariana tenía su propio periódico digital.
+Y ganaba más que antes.
 
-Un día dejó de esperar que alguien le diera permiso para seguir haciendo periodismo.
+No te cuento esto para que suene bonito.
+Te lo cuento porque Mariana no era "especial".
+No tenía ahorros. No tenía inversores.
+No sabía nada de tecnología.
 
-Empezó sola. Con una notebook vieja, una audiencia pequeña que la conocía de sus años en radio, y herramientas de IA que aprendió a usar mientras tomaba mate a las 11 de la noche.
+Lo que tenía era una pregunta que muchos periodistas nos hacemos pero pocos decimos en voz alta:
 
-Hoy tiene su propio medio digital.
-Cubre la región que siempre cubrió.
-Pero ahora decide qué publica, cuándo y para quién.
-
----
-
-Lo que le pasó a Martina no es la excepción.
-Es el patrón que se repite en toda América Latina.
-
-Los medios tradicionales achican.
-Las salas de redacción se vacían.
-Y los periodistas con más experiencia, con más fuentes, con más criterio... son los primeros en quedar afuera.
-
-Pero acá está el dato que cambia todo:
-
-Nunca fue tan fácil como ahora construir tu propio medio.
-
-La IA no reemplaza al periodista.
-Le devuelve el tiempo que los medios le robaban en tareas operativas para que pueda hacer lo único que una máquina no puede hacer:
-
-Contar historias que importan.
-Con criterio. Con contexto. Con humanidad.
+*¿Y si el medio que necesito no existe todavía… porque lo tengo que crear yo?*
 
 ---
 
 El periodismo no está muriendo.
-Está cambiando de dueño.
+Está cambiando de manos.
 
-Y la pregunta que vale la pena hacerse hoy no es si vas a adaptarte.
+Durante décadas, el poder de publicar estuvo en las empresas.
+Ellas ponían la plataforma, el alcance, el sueldo.
+Y también ponían las condiciones.
 
-Es si vas a adaptarte para otro o para vos.
+Hoy eso cambió.
+
+La IA redujo a horas lo que antes llevaba semanas.
+Las plataformas de distribución son accesibles para cualquiera.
+Y los lectores están dispuestos a pagar por periodismo que los respete.
+
+La pregunta ya no es si podés hacerlo.
+La pregunta es si vas a esperar a que alguien te dé permiso.
 
 ---
 
-¿En qué parte de este proceso estás vos?
-Contame en los comentarios. 👇
+Más de 5.500 periodistas en 50 países ya no esperaron.
+
+Algunos tienen boletines. Otros, portales locales.
+Algunos cubren nichos que los medios grandes ignoraron siempre.
+Todos tienen algo en común: decidieron que su experiencia valía más que un sueldo que dependía de que otro no cerrara la redacción.
 
 ---
 
-#PeriodismoDigital #PeriodismoLatino #InteligenciaArtificial #MediosDigitales #PeriodismoIndependiente #IAyPeriodismo #TransformaciónDigital
+¿Vos qué pensás?
+
+¿Creés que el periodismo independiente es el camino, o todavía confiás en que las redacciones tradicionales van a sostenerse?
+
+Contame abajo. Sin filtro.
+Me interesa saber cómo lo estás viviendo vos.
+
+👇
+
+---
+
+#PeriodismoDigital #PeriodismoIndependiente #PeriodistaLatino #InteligenciaArtificial #TransformaciónDigital #MediosDigitales #PeriodismoConIA #ComunidadPeriodistas
 
 ---
 
 ## Prompt de imagen
 ---
 
-Editorial-style photograph of a Latin American woman in her late 40s sitting at a wooden desk in a home office at night, warm lamp light illuminating her face, she is focused on a laptop screen, a ceramic mug beside her, bookshelves slightly out of focus in the background, a small notepad with handwritten notes nearby, the atmosphere feels determined and quiet, cinematic grain, muted warm tones with deep shadows, documentary photography aesthetic, no text, no logos, no UI elements visible on screen
+Editorial photography style, cinematic and warm. A Latin American woman in her late 30s sits alone at a wooden desk near a large window with natural morning light. She has dark hair pulled back, wearing a simple shirt, looking focused and calm at a laptop screen with a soft glow. On the desk: a coffee cup, a notebook with handwritten notes, and a small lamp. The room feels like a home office — intimate, real, not corporate. Bookshelves in the background slightly out of focus. The overall mood is quiet determination and new beginnings. Shallow depth of field. No text, no logos, no overlays. Color palette: warm amber, soft whites, deep browns.
 
 ---
 
@@ -70,10 +74,8 @@ Editorial-style photograph of a Latin American woman in her late 40s sitting at 
 ---
 
 **Mejor horario:**
-Martes a jueves entre 12:00 y 13:30 (hora local del país con mayor concentración de tu audiencia). Segunda ventana: 20:00–21:30. Evitá lunes temprano y viernes después de las 15:00.
+Publicar entre las **8:00 y 9:30 AM** (hora local de tu audiencia principal — ajustar según analytics, pero el horario de "antes de arrancar el día" funciona muy bien con contenido reflexivo).
+Si tu audiencia es mayoritariamente de Argentina, México o Colombia, apuntá a las **8:30 AM hora Ciudad de México / 9:30 AM hora Buenos Aires.**
 
 **Formato:**
-Imagen única (no carrusel). El copy largo funciona como gancho narrativo. En Instagram, la historia de Martina debe aparecer completa antes del "ver más" o muy cerca del corte, para que el primer párrafo genere el enganche emocional suficiente y lleven a leer el resto.
-
-**Tip de engagement:**
-La pregunta final es abierta e invita a ubicarse en un proceso, no
+Imagen única editorial (no carrusel para este tipo). El copy largo funciona como gancho narrativo — Instagram lo va a

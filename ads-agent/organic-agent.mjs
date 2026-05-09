@@ -162,7 +162,7 @@ for (let i = 0; i < days; i++) {
       const imageUrl = await generateImage(imgPrompt, { size: 'square_hd', steps: 20 })
       const imgBuffer = await downloadImage(imageUrl)
       const imgPath   = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-imagen.jpg`
-      require('fs').writeFileSync(imgPath, imgBuffer)
+      writeFileSync(imgPath, imgBuffer)
       post.imageUrl = imgPath
     } catch (e) {
       console.error(' [error imagen: ' + e.message + ']')

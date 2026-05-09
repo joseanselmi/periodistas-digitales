@@ -2,54 +2,51 @@
 **Tipo:** problema-consciente | **Plataforma:** both
 
 ## Copy
-Cuántos años llevas haciendo periodismo y todavía no sabés si el mes que viene vas a tener trabajo.
+Llevas 10 años en periodismo.
+Sabes escribir, investigar, entrevistar.
+Y aun así… no sabes si el mes que viene vas a tener trabajo.
 
-No lo digo para atacarte.
-Lo digo porque es la realidad de casi todos los periodistas que conozco.
+Eso no está bien.
 
-Trabajás duro.
-Escribís bien.
-Tenés años de experiencia.
+El problema no sos vos.
+El problema es que nadie te enseñó a construir algo propio.
 
-Y aun así dependés de que alguien más decida si te renueva el contrato,
-si te paga a tiempo,
-o si simplemente "ya no hay presupuesto para tu sección".
+Te formaron para depender:
+→ De un editor que te apruebe
+→ De una redacción que te pague
+→ De una empresa que decida si seguís o no
 
-El medio cierra y vos quedás en cero.
-La pauta cae y recortan primero al freelance.
-La redacción achica y el último en entrar es el primero en salir.
+Y mientras tanto, los sueldos no alcanzan,
+los recortes no paran,
+y la IA que supuestamente "te va a reemplazar"
+nadie te explicó cómo usarla a tu favor.
 
-Mientras tanto, el sueldo no alcanza.
-Y la sensación de que estudiaste tanto para terminar dependiendo de decisiones que no controlás...
-esa duele diferente.
+¿Cuántos periodistas conocés que están buscando trabajo ahora mismo?
 
-No sos malo en tu trabajo.
-Es que el modelo en el que te metieron no fue diseñado para que vos ganes.
-Fue diseñado para que el medio gane usando lo que vos sabés.
+Yo también los conozco. Son muchos.
 
-Si esto te suena conocido, guardá este post.
-Porque en los próximos días voy a mostrarte algo que cambió la situación de más de 5.500 periodistas en toda América Latina.
+Y la mayoría tiene exactamente las mismas habilidades que vos.
+Solo les falta una salida diferente.
 
-Hoy solo te pregunto:
-¿Cuánto tiempo más vas a esperar que alguien más decida tu futuro?
+Compartí esto si te identificás. 👇
 
-Compartí si sentís que esto te describe. 👇
+---
 
-\#Periodismo #PeriodismoDigital #PeriodistasLatinos #IngresosPropios #LibertadFinanciera #PeriodismoIndependiente #IA #Periodistas
+#PeriodismoDigital #PeriodistasLatam #InseguridadLaboral #PeriodismoYIA #ComunidadPeriodistas #PeriodismoIndependiente
 
 ---
 
 ## Prompt de imagen
-A tired but determined Latin American journalist in their late 30s sitting alone at a cluttered desk in a dimly lit home office at night, staring at a laptop screen with a worried expression, stacks of papers and notebooks around them, a cold cup of coffee nearby, soft blue light from the screen illuminating their face, realistic photography style, cinematic mood, shallow depth of field, no text visible anywhere in the image
+A Latin American journalist in their late 30s, sitting alone at a dimly lit desk cluttered with notebooks, a laptop with a dim screen, and an empty coffee cup. The room feels small and slightly worn. The person has a tired, pensive expression, looking down at the screen. Soft, moody lighting with shadows. Photorealistic style, cinematic composition, shallow depth of field. No text, no logos, no overlays.
 
 ---
 
 ## Notas
-**Mejor horario:**
-Martes, miércoles o jueves entre 19:00 y 21:00 hora local (Argentina/México/Colombia). Es cuando los periodistas terminan su jornada y están más receptivos al contenido que los interpela personalmente.
+**Horario recomendado:**
+Martes a jueves entre 19:00 y 21:00 (hora Argentina/México). Ese es el momento en que los periodistas terminan su jornada y están en modo scrolling personal, no profesional. La vulnerabilidad del copy conecta mejor cuando el lector está fuera del modo "trabajo".
 
 **Formato:**
-Post de imagen única con la foto generada + el copy en el caption. No usar carrusel en este caso — el objetivo es que el dolor golpee de una sola vez, sin dividir la atención.
+Imagen única con el copy en el caption. No carrusel. El objetivo es que el texto se lea completo y la imagen genere la emoción inicial antes de leer. Si querés probar variante B: fondo oscuro con una sola pregunta en tipografía limpia ("¿Cuánto tiempo más vas a depender de que alguien te dé trabajo?") sin imagen fotográfica.
 
 **Tip de engagement:**
-La última pregunta ("¿Cuánto tiempo más vas a esperar...?") es el gancho de comentarios. Podés fijarla como primer comentario propio si la plataforma lo permite, para que quede visible. En Facebook, respondé cada comentario en las primeras 2 horas — el algoritmo lo premia y genera conversaciones que amplifican el alcance orgánico sin un peso de pauta.
+La pregunta del final ("¿Cuántos periodistas conocés que están buscando trabajo ahora mismo?") está diseñada para respuestas en comentarios, no solo likes. Respondé cada comentario en las primeras 2 horas para disparar el alcance orgánico. No menciones el producto en ninguna respuesta todavía — este post es solo para abrir la herida, no para vender.

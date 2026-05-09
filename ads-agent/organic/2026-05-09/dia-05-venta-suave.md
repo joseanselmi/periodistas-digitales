@@ -2,47 +2,54 @@
 **Tipo:** venta-suave | **Plataforma:** both
 
 ## Copy
-La IA no va a reemplazar periodistas.
-Va a reemplazar a los periodistas que no saben usarla.
+Hace tres años, una periodista en Bogotá me escribió para contarme que había perdido su trabajo en un medio local.
 
-Lo vengo diciendo hace tiempo, pero ahora lo veo con datos concretos.
+No porque fuera mala en lo suyo.
+Sino porque el medio cerró.
 
-Más de 5.500 colegas en 50 países ya están usando inteligencia artificial para hacer algo que antes parecía imposible para un periodista independiente:
+Hoy tiene su propio periódico digital.
+Publica todos los días.
+Y genera ingresos sin depender de ningún editor.
 
-→ Crear su propio medio digital
-→ Publicar contenido todos los días
-→ Y generar ingresos propios, sin depender de una redacción
+Lo que cambió no fue su talento —ese siempre lo tuvo.
+Lo que cambió fue que dejó de esperar que alguien le diera un espacio
+y creó el suyo.
 
-No hablo de un blog. Hablo de un periódico digital real, con estructura profesional, audiencia propia y modelos de monetización que funcionan.
+Con IA. Con una estructura simple. Con tiempo real.
 
-El sistema que armé para lograr eso cuesta $17 USD.
-Sí, diecisiete dólares.
+Eso es exactamente lo que enseña el Sistema de Ingresos Diarios para Periodistas:
+cómo construir tu propio medio digital desde cero,
+monetizarlo desde el día uno,
+y usar herramientas de IA para hacerlo sin un equipo detrás.
 
-Incluye acceso a Leadr, la plataforma de IA que desarrollé específicamente para periodistas — durante un mes completo.
+Ya son más de 5.500 periodistas en 50 países que lo están aplicando.
 
-No es un curso de 40 horas que nunca terminás.
-Es un sistema para arrancar, publicar y cobrar.
+Si estás cansado/a de escribir para otros
+y querés empezar a construir algo tuyo,
+el link está en bio.
 
-Si sos periodista y estás cansado de trabajar para medios que te pagan tarde, poco o nada…
+👇 Sistema completo por $17 USD — incluye 1 mes de Leadr, la plataforma de IA diseñada para periodistas.
 
-Este puede ser el primer paso para cambiar eso.
+—
 
-📎 Link en bio para ver el sistema completo.
-
----
-
-#PeriodismoDigital #IAParaPeriodistas #IndependenciaPeriodística #PeriodismoLatino #InteligenciaArtificial #MediosDigitales #EmprendimientoPeriodístico #Periodistas #JoséFiaccini
+#PeriodismoDigital #PeriodismoLatino #IAparaPeriodistas #EmprendimientoPeriodístico #MediosDigitales #PeriodismoIndependiente #IngresosPropios #Periodistas
 
 ---
 
 ## Prompt de imagen
-A Latin American male journalist in his late 30s sitting at a clean modern desk, working on a laptop, warm natural light coming through a window beside him, on the screen a professional-looking digital newspaper layout is visible, a small notebook and coffee cup on the desk, relaxed and focused expression, home office setting with bookshelves in the background, cinematic color grading with warm tones, photorealistic style, no text or UI overlays visible
+A Latin American woman in her late 30s sitting at a wooden desk in a warmly lit home office, focused on writing on a laptop. On the screen, a clean digital newspaper layout is partially visible. A small notebook with handwritten notes sits beside the laptop, along with a cup of coffee. Natural morning light comes through a nearby window. The atmosphere feels productive, calm, and personal — not corporate. Shot in a documentary photography style, warm tones, shallow depth of field, no text or UI overlays visible.
 
 ---
 
 ## Notas
-**Horario recomendado:** Martes o miércoles entre 12:00 y 13:30 hs (hora Argentina/México). Son los picos de mayor actividad orgánica en cuentas de contenido profesional en LATAM.
+**Mejor horario:**
+Martes a jueves entre 8:00–9:30 AM o 7:00–8:30 PM (hora local del país con mayor volumen de tu audiencia — si es mixta, apuntá a Colombia/Argentina como referencia).
 
-**Formato:** Imagen estática única — este copy no necesita carrusel. La fuerza está en la lectura corrida. Un carrusel lo fragmentaría y perdería ritmo.
+**Formato:**
+Imagen única (no carrusel). El copy largo funciona mejor con una imagen emocional y estática que no compita con el texto. En Instagram, el hook está en la primera línea visible antes del "ver más" — ese gancho narrativo ("Hace tres años...") está pensado para eso.
 
-**Tip de engagement:** En las primeras respuestas a comentarios, usá preguntas abiertas ("¿y vos en qué medio estás trabajando ahora?"). Eso activa el algoritmo sin pedir likes explícitamente. Si alguien pregunta el precio en comentarios, respondé con el precio + link — convierte mejor que redirigir al bio.
+**Tip de engagement:**
+Al final del copy podés agregar una pregunta en el primer comentario fijado, por ejemplo: *"¿Alguna vez pensaste en crear tu propio medio? Contame abajo."* Esto dispara conversaciones sin saturar el post principal con una pregunta directa que se sienta forzada.
+
+**En Facebook:**
+Publicá el mismo copy pero sin hashtags o con máximo 3. El algoritmo de Facebook penaliza el exceso de hashtags en posts orgánicos.

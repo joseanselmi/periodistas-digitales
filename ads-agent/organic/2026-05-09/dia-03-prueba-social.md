@@ -2,33 +2,37 @@
 **Tipo:** prueba-social | **Plataforma:** both
 
 ## Copy
-"Llevaba 12 años trabajando para medios ajenos.
-Hoy tengo mi propio periódico digital y facturé $340 en la primera semana."
+"Llevaba 12 años escribiendo para otros.
+Hoy tengo mi propio medio digital."
 
-Eso me escribió Marcos, periodista colombiano, 41 años.
+Eso nos escribió Marcos, periodista de Buenos Aires,
+a los 47 días de entrar al Sistema de Ingresos Diarios.
 
-No tenía experiencia en tecnología.
-No tenía audiencia propia.
-Solo aplicó el sistema paso a paso.
+Armó su periódico digital con IA.
+Consiguió sus primeros anunciantes locales.
+Y dejó de depender de un solo empleador.
 
-Más de 5.500 periodistas en 50 países ya están construyendo sus ingresos propios con IA.
+Más de 5.500 periodistas en 50 países
+ya tomaron esa decisión.
 
-¿Cuándo arrancás vos?
+¿Seguís esperando el momento perfecto?
 
 → Ver el sistema completo (link en bio)
 
-#PeriodismoDigital #IngresosPropios #PeriodismoConIA #Periodistas #ComunidadPeriodistas
+#PeriodismoDigital #PeriodismoLatino #InteligenciaArtificial #IngresosPropios #PeriodismoIA
 
 ---
 
 ## Prompt de imagen
-A clean, minimal editorial-style graphic with a warm dark navy blue background. In the center, a bold white quotation mark icon at the top. Below it, a short pull-quote area (no actual text rendered). At the bottom left, a small abstract illustration of a newspaper or document icon in gold/amber tones. The overall aesthetic is professional yet approachable, like a modern journalism brand. Soft grain texture overlay. No text, no numbers, no letters anywhere in the image. Horizontal format, 4:5 ratio.
+A clean, modern editorial-style graphic with a warm off-white background. On the left side, a confident Latin American man in his mid-40s sitting at a minimal desk with a laptop, soft natural light coming from a window. On the right side, a large bold number "47" with the word "días" below it in a smaller sans-serif font, and underneath a single short line of neutral placeholder text suggesting a transformation. Color palette: deep navy blue, warm amber accent, and off-white. Professional journalism aesthetic, no clutter, no stock-photo feel. No text rendered in the image.
 
 ---
 
 ## Notas
-**Horario recomendado:** Martes a jueves entre 12:00 y 13:00 hs (hora Colombia/Argentina). Los periodistas suelen revisar redes en pausas de mediodía.
+**Horario recomendado:** Martes o miércoles entre 12:00 y 13:00 hs (hora Argentina / Ciudad de México). Es el pico de consumo de periodistas en pausa del mediodía.
 
-**Formato:** Imagen única con la cita de Marcos como texto superpuesto en edición (Canva o similar). No carrusel — la historia completa cabe en el copy y el scroll directo convierte mejor en este tipo de testimonio corto.
+**Formato:** Imagen estática única. No carrusel — el copy es lo suficientemente corto para que funcione solo. El contraste entre la cita inicial y el dato (47 días) hace el trabajo de retención.
 
-**Tip de engagement:** En los primeros 20 minutos respondé los comentarios con una pregunta: *"¿Y vos, en qué medio trabajás ahora?"* — activa la conversación y le da señal al algoritmo. Si alguien duda de la historia, respondés con naturalidad: *"Marcos nos dio permiso de compartirla, es parte de nuestra comunidad."* Eso construye confianza sin ponerse defensivo.
+**Tip de engagement:** En los primeros 20 minutos, respondé cualquier comentario con una pregunta de vuelta: *"¿Y vos, para quién estás escribiendo hoy?"* — activa conversación y alimenta el algoritmo sin forzar.
+
+**Para Facebook:** Agregá manualmente el link al sistema en el cuerpo del post (no solo en bio), ya que Facebook penaliza menos los links directos que Instagram.

@@ -2,82 +2,80 @@
 **Tipo:** mito-verdad | **Plataforma:** both
 
 ## Copy
-## COPY DEL POST
+---
+
+**MITO:** "La IA va a reemplazar a los periodistas."
+
+**VERDAD:** La IA no reemplaza periodistas. Reemplaza periodistas que no saben usarla.
 
 ---
 
-❌ "La IA va a reemplazar a los periodistas."
+Hay una diferencia enorme entre los dos.
 
-Cuántas veces escuchaste eso.
-Cuántas veces lo creíste, aunque sea un poco.
-
-Yo también lo creí.
-
-Hasta que entendí algo que nadie te dice:
-
-✅ **La IA no reemplaza periodistas. Reemplaza a los periodistas que no saben usarla.**
-
-Y hay una diferencia enorme entre los dos.
+Y esa diferencia, hoy, se mide en ingresos.
 
 ---
 
-El periodista que usa IA bien no pierde trabajo.
-Genera más contenido en menos tiempo.
-Llega a audiencias que antes no podía alcanzar.
-Y lo más importante: **puede emprender sin necesitar una redacción que lo contrate.**
+El periodista que le tiene miedo a la IA sigue esperando que un medio lo llame.
 
-Eso es exactamente lo que están haciendo más de 5.500 periodistas en 50 países con el Sistema de Ingresos Diarios.
-
-No esperaron que la industria los salvara.
-Crearon su propio periódico digital.
-Usan IA para producir.
-Y generan ingresos todos los días.
+El periodista que aprendió a usarla ya tiene su propio medio, sus propias reglas y sus propios ingresos.
 
 ---
 
-¿Vos seguías creyendo este mito? 👇
-Contame en los comentarios.
+No te pido que confíes en mí.
 
-Y si querés ver cómo funciona el Sistema, el link está en mi bio.
+Te pido que mires los números:
 
----
+Más de **5.500 periodistas en 50 países** ya construyeron su periódico digital con IA.
 
-#PeriodismoDigital #IAyPeriodismo #EmprendimientoPeriodístico #PeriodismoLatino #IngresosDiarios #PeriodistaDigital #InteligenciaArtificial #Periodismo2025
+No eran genios de la tecnología.
 
----
----
-
-## PROMPT DE IMAGEN
+Eran periodistas cansados de depender de otros.
 
 ---
 
-**Slide 1 (cover):**
-Split image composition, two halves divided by a sharp diagonal line. Left side: dark, desaturated tone — a journalist sitting alone at a desk looking at a blank computer screen, head slightly down, dim light, mood of uncertainty and stagnation. Right side: bright, warm light — the same journalist sitting confidently at a modern laptop, natural daylight coming through a window, focused expression, open notebook beside them. Photorealistic style, cinematic color grading, no text, no UI elements, Latin American setting implied by warm skin tones and natural ambient light. 16:9 ratio adapted for Instagram carousel format.
+La IA no es el enemigo.
 
-**Slides 2–4 (content slides):**
-Clean editorial layout background — off-white textured paper with subtle newsprint grain. Single journalist figure in each slide shown in different postures: thinking, typing, smiling at screen. Warm amber and deep navy accent tones. Minimal, modern. No text elements in the image. Photorealistic, magazine editorial style.
-
-**Slide 5 (CTA slide):**
-Close-up of two hands typing on a modern laptop keyboard, warm natural side lighting, shallow depth of field, a small notebook with handwritten notes partially visible at the edge. Mood: productive, calm, empowered. No text, no logos. Photorealistic.
-
----
----
-
-## NOTAS DE PUBLICACIÓN
+La dependencia sí lo es.
 
 ---
 
-**Mejor horario:**
-Martes a jueves entre **12:00 y 13:00** o **19:00 y 20:30** (hora Argentina/Colombia como referencia central). Evitar lunes temprano y viernes tarde — baja intención de lectura profunda.
+¿Vos también creías este mito antes de leer esto?
 
-**Estructura del carrusel — 5 slides:**
-1. **Cover:** imagen split + frase gancho (el mito en grande)
-2. **Slide 2:** desarrollo del mito — por qué lo creemos
-3. **Slide 3:** el quiebre — la verdad con argumento concreto
-4. **Slide 4:** prueba social — los 5.500 periodistas, el dato real
-5. **Slide 5:** CTA — pregunta
+Contame en los comentarios. 👇
+
+---
+
+#PeriodismoDigital #IAyPeriodismo #EmprendedorPeriodista #PeriodistaLatino #IngresosPropios #PeriodismoIndependiente #ComunidadPeriodistas
+
+---
 
 ## Prompt de imagen
+---
 
+**Slide 1 (portada):**
+A split image divided diagonally into two halves. Left side: dark, muted tones, a stressed Latin American journalist in their 40s sitting alone at a desk, looking at a phone with a worried expression, dim lighting, analog newspaper clippings around. Right side: bright, warm lighting, the same type of journalist smiling confidently at a laptop, modern home office setup, clean desk, natural light coming through a window. No text. Photorealistic style, editorial quality, cinematic composition.
+
+**Slide 2:**
+Close-up of two hands on a laptop keyboard, one hand looks hesitant and tense, the other is relaxed and in motion typing. Dual lighting: cold blue on the hesitant side, warm golden on the active side. No text. Clean minimalist composition. Photorealistic.
+
+**Slide 3:**
+A Latin American journalist, mid-30s to 50s, sitting at a bright modern desk, looking at a screen with a calm and focused expression. On the screen a faint glow suggesting a digital dashboard. A cup of coffee nearby. Warm tones. No text. Photorealistic, editorial style.
+
+**Slide 4 (cierre):**
+Wide shot of a diverse group of Latin American journalists — different ages and genders — each looking at their own laptop in different locations (home office, café, outdoors), connected visually by a soft warm light thread linking them together. Represents community and independence. No text. Photorealistic, slightly stylized editorial feel.
+
+---
 
 ## Notas
+---
+
+**Horario recomendado:**
+Publicar entre **12:00 y 13:30 hs (hora Argentina/CDMX)** o entre **19:00 y 20:30 hs**. Son los dos picos de mayor actividad para audiencias profesionales latinoamericanas entre semana. Para día 7 del calendario, si cae martes, miércoles o jueves, mejor rendimiento garantizado.
+
+**Formato:**
+Carrusel de **4 slides**:
+- Slide 1: El mito (gancho visual fuerte)
+- Slide 2: La verdad (la vuelta de tuerca)
+- Slide 3: La prueba social (los 5.500 periodistas)
+- Slide 4
