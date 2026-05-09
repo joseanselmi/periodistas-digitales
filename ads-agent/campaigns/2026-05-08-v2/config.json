@@ -1,0 +1,97 @@
+{
+  "name": "Sistema de Ingresos — Campaña v2 (copies estrategia mayo 2026)",
+  "date": "2026-05-08",
+  "objective": "PURCHASE",
+  "pixel": "1086780383211630",
+  "landingUrl": "https://sistemadeingresosdiariosia.com",
+  "notes": "Copies basados en análisis histórico: ganó '8.0 P1' con hook FOMO+IA. Segmento 40-55 dio CPA $6.33 (mejor histórico). Todos usan 'tú' (no 'vos').",
+
+  "adSets": [
+
+    {
+      "id": "ad-1-fomo",
+      "name": "AD 1 — FOMO profesional (frío, intereses)",
+      "awarenessLevel": "1 — Problema-consciente",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "CL", "PE"],
+        "ageMin": 35,
+        "ageMax": 60,
+        "language": ["es"],
+        "interests": ["periodismo", "medios digitales", "comunicación", "inteligencia artificial", "emprendimiento"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 10,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "Hay algo que nadie te dijo en la redacción:\n\nMientras sigues esperando que el trabajo sea seguro, tus colegas ya construyeron una salida.\n\nSin dejar su trabajo actual.\nSin saber de tecnología.\nCon solo 6 horas a la semana.\n\nCon \"Sistema de Ingresos Diarios para Periodistas\" aprendes exactamente cómo crear tu periódico digital con IA — el mismo sistema que usaron más de 5.500 periodistas en 50 países.\n\nHoy cuesta $17 USD. Pago único. Sin suscripción. Acceso de por vida.\n\n👉 Si la pregunta ya te la hiciste, es hora de responderla.",
+      "headline": "5.500 periodistas ya tienen su propio medio digital. ¿Y tú?",
+      "description": "Sistema probado · $17 USD · Acceso inmediato",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Cinematic dark editorial. Latin American journalist woman in her 40s, confident expression, sitting at a modern home desk at night. On her ultrawide monitor: a sleek Spanish-language digital newspaper she created, with articles, analytics showing reader growth. Warm lamp light contrasts with blue screen glow. Press badge on desk, notebook, coffee. No cash, no charts, no stock smile. She looks proud and focused. Ultra realistic, photojournalism + tech brand aesthetic. 9:16 vertical format.",
+      "imageNotes": "Persona real, cara visible, resultado visible en pantalla. Vertical para Stories/Reels."
+    },
+
+    {
+      "id": "ad-2-social-proof",
+      "name": "AD 2 — Prueba social + precio (lookalike compradores)",
+      "awarenessLevel": "2 — Solución-consciente",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "CL", "PR"],
+        "ageMin": 35,
+        "ageMax": 60,
+        "language": ["es"],
+        "lookalike": {
+          "source": "COMPRAS 180 DIAS",
+          "percent": 1
+        },
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 10,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "María tenía 46 años, 15 en televisión, y una pregunta que no podía sacarse de la cabeza:\n\"¿Qué hago si esto se termina?\"\n\nTres meses después lanzó su periódico digital. Hoy tiene 8.000 lectores en Colombia y genera ingresos propios — sin cámara, sin inversión inicial, desde su casa.\n\nLo hizo con el Sistema de Ingresos Diarios para Periodistas.\nEl mismo que ya usaron +5.500 periodistas en 50 países.\n\nPor $17 USD consigues el sistema completo:\n✅ El método paso a paso para crear tu medio\n✅ Guía de IA para periodistas (ChatGPT aplicado a tu trabajo real)\n✅ +100 templates de Canva para medios digitales\n✅ 1 mes gratis en Leadr (plataforma exclusiva)\n✅ Garantía de 7 días — si no te sirve, te devolvemos todo\n\nEl acceso es inmediato. El primer paso es este.",
+      "headline": "De periodista a dueña de su propio medio — $17 USD, pago único",
+      "description": "Más de 5.500 periodistas certificados · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Split composition, dark background. Left: stressed Latin American journalist woman in her 40s in a traditional newsroom, tired expression, fluorescent lights. Right: same woman transformed, confident, working from a beautiful home office at night, laptop showing her own digital newspaper in Spanish, warm light, relaxed smile. Visual contrast: before/after without text. Ultra realistic, cinematic grade, 9:16 vertical.",
+      "imageNotes": "Antes/después sin texto. Debe ser la misma persona, mismo estilo de ropa para coherencia visual."
+    },
+
+    {
+      "id": "ad-3-retargeting",
+      "name": "AD 3 — Retargeting (visitó LP, no compró)",
+      "awarenessLevel": "3 — Precio y prueba social",
+      "targeting": {
+        "customAudience": "Visitas LP últimos 14 días",
+        "excludeCustomAudiences": ["COMPRAS 7 DIAS"],
+        "countries": ["worldwide"],
+        "language": ["es"],
+        "ageMin": 25,
+        "ageMax": 65
+      },
+      "dailyBudget": 5,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "Entraste. Viste el sistema.\nAlgo te frenó.\n\n¿Fue el precio? Son $17 USD. Un almuerzo.\n\n¿Fue la duda de si funciona? 5.500 periodistas en 50 países ya lo validaron.\n\n¿Fue el tiempo? Son 6 horas a la semana. Puedes empezar el domingo.\n\nEl precio sube pronto. Hoy todavía son $17.\n\n👉 Termina lo que empezaste.",
+      "headline": "Estuviste a punto. El precio todavía es $17.",
+      "description": "Garantía 7 días · Acceso inmediato · Sin suscripción",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Dark editorial, close-up of a Latin American professional in their 40s looking at a phone screen at night. The phone screen glows showing a checkout page with '$17 USD' visible. Expression is thoughtful, almost decided. Warm backlight, dramatic shadows. No text overlays on image. Ultra realistic, intimate and personal mood. 1:1 square format for feed.",
+      "imageNotes": "Feed cuadrado. Imagen íntima — el momento de decisión. Enfoque en cara + teléfono."
+    }
+
+  ],
+
+  "rulesOfPause": {
+    "noConversionAfterDays": 4,
+    "minSpendBeforeCut": 20,
+    "cpaMax": 18,
+    "notes": "Pausa si en 4 días y $20 gastados no hay compra. CPA > $18 en escala = pausar y revisar."
+  },
+
+  "testingPlan": {
+    "week1": "Correr los 3 ads simultáneamente — medir CTR y LP Views",
+    "week2": "Ganador de copy × 2 imágenes distintas",
+    "week3": "Segmento 40-55 vs. 35-60 por CPA",
+    "week4": "LP con todos los fixes vs. LP original (A/B test por URL)"
+  }
+}
