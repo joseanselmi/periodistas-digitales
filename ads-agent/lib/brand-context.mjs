@@ -23,7 +23,22 @@ export const BRAND = {
 
   valueProposition: 'Crear un periódico digital con IA y generar ingresos reales sin dejar el trabajo actual',
 
-  socialProof: 'Más de 5.000 periodistas en Latinoamérica',
+  socialProof: 'Más de 5.500 periodistas en Latinoamérica',
+
+  // Oferta actual (mayo 2026) — DIFERENTE a campañas anteriores
+  offer: {
+    price: 17,
+    perceivedValue: 227,
+    keyDifferentiator: 'Incluye 1 mes de Leadr — plataforma propia de formación IA para periodistas ($97 valor). Nadie más puede dar este bono.',
+    bonuses: [
+      { name: 'IA para Periodistas (micro curso)', value: 47 },
+      { name: 'Canva +100 diseños para medios', value: 27 },
+      { name: 'Leadr — 1 mes gratis (plataforma exclusiva)', value: 97 },
+      { name: '+50 Prompts periodísticos', value: 9 },
+    ],
+    totalValue: 227,
+    notes: 'Leadr es el diferenciador único — es un producto propio que ningún competidor puede replicar. Usarlo como argumento de cierre en los copies.',
+  },
 
   metaPolicy: [
     'Sin claims de ingresos garantizados',
