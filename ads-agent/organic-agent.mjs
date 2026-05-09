@@ -1,115 +1,130 @@
 /**
  * organic-agent.mjs — Genera calendario de contenido orgánico
- * Crea 7 días de posts para Instagram y Facebook con copy + prompt de imagen.
- * Uso: node organic-agent.mjs [--days=7] [--platform=instagram|facebook|both]
- * Variables: ANTHROPIC_API_KEY, FAL_API_KEY (opcional, para generar imágenes)
+ * Crea 7 días de posts para Instagram y Facebook con copy + imagen revisada por IA.
+ * Uso: node organic-agent.mjs [--days=7] [--platform=instagram|facebook|both] [--images]
+ * Variables: ANTHROPIC_API_KEY, FAL_API_KEY (para imágenes)
  */
 
 import Anthropic from '@anthropic-ai/sdk'
 import { writeFileSync, mkdirSync } from 'fs'
 import { generateImage, downloadImage } from './lib/fal.mjs'
 import { BRAND } from './lib/brand-context.mjs'
+import { generateAndReview } from './lib/image-reviewer.mjs'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const client    = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const args      = process.argv.slice(2)
+const days      = parseInt(args.find(a => a.startsWith('--days='))?.split('=')[1] || '7')
+const platform  = args.find(a => a.startsWith('--platform='))?.split('=')[1] || 'both'
+const genImages = args.includes('--images') && !!process.env.FAL_API_KEY
 
 if (!process.env.ANTHROPIC_API_KEY) {
   console.error('❌ Falta ANTHROPIC_API_KEY')
   process.exit(1)
 }
 
-const args        = process.argv.slice(2)
-const days        = parseInt(args.find(a => a.startsWith('--days='))?.split('=')[1] || '7')
-const platform    = args.find(a => a.startsWith('--platform='))?.split('=')[1] || 'both'
-const genImages   = args.includes('--images') && !!process.env.FAL_API_KEY
 
-// ─── Tipos de contenido para el calendario ────────────────────────────────────
+// ─── Tipos de contenido ───────────────────────────────────────────────────────
 
 const CONTENT_TYPES = [
   {
     type: 'educativo',
-    description: 'Tip práctico de IA aplicado al periodismo. Algo que puedan usar hoy.',
+    description: 'Tip práctico de IA aplicado al periodismo latinoamericano. Incluí un prompt copiable específico, explicá exactamente cómo usarlo y qué resultado da. Sé muy concreto — nada de generalidades.',
     cta: 'Guardar para usarlo esta semana',
-    format: 'Carrusel o imagen con texto',
+    format: 'Carrusel de 4-5 slides o post con prompt destacado',
+    imageScene: 'Latin American journalist in their 40s at a dark home office desk, looking at laptop screen glowing with text, focused expression, warm lamp light, notebook with handwritten notes nearby, press badge visible. Shallow depth of field.',
   },
   {
     type: 'inspiracional',
-    description: 'Historia real o reflexión sobre el periodismo digital. Qué está cambiando y cómo los periodistas se adaptan.',
-    cta: 'Comentar qué piensan',
-    format: 'Imagen editorial + copy largo',
+    description: 'Historia real o reflexión profunda sobre el periodismo digital en Latinoamérica. Contá algo que pasó de verdad en el sector — un medio que cerró, un periodista que se reinventó, un cambio concreto del mercado. Con nombre de país, contexto real, emoción genuina.',
+    cta: 'Comentar si se identifican',
+    format: 'Post largo con historia + reflexión',
+    imageScene: 'Latin American female journalist in her 40s sitting alone at a dark newsroom late at night, looking at her phone with a thoughtful expression, dramatic side lighting, empty desks behind her, atmosphere of change and uncertainty.',
   },
   {
     type: 'prueba-social',
-    description: 'Resultado de un alumno o dato del sistema. Conciso y específico.',
+    description: 'Resultado específico y verificable de un alumno latinoamericano del sistema. Incluí: país, tipo de periódico digital que creó, resultado concreto en números (lectores, ingresos, tiempo). Hacelo sonar real y humano, no un testimonio genérico.',
     cta: 'Ver el sistema completo (link en bio)',
-    format: 'Imagen simple con estadística o cita',
+    format: 'Post corto con cita destacada + dato concreto',
+    imageScene: 'Latin American woman in her 40s smiling naturally while working on laptop at home at night, the screen shows a Spanish-language digital newspaper she created, warm home environment, authentic and real atmosphere. Not staged.',
   },
   {
     type: 'problema-consciente',
-    description: 'Activar el dolor del periodista: inseguridad laboral, bajo sueldo, dependencia de la redacción. Sin vender nada todavía.',
+    description: 'Activar el dolor específico del periodista latinoamericano: inseguridad laboral en medios de CO/MX/EC/AR, sueldos bajos, dependencia de decisiones ajenas, miedo a quedar obsoleto por la IA. Sé directo y específico — mencioná realidades del sector en LATAM. Sin vender nada.',
     cta: 'Compartir si se identifican',
-    format: 'Texto puro o imagen con pregunta',
+    format: 'Texto directo, párrafos cortos, pregunta al final',
+    imageScene: 'Latin American male journalist in his 40s, tired expression, sitting at a traditional newsroom desk under harsh fluorescent lights, looking at a notice on paper, other desks empty around him, dramatic contrast lighting.',
   },
   {
     type: 'venta-suave',
-    description: 'Mostrar el producto naturalmente dentro de contenido de valor. No un ad disfrazado — contenido real con mención del sistema.',
-    cta: 'Link en bio para ver el sistema completo',
-    format: 'Imagen del producto o proceso',
+    description: 'Mostrar el producto naturalmente dentro de contenido de valor real. Contá cómo un periodista específico usó el sistema — el proceso, los pasos concretos, el resultado. La mención del sistema tiene que sentirse orgánica, no forzada. Incluí el precio solo al final.',
+    cta: 'Link en bio — $17 USD, acceso inmediato',
+    format: 'Historia de caso + CTA suave al final',
+    imageScene: 'Latin American journalist man in his late 30s working from a beautiful home office at night, dual monitor setup showing a Spanish digital newspaper and analytics dashboard, relaxed confident posture, dark room with warm accent lighting.',
   },
   {
     type: 'ia-periodismo',
-    description: 'Prompt de IA específico para periodistas. Copiable y aplicable inmediatamente a su trabajo diario.',
-    cta: 'Guardar este prompt',
-    format: 'Imagen tipo "código" o captura de pantalla',
+    description: 'Prompt de IA específico para periodismo latinoamericano — copiable y aplicable hoy. Elegí un caso de uso concreto (titulares para Instagram, investigación con fuentes, resumen de rueda de prensa, etc.). Explicá paso a paso cómo usarlo con resultado esperado. Muy práctico.',
+    cta: 'Guardar este prompt 🔖',
+    format: 'Post con prompt formateado + explicación de uso',
+    imageScene: 'Close-up of Latin American hands typing on a modern keyboard at night, laptop screen glowing with Spanish text being generated by AI, dramatic light from screen illuminating face partially, dark background, cinematic macro shot.',
   },
   {
     type: 'mito-verdad',
-    description: 'Derribar un mito sobre la IA o sobre emprender como periodista. Formato confrontacional pero constructivo.',
-    cta: 'Comentar si estaban de acuerdo con el mito',
-    format: 'Carrusel o split image',
+    description: 'Derribar un mito concreto y específico sobre la IA o el periodismo digital en Latinoamérica. Elegí un mito real que tu audiencia cree ("la IA va a reemplazar a los periodistas", "necesitás saber de tecnología", "el periodismo digital es para jóvenes"). Confrontalo con datos o argumentos reales.',
+    cta: 'Comentar si tenían ese mito',
+    format: 'Post formato MITO → REALIDAD, párrafos cortos',
+    imageScene: 'Latin American journalist woman in her 50s with a confident expression, arms crossed, standing in front of a dark wall, dramatic studio lighting, editorial portrait style. She looks empowered and certain.',
   },
 ]
 
-// ─── Generar posts ────────────────────────────────────────────────────────────
 
-async function generatePost(dayNum, contentType, platforms) {
-  const platformText = platforms === 'both'
-    ? 'Instagram y Facebook'
-    : platforms === 'instagram' ? 'Instagram' : 'Facebook'
+// ─── Generar copy del post ────────────────────────────────────────────────────
 
-  const prompt = `Sos el community manager de José Fiaccini, creador del Sistema de Ingresos Diarios para Periodistas.
-Tu audiencia: periodistas latinoamericanos de 30-55 años que siguen la cuenta en busca de consejos sobre IA y periodismo digital.
-Escribís en español latinoamericano, con voz cercana, directa y sin corporativismo.
+async function generatePost(dayNum, contentType, plt) {
+  const platformText = plt === 'both' ? 'Instagram y Facebook' : plt === 'instagram' ? 'Instagram' : 'Facebook'
+
+  const prompt = `Sos el community manager de José Fiaccini, periodista argentino, creador del Sistema de Ingresos Diarios para Periodistas.
+Tu audiencia: periodistas latinoamericanos de 35-55 años (Colombia, México, Ecuador, Chile, Argentina, Puerto Rico).
+Escribís en español latinoamericano neutro. Usás "vos" con naturalidad. Sos directo, cercano, sin corporativismo ni frases vacías.
 
 MARCA:
 - Producto: ${BRAND.product} ($${BRAND.price} USD)
-- Propuesta: crear un periódico digital con IA y generar ingresos propios
+- Diferencial: incluye 1 mes de Leadr (plataforma exclusiva de IA para periodistas, valor $97)
 - Prueba social: +5.500 periodistas en 50 países
-- Diferencial: incluye 1 mes de Leadr (plataforma exclusiva de IA para periodistas)
+- Propuesta: crear un periódico digital con IA y generar ingresos propios sin dejar el trabajo actual
 
 POST A CREAR:
-- Día: ${dayNum} del calendario
+- Día ${dayNum} del calendario semanal
 - Plataforma: ${platformText}
 - Tipo: ${contentType.type}
-- Descripción: ${contentType.description}
-- CTA sugerido: ${contentType.cta}
-- Formato visual: ${contentType.format}
+- Descripción detallada: ${contentType.description}
+- CTA: ${contentType.cta}
+- Formato: ${contentType.format}
 
-GENERÁ:
+REGLAS DE ESCRITURA:
+1. Abrí con un hook que detenga el scroll — primera línea debe ser impactante, específica, inesperada
+2. Párrafos de máximo 2-3 líneas — el feed se lee rápido
+3. Incluí datos concretos, nombres de países, realidades específicas de LATAM
+4. El CTA tiene que ser una sola acción clara, al final
+5. Hashtags en español, relevantes, máximo 8
+6. NO uses frases genéricas como "en el mundo digital de hoy" o "en este contexto"
+7. NO más de 2 emojis en todo el post
+8. Longitud: 150-280 palabras para feed, más corto para Stories
 
-### COPY DEL POST
-(listo para publicar, con saltos de línea como aparecerían en el post, hashtags al final si aplica)
+RESPONDÉ SOLO CON:
 
-### PROMPT DE IMAGEN
-(en inglés, para generar con Flux/Midjourney — descriptivo, específico, sin texto en la imagen)
+### COPY
+(el post completo listo para publicar)
 
-### NOTAS DE PUBLICACIÓN
-(mejor horario, si es carrusel cuántas slides, tip de engagement)
+### HASHTAGS
+(solo los hashtags, en línea separada)
 
-Respondé con las 3 secciones claramente separadas. Solo el contenido, sin meta-comentarios.`
+### NOTAS
+(horario recomendado, formato específico, tip de engagement — máximo 3 líneas)`
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 900,
+    max_tokens: 1000,
     messages: [{ role: 'user', content: prompt }],
   })
 
@@ -119,11 +134,11 @@ Respondé con las 3 secciones claramente separadas. Solo el contenido, sin meta-
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 console.log('\n📱 ORGANIC AGENT — Generando calendario de contenido')
-console.log(`   Días: ${days} | Plataforma: ${platform} | Imágenes: ${genImages ? 'sí' : 'no (agregar --images para generar)'}`)
+console.log(`   Días: ${days} | Plataforma: ${platform} | Imágenes con revisión IA: ${genImages ? 'sí' : 'no'}`)
 console.log()
 
-const today    = new Date()
-const outDir   = `organic/${today.toISOString().slice(0, 10)}`
+const today  = new Date()
+const outDir = `organic/${today.toISOString().slice(0, 10)}`
 mkdirSync(outDir, { recursive: true })
 
 const calendar = []
@@ -138,38 +153,46 @@ for (let i = 0; i < days; i++) {
 
   const content = await generatePost(i + 1, contentType, platform)
 
-  // Extraer secciones del contenido
-  const sections = content.split(/###\s+/)
-  const copy     = sections.find(s => s.startsWith('COPY'))?.replace(/^COPY.*\n/, '').trim() || content
-  const imgPrompt = sections.find(s => s.startsWith('PROMPT'))?.replace(/^PROMPT.*\n/, '').trim() || ''
-  const notes    = sections.find(s => s.startsWith('NOTAS'))?.replace(/^NOTAS.*\n/, '').trim() || ''
+  // Extraer secciones
+  const sections  = content.split(/###\s+/)
+  const copy      = sections.find(s => s.startsWith('COPY'))?.replace(/^COPY\s*\n/, '').trim() || content
+  const hashtags  = sections.find(s => s.startsWith('HASHTAGS'))?.replace(/^HASHTAGS\s*\n/, '').trim() || ''
+  const notes     = sections.find(s => s.startsWith('NOTAS'))?.replace(/^NOTAS\s*\n/, '').trim() || ''
 
-  const post = {
-    day:      i + 1,
-    date:     dateStr,
-    type:     contentType.type,
-    platform,
-    copy,
-    imagePrompt: imgPrompt,
-    notes,
-    imageUrl: null,
-  }
+  process.stdout.write(' ✅')
 
-  // Generar imagen si se pidió
-  if (genImages && imgPrompt) {
+  const post = { day: i + 1, date: dateStr, type: contentType.type, platform, copy, hashtags, notes, imageUrl: null }
+
+  // Generar imagen con revisión automática
+  if (genImages) {
+    process.stdout.write(' [generando imagen]')
     try {
-      process.stdout.write(' [generando imagen]')
-      const imageUrl = await generateImage(imgPrompt, { size: 'square_hd', steps: 20 })
-      const imgBuffer = await downloadImage(imageUrl)
-      const imgPath   = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-imagen.jpg`
+      const generateFn = async (prompt) => {
+        const url = await generateImage(prompt, { size: 'square_hd', steps: 30 })
+        return downloadImage(url)
+      }
+      const imgBuffer = await generateAndReview(
+        generateFn,
+        `SCENE: ${contentType.imageScene}`,
+        contentType.type,
+        copy,
+        (attempt, review) => {
+          if (review.aprobada || review.score >= 7) {
+            process.stdout.write(` [✅ ${review.score}/10]`)
+          } else {
+            process.stdout.write(` [❌ intento ${attempt} — ${review.razon.slice(0, 60)}]`)
+          }
+        }
+      )
+      const imgPath = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-imagen.jpg`
       writeFileSync(imgPath, imgBuffer)
       post.imageUrl = imgPath
     } catch (e) {
-      console.error(' [error imagen: ' + e.message + ']')
+      process.stdout.write(` [error: ${e.message}]`)
     }
   }
 
-  // Guardar post individual
+  // Guardar post
   const postPath = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-${contentType.type}.md`
   writeFileSync(postPath, [
     `# Día ${i + 1} — ${dateStr}`,
@@ -178,27 +201,22 @@ for (let i = 0; i < days; i++) {
     '## Copy',
     copy,
     '',
-    '## Prompt de imagen',
-    imgPrompt,
+    hashtags ? `## Hashtags\n${hashtags}` : '',
     '',
-    '## Notas',
-    notes,
+    notes ? `## Notas\n${notes}` : '',
   ].join('\n'))
 
   calendar.push(post)
-  console.log(' ✅')
+  console.log()
 }
 
-// Guardar calendario completo
 writeFileSync(`${outDir}/calendario.json`, JSON.stringify(calendar, null, 2))
 
-// Resumen visual
 console.log('\n' + '═'.repeat(60))
 console.log('CALENDARIO GENERADO')
 console.log('═'.repeat(60))
 calendar.forEach(p => {
-  console.log(`  ${p.date}  Día ${p.day}  ${p.type.padEnd(20)} ${p.imageUrl ? '📸' : ''}`)
+  console.log(`  ${p.date}  Día ${p.day}  ${p.type.padEnd(22)} ${p.imageUrl ? '📸' : ''}`)
 })
 console.log(`\n📁 Guardado en: ${outDir}/`)
-console.log('\n👉 Próximo paso: revisá los posts, ajustá lo que no suene a tu voz, y programalos en Meta Business Suite.')
-console.log('   Para generar con imágenes: node organic-agent.mjs --images')
+console.log('\n👉 Revisá los posts, ajustá lo que no suene a tu voz, y subílos a Business Suite.')
