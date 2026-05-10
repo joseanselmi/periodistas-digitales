@@ -57,8 +57,8 @@ const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
 const BRAND = {
   primary:   '#22D3EE',
   secondary: '#7C3AED',
-  bg:        '#020617',
-  surface:   '#0F172A',
+  bg:        '#0F172A',   // slate-900 — distinto al fondo de la página (#020617)
+  surface:   '#1E293B',  // slate-800 — superficies internas
   text:      '#F8FAFC',
 }
 
