@@ -21,6 +21,22 @@ export const BRAND = {
     'Personas latinoamericanas 30-55 años',
   ],
 
+  // Paleta oficial aprobada por Jose Anselmi (mayo 2026)
+  // Fuente: lib/brand-palette.mjs
+  palette: {
+    bg:           '#07070f',
+    gradBrand:    'linear-gradient(135deg, #6366f1, #22d3ee)',
+    indigo:       '#6366f1',
+    cyan:         '#22d3ee',
+    amber:        '#f59e0b',
+    green:        '#22c55e',
+    red:          '#ef4444',
+    textPrimary:  '#f1f5f9',
+    textMuted:    '#94a3b8',
+    fontDisplay:  'Inter',
+    fontMono:     'JetBrains Mono',
+  },
+
   valueProposition: 'Crear un periódico digital con IA y generar ingresos reales sin dejar el trabajo actual',
 
   socialProof: 'Más de 5.500 periodistas en Latinoamérica',
