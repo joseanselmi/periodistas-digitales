@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cómo monetizar tu periódico digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080810; font-family: 'Inter', system-ui, sans-serif; }
+
+    .carousel { display: flex; flex-direction: column; gap: 32px; padding: 32px; max-width: 1200px; margin: 0 auto; }
+    .carousel-title { color: #64748b; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+
+    .slide {
+      width: 1080px; height: 1080px;
+      background: #07070f;
+      border-radius: 4px;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 80px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    /* Glow de fondo */
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Línea de acento izquierda */
+    .slide::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 80px; bottom: 80px;
+      width: 3px;
+      background: linear-gradient(180deg, #6366f1, #22d3ee);
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* Variantes de fondo */
+    .slide.dark-violet::before { background: radial-gradient(circle, rgba(124,58,237,.2) 0%, transparent 70%); }
+    .slide.dark-cyan::before   { background: radial-gradient(circle, rgba(34,211,238,.12) 0%, transparent 70%); }
+    .slide.dark-amber::before  { background: radial-gradient(circle, rgba(245,158,11,.1) 0%, transparent 70%); }
+    .slide.dark-red::before    { background: radial-gradient(circle, rgba(239,68,68,.1) 0%, transparent 70%); }
+
+    /* Número de slide */
+    .slide-num {
+      position: absolute;
+      bottom: 48px; right: 60px;
+      font-size: 13px;
+      color: rgba(255,255,255,.2);
+      font-weight: 500;
+      letter-spacing: .05em;
+    }
+
+    /* Logo/marca */
+    .brand {
+      position: absolute;
+      top: 48px; right: 60px;
+      font-size: 12px;
+      color: rgba(255,255,255,.25);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Eyebrow */
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 24px;
+    }
+    .eyebrow.cyan  { color: #22d3ee; }
+    .eyebrow.amber { color: #f59e0b; }
+    .eyebrow.green { color: #22c55e; }
+    .eyebrow.red   { color: #ef4444; }
+
+    /* Headline */
+    .headline {
+      font-size: 68px;
+      font-weight: 800;
+      color: #f1f5f9;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      margin-bottom: 32px;
+      max-width: 880px;
+    }
+    .headline .accent {
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .headline .accent-amber {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .headline.large  { font-size: 80px; }
+    .headline.medium { font-size: 56px; }
+    .headline.small  { font-size: 44px; }
+
+    /* Body text */
+    .body {
+      font-size: 28px;
+      color: #94a3b8;
+      line-height: 1.6;
+      max-width: 860px;
+      margin-bottom: 40px;
+    }
+    .body strong { color: #f1f5f9; font-weight: 600; }
+    .body.large  { font-size: 34px; }
+    .body.small  { font-size: 24px; }
+
+    /* Lista */
+    .list { list-style: none; margin-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
+    .list li {
+      display: flex; align-items: flex-start; gap: 16px;
+      font-size: 26px; color: #94a3b8; line-height: 1.4;
+    }
+    .list li .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #6366f1; flex-shrink: 0; margin-top: 10px;
+    }
+    .list li .dot.cyan  { background: #22d3ee; }
+    .list li .dot.amber { background: #f59e0b; }
+    .list li strong { color: #f1f5f9; }
+
+    /* Prompt box */
+    .prompt-box {
+      background: rgba(99,102,241,.08);
+      border: 1px solid rgba(99,102,241,.25);
+      border-radius: 16px;
+      padding: 32px 40px;
+      font-family: 'Courier New', monospace;
+      font-size: 22px;
+      color: #c4b5fd;
+      line-height: 1.7;
+      max-width: 900px;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+    .prompt-box .placeholder { color: #6366f1; font-weight: 700; }
+
+    /* Stat grande */
+    .stat { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+    .stat .num {
+      font-size: 120px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.05em;
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat .unit { font-size: 40px; color: #64748b; font-weight: 600; }
+
+    /* Quote */
+    .quote {
+      font-size: 40px;
+      font-style: italic;
+      color: #f1f5f9;
+      line-height: 1.4;
+      max-width: 880px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .quote::before {
+      content: '"';
+      font-size: 120px;
+      color: #6366f1;
+      position: absolute;
+      top: -40px; left: -20px;
+      line-height: 1;
+      opacity: .4;
+    }
+
+    /* CTA */
+    .cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 18px 36px;
+      border-radius: 100px;
+      letter-spacing: -.01em;
+    }
+
+    /* Mito/Verdad */
+    .myth-tag {
+      display: inline-block;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.3);
+      color: #ef4444;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .truth-tag {
+      display: inline-block;
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.3);
+      color: #22c55e;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+
+    /* Divider */
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+    /* Swipe hint */
+    .swipe {
+      position: absolute;
+      bottom: 48px; left: 80px;
+      font-size: 13px;
+      color: rgba(255,255,255,.2);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .swipe::after { content: '→'; }
+  </style>
+</head>
+<body>
+<div class="carousel">
+  <p class="carousel-title">Cómo monetizar tu periódico digital — 5 slides · 1080×1080px · Capturá cada slide por separado</p>
+  
+  <div class="slide dark-amber">
+    <span class="brand">@periodistasdelfuturo</span>
+    
+          <div class="eyebrow amber">Para periodistas independientes</div>
+          <h2 class="headline">3 formas reales<br>de ganar dinero<br>con tu <span class="accent-amber">medio digital.</span></h2>
+        
+    <span class="slide-num">01 / 05</span>
+    <span class="swipe">Deslizá</span>
+  </div>
+
+  <div class="slide ">
+    <span class="brand">@periodistasdelfuturo</span>
+    
+          <div class="eyebrow">01 / Publicidad local</div>
+          <h2 class="headline medium" style="margin-bottom:24px">El negocio que nadie ve.</h2>
+          <p class="body">Las pymes de tu ciudad necesitan llegar a lectores locales. <strong>Vos tenés esa audiencia.</strong><br><br>Una empresa local en Ecuador paga entre <strong>$50 y $300/mes</strong> por aparecer en un medio de nicho con lectores reales.</p>
+        
+    <span class="slide-num">02 / 05</span>
+    <span class="swipe">Deslizá</span>
+  </div>
+
+  <div class="slide dark-violet">
+    <span class="brand">@periodistasdelfuturo</span>
+    
+          <div class="eyebrow">02 / Suscripciones</div>
+          <h2 class="headline medium" style="margin-bottom:24px">El ingreso mensual predecible.</h2>
+          <p class="body">Contenido premium para tu comunidad más comprometida.<br><br><strong>100 suscriptores a $5/mes = $500 fijos.</strong><br>Sin jefes. Sin dependencia.</p>
+        
+    <span class="slide-num">03 / 05</span>
+    <span class="swipe">Deslizá</span>
+  </div>
+
+  <div class="slide dark-cyan">
+    <span class="brand">@periodistasdelfuturo</span>
+    
+          <div class="eyebrow cyan">03 / Marcas aliadas</div>
+          <h2 class="headline medium" style="margin-bottom:24px">Cuando tu audiencia<br>es tu activo.</h2>
+          <p class="body">Marcas que quieren llegar a tu nicho específico pagan por contenido patrocinado.<br><br>No necesitás <strong>100.000 seguidores</strong>. Necesitás <strong>la audiencia correcta.</strong></p>
+        
+    <span class="slide-num">04 / 05</span>
+    <span class="swipe">Deslizá</span>
+  </div>
+
+  <div class="slide ">
+    <span class="brand">@periodistasdelfuturo</span>
+    
+          <div class="eyebrow amber">El sistema completo</div>
+          <h2 class="headline medium">Aprende las <span class="accent">3 fuentes</span><br>en el Módulo 4.</h2>
+          <div class="divider" style="background:linear-gradient(90deg,#f59e0b,#6366f1)"></div>
+          <p class="body small" style="color:#94a3b8">Sistema de Ingresos Diarios para Periodistas · <strong>$17 USD · Link en bio</strong></p>
+        
+    <span class="slide-num">05 / 05</span>
+    
+  </div>
+</div>
+</body>
+</html>
