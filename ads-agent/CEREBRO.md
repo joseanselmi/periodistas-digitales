@@ -1,156 +1,170 @@
-# CEREBRO — Todo lo que sé sobre este ecosistema
-
-Documento de referencia para el agente. Se actualiza con cada sesión.
+# CEREBRO — Ecosistema completo Periodistas del Futuro IA
+**Última actualización: 10 mayo 2026**
 
 ---
 
-## El negocio
+## EL NEGOCIO
 
 **Producto activo:** Sistema de Ingresos Diarios para Periodistas
 **Precio:** $17 USD (valor percibido $227)
-**Checkout:** Hotmart `https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2`
-**Diferencial único:** Incluye 1 mes de Leadr ($97 valor) — nadie más puede dar este bono
-**Historial:** $4.364 gastados → 346 compras → CPA promedio $10.19
-
-**Dos productos en cuenta:**
-1. Curso IA para Periodistas ($11.99, campañas 2024-2025) — pausado
-2. Sistema de Ingresos Diarios / Periódicos Digitales ($17, campañas 2026) — activo
+**Checkout:** Hotmart `https://pay.hotmart.com/H99593850B`
+**Diferencial único:** Incluye 1 mes de Leadr ($97) — nadie más puede dar este bono
+**Historial Meta Ads:** $4.364 gastados → 346 compras → CPA promedio $10.19
 
 ---
 
-## El ecosistema técnico
+## INFRAESTRUCTURA TÉCNICA
 
-### Dominios (ambos en Vercel, deploy automático con git push)
-| Dominio | Qué es | Carpeta |
-|---------|--------|---------|
-| `sistemadeingresosdiariosia.com` | Landing de ventas | `sistema-ingresos/` |
-| `leadr.cloud` | Plataforma Leadr | `leadr/app/` |
+### Dominios (Vercel, deploy automático con git push)
+| Dominio | Carpeta | Qué es |
+|---------|---------|--------|
+| `sistemadeingresosdiariosia.com` | `sistema-ingresos/` | Landing de ventas HTML |
+| `leadr.cloud` | `leadr/app/` | Plataforma Next.js |
 
-### Variables de entorno (en `leadr/app/.env.local` y Vercel)
-- `ANTHROPIC_API_KEY` — Claude API
-- `FAL_API_KEY` — Generación de imágenes Flux
-- `META_CAPI_TOKEN` — Meta Conversions API
-- `META_PIXEL_ID` — 1086780383211630
-- `HOTMART_WEBHOOK_TOKEN` — Webhook compras
-- `NEXT_PUBLIC_SUPABASE_URL` — proyecto ovwlsnnhiuoxoazyrhvt
+### Variables de entorno — `leadr/app/.env.local`
+```
+ANTHROPIC_API_KEY=sk-ant-api03-bmBNCX...
+FAL_API_KEY=0bfe28dd-31e3-...
+META_PIXEL_ID=1086780383211630
+META_CAPI_TOKEN=EAASob...
+FB_PAGE_TOKEN=EAAX3KwDW0p8BReZ...  ← PERMANENTE, no vence
+FB_PAGE_ID=439763019230527
+NEXT_PUBLIC_SUPABASE_URL=https://ovwlsnnhiuoxoazyrhvt.supabase.co
+HOTMART_WEBHOOK_TOKEN=...
+ELEVENLABS_API_KEY=...
+```
 
 ### Meta Ads
-- **Ad Account:** act_583636631091469 (Periodistas del futuro IA CP)
-- **Página Facebook:** 439763019230527
-- **Token:** regenerar en developers.facebook.com/tools/explorer → app "Periodistas digitales" → permisos: ads_read + ads_management
+- **Ad Account:** act_583636631091469
+- **Página FB:** 439763019230527 (Periodistas del Futuro IA)
+- **Token FB:** Sistema user "Claude publisher" — permanente
+- **App Meta:** "Periodistas digitales" (ID: 167913895328630)
 
 ---
 
-## Los agentes (ads-agent/)
+## TODOS LOS AGENTES
 
+### Scripts principales
 | Script | Qué hace | Cómo correr |
 |--------|---------|-------------|
-| `fetch-meta.mjs` | Baja todos los datos de Meta | `node fetch-meta.mjs` |
-| `monitor.mjs` | Métricas diarias + alertas | `node monitor.mjs` |
+| `fetch-meta.mjs` | Baja campañas + métricas Meta | `META_ACCESS_TOKEN=x META_AD_ACCOUNT_ID=act_x node fetch-meta.mjs` |
+| `monitor.mjs` | Métricas diarias + alertas | Mismas vars |
 | `publish.mjs` | Publica ads en Meta (PAUSED) | `node publish.mjs campaigns/X/config.json` |
-| `reviewer.mjs` | Analiza imagen + copy con Claude Vision | via `review.mjs` |
-| `audit-cmo.mjs` | Auditoría completa del ecosistema | `node audit-cmo.mjs` |
-| `email-agent.mjs` | Genera 5 emails post-compra | `node email-agent.mjs` |
-| `organic-agent.mjs` | Genera 7 días posts Facebook + imágenes | `node organic-agent.mjs --days=7 --images` |
-| `carousel-generator.mjs` | Genera carruseles HTML 1080x1080 | `node carousel-generator.mjs` |
+| `audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node audit-cmo.mjs` |
+| `email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node email-agent.mjs` |
+| `organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x FAL_API_KEY=x node organic-agent.mjs --days=7 --images` |
+| `carousel-generator.mjs` | Carruseles HTML 1080x1080 | `ANTHROPIC_API_KEY=x node carousel-generator.mjs` |
+| `export-slides.mjs` | JPG por carpeta para subir | `node export-slides.mjs carousels/semana-X` |
+| `post-facebook.mjs` | Publica/programa en FB | `FB_PAGE_TOKEN=x node post-facebook.mjs <carpeta> [--schedule "YYYY-MM-DD HH:MM"]` |
+| `schedule-week.mjs` | Programa semana completa | `FB_PAGE_TOKEN=x FB_PAGE_ID=x node schedule-week.mjs` |
+| `add-nav.mjs` | Navegación slideshow a carruseles | `node add-nav.mjs` |
 
-### Librería compartida (lib/)
-- `brand-context.mjs` — contexto de marca, benchmarks, audiencia
-- `fal.mjs` — generación y descarga de imágenes con Flux
-- `reviewer.mjs` — revisión de ads con Claude Vision
-- `image-reviewer.mjs` — revisor universal de imágenes (LATAM, sin texto, score ≥7)
+### Librerías (lib/)
+| Archivo | Exporta |
+|---------|---------|
+| `brand-context.mjs` | BRAND — producto, audiencia, paleta, benchmarks |
+| `brand-palette.mjs` | PALETTE — colores exactos + paletteCSS() |
+| `fal.mjs` | generateImage(), downloadImage() |
+| `reviewer.mjs` | reviewAd(), printReview() |
+| `image-reviewer.mjs` | reviewImage(), generateAndReview(), LATAM_IMAGE_PREFIX |
 
 ---
 
-## Meta Ads — Lo que aprendimos
+## PALETA DE MARCA (aprobada por Jose, mayo 2026)
 
-### Top performers históricos
+| Token | Valor |
+|-------|-------|
+| Fondo | `#07070f` |
+| Indigo (principal) | `#6366f1` |
+| Cyan (secundario) | `#22d3ee` |
+| Gradiente | `linear-gradient(135deg, #6366f1, #22d3ee)` |
+| Amber (urgencia) | `#f59e0b` |
+| Green (éxito) | `#22c55e` |
+| Red (problema) | `#ef4444` |
+| Texto | `#f1f5f9` / `#94a3b8` / `#64748b` |
+| Tipografía | Inter + JetBrains Mono |
+
+---
+
+## META ADS — LO QUE SABEMOS
+
+### Top performers históricos (por CPA)
 | Ad Set | Gasto | Compras | CPA | CTR |
 |--------|-------|---------|-----|-----|
 | 8.0 P1 | $1.095 | 103 | $10.63 | 2.99% |
-| AD 3 P2 12/2 | $456 | 54 | $8.45 | 4.58% |
 | 2.0 11.99 usd CP | $393 | 48 | $8.18 | 3.50% |
-| 2.0 SG 40+65 | $38 | 6 | **$6.33** | 3.54% | ← mejor CPA, nunca escalado
+| AD 3 P2 12/2 | $456 | 54 | $8.45 | 4.58% |
+| **2.0 SG 40+65** | $38 | 6 | **$6.33** | 3.54% | ← nunca escalado, oportunidad
 
 ### Copy ganador (8.0 P1)
-Hook: *"¿Tus colegas están usando IA y vos todavía no sabés por dónde empezar?"*
+*"¿Tus colegas están usando IA y vos todavía no sabés por dónde empezar?"*
 Título: "+3.700 alumnos satisfechos" | CTA: LEARN_MORE
 
-### Segmento sin escalar (OPORTUNIDAD)
-**40-65 años** → CPA $6.33 con solo $38 de gasto. Nunca fue escalado. Testear con $25/día.
-
-### Campaña v2 lista para publicar
+### Campaña v2 (lista, no publicada)
 Config: `campaigns/2026-05-08-v2/config.json`
-- AD 1: FOMO frío (35-60, intereses)
+- AD 1: FOMO frío 35-60 (intereses)
 - AD 2: Prueba social María (lookalike compradores)
-- AD 3: Retargeting (visitó LP, no compró)
-Comando: `node publish.mjs campaigns/2026-05-08-v2/config.json`
+- AD 3: Retargeting visitantes LP
 
 ---
 
-## Contenido orgánico — Facebook
+## CONTENIDO ORGÁNICO FACEBOOK
 
-### Reglas fijas
-- **Solo Facebook** — no usa Instagram
-- **1 post por día**, yo genero los 7 cada lunes
-- Sin reels, sin videos, sin fotos de IA solas
+### Estrategia
+- Archivo completo: `ESTRATEGIA-ORGANICO.md`
+- 1 post/día, yo programo todo, Jose no toca nada
+- 5 posts fríos + 1 tibio + 1 caliente por semana
+- Boost $1/día × 7 días al mejor post orgánico cada semana
 
-### Calendario semanal
-| Día | Formato | Tipo |
-|-----|---------|------|
-| Lunes | Carrusel | Educativo / prompt IA |
-| Martes | Texto | Problema consciente |
-| Miércoles | Carrusel | Mito vs. Verdad |
-| Jueves | Texto | Prueba social / dato |
-| Viernes | Carrusel | Monetización / venta suave |
-| Sábado | Texto | Inspiracional / reflexión |
-| Domingo | Carrusel | Tema libre / novedad IA |
+### Semana 1 — "El periodismo cambió" (10-18 mayo) ✅ PROGRAMADA
+Todos los posts están en Facebook con sus IDs. Ver `organic_strategy.md` en memoria.
 
-### Diseño aprobado por Jose
-- ✅ Estilo 01 (educativo con prompt) — dark, gradiente violeta-cyan
-- ✅ Estilo 03 (problema consciente) — dark, acento rojo
-- ❌ Estilo 02 (mito-verdad) — no gustó, no repetir ese tono
+### Arco 4 semanas
+- S1 (10-18 mayo): "El periodismo cambió" ✅
+- S2 (19-25 mayo): "La IA es tu herramienta" 🔲
+- S3 (26 mayo-1 jun): "Otros ya lo están haciendo" 🔲
+- S4 (2-8 jun): "Es tu momento" — semana de conversión 🔲
 
-### Qué aprendimos sobre el contenido
-- Fotos de IA = genéricas = no paran el scroll
-- Carruseles de texto con datos duros = SÍ funcionan
-- Una foto real de Jose vale más que 10 imágenes generadas
-- Cuando haya testimonios reales de alumnos → contenido #1
+### Estructura de archivos estándar
+```
+carousels/semana-DD-MM/para-subir/
+├── 0-SABADO-10/
+│   └── pie-de-foto.txt
+├── 1-LUNES/
+│   ├── slide-01.jpg ... slide-05.jpg
+│   └── pie-de-foto.txt
+└── ...
+```
 
 ---
 
-## Landing (sistemadeingresosdiariosia.com)
+## LANDING (sistemadeingresosdiariosia.com)
 
 ### Estado actual
-- ✅ Headline fuerte: "Tu conocimiento periodístico es un negocio. Solo falta el sistema."
-- ✅ Contador de urgencia 72h evergreen (localStorage)
-- ✅ 3 placeholders de testimonios (esperando capturas WhatsApp de Jose)
-- ❌ Sin testimonios reales con cara y resultado concreto — el problema más crítico
-- ❌ Mismatch ad→landing: ads hablan de IA para aprender, landing habla de ingresos
-
-### Fixes pendientes
-1. Jose sube 3 capturas WhatsApp a `sistema-ingresos/img/testimonio-1/2/3.jpg`
-2. Cambiar headline para mencionar IA explícitamente
-3. Crear LP alternativa para ads con ángulo IA
+- ✅ Headline: "Tu conocimiento periodístico es un negocio. Solo falta el sistema."
+- ✅ Contador urgencia 72h evergreen (localStorage)
+- ✅ 3 slots de testimonios (placeholders — esperando capturas WhatsApp)
+- ❌ Sin testimonios reales — el problema más crítico de conversión
 
 ---
 
-## Pendientes — loops abiertos
+## PENDIENTES — LOOPS ABIERTOS
 
-| # | Qué | Acción requerida |
-|---|-----|-----------------|
-| 1 | Emails post-compra sin envío | Jose carga los 5 emails en Hotmart → Email marketing |
-| 2 | Testimonios landing vacíos | Jose sube 3 capturas WhatsApp |
-| 3 | Campaña v2 sin publicar | `node publish.mjs` + Jose activa en Meta |
-| 4 | Monitor sin schedule | Configurar tarea programada diaria |
-| 5 | Contenido orgánico sin programar | Jose programa posts en Business Suite |
-| 6 | Segmento 40-65 sin escalar | Testear $25/día con copy ganador |
-| 7 | Integrar image-reviewer en publish.mjs | Próxima sesión |
+| # | Qué | Cómo cerrar |
+|---|-----|------------|
+| 1 | Emails sin envío | Cargar en Hotmart → Email marketing |
+| 2 | Testimonios landing vacíos | Jose sube capturas → `sistema-ingresos/img/` |
+| 3 | Campaña Meta v2 sin publicar | `node publish.mjs campaigns/2026-05-08-v2/config.json` |
+| 4 | Monitor sin schedule | Windows Task Scheduler o Make.com |
+| 5 | Segmento 40-65 sin escalar | Testear $25/día — mejor CPA histórico $6.33 |
+| 6 | image-reviewer en publish.mjs | Integrar antes del próximo lanzamiento de ads |
+| 7 | Semana 2 orgánico | Crear el domingo 18/05 |
+| 8 | Boost semana 1 | Elegir post ganador el domingo 18/05 |
 
 ---
 
-## El ICP (cliente ideal)
+## EL ICP (cliente ideal)
 
-Periodista latinoamericana/o de **40-55 años**. 10+ años en medios. Siente el piso moverse — ve colegas más jóvenes usando IA que ella/él no domina. No fue despedido/a todavía, pero la señal ya llegó. Trabaja en Colombia, México, Ecuador o Chile. Usa Facebook más que Instagram. $17 USD no es barrera.
+Periodista latinoamericana/o de **40-55 años**. 10+ años en medios. Siente el piso moverse. No fue despedido/a todavía pero la señal llegó. Colombia, México, Ecuador o Chile. Usa Facebook más que Instagram. $17 USD no es barrera — es una prueba de que esto es serio sin ser una apuesta.
 
 **Mercados top reales:** Ecuador, Puerto Rico, Colombia, México, EEUU hispano, Chile.
