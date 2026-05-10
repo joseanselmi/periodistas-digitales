@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const ALLOWED_HOST = 'ovwlsnnhiuoxoazyrhvt.supabase.co'
+const ALLOWED_HOSTS = [
+  'ovwlsnnhiuoxoazyrhvt.supabase.co',
+  'wbwfzsdhtbhkjlfuebrd.supabase.co',
+]
 
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get('url')
@@ -13,7 +16,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse('Invalid url', { status: 400 })
   }
 
-  if (parsed.hostname !== ALLOWED_HOST) {
+  if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
     return new NextResponse('URL not allowed', { status: 403 })
   }
 
