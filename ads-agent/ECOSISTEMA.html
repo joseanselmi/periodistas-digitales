@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ecosistema — Periodistas del Futuro IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #07070f;
+  font-family: 'Inter', sans-serif;
+  color: #f1f5f9;
+  min-height: 100vh;
+  padding: 48px 40px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 48px;
+  letter-spacing: .04em;
+}
+
+/* ── GRID PRINCIPAL ─────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── COLUMNA CEREBRO (centro) ───────────────────────── */
+.cerebro-col {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── CARDS ──────────────────────────────────────────── */
+.card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  padding: 20px 22px;
+  position: relative;
+  transition: border-color .3s, background .3s;
+}
+.card:hover {
+  border-color: rgba(99,102,241,.35);
+  background: rgba(99,102,241,.04);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20px; bottom: 20px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent, linear-gradient(180deg,#6366f1,#22d3ee));
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color, #6366f1);
+  margin-bottom: 8px;
+}
+.card-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+}
+.card-sub {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-top: 8px;
+  margin-right: 4px;
+}
+.tag-green  { background: rgba(34,197,94,.1);  color: #22c55e; border: 1px solid rgba(34,197,94,.2); }
+.tag-violet { background: rgba(99,102,241,.1); color: #818cf8; border: 1px solid rgba(99,102,241,.2); }
+.tag-amber  { background: rgba(245,158,11,.1); color: #f59e0b; border: 1px solid rgba(245,158,11,.2); }
+.tag-red    { background: rgba(239,68,68,.1);  color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
+.tag-cyan   { background: rgba(34,211,238,.1); color: #22d3ee; border: 1px solid rgba(34,211,238,.2); }
+.tag-gray   { background: rgba(255,255,255,.05); color: #64748b; border: 1px solid rgba(255,255,255,.1); }
+
+/* ── CEREBRO CENTRAL ─────────────────────────────────── */
+.cerebro {
+  background: rgba(99,102,241,.08);
+  border: 2px solid rgba(99,102,241,.4);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 0 60px rgba(99,102,241,.12);
+}
+.cerebro-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+.cerebro-name {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg,#6366f1,#22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.cerebro-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+.cerebro-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+
+/* ── AGENTES ─────────────────────────────────────────── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+.agent {
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 11px;
+}
+.agent-name {
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+.agent-desc { color: #4b5563; font-size: 10px; }
+.agent-status {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.status-ok { background: #22c55e; }
+.status-pending { background: #f59e0b; }
+
+/* ── COLUMNAS IZQUIERDA Y DERECHA ────────────────────── */
+.col-left  { display: flex; flex-direction: column; gap: 16px; }
+.col-right { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── FLECHAS / CONEXIONES ────────────────────────────── */
+.conn-label {
+  text-align: center;
+  font-size: 10px;
+  color: #374151;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin: 4px 0;
+}
+
+/* ── SECCIÓN FOOTER ──────────────────────────────────── */
+.footer-grid {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.metric {
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 16px 20px;
+  text-align: center;
+}
+.metric-num {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  background: linear-gradient(135deg,#6366f1,#22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.metric-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+/* ── SECCIÓN DE ESTRATEGIA ───────────────────────────── */
+.strategy-row {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.week {
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid;
+}
+.week-num { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.week-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.week-sub { font-size: 11px; opacity: .6; }
+
+.w1 { background: rgba(99,102,241,.06); border-color: rgba(99,102,241,.25); }
+.w1 .week-num { color: #6366f1; }
+.w2 { background: rgba(34,211,238,.04); border-color: rgba(34,211,238,.15); }
+.w2 .week-num { color: #22d3ee; }
+.w3 { background: rgba(34,197,94,.04); border-color: rgba(34,197,94,.15); }
+.w3 .week-num { color: #22c55e; }
+.w4 { background: rgba(245,158,11,.04); border-color: rgba(245,158,11,.2); }
+.w4 .week-num { color: #f59e0b; }
+
+.section-label {
+  max-width: 1200px;
+  margin: 28px auto 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #374151;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  padding-bottom: 8px;
+}
+</style>
+</head>
+<body>
+
+<h1>Periodistas del Futuro IA</h1>
+<p class="subtitle">Ecosistema completo — Mayo 2026 &nbsp;·&nbsp; Cerebro: Claude + Jose</p>
+
+<!-- ══════════ GRID PRINCIPAL ══════════ -->
+<div class="grid">
+
+  <!-- COLUMNA IZQUIERDA — Productos y canales -->
+  <div class="col-left">
+
+    <div class="card" style="--accent:linear-gradient(180deg,#6366f1,#7c3aed);--color:#818cf8">
+      <div class="card-title">Producto principal</div>
+      <div class="card-name">Sistema de Ingresos Diarios</div>
+      <div class="card-sub">Curso para periodistas LATAM — crear periódico digital con IA</div>
+      <span class="tag tag-green">$17 USD</span>
+      <span class="tag tag-violet">Valor $227</span>
+      <span class="tag tag-cyan">Leadr incluido</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#22d3ee,#6366f1);--color:#22d3ee">
+      <div class="card-title">Plataforma</div>
+      <div class="card-name">Leadr</div>
+      <div class="card-sub">leadr.cloud · Clases de IA para periodistas · Freemium + Pro</div>
+      <span class="tag tag-cyan">Next.js</span>
+      <span class="tag tag-violet">Supabase</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#f59e0b,#6366f1);--color:#f59e0b">
+      <div class="card-title">Landing de ventas</div>
+      <div class="card-name">sistemadeingresosdiariosia.com</div>
+      <div class="card-sub">HTML estático en Vercel · Contador urgencia 72h · 3 testimonios pendientes</div>
+      <span class="tag tag-amber">HTML + Vercel</span>
+      <span class="tag tag-red">Testimonios faltantes</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#22d3ee);--color:#22c55e">
+      <div class="card-title">Checkout</div>
+      <div class="card-name">Hotmart</div>
+      <div class="card-sub">Pagos, entrega del curso, webhook → Leadr activa plan Pro automáticamente</div>
+      <span class="tag tag-green">Webhook activo</span>
+    </div>
+
+  </div>
+
+  <!-- COLUMNA CENTRO — CEREBRO -->
+  <div class="cerebro-col">
+
+    <div class="cerebro">
+      <div class="cerebro-icon">🧠</div>
+      <div class="cerebro-name">Claude + Jose</div>
+      <div class="cerebro-sub">Cerebro y manos del ecosistema</div>
+      <div class="cerebro-tags">
+        <span class="tag tag-violet">Estrategia</span>
+        <span class="tag tag-cyan">Ejecución</span>
+        <span class="tag tag-green">Publicación</span>
+        <span class="tag tag-amber">Optimización</span>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:#374151;text-align:center;letter-spacing:.06em;text-transform:uppercase">Agentes activos</div>
+
+    <div class="agents-grid">
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>fetch-meta.mjs</div>
+        <div class="agent-desc">Baja datos Meta Ads</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>monitor.mjs</div>
+        <div class="agent-desc">Métricas + alertas diarias</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>publish.mjs</div>
+        <div class="agent-desc">Publica ads en Meta</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>audit-cmo.mjs</div>
+        <div class="agent-desc">Auditoría ecosistema</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>organic-agent.mjs</div>
+        <div class="agent-desc">Posts + imágenes IA</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>carousel-gen.mjs</div>
+        <div class="agent-desc">Carruseles HTML</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>post-facebook.mjs</div>
+        <div class="agent-desc">Publica en fanpage</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>schedule-week.mjs</div>
+        <div class="agent-desc">Programa semana entera</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-ok"></span>email-agent.mjs</div>
+        <div class="agent-desc">5 emails post-compra</div>
+      </div>
+      <div class="agent">
+        <div class="agent-name"><span class="agent-status status-pending"></span>image-reviewer.mjs</div>
+        <div class="agent-desc">Revisa imágenes IA</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COLUMNA DERECHA — Distribución y tráfico -->
+  <div class="col-right">
+
+    <div class="card" style="--accent:linear-gradient(180deg,#1877f2,#22d3ee);--color:#60a5fa">
+      <div class="card-title">Orgánico</div>
+      <div class="card-name">Facebook — Periodistas del Futuro IA</div>
+      <div class="card-sub">1 post/día · Semana 1 programada · Boost $7/semana al mejor post</div>
+      <span class="tag tag-green">9 posts activos</span>
+      <span class="tag tag-cyan">API conectada</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#ef4444,#f59e0b);--color:#f87171">
+      <div class="card-title">Tráfico pago</div>
+      <div class="card-name">Meta Ads</div>
+      <div class="card-sub">act_583636631091469 · $4.364 histórico · CPA $10.19 · Campaña v2 lista</div>
+      <span class="tag tag-amber">v2 sin publicar</span>
+      <span class="tag tag-violet">346 compras hist.</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#6366f1);--color:#22c55e">
+      <div class="card-title">Generación de imágenes</div>
+      <div class="card-name">Flux / fal.ai</div>
+      <div class="card-sub">Imágenes para ads y orgánico · Revisor Claude Vision · Personas LATAM forzadas</div>
+      <span class="tag tag-green">Con revisor IA</span>
+    </div>
+
+    <div class="card" style="--accent:linear-gradient(180deg,#64748b,#94a3b8);--color:#94a3b8">
+      <div class="card-title">Infraestructura</div>
+      <div class="card-name">Vercel + Supabase + GitHub</div>
+      <div class="card-sub">Deploy automático · git push = live · Todas las keys en .env.local</div>
+      <span class="tag tag-green">Todo conectado</span>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══════════ MÉTRICAS ══════════ -->
+<div class="section-label">Números clave del negocio</div>
+<div class="footer-grid">
+  <div class="metric">
+    <div class="metric-num">$4.364</div>
+    <div class="metric-label">Gastado en Meta Ads histórico</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">346</div>
+    <div class="metric-label">Compras totales</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">$10.19</div>
+    <div class="metric-label">CPA promedio histórico</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">$6.33</div>
+    <div class="metric-label">Mejor CPA (segmento 40-65, sin escalar)</div>
+  </div>
+</div>
+
+<!-- ══════════ ESTRATEGIA ORGÁNICO ══════════ -->
+<div class="section-label">Arco estratégico orgánico — Mayo/Junio 2026</div>
+<div class="strategy-row">
+  <div class="week w1">
+    <div class="week-num">✅ Semana 1 · 10-18 mayo</div>
+    <div class="week-title">"El periodismo cambió"</div>
+    <div class="week-sub">Autoridad · Sin vender · 9 posts programados</div>
+  </div>
+  <div class="week w2">
+    <div class="week-num">🔲 Semana 2 · 19-25 mayo</div>
+    <div class="week-title">"La IA es tu herramienta"</div>
+    <div class="week-sub">Prompts, casos, datos de impacto</div>
+  </div>
+  <div class="week w3">
+    <div class="week-num">🔲 Semana 3 · 26 mayo-1 jun</div>
+    <div class="week-title">"Otros ya lo hacen"</div>
+    <div class="week-sub">Prueba social masiva · Casos reales</div>
+  </div>
+  <div class="week w4">
+    <div class="week-num">🔲 Semana 4 · 2-8 jun</div>
+    <div class="week-title">"Es tu momento"</div>
+    <div class="week-sub">Conversión · CTA directo · Urgencia</div>
+  </div>
+</div>
+
+</body>
+</html>
