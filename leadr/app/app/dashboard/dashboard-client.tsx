@@ -134,7 +134,7 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex">
+    <div className="h-screen bg-[#020617] text-white flex overflow-hidden">
 
       {/* ── Overlay móvil ── */}
       {sidebarOpen && (
@@ -146,10 +146,10 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
 
       {/* ── Sidebar ── */}
       <aside className={`
-        fixed top-0 left-0 h-full w-60 bg-[#060c1a] border-r border-slate-800/80 flex flex-col z-30
+        fixed top-0 left-0 h-screen w-60 bg-[#060c1a] border-r border-slate-800/80 flex flex-col z-30
         transform transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:relative lg:flex-shrink-0
+        lg:translate-x-0 lg:static lg:flex-shrink-0
       `}>
         {/* Logo */}
         <div className="px-5 py-5 border-b border-slate-800/60 flex items-center gap-2.5">
@@ -246,7 +246,7 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
       </aside>
 
       {/* ── Columna principal ── */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
 
         {/* Topbar móvil */}
         <header className="lg:hidden sticky top-0 z-10 bg-[#020617]/95 backdrop-blur border-b border-slate-800 px-4 py-3.5 flex items-center gap-3">
