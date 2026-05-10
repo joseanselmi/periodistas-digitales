@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Google cambió las noticias — Domingo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080810; font-family:'Inter',sans-serif; padding:32px; }
+.info { color:#64748b; font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:24px; }
+.slides { display:flex; flex-direction:column; gap:32px; }
+.slide { width:1080px; height:1080px; background:#07070f; border-radius:4px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:80px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.06); }
+.slide::before { content:''; position:absolute; top:-200px; left:-200px; width:700px; height:700px; background:radial-gradient(circle, rgba(99,102,241,.16) 0%, transparent 70%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:80px; bottom:80px; width:3px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 2px 2px 0; }
+.brand { position:absolute; top:48px; right:60px; font-size:12px; color:rgba(255,255,255,.2); letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
+.num { position:absolute; bottom:48px; right:60px; font-size:13px; color:rgba(255,255,255,.2); }
+.swipe { position:absolute; bottom:48px; left:80px; font-size:13px; color:rgba(255,255,255,.2); }
+.eye { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#6366f1; margin-bottom:24px; }
+.eye.red { color:#ef4444; } .eye.cyan { color:#22d3ee; } .eye.green { color:#22c55e; } .eye.amber { color:#f59e0b; }
+h1 { font-size:66px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:28px; }
+h2 { font-size:52px; font-weight:800; color:#f1f5f9; line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.accent-red { background:linear-gradient(135deg,#ef4444,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:26px; color:#94a3b8; line-height:1.65; max-width:880px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.small { font-size:21px; color:#64748b; }
+.bad { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.2); border-radius:14px; padding:24px 32px; margin-bottom:16px; }
+.bad-label { font-size:12px; font-weight:700; color:#ef4444; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+.bad-text { font-size:24px; color:#f1f5f9; font-weight:600; }
+.bad-sub { font-size:20px; color:#64748b; margin-top:4px; }
+.good { background:rgba(34,197,94,.07); border:1px solid rgba(34,197,94,.2); border-radius:14px; padding:24px 32px; margin-bottom:16px; }
+.good-label { font-size:12px; font-weight:700; color:#22c55e; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+.good-text { font-size:24px; color:#f1f5f9; font-weight:600; }
+.good-sub { font-size:20px; color:#64748b; margin-top:4px; }
+ul { list-style:none; margin-bottom:28px; display:flex; flex-direction:column; gap:18px; }
+ul li { display:flex; gap:16px; font-size:24px; color:#94a3b8; line-height:1.45; align-items:flex-start; }
+ul li::before { content:''; width:7px; height:7px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:9px; }
+ul li strong { color:#f1f5f9; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.cta { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:20px; font-weight:700; padding:16px 32px; border-radius:100px; }
+</style>
+</head>
+<body>
+<p class="info">Domingo 18/05 — Google cambió las noticias — 5 slides</p>
+<div class="slides">
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye red">Alerta para periodistas</div>
+  <h1>Google acaba<br>de cambiar cómo<br>muestra las<br><span class="accent-red">noticias.</span></h1>
+  <p>Lo que significa para tu medio digital y qué hacer ahora.</p>
+  <span class="swipe">Explicación en el siguiente slide →</span>
+  <span class="num">01 / 05</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye red">Qué cambió</div>
+  <h2 style="margin-bottom:28px">Google AI Overviews<br>ya <span class="accent-red">resume las noticias</span><br>sin que el lector<br>entre a tu sitio.</h2>
+  <p>Antes: buscaba "inundaciones en Quito" → entraba a tu nota.</p>
+  <p>Ahora: Google le da un resumen generado por IA. <strong>Tu nota existe. Nadie hace click.</strong></p>
+  <span class="num">02 / 05</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye red">El impacto real</div>
+  <div class="bad"><div class="bad-label">Lo que pierde</div><div class="bad-text">Tráfico de búsqueda orgánico</div><div class="bad-sub">Notas informativas genéricas — el tipo que puede resumir la IA</div></div>
+  <div class="good"><div class="good-label">Lo que gana</div><div class="good-text">Contenido que la IA no puede reemplazar</div><div class="good-sub">Opinión, investigación local, fuentes propias, contexto que solo vos tenés</div></div>
+  <span class="num">03 / 05</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye cyan">Cómo adaptarse</div>
+  <h2 style="margin-bottom:28px">Distribuí donde<br>Google <span class="accent">no llega.</span></h2>
+  <ul>
+    <li><strong>WhatsApp Channels</strong> — tráfico directo, sin algoritmo</li>
+    <li><strong>Newsletter propio</strong> — inbox del lector, sin intermediario</li>
+    <li><strong>Facebook</strong> — comunidad que vuelve, no tráfico de paso</li>
+    <li><strong>Periodismo local profundo</strong> — lo que la IA no puede resumir porque no estuvo ahí</li>
+  </ul>
+  <span class="num">04 / 05</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye green">La conclusión</div>
+  <h2>El periodismo<br>que depende de<br>Google ya perdió.<br>El tuyo <span class="accent">no tiene<br>que depender.</span></h2>
+  <div class="divider"></div>
+  <p class="small">Sistema de Ingresos Diarios — enseña a construir audiencia propia, sin depender de ningún algoritmo. <strong>$17 USD · Link en bio</strong></p>
+  <span class="num">05 / 05</span>
+</div>
+
+</div></body></html>

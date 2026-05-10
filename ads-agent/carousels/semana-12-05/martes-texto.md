@@ -1,0 +1,28 @@
+# Martes 13/05 — Texto puro — Problema consciente
+
+---
+
+El periodismo que te enseñaron en la universidad ya no existe.
+
+No el de las redacciones con 40 personas. No el de los sueldos que aumentaban cada año. No el de "publicamos mañana y el mundo lo lee".
+
+Ese se fue.
+
+Lo que hay ahora es otra cosa: redacciones que funcionan con la mitad del equipo de hace diez años. Contratos que se renuevan cada tres meses. Decisiones que se toman arriba, sin consultarte, aunque llevés décadas cubriendo esa fuente.
+
+En Colombia cerraron más de 80 medios locales entre 2020 y 2024. En México, los periodistas regionales cobran en promedio lo mismo que hace ocho años — con una inflación que triplicó el costo de vida. En Ecuador, las salas de redacción que quedaron en pie tienen la mitad del personal que tenían.
+
+No es que el periodismo esté muriendo.
+
+Es que el modelo en el que te formaron ya no funciona.
+
+Y lo sabés. Lo sentís cada vez que abrís el mail un lunes por la mañana sin saber si hay novedades del contrato. Cada vez que un colega más joven —con menos años, menos fuentes, menos criterio— consigue el trabajo que esperabas vos.
+
+La pregunta no es si esto va a cambiar.
+
+Es qué vas a hacer vos mientras tanto.
+
+---
+*¿Lo sentís también? Contame en los comentarios.*
+
+#PeriodismoLatam #PeriodismoDigital #Periodistas #ComunicaciónLatam

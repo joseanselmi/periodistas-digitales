@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Primer anunciante — Viernes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080810; font-family:'Inter',sans-serif; padding:32px; }
+.info { color:#64748b; font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:24px; }
+.slides { display:flex; flex-direction:column; gap:32px; }
+.slide { width:1080px; height:1080px; background:#07070f; border-radius:4px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:80px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.06); }
+.slide::before { content:''; position:absolute; top:-200px; left:-200px; width:700px; height:700px; background:radial-gradient(circle, rgba(245,158,11,.12) 0%, transparent 70%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:80px; bottom:80px; width:3px; background:linear-gradient(180deg,#f59e0b,#6366f1); border-radius:0 2px 2px 0; }
+.brand { position:absolute; top:48px; right:60px; font-size:12px; color:rgba(255,255,255,.2); letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
+.num { position:absolute; bottom:48px; right:60px; font-size:13px; color:rgba(255,255,255,.2); }
+.swipe { position:absolute; bottom:48px; left:80px; font-size:13px; color:rgba(255,255,255,.2); }
+.eye { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#f59e0b; margin-bottom:24px; }
+.eye.violet { color:#6366f1; } .eye.cyan { color:#22d3ee; } .eye.green { color:#22c55e; }
+h1 { font-size:68px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:28px; }
+h2 { font-size:52px; font-weight:800; color:#f1f5f9; line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; }
+.accent { background:linear-gradient(135deg,#f59e0b,#fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.accent-v { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:26px; color:#94a3b8; line-height:1.65; max-width:880px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.small { font-size:21px; color:#64748b; }
+.step { display:flex; gap:24px; align-items:flex-start; margin-bottom:24px; }
+.step-circle { width:48px; height:48px; border-radius:50%; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; color:#f59e0b; flex-shrink:0; }
+.step-body { flex:1; }
+.step-title { font-size:26px; font-weight:700; color:#f1f5f9; margin-bottom:4px; }
+.step-sub { font-size:21px; color:#64748b; line-height:1.5; }
+.script-box { background:rgba(245,158,11,.06); border:1px solid rgba(245,158,11,.2); border-radius:14px; padding:28px 32px; font-size:22px; color:#fcd34d; line-height:1.7; font-style:italic; margin-bottom:20px; }
+.price-row { display:flex; align-items:baseline; gap:16px; margin-bottom:12px; }
+.price-big { font-size:80px; font-weight:900; line-height:1; background:linear-gradient(135deg,#f59e0b,#fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.price-unit { font-size:28px; color:#64748b; font-weight:600; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,#f59e0b,#6366f1); border-radius:2px; margin-bottom:28px; }
+.cta { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#f59e0b,#d97706); color:#07070f; font-size:20px; font-weight:800; padding:16px 32px; border-radius:100px; }
+</style>
+</head>
+<body>
+<p class="info">Viernes 16/05 — Primer anunciante local en 7 días — 6 slides</p>
+<div class="slides">
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye">Para periodistas independientes</div>
+  <h1>Cómo conseguir<br>tu primer<br><span class="accent">anunciante local</span><br>en 7 días.</h1>
+  <p>Paso a paso. Sin experiencia en ventas. Sin agencia.</p>
+  <span class="swipe">El método en los próximos slides →</span>
+  <span class="num">01 / 06</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye">Primero, el error más común</div>
+  <h2 style="margin-bottom:32px">No le vendás<br>publicidad.<br>Vendé <span class="accent">audiencia.</span></h2>
+  <p>La ferretería de tu barrio no quiere "un banner". Quiere que <strong>más clientes entren por la puerta.</strong></p>
+  <p>Tu trabajo es conectar su problema con tu solución. Eso cambia todo.</p>
+  <span class="num">02 / 06</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye cyan">Día 1-2: A quién llamar</div>
+  <div class="step"><div class="step-circle">1</div><div class="step-body"><div class="step-title">Negocios locales con presencia digital débil</div><div class="step-sub">Restaurantes, clínicas, inmobiliarias, escuelas, ferreterías, farmacias — buscan clientes en tu zona</div></div></div>
+  <div class="step"><div class="step-circle">2</div><div class="step-body"><div class="step-title">Que ya invierten en publicidad</div><div class="step-sub">Si tienen flyers, cartelería o perfil de Facebook activo → ya entienden que necesitan visibilidad</div></div></div>
+  <div class="step"><div class="step-circle">3</div><div class="step-body"><div class="step-title">Que son relevantes para tu nicho</div><div class="step-sub">Tu medio de noticias locales de Medellín → anunciante ideal: negocio de Medellín</div></div></div>
+  <span class="num">03 / 06</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye amber">Día 3: El guion exacto</div>
+  <div class="script-box">"Hola, soy [tu nombre]. Tengo un medio digital de [tu nicho] con [X lectores] en [tu ciudad]. Muchos de ellos buscan exactamente lo que vos ofrecés. Me gustaría mostrarte cómo podría ayudarte a llegar a ellos. ¿Tenés 15 minutos esta semana?"</div>
+  <p class="small">No pedís dinero todavía. Pedís una reunión. La venta pasa en la reunión.</p>
+  <span class="num">04 / 06</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye green">Cuánto cobrar</div>
+  <div class="price-row"><span class="price-big">$80</span><span class="price-unit">/ mes</span></div>
+  <p><strong>Para empezar.</strong> Banner en sidebar + mención en 2 notas por mes.</p>
+  <div class="divider"></div>
+  <p class="small">Con 5 anunciantes a $80 = $400/mes fijos.<br>Con 10 = <strong>$800/mes de base.</strong><br>Sin depender de ninguna redacción.</p>
+  <span class="num">05 / 06</span>
+</div>
+
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye violet">El Módulo 4 del sistema</div>
+  <h2>Monetización desde<br>el <span class="accent-v">primer mes.</span></h2>
+  <div class="divider" style="background:linear-gradient(90deg,#6366f1,#22d3ee)"></div>
+  <p>Publicidad local, suscripciones, marcas aliadas — el sistema enseña las 3 fuentes con ejemplos reales de periodistas en LATAM.</p>
+  <div class="cta">Ver el sistema · $17 USD · Link en bio</div>
+  <span class="num">06 / 06</span>
+</div>
+
+</div></body></html>

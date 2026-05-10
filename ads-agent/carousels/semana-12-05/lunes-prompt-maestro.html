@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El Prompt Maestro — Lunes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080810; font-family:'Inter',sans-serif; padding:32px; }
+.info { color:#64748b; font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:24px; }
+.slides { display:flex; flex-direction:column; gap:32px; }
+
+.slide {
+  width:1080px; height:1080px;
+  background:#07070f;
+  border-radius:4px;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:flex-start;
+  padding:80px; position:relative; overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+}
+.slide::before {
+  content:''; position:absolute;
+  top:-200px; left:-200px; width:700px; height:700px;
+  background:radial-gradient(circle, rgba(99,102,241,.18) 0%, transparent 70%);
+  pointer-events:none;
+}
+.slide::after {
+  content:''; position:absolute;
+  left:0; top:80px; bottom:80px; width:3px;
+  background:linear-gradient(180deg,#6366f1,#22d3ee);
+  border-radius:0 2px 2px 0;
+}
+.brand { position:absolute; top:48px; right:60px; font-size:12px; color:rgba(255,255,255,.2); letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
+.num { position:absolute; bottom:48px; right:60px; font-size:13px; color:rgba(255,255,255,.2); font-weight:500; }
+.swipe { position:absolute; bottom:48px; left:80px; font-size:13px; color:rgba(255,255,255,.2); }
+
+.eye { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#6366f1; margin-bottom:24px; }
+.eye.cyan { color:#22d3ee; }
+.eye.amber { color:#f59e0b; }
+.eye.green { color:#22c55e; }
+
+h1 { font-size:72px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:800; color:#f1f5f9; line-height:1.08; letter-spacing:-.025em; margin-bottom:24px; }
+h3 { font-size:40px; font-weight:800; color:#f1f5f9; line-height:1.1; letter-spacing:-.02em; margin-bottom:20px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.accent-amber { background:linear-gradient(135deg,#f59e0b,#fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+p { font-size:26px; color:#94a3b8; line-height:1.65; max-width:880px; margin-bottom:24px; }
+p strong { color:#f1f5f9; }
+p.large { font-size:32px; }
+p.small { font-size:22px; color:#64748b; }
+
+.code-box {
+  background:rgba(99,102,241,.07);
+  border:1px solid rgba(99,102,241,.2);
+  border-radius:16px;
+  padding:28px 36px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:19px;
+  color:#c4b5fd;
+  line-height:1.8;
+  width:100%;
+  margin-bottom:24px;
+}
+.code-box .var { color:#22d3ee; font-weight:600; }
+.code-box .section { color:#f59e0b; font-weight:700; font-size:16px; letter-spacing:.06em; display:block; margin-top:16px; margin-bottom:4px; }
+.code-box .comment { color:#4b5563; font-size:16px; }
+
+.tag {
+  display:inline-block;
+  background:rgba(99,102,241,.15);
+  border:1px solid rgba(99,102,241,.3);
+  color:#a5b4fc;
+  font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  padding:6px 16px; border-radius:100px; margin-bottom:28px;
+}
+.tag.amber { background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.3); color:#fcd34d; }
+.tag.green { background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.3); color:#86efac; }
+
+ul { list-style:none; margin-bottom:32px; display:flex; flex-direction:column; gap:18px; }
+ul li { display:flex; gap:16px; font-size:24px; color:#94a3b8; line-height:1.45; align-items:flex-start; }
+ul li::before { content:''; width:7px; height:7px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:9px; }
+ul li strong { color:#f1f5f9; }
+
+.divider { width:56px; height:3px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+
+.cta {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,#6366f1,#4f46e5);
+  color:#fff; font-size:20px; font-weight:700;
+  padding:16px 32px; border-radius:100px; margin-top:8px;
+}
+</style>
+</head>
+<body>
+<p class="info">Lunes 12/05 — El Prompt Maestro — 5 slides · 1080×1080px</p>
+<div class="slides">
+
+<!-- SLIDE 1 -->
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye">Para periodistas digitales</div>
+  <h1>El prompt<br>que uso<br><span class="accent">para todo.</span></h1>
+  <p class="large">Uno solo. Configurado una vez. Funciona para cualquier nota.</p>
+  <span class="swipe">Slide 2 para copiarlo completo →</span>
+  <span class="num">01 / 05</span>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye cyan">El prompt — parte 1/2</div>
+  <div class="code-box">
+<span class="comment">// Pegá esto al inicio de cualquier conversación con IA</span>
+
+Actuás como mi asistente editorial personal.
+Soy periodista especializado en <span class="var">[TU NICHO]</span>.
+Mi medio se llama <span class="var">[NOMBRE DE TU MEDIO]</span>.
+Mi audiencia: <span class="var">[QUIÉNES SON TUS LECTORES]</span>.
+Mi estilo: <span class="var">[SERIO / CERCANO / INVESTIGATIVO]</span>.
+
+Cuando te comparta un tema, esperá mis instrucciones.
+No hagas nada hasta que yo te diga qué necesito.
+  </div>
+  <p class="small">Esto configura el contexto. Lo que sigue es la parte poderosa →</p>
+  <span class="num">02 / 05</span>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye cyan">El prompt — parte 2/2</div>
+  <div class="code-box" style="font-size:17px">
+<span class="section">CUANDO TE DÉ UN TEMA, GENERAME SIEMPRE:</span>
+
+1. Titular con gancho emocional para Facebook
+2. Titular alternativo directo/informativo
+3. Lead de 3 líneas <span class="comment">(qué, quién, cuándo, dónde, por qué)</span>
+4. Estructura de nota: 5 párrafos con subtítulos propuestos
+5. <span class="var">3 datos o estadísticas</span> que debería buscar para reforzar
+6. <span class="var">3 fuentes confiables</span> de LATAM para consultar
+7. El ángulo que <strong>nadie más está cubriendo</strong>
+8. Versión de 280 caracteres para redes sociales
+  </div>
+  <span class="num">03 / 05</span>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye amber">Por qué funciona</div>
+  <h3 style="margin-bottom:32px">No le pedís a la IA que escriba.<br>Le pedís que <span class="accent-amber">estructure.</span></h3>
+  <ul>
+    <li><strong>Vos ponés el criterio</strong> — la IA no sabe qué es noticia en tu ciudad</li>
+    <li><strong>Vos ponés las fuentes</strong> — la IA sugiere, vos verificás</li>
+    <li><strong>Vos ponés el olfato</strong> — el ángulo diferente lo decidís vos</li>
+    <li>La IA <strong>elimina las 2 horas de bloqueo</strong> antes de arrancar</li>
+  </ul>
+  <span class="num">04 / 05</span>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <span class="brand">@periodistasdelfuturo</span>
+  <div class="eye green">¿Querés más así?</div>
+  <h2>El sistema incluye<br><span class="accent">+50 prompts</span><br>para periodistas.</h2>
+  <div class="divider"></div>
+  <p>Uno para cada situación: entrevistas, breaking news, investigación, cobertura de elecciones, obituarios, economía local.</p>
+  <div class="cta">Ver el sistema · $17 USD · Link en bio</div>
+  <span class="num">05 / 05</span>
+</div>
+
+</div>
+</body>
+</html>
