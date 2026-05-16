@@ -140,13 +140,9 @@ export async function POST(req: Request) {
       plan_expires_at: expiresAt.toISOString(),
     })
 
-    // Mandar email con link para crear contraseña (igual para curso y suscripción)
-    await supabase.auth.admin.generateLink({
-      type: 'recovery',
-      email,
-      options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://leadr.cloud'}/reset-password`,
-      },
+    // Mandar email con link para crear contraseña
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://leadr.cloud'}/reset-password`,
     })
 
     return NextResponse.json({
