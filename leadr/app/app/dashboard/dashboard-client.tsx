@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import UpgradeModal from '@/components/upgrade-modal'
+import PromptLibrary from './prompt-library'
 
 type Class = {
   id: number
@@ -104,7 +105,8 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
       setShowActivated(true)
       router.replace('/dashboard', { scroll: false })
     }
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const totalPublished = groups.reduce((acc, g) => acc + g.classes.filter(c => c.status === 'published').length, 0)
   const totalWatched = groups.reduce((acc, g) => acc + g.classes.filter(c => c.status === 'published' && watched.has(c.id)).length, 0)
@@ -313,96 +315,106 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
 
         {/* Contenido principal */}
         <main className="flex-1 px-6 py-8">
-          {/* Cabecera de sección */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className={`w-2 h-7 rounded-full ${activeSeccion.dot}`} />
-            <div>
-              <h1 className={`text-2xl font-bold ${activeSeccion.activeText}`}>{activeSeccion.label}</h1>
-              {publishedInSection > 0 && (
-                <p className="text-slate-500 text-sm mt-0.5">
-                  {activeGroups.filter(g => g.classes.some(c => c.status === 'published')).length} {activeGroups.length === 1 ? 'módulo' : 'módulos'} · {publishedInSection} clases
-                </p>
-              )}
-            </div>
-          </div>
 
-          {/* Estado vacío */}
-          {publishedInSection === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className={`w-16 h-16 rounded-2xl ${activeSeccion.activeBg} border ${activeSeccion.activeBorder} flex items-center justify-center mb-5`}>
-                <span className={`${activeSeccion.activeText}`}>{activeSeccion.icon}</span>
-              </div>
-              <h2 className="text-white font-semibold text-lg mb-2">Próximamente</h2>
-              <p className="text-slate-500 text-sm max-w-xs">
-                Estamos preparando el contenido de <span className={activeSeccion.activeText}>{activeSeccion.label}</span>. Pronto estará disponible.
-              </p>
-            </div>
+          {/* Librería de prompts — sección especial */}
+          {activeSection === 'prompts' && (
+            <PromptLibrary />
           )}
 
-          {/* Grid de grupos */}
-          {publishedInSection > 0 && (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {activeGroups.map(group => {
-                const published = group.classes.filter(c => c.status === 'published')
-                if (published.length === 0) return null
-                const doneCount = published.filter(c => watched.has(c.id)).length
-                const remaining = published.length - doneCount
-                const pct = published.length > 0 ? Math.round((doneCount / published.length) * 100) : 0
-                const isComplete = pct === 100
+          {activeSection !== 'prompts' && (
+            <>
+              {/* Cabecera de sección */}
+              <div className="flex items-center gap-3 mb-8">
+                <div className={`w-2 h-7 rounded-full ${activeSeccion.dot}`} />
+                <div>
+                  <h1 className={`text-2xl font-bold ${activeSeccion.activeText}`}>{activeSeccion.label}</h1>
+                  {publishedInSection > 0 && (
+                    <p className="text-slate-500 text-sm mt-0.5">
+                      {activeGroups.filter(g => g.classes.some(c => c.status === 'published')).length} {activeGroups.length === 1 ? 'módulo' : 'módulos'} · {publishedInSection} clases
+                    </p>
+                  )}
+                </div>
+              </div>
 
-                return (
-                  <Link
-                    key={group.id}
-                    href={`/dashboard/grupo/${group.id}`}
-                    className="group bg-[#0A0F1E] border border-slate-800 hover:border-slate-600 rounded-2xl p-6 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/20"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${activeSeccion.activeBg} ${activeSeccion.activeBorder}`}>
-                          <span className={activeSeccion.activeText}>{activeSeccion.icon}</span>
+              {/* Estado vacío */}
+              {publishedInSection === 0 && (
+                <div className="flex flex-col items-center justify-center py-24 text-center">
+                  <div className={`w-16 h-16 rounded-2xl ${activeSeccion.activeBg} border ${activeSeccion.activeBorder} flex items-center justify-center mb-5`}>
+                    <span className={`${activeSeccion.activeText}`}>{activeSeccion.icon}</span>
+                  </div>
+                  <h2 className="text-white font-semibold text-lg mb-2">Próximamente</h2>
+                  <p className="text-slate-500 text-sm max-w-xs">
+                    Estamos preparando el contenido de <span className={activeSeccion.activeText}>{activeSeccion.label}</span>. Pronto estará disponible.
+                  </p>
+                </div>
+              )}
+
+              {/* Grid de grupos */}
+              {publishedInSection > 0 && (
+                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {activeGroups.map(group => {
+                    const published = group.classes.filter(c => c.status === 'published')
+                    if (published.length === 0) return null
+                    const doneCount = published.filter(c => watched.has(c.id)).length
+                    const remaining = published.length - doneCount
+                    const pct = published.length > 0 ? Math.round((doneCount / published.length) * 100) : 0
+                    const isComplete = pct === 100
+
+                    return (
+                      <Link
+                        key={group.id}
+                        href={`/dashboard/grupo/${group.id}`}
+                        className="group bg-[#0A0F1E] border border-slate-800 hover:border-slate-600 rounded-2xl p-6 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/20"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${activeSeccion.activeBg} ${activeSeccion.activeBorder}`}>
+                              <span className={activeSeccion.activeText}>{activeSeccion.icon}</span>
+                            </div>
+                            <h3 className="font-bold text-white leading-tight text-sm group-hover:text-slate-200 transition-colors">
+                              {group.name}
+                            </h3>
+                          </div>
+                          {isComplete ? (
+                            <span className="flex-shrink-0 text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
+                              Completado
+                            </span>
+                          ) : (
+                            <svg className="w-4 h-4 text-slate-600 group-hover:text-slate-300 transition-colors flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          )}
                         </div>
-                        <h3 className="font-bold text-white leading-tight text-sm group-hover:text-slate-200 transition-colors">
-                          {group.name}
-                        </h3>
-                      </div>
-                      {isComplete ? (
-                        <span className="flex-shrink-0 text-xs px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 rounded-full">
-                          Completado
-                        </span>
-                      ) : (
-                        <svg className="w-4 h-4 text-slate-600 group-hover:text-slate-300 transition-colors flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      )}
-                    </div>
 
-                    {group.description && (
-                      <p className="text-slate-400 text-sm leading-relaxed line-clamp-2">{group.description}</p>
-                    )}
-
-                    <div className="mt-auto pt-3 border-t border-slate-800/60 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
-                        <span>{published.length} {published.length === 1 ? 'clase' : 'clases'}</span>
-                        <span className="w-1 h-1 rounded-full bg-slate-700" />
-                        {isComplete ? (
-                          <span className="text-emerald-400">Todas vistas</span>
-                        ) : doneCount > 0 ? (
-                          <span>{remaining} {remaining === 1 ? 'restante' : 'restantes'}</span>
-                        ) : (
-                          <span>Sin empezar</span>
+                        {group.description && (
+                          <p className="text-slate-400 text-sm leading-relaxed line-clamp-2">{group.description}</p>
                         )}
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full transition-all ${activeSeccion.dot}`} style={{ width: `${pct}%` }} />
+
+                        <div className="mt-auto pt-3 border-t border-slate-800/60 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 text-xs text-slate-500">
+                            <span>{published.length} {published.length === 1 ? 'clase' : 'clases'}</span>
+                            <span className="w-1 h-1 rounded-full bg-slate-700" />
+                            {isComplete ? (
+                              <span className="text-emerald-400">Todas vistas</span>
+                            ) : doneCount > 0 ? (
+                              <span>{remaining} {remaining === 1 ? 'restante' : 'restantes'}</span>
+                            ) : (
+                              <span>Sin empezar</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                              <div className={`h-full rounded-full transition-all ${activeSeccion.dot}`} style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="text-slate-600 text-xs">{pct}%</span>
+                          </div>
                         </div>
-                        <span className="text-slate-600 text-xs">{pct}%</span>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
