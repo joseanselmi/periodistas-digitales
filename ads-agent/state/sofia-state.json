@@ -1,0 +1,20 @@
+{
+  "ultima_accion": "2026-05-17",
+  "resumen": "L1 enviado a 144 contactos (seg A 44 + seg B 100). L2 enviado a seg A (44).",
+  "campana_leadr": {
+    "segmento_A": { "offset": 0, "size": 44, "L1": "2026-05-17", "L2": "2026-05-17", "L3": null },
+    "segmento_B": { "offset": 44, "size": 100, "L1": "2026-05-17", "L2": null, "L3": null },
+    "segmento_C": { "offset": 144, "size": 100, "L1": null, "L2": null, "L3": null }
+  },
+  "proximas_acciones": [
+    { "dia": "2026-05-18", "accion": "L1 → seg C (offset 144, limit 100)" },
+    { "dia": "2026-05-18", "accion": "L2 → seg B (offset 44, limit 100)" },
+    { "dia": "2026-05-18", "accion": "L3 → seg A (offset 0, limit 44)" },
+    { "dia": "2026-05-19", "accion": "L2 → seg C (offset 144, limit 100)" },
+    { "dia": "2026-05-19", "accion": "L3 → seg B (offset 44, limit 100)" },
+    { "dia": "2026-05-20", "accion": "L3 → seg C (offset 144, limit 100)" }
+  ],
+  "total_en_lista": 244,
+  "emails_post_compra": "pendiente — no cargados en Hotmart",
+  "metricas_brevo": null
+}

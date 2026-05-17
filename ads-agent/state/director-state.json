@@ -1,0 +1,8 @@
+{
+  "clases_publicadas": 24,
+  "grupos_activos": ["Tecnología para Periodistas", "Claude para Periodistas", "ChatGPT para Periodistas"],
+  "grupos_vacios": ["Automatizaciones Make", "Prompts", "Bonus exclusivos"],
+  "proximo_grupo_recomendado": "Make para Periodistas",
+  "ultima_clase_creada": null,
+  "proxima_accion": "Crear grupo Make cuando Ricardo lo priorice"
+}

@@ -1,0 +1,10 @@
+{
+  "semana_actual": "S1 — El periodismo cambió (10-18 mayo)",
+  "semana_programada": true,
+  "ultimo_post_hoy": { "fecha": "2026-05-17", "id": "122165842778678149", "tipo": "texto-reflexion" },
+  "proximo_post": { "fecha": "2026-05-18", "id": "122165843114678149", "tipo": "carrusel-notebooklm" },
+  "boost_semana_1": "PENDIENTE — elegir el domingo 18/05 según métricas",
+  "semana_2_creada": false,
+  "semana_2_tema": "La IA es tu herramienta (19-25 mayo)",
+  "proxima_accion": "Domingo 18: elegir boost S1 + crear S2"
+}

@@ -6,208 +6,365 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #07070f;
+  --indigo: #6366f1;
+  --cyan: #22d3ee;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+}
 body {
-  background: #07070f;
+  background: var(--bg);
   font-family: 'Inter', sans-serif;
   color: #f1f5f9;
   min-height: 100vh;
-  padding: 48px 40px;
+  padding: 48px 40px 80px;
 }
 
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 52px; }
 h1 {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -.02em;
-  margin-bottom: 6px;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -.03em;
   background: linear-gradient(135deg, #6366f1, #22d3ee);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  margin-bottom: 6px;
 }
 .subtitle {
-  text-align: center;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 48px;
-  letter-spacing: .04em;
+  font-size: 12px;
+  color: #374151;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
-/* ── GRID PRINCIPAL ─────────────────────────────────── */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto auto auto;
-  gap: 20px;
+/* ── SECTION LABEL ── */
+.section-label {
   max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
+  margin: 0 auto 14px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,.05);
+}
+.section-wrap { max-width: 1200px; margin: 0 auto 52px; }
 
-/* ── COLUMNA CEREBRO (centro) ───────────────────────── */
-.cerebro-col {
-  grid-column: 2;
-  grid-row: 1 / 4;
+/* ══════════════════════════════════════
+   EMBUDO — FUNNEL HORIZONTAL CHEVRONS
+══════════════════════════════════════ */
+.funnel {
+  display: flex;
+  align-items: stretch;
+  max-width: 1200px;
+  margin: 0 auto 52px;
+}
+.funnel-step {
+  flex: 1;
+  padding: 22px 28px 22px 36px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 6px;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%, 22px 50%);
+  transition: filter .2s ease;
+  cursor: default;
+}
+.funnel-step:hover { filter: brightness(1.12); }
+.funnel-step:first-child {
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  padding-left: 22px;
+  border-radius: 10px 0 0 10px;
+}
+.funnel-step:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 22px 50%);
+  border-radius: 0 10px 10px 0;
+}
+
+.fs-1 { background: rgba(99,102,241,.13); }
+.fs-2 { background: rgba(124,58,237,.1); }
+.fs-3 { background: rgba(34,211,238,.08); }
+.fs-4 { background: rgba(34,197,94,.08); }
+.fs-5 { background: rgba(245,158,11,.07); }
+
+.f-num {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.fs-1 .f-num { color: #818cf8; }
+.fs-2 .f-num { color: #a78bfa; }
+.fs-3 .f-num { color: #22d3ee; }
+.fs-4 .f-num { color: #4ade80; }
+.fs-5 .f-num { color: #fbbf24; }
+
+.f-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #f1f5f9;
+  line-height: 1.1;
+}
+.f-tools {
+  font-size: 11px;
+  color: #475569;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.f-stat {
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.fs-1 .f-stat { color: #818cf8; }
+.fs-2 .f-stat { color: #a78bfa; }
+.fs-3 .f-stat { color: #22d3ee; }
+.fs-4 .f-stat { color: #4ade80; }
+.fs-5 .f-stat { color: #fbbf24; }
+
+.f-badge {
+  display: inline-block;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 100px;
+  margin-top: 5px;
+  align-self: flex-start;
+}
+.fb-green { background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.3); }
+.fb-amber { background: rgba(245,158,11,.12); color: #f59e0b; border: 1px solid rgba(245,158,11,.25); }
+.fb-violet { background: rgba(99,102,241,.15); color: #818cf8; border: 1px solid rgba(99,102,241,.3); }
+
+/* ══════════════════════════════════════
+   ESTADO DEL SISTEMA — 3 columnas
+══════════════════════════════════════ */
+.estado-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
-
-/* ── CARDS ──────────────────────────────────────────── */
-.card {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.07);
+.estado-col {
   border-radius: 16px;
   padding: 20px 22px;
-  position: relative;
-  transition: border-color .3s, background .3s;
 }
-.card:hover {
-  border-color: rgba(99,102,241,.35);
-  background: rgba(99,102,241,.04);
-}
-.card::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 20px; bottom: 20px;
-  width: 2px;
-  border-radius: 0 2px 2px 0;
-  background: var(--accent, linear-gradient(180deg,#6366f1,#22d3ee));
-}
+.ec-done    { background: rgba(34,197,94,.04);   border: 1px solid rgba(34,197,94,.15); }
+.ec-missing { background: rgba(245,158,11,.04);  border: 1px solid rgba(245,158,11,.13); }
+.ec-sprint  { background: rgba(99,102,241,.06);  border: 1px solid rgba(99,102,241,.22); }
 
-.card-title {
+.ec-title {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--color, #6366f1);
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ec-done .ec-title    { color: #22c55e; }
+.ec-missing .ec-title { color: #f59e0b; }
+.ec-sprint .ec-title  { color: #818cf8; }
+
+.ec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.ec-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.ec-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.d-green  { background: #22c55e; box-shadow: 0 0 7px rgba(34,197,94,.6); }
+.d-amber  { background: #f59e0b; box-shadow: 0 0 7px rgba(245,158,11,.4); }
+.d-violet { background: #6366f1; box-shadow: 0 0 7px rgba(99,102,241,.5); }
+.d-red    { background: #ef4444; }
+
+.ec-item-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+  line-height: 1.3;
+}
+.ec-item-sub {
+  font-size: 10px;
+  color: #374151;
+  margin-top: 1px;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════
+   MAPA — 3 cols (productos/cerebro/canales)
+══════════════════════════════════════ */
+.eco-grid {
+  display: grid;
+  grid-template-columns: 1fr 268px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.eco-col { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px;
+  padding: 16px 18px;
+  position: relative;
+  transition: border-color .25s, background .25s;
+}
+.card:hover {
+  border-color: rgba(99,102,241,.3);
+  background: rgba(99,102,241,.03);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 16px; bottom: 16px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent, linear-gradient(180deg,#6366f1,#22d3ee));
+}
+.card-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color, #818cf8);
+  margin-bottom: 5px;
 }
 .card-name {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
   color: #f1f5f9;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
-.card-sub {
-  font-size: 12px;
-  color: #64748b;
-  line-height: 1.5;
+.card-desc {
+  font-size: 11px;
+  color: #374151;
+  line-height: 1.55;
+  margin-bottom: 8px;
 }
 
 .tag {
   display: inline-block;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .05em;
   text-transform: uppercase;
-  padding: 3px 10px;
+  padding: 2px 8px;
   border-radius: 100px;
-  margin-top: 8px;
   margin-right: 4px;
+  margin-top: 3px;
 }
-.tag-green  { background: rgba(34,197,94,.1);  color: #22c55e; border: 1px solid rgba(34,197,94,.2); }
-.tag-violet { background: rgba(99,102,241,.1); color: #818cf8; border: 1px solid rgba(99,102,241,.2); }
-.tag-amber  { background: rgba(245,158,11,.1); color: #f59e0b; border: 1px solid rgba(245,158,11,.2); }
-.tag-red    { background: rgba(239,68,68,.1);  color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
-.tag-cyan   { background: rgba(34,211,238,.1); color: #22d3ee; border: 1px solid rgba(34,211,238,.2); }
-.tag-gray   { background: rgba(255,255,255,.05); color: #64748b; border: 1px solid rgba(255,255,255,.1); }
+.tg  { background: rgba(34,197,94,.1);  color: #22c55e; border: 1px solid rgba(34,197,94,.2); }
+.tv  { background: rgba(99,102,241,.1); color: #818cf8; border: 1px solid rgba(99,102,241,.2); }
+.ta  { background: rgba(245,158,11,.1); color: #f59e0b; border: 1px solid rgba(245,158,11,.2); }
+.tr  { background: rgba(239,68,68,.1);  color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
+.tc  { background: rgba(34,211,238,.1); color: #22d3ee; border: 1px solid rgba(34,211,238,.2); }
 
-/* ── CEREBRO CENTRAL ─────────────────────────────────── */
+/* ── CEREBRO ── */
 .cerebro {
-  background: rgba(99,102,241,.08);
-  border: 2px solid rgba(99,102,241,.4);
+  background: rgba(99,102,241,.09);
+  border: 2px solid rgba(99,102,241,.38);
   border-radius: 20px;
-  padding: 28px 24px;
+  padding: 24px 18px;
   text-align: center;
-  position: relative;
-  width: 100%;
-  box-shadow: 0 0 60px rgba(99,102,241,.12);
+  box-shadow: 0 0 80px rgba(99,102,241,.1), 0 0 24px rgba(34,211,238,.04);
 }
-.cerebro-icon {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
+.cerebro-icon { font-size: 38px; margin-bottom: 8px; display: block; }
 .cerebro-name {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 800;
   background: linear-gradient(135deg,#6366f1,#22d3ee);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
-.cerebro-sub {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 12px;
-}
-.cerebro-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.cerebro-sub { font-size: 10px; color: #374151; margin-bottom: 14px; letter-spacing:.04em; }
+.cerebro-tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
 
-/* ── AGENTES ─────────────────────────────────────────── */
+/* ── AGENTES GRID ── */
+.agents-section {
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.05);
+  padding: 14px;
+}
+.agents-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #374151;
+  margin-bottom: 10px;
+  text-align: center;
+}
 .agents-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
+  gap: 5px;
 }
 .agent {
   background: rgba(255,255,255,.02);
   border: 1px solid rgba(255,255,255,.06);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 11px;
+  border-radius: 8px;
+  padding: 7px 9px;
 }
 .agent-name {
-  font-weight: 700;
-  color: #94a3b8;
-  margin-bottom: 2px;
   font-family: 'Courier New', monospace;
-  font-size: 11px;
-}
-.agent-desc { color: #4b5563; font-size: 10px; }
-.agent-status {
-  display: inline-block;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-.status-ok { background: #22c55e; }
-.status-pending { background: #f59e0b; }
-
-/* ── COLUMNAS IZQUIERDA Y DERECHA ────────────────────── */
-.col-left  { display: flex; flex-direction: column; gap: 16px; }
-.col-right { display: flex; flex-direction: column; gap: 16px; }
-
-/* ── FLECHAS / CONEXIONES ────────────────────────────── */
-.conn-label {
-  text-align: center;
   font-size: 10px;
-  color: #374151;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  margin: 4px 0;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.agent-desc { font-size: 9px; color: #2d3748; }
+.ast { display: inline-block; width: 5px; height: 5px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+.ok  { background: #22c55e; }
+.pnd { background: #f59e0b; }
 
-/* ── SECCIÓN FOOTER ──────────────────────────────────── */
-.footer-grid {
-  max-width: 1200px;
-  margin: 20px auto 0;
+/* ══════════════════════════════════════
+   MÉTRICAS
+══════════════════════════════════════ */
+.metrics-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 .metric {
   background: rgba(255,255,255,.02);
   border: 1px solid rgba(255,255,255,.06);
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 16px;
   text-align: center;
 }
 .metric-num {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
   letter-spacing: -.03em;
   background: linear-gradient(135deg,#6366f1,#22d3ee);
@@ -215,12 +372,12 @@ h1 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.metric-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+.metric-label { font-size: 10px; color: #374151; margin-top: 3px; line-height:1.3; }
 
-/* ── SECCIÓN DE ESTRATEGIA ───────────────────────────── */
+/* ══════════════════════════════════════
+   ESTRATEGIA ORGÁNICO
+══════════════════════════════════════ */
 .strategy-row {
-  max-width: 1200px;
-  margin: 20px auto 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
@@ -229,220 +386,423 @@ h1 {
   border-radius: 12px;
   padding: 14px 16px;
   border: 1px solid;
+  position: relative;
+  overflow: hidden;
 }
-.week-num { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
-.week-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.week-sub { font-size: 11px; opacity: .6; }
+.week::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--stripe);
+}
+.w1 { background: rgba(99,102,241,.06); border-color: rgba(99,102,241,.2); --stripe: linear-gradient(90deg,#6366f1,#818cf8); }
+.w2 { background: rgba(34,211,238,.04); border-color: rgba(34,211,238,.12); --stripe: linear-gradient(90deg,#22d3ee,#67e8f9); }
+.w3 { background: rgba(34,197,94,.04);  border-color: rgba(34,197,94,.12);  --stripe: linear-gradient(90deg,#22c55e,#4ade80); }
+.w4 { background: rgba(245,158,11,.04); border-color: rgba(245,158,11,.15); --stripe: linear-gradient(90deg,#f59e0b,#fbbf24); }
 
-.w1 { background: rgba(99,102,241,.06); border-color: rgba(99,102,241,.25); }
-.w1 .week-num { color: #6366f1; }
-.w2 { background: rgba(34,211,238,.04); border-color: rgba(34,211,238,.15); }
-.w2 .week-num { color: #22d3ee; }
-.w3 { background: rgba(34,197,94,.04); border-color: rgba(34,197,94,.15); }
-.w3 .week-num { color: #22c55e; }
-.w4 { background: rgba(245,158,11,.04); border-color: rgba(245,158,11,.2); }
-.w4 .week-num { color: #f59e0b; }
-
-.section-label {
-  max-width: 1200px;
-  margin: 28px auto 10px;
-  font-size: 10px;
+.week-badge {
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: .12em;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: #374151;
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+.w1 .week-badge { color: #6366f1; }
+.w2 .week-badge { color: #22d3ee; }
+.w3 .week-badge { color: #22c55e; }
+.w4 .week-badge { color: #f59e0b; }
+
+.week-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #e2e8f0; }
+.week-sub   { font-size: 10px; color: #374151; line-height: 1.4; }
+
+.week-active-tag {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: rgba(34,197,94,.15);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,.3);
+  padding: 2px 6px;
+  border-radius: 100px;
+}
+
+/* ══════════════════════════════════════
+   CONNECTOR LINES (visual only)
+══════════════════════════════════════ */
+.conn-hint {
+  font-size: 9px;
+  color: #1f2937;
+  text-align: center;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 6px 0 2px;
 }
 </style>
 </head>
 <body>
 
-<h1>Periodistas del Futuro IA</h1>
-<p class="subtitle">Ecosistema completo — Mayo 2026 &nbsp;·&nbsp; Cerebro: Claude + Jose</p>
+<!-- ══════════ HEADER ══════════ -->
+<div class="header">
+  <h1>Periodistas del Futuro IA</h1>
+  <p class="subtitle">Mapa del ecosistema completo &nbsp;·&nbsp; Mayo 2026 &nbsp;·&nbsp; Cerebro: Claude + Jose</p>
+</div>
 
-<!-- ══════════ GRID PRINCIPAL ══════════ -->
-<div class="grid">
+<!-- ══════════ EMBUDO ══════════ -->
+<div class="section-label">Embudo de ventas completo</div>
+<div class="funnel">
 
-  <!-- COLUMNA IZQUIERDA — Productos y canales -->
-  <div class="col-left">
+  <div class="funnel-step fs-1">
+    <div class="f-num">01 · Tráfico</div>
+    <div class="f-title">Atracción</div>
+    <div class="f-tools">Facebook Orgánico<br>Meta Ads</div>
+    <div class="f-stat">9 posts live · $4.364 hist.</div>
+    <span class="f-badge fb-green">Activo</span>
+  </div>
 
-    <div class="card" style="--accent:linear-gradient(180deg,#6366f1,#7c3aed);--color:#818cf8">
-      <div class="card-title">Producto principal</div>
-      <div class="card-name">Sistema de Ingresos Diarios</div>
-      <div class="card-sub">Curso para periodistas LATAM — crear periódico digital con IA</div>
-      <span class="tag tag-green">$17 USD</span>
-      <span class="tag tag-violet">Valor $227</span>
-      <span class="tag tag-cyan">Leadr incluido</span>
+  <div class="funnel-step fs-2">
+    <div class="f-num">02 · Landing</div>
+    <div class="f-title">Convicción</div>
+    <div class="f-tools">sistemadeingresosdiariosia.com<br>Urgencia 72h</div>
+    <div class="f-stat">HTML + Vercel · live</div>
+    <span class="f-badge fb-amber">3 testimonios faltantes</span>
+  </div>
+
+  <div class="funnel-step fs-3">
+    <div class="f-num">03 · Checkout</div>
+    <div class="f-title">Conversión</div>
+    <div class="f-tools">Hotmart · $17 USD<br>Webhook automático</div>
+    <div class="f-stat">CPA $10.19 · 346 compras</div>
+    <span class="f-badge fb-green">Activo</span>
+  </div>
+
+  <div class="funnel-step fs-4">
+    <div class="f-num">04 · Entrega</div>
+    <div class="f-title">Activación</div>
+    <div class="f-tools">Leadr · Plan Pro activado<br>5 emails automáticos</div>
+    <div class="f-stat">leadr.cloud · webhook OK</div>
+    <span class="f-badge fb-green">Activo</span>
+  </div>
+
+  <div class="funnel-step fs-5">
+    <div class="f-num">05 · Retención</div>
+    <div class="f-title">Upsell</div>
+    <div class="f-tools">Leadr Pro continuo<br>Nuevos cursos · Comunidad</div>
+    <div class="f-stat">En construcción</div>
+    <span class="f-badge fb-amber">Próximo</span>
+  </div>
+
+</div>
+
+<!-- ══════════ ESTADO DEL SISTEMA ══════════ -->
+<div class="section-label">Estado del sistema</div>
+<div class="section-wrap">
+  <div class="estado-grid">
+
+    <!-- ✅ LO QUE TENEMOS -->
+    <div class="estado-col ec-done">
+      <div class="ec-title">✅ Lo que tenemos</div>
+
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">Landing page live</div><div class="ec-item-sub">Vercel · contador urgencia · precio $17</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">Leadr funcional</div><div class="ec-item-sub">Next.js · Supabase · leadr.cloud</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">Hotmart + Webhook</div><div class="ec-item-sub">Activa Leadr Pro automáticamente post-compra</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">9 posts Facebook programados</div><div class="ec-item-sub">Semana 1 completa · 10-18 mayo</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">9 agentes activos</div><div class="ec-item-sub">fetch, monitor, publish, organic, carousel, post-fb, schedule, email, audit</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">Generación imágenes IA</div><div class="ec-item-sub">Flux / fal.ai · personas LATAM forzadas</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">Token Facebook permanente</div><div class="ec-item-sub">API conectada · publicación 100% automática</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-green"></span>
+        <div><div class="ec-item-title">5 emails post-compra</div><div class="ec-item-sub">Secuencia automática de activación</div></div>
+      </div>
     </div>
 
-    <div class="card" style="--accent:linear-gradient(180deg,#22d3ee,#6366f1);--color:#22d3ee">
-      <div class="card-title">Plataforma</div>
-      <div class="card-name">Leadr</div>
-      <div class="card-sub">leadr.cloud · Clases de IA para periodistas · Freemium + Pro</div>
-      <span class="tag tag-cyan">Next.js</span>
-      <span class="tag tag-violet">Supabase</span>
+    <!-- 🔲 LO QUE FALTA -->
+    <div class="estado-col ec-missing">
+      <div class="ec-title">🔲 Lo que falta</div>
+
+      <div class="ec-item">
+        <span class="ec-dot d-red"></span>
+        <div><div class="ec-item-title">3 testimonios en landing</div><div class="ec-item-sub">Bloque preparado · necesita contenido real de alumnos</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">Meta Ads v2 sin publicar</div><div class="ec-item-sub">Creative lista · solo falta activar campaña</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">Semanas 2-4 orgánico</div><div class="ec-item-sub">19 mayo → 8 junio sin programar aún</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">image-reviewer.mjs</div><div class="ec-item-sub">Agente revisor de imágenes IA · en desarrollo</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">Escalado del boost Facebook</div><div class="ec-item-sub">Medir semana 1 → escalar más allá de $7/sem</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">Estrategia retención post-compra</div><div class="ec-item-sub">WhatsApp / comunidad / upsell a cursos nuevos</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-amber"></span>
+        <div><div class="ec-item-title">Nuevas clases Leadr</div><div class="ec-item-sub">Expandir curriculum IA para periodistas</div></div>
+      </div>
     </div>
 
-    <div class="card" style="--accent:linear-gradient(180deg,#f59e0b,#6366f1);--color:#f59e0b">
-      <div class="card-title">Landing de ventas</div>
-      <div class="card-name">sistemadeingresosdiariosia.com</div>
-      <div class="card-sub">HTML estático en Vercel · Contador urgencia 72h · 3 testimonios pendientes</div>
-      <span class="tag tag-amber">HTML + Vercel</span>
-      <span class="tag tag-red">Testimonios faltantes</span>
-    </div>
+    <!-- 🚀 PRÓXIMO SPRINT -->
+    <div class="estado-col ec-sprint">
+      <div class="ec-title">🚀 Próximo sprint</div>
 
-    <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#22d3ee);--color:#22c55e">
-      <div class="card-title">Checkout</div>
-      <div class="card-name">Hotmart</div>
-      <div class="card-sub">Pagos, entrega del curso, webhook → Leadr activa plan Pro automáticamente</div>
-      <span class="tag tag-green">Webhook activo</span>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Publicar Meta Ads v2</div><div class="ec-item-sub">Ya lista · activar ahora · objetivo CPA &lt; $8</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Programar semana 2 orgánico</div><div class="ec-item-sub">19-25 mayo · "La IA es tu herramienta"</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Conseguir 3 testimonios reales</div><div class="ec-item-sub">Alumnos · screenshots o video corto</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Medir resultados semana 1 FB</div><div class="ec-item-sub">Reach · engagement · clicks → boost al mejor</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Terminar image-reviewer.mjs</div><div class="ec-item-sub">Revisor Claude Vision antes de publicar</div></div>
+      </div>
+      <div class="ec-item">
+        <span class="ec-dot d-violet"></span>
+        <div><div class="ec-item-title">Crear clases nuevas Leadr</div><div class="ec-item-sub">skill crear-clase disponible · arco A→B</div></div>
+      </div>
     </div>
 
   </div>
+</div>
 
-  <!-- COLUMNA CENTRO — CEREBRO -->
-  <div class="cerebro-col">
+<!-- ══════════ MAPA HERRAMIENTAS ══════════ -->
+<div class="section-label">Mapa de herramientas y agentes</div>
+<div class="section-wrap">
+  <div class="eco-grid">
 
-    <div class="cerebro">
-      <div class="cerebro-icon">🧠</div>
-      <div class="cerebro-name">Claude + Jose</div>
-      <div class="cerebro-sub">Cerebro y manos del ecosistema</div>
-      <div class="cerebro-tags">
-        <span class="tag tag-violet">Estrategia</span>
-        <span class="tag tag-cyan">Ejecución</span>
-        <span class="tag tag-green">Publicación</span>
-        <span class="tag tag-amber">Optimización</span>
+    <!-- COLUMNA IZQUIERDA: productos -->
+    <div class="eco-col">
+
+      <div class="card" style="--accent:linear-gradient(180deg,#6366f1,#7c3aed);--color:#818cf8">
+        <div class="card-label">Producto principal</div>
+        <div class="card-name">Sistema de Ingresos Diarios</div>
+        <div class="card-desc">Curso para periodistas LATAM — crear periódico digital con IA en 7 días</div>
+        <span class="tag tg">$17 USD</span>
+        <span class="tag tv">Valor $227</span>
+        <span class="tag tc">Leadr incluido</span>
       </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#22d3ee,#6366f1);--color:#22d3ee">
+        <div class="card-label">Plataforma de entrega</div>
+        <div class="card-name">Leadr</div>
+        <div class="card-desc">leadr.cloud · Clases IA para periodistas · Freemium + Plan Pro</div>
+        <span class="tag tc">Next.js</span>
+        <span class="tag tv">Supabase</span>
+      </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#f59e0b,#6366f1);--color:#f59e0b">
+        <div class="card-label">Landing de ventas</div>
+        <div class="card-name">sistemadeingresosdiariosia.com</div>
+        <div class="card-desc">HTML estático en Vercel · Contador urgencia 72h · Precio anclado $227→$17</div>
+        <span class="tag ta">HTML + Vercel</span>
+        <span class="tag tr">3 testimonios faltantes</span>
+      </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#22d3ee);--color:#22c55e">
+        <div class="card-label">Checkout + Pagos</div>
+        <div class="card-name">Hotmart</div>
+        <div class="card-desc">Procesamiento pagos · webhook → activa Leadr Pro automáticamente al comprar</div>
+        <span class="tag tg">Webhook activo</span>
+        <span class="tag tv">346 compras hist.</span>
+      </div>
+
     </div>
 
-    <div style="font-size:10px;color:#374151;text-align:center;letter-spacing:.06em;text-transform:uppercase">Agentes activos</div>
+    <!-- COLUMNA CENTRO: cerebro + agentes -->
+    <div style="display:flex;flex-direction:column;gap:12px">
 
-    <div class="agents-grid">
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>fetch-meta.mjs</div>
-        <div class="agent-desc">Baja datos Meta Ads</div>
+      <div class="cerebro">
+        <span class="cerebro-icon">🧠</span>
+        <div class="cerebro-name">Claude + Jose</div>
+        <div class="cerebro-sub">Cerebro y manos del ecosistema</div>
+        <div class="cerebro-tags">
+          <span class="tag tv">Estrategia</span>
+          <span class="tag tc">Ejecución</span>
+          <span class="tag tg">Publicación</span>
+          <span class="tag ta">Optimización</span>
+        </div>
       </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>monitor.mjs</div>
-        <div class="agent-desc">Métricas + alertas diarias</div>
+
+      <div class="agents-section">
+        <div class="agents-label">Agentes automatizados</div>
+        <div class="agents-grid">
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>fetch-meta</div>
+            <div class="agent-desc">Baja datos Meta Ads</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>monitor</div>
+            <div class="agent-desc">Métricas + alertas</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>publish</div>
+            <div class="agent-desc">Publica ads en Meta</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>audit-cmo</div>
+            <div class="agent-desc">Auditoría CMO</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>organic-agent</div>
+            <div class="agent-desc">Posts + imágenes</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>carousel-gen</div>
+            <div class="agent-desc">Carruseles HTML</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>post-facebook</div>
+            <div class="agent-desc">Publica en fanpage</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>schedule-week</div>
+            <div class="agent-desc">Programa semana</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast ok"></span>email-agent</div>
+            <div class="agent-desc">5 emails post-compra</div>
+          </div>
+          <div class="agent">
+            <div class="agent-name"><span class="ast pnd"></span>img-reviewer</div>
+            <div class="agent-desc">Revisor IA imágenes</div>
+          </div>
+        </div>
       </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>publish.mjs</div>
-        <div class="agent-desc">Publica ads en Meta</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>audit-cmo.mjs</div>
-        <div class="agent-desc">Auditoría ecosistema</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>organic-agent.mjs</div>
-        <div class="agent-desc">Posts + imágenes IA</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>carousel-gen.mjs</div>
-        <div class="agent-desc">Carruseles HTML</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>post-facebook.mjs</div>
-        <div class="agent-desc">Publica en fanpage</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>schedule-week.mjs</div>
-        <div class="agent-desc">Programa semana entera</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-ok"></span>email-agent.mjs</div>
-        <div class="agent-desc">5 emails post-compra</div>
-      </div>
-      <div class="agent">
-        <div class="agent-name"><span class="agent-status status-pending"></span>image-reviewer.mjs</div>
-        <div class="agent-desc">Revisa imágenes IA</div>
-      </div>
+
     </div>
 
+    <!-- COLUMNA DERECHA: canales y tráfico -->
+    <div class="eco-col">
+
+      <div class="card" style="--accent:linear-gradient(180deg,#1877f2,#22d3ee);--color:#60a5fa">
+        <div class="card-label">Tráfico orgánico</div>
+        <div class="card-name">Facebook — Periodistas del Futuro IA</div>
+        <div class="card-desc">1 post/día · Semana 1 programada · Boost $7/semana al post de mejor performance</div>
+        <span class="tag tg">9 posts activos</span>
+        <span class="tag tc">API conectada</span>
+      </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#ef4444,#f59e0b);--color:#f87171">
+        <div class="card-label">Tráfico pago</div>
+        <div class="card-name">Meta Ads</div>
+        <div class="card-desc">act_583636631091469 · $4.364 invertido · CPA $10.19 · Campaña v2 lista para activar</div>
+        <span class="tag ta">v2 sin publicar</span>
+        <span class="tag tv">346 compras hist.</span>
+      </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#6366f1);--color:#22c55e">
+        <div class="card-label">Generación de imágenes</div>
+        <div class="card-name">Flux / fal.ai</div>
+        <div class="card-desc">Imágenes para ads y orgánico · Revisor Claude Vision · Personas LATAM forzadas vía prompt</div>
+        <span class="tag tg">Activo</span>
+        <span class="tag tc">+ revisor IA</span>
+      </div>
+
+      <div class="card" style="--accent:linear-gradient(180deg,#475569,#94a3b8);--color:#94a3b8">
+        <div class="card-label">Infraestructura</div>
+        <div class="card-name">Vercel + Supabase + GitHub</div>
+        <div class="card-desc">Deploy automático · git push = live · Todas las keys en .env.local</div>
+        <span class="tag tg">Todo conectado</span>
+      </div>
+
+    </div>
   </div>
-
-  <!-- COLUMNA DERECHA — Distribución y tráfico -->
-  <div class="col-right">
-
-    <div class="card" style="--accent:linear-gradient(180deg,#1877f2,#22d3ee);--color:#60a5fa">
-      <div class="card-title">Orgánico</div>
-      <div class="card-name">Facebook — Periodistas del Futuro IA</div>
-      <div class="card-sub">1 post/día · Semana 1 programada · Boost $7/semana al mejor post</div>
-      <span class="tag tag-green">9 posts activos</span>
-      <span class="tag tag-cyan">API conectada</span>
-    </div>
-
-    <div class="card" style="--accent:linear-gradient(180deg,#ef4444,#f59e0b);--color:#f87171">
-      <div class="card-title">Tráfico pago</div>
-      <div class="card-name">Meta Ads</div>
-      <div class="card-sub">act_583636631091469 · $4.364 histórico · CPA $10.19 · Campaña v2 lista</div>
-      <span class="tag tag-amber">v2 sin publicar</span>
-      <span class="tag tag-violet">346 compras hist.</span>
-    </div>
-
-    <div class="card" style="--accent:linear-gradient(180deg,#22c55e,#6366f1);--color:#22c55e">
-      <div class="card-title">Generación de imágenes</div>
-      <div class="card-name">Flux / fal.ai</div>
-      <div class="card-sub">Imágenes para ads y orgánico · Revisor Claude Vision · Personas LATAM forzadas</div>
-      <span class="tag tag-green">Con revisor IA</span>
-    </div>
-
-    <div class="card" style="--accent:linear-gradient(180deg,#64748b,#94a3b8);--color:#94a3b8">
-      <div class="card-title">Infraestructura</div>
-      <div class="card-name">Vercel + Supabase + GitHub</div>
-      <div class="card-sub">Deploy automático · git push = live · Todas las keys en .env.local</div>
-      <span class="tag tag-green">Todo conectado</span>
-    </div>
-
-  </div>
-
 </div>
 
 <!-- ══════════ MÉTRICAS ══════════ -->
 <div class="section-label">Números clave del negocio</div>
-<div class="footer-grid">
-  <div class="metric">
-    <div class="metric-num">$4.364</div>
-    <div class="metric-label">Gastado en Meta Ads histórico</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num">346</div>
-    <div class="metric-label">Compras totales</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num">$10.19</div>
-    <div class="metric-label">CPA promedio histórico</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num">$6.33</div>
-    <div class="metric-label">Mejor CPA (segmento 40-65, sin escalar)</div>
+<div class="section-wrap" style="margin-bottom:36px">
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-num">$4.364</div>
+      <div class="metric-label">Invertido en Meta Ads (histórico)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">346</div>
+      <div class="metric-label">Compras totales</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">$10.19</div>
+      <div class="metric-label">CPA promedio histórico</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">$6.33</div>
+      <div class="metric-label">Mejor CPA logrado (seg. 40-65)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">$17</div>
+      <div class="metric-label">Precio actual del curso</div>
+    </div>
   </div>
 </div>
 
-<!-- ══════════ ESTRATEGIA ORGÁNICO ══════════ -->
-<div class="section-label">Arco estratégico orgánico — Mayo/Junio 2026</div>
-<div class="strategy-row">
-  <div class="week w1">
-    <div class="week-num">✅ Semana 1 · 10-18 mayo</div>
-    <div class="week-title">"El periodismo cambió"</div>
-    <div class="week-sub">Autoridad · Sin vender · 9 posts programados</div>
-  </div>
-  <div class="week w2">
-    <div class="week-num">🔲 Semana 2 · 19-25 mayo</div>
-    <div class="week-title">"La IA es tu herramienta"</div>
-    <div class="week-sub">Prompts, casos, datos de impacto</div>
-  </div>
-  <div class="week w3">
-    <div class="week-num">🔲 Semana 3 · 26 mayo-1 jun</div>
-    <div class="week-title">"Otros ya lo hacen"</div>
-    <div class="week-sub">Prueba social masiva · Casos reales</div>
-  </div>
-  <div class="week w4">
-    <div class="week-num">🔲 Semana 4 · 2-8 jun</div>
-    <div class="week-title">"Es tu momento"</div>
-    <div class="week-sub">Conversión · CTA directo · Urgencia</div>
+<!-- ══════════ ARCO ORGÁNICO ══════════ -->
+<div class="section-label">Arco estratégico orgánico — Mayo / Junio 2026</div>
+<div class="section-wrap" style="margin-bottom:0">
+  <div class="strategy-row">
+    <div class="week w1">
+      <span class="week-active-tag">EN CURSO</span>
+      <div class="week-badge">Semana 1 · 10-18 mayo</div>
+      <div class="week-title">"El periodismo cambió"</div>
+      <div class="week-sub">Autoridad · Sin vender · 9 posts programados</div>
+    </div>
+    <div class="week w2">
+      <div class="week-badge">Semana 2 · 19-25 mayo</div>
+      <div class="week-title">"La IA es tu herramienta"</div>
+      <div class="week-sub">Prompts · casos reales · datos de impacto</div>
+    </div>
+    <div class="week w3">
+      <div class="week-badge">Semana 3 · 26 mayo-1 jun</div>
+      <div class="week-title">"Otros ya lo hacen"</div>
+      <div class="week-sub">Prueba social masiva · casos reales de alumnos</div>
+    </div>
+    <div class="week w4">
+      <div class="week-badge">Semana 4 · 2-8 jun</div>
+      <div class="week-title">"Es tu momento"</div>
+      <div class="week-sub">Conversión · CTA directo · Urgencia máxima</div>
+    </div>
   </div>
 </div>
 

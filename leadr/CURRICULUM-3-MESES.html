@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curriculum Leadr — 3 Meses</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #07070f;
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.35);
+    color: #a5b4fc;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 8px;
+  }
+  .header h1 span {
+    background: linear-gradient(135deg, #6366f1, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p {
+    color: #64748b;
+    font-size: 15px;
+  }
+
+  /* ARCO MAESTRO */
+  .arco-maestro {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    background: rgba(15,23,42,0.7);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 16px;
+    padding: 24px 32px;
+  }
+  .arco-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 16px;
+  }
+  .arco-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .arco-step {
+    flex: 1;
+    text-align: center;
+    padding: 16px 12px;
+    border-radius: 12px;
+    position: relative;
+  }
+  .arco-step.a { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); }
+  .arco-step.b { background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.15); }
+  .arco-step.c { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); }
+  .arco-mes {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .arco-step.a .arco-mes { color: #818cf8; }
+  .arco-step.b .arco-mes { color: #22d3ee; }
+  .arco-step.c .arco-mes { color: #10b981; }
+  .arco-desc {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.5;
+  }
+  .arco-arrow {
+    width: 32px;
+    text-align: center;
+    color: #334155;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* STATS GLOBALES */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 16px 24px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .stat-card.s1 .stat-number { color: #818cf8; }
+  .stat-card.s2 .stat-number { color: #22d3ee; }
+  .stat-card.s3 .stat-number { color: #10b981; }
+  .stat-card.s4 .stat-number { color: #f59e0b; }
+  .stat-card.s5 .stat-number { color: #f8fafc; }
+
+  /* MESES */
+  .meses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1300px;
+    margin: 0 auto 48px;
+  }
+  @media (max-width: 900px) {
+    .meses-grid { grid-template-columns: 1fr; }
+  }
+
+  .mes-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mes-header {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 4px;
+  }
+  .mes-header.mayo { background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(99,102,241,0.05)); border: 1px solid rgba(99,102,241,0.25); }
+  .mes-header.junio { background: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(34,211,238,0.04)); border: 1px solid rgba(34,211,238,0.2); }
+  .mes-header.julio { background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.04)); border: 1px solid rgba(16,185,129,0.2); }
+
+  .mes-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .mes-header.mayo .mes-titulo { color: #818cf8; }
+  .mes-header.junio .mes-titulo { color: #22d3ee; }
+  .mes-header.julio .mes-titulo { color: #10b981; }
+  .mes-fase {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .mes-subtitulo {
+    font-size: 12px;
+    color: #475569;
+  }
+
+  /* MÓDULO CARD */
+  .modulo-card {
+    background: rgba(15,23,42,0.65);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: transform 0.15s, border-color 0.15s;
+    cursor: default;
+  }
+  .modulo-card:hover { transform: translateY(-2px); }
+  .modulo-card.mayo-card { border: 1px solid rgba(99,102,241,0.18); }
+  .modulo-card.mayo-card:hover { border-color: rgba(99,102,241,0.4); }
+  .modulo-card.junio-card { border: 1px solid rgba(34,211,238,0.15); }
+  .modulo-card.junio-card:hover { border-color: rgba(34,211,238,0.35); }
+  .modulo-card.julio-card { border: 1px solid rgba(16,185,129,0.15); }
+  .modulo-card.julio-card:hover { border-color: rgba(16,185,129,0.35); }
+
+  .modulo-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .modulo-semana {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #475569;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge.listo { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .badge.parcial { background: rgba(245,158,11,0.13); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+  .badge.crear { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.22); }
+
+  .modulo-nombre {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .modulo-arco {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+  .modulo-arco strong { color: #64748b; }
+  .modulo-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-size: 10.5px;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .meta-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.green { background: #10b981; }
+  .dot.yellow { background: #f59e0b; }
+  .dot.red { background: #f87171; }
+
+  /* CAPAS */
+  .capas-section {
+    max-width: 1300px;
+    margin: 0 auto 48px;
+  }
+  .capas-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .capas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .capas-grid { grid-template-columns: 1fr; } }
+
+  .capa-card {
+    background: rgba(15,23,42,0.6);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .capa-card.capa1 { border: 1px solid rgba(99,102,241,0.2); }
+  .capa-card.capa2 { border: 1px solid rgba(34,211,238,0.15); }
+  .capa-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .capa-card.capa1 .capa-card-title { color: #818cf8; }
+  .capa-card.capa2 .capa-card-title { color: #22d3ee; }
+  .capa-card-subtitle {
+    font-size: 11px;
+    color: #475569;
+    margin-bottom: 12px;
+  }
+  .capa-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .capa-item {
+    font-size: 12px;
+    color: #94a3b8;
+    padding-left: 12px;
+    position: relative;
+  }
+  .capa-item::before { content: '–'; position: absolute; left: 0; color: #334155; }
+
+  /* LANZAMIENTO */
+  .lanzamiento-section {
+    max-width: 1300px;
+    margin: 0 auto 48px;
+  }
+  .lanzamiento-card {
+    background: rgba(99,102,241,0.07);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 12px;
+    padding: 20px 28px;
+  }
+  .lanzamiento-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 12px;
+  }
+  .lanzamiento-steps {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .lanzamiento-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .lanzamiento-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(99,102,241,0.25);
+    color: #818cf8;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .lanzamiento-text {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+  .lanzamiento-text strong { color: #c7d2fe; display: block; margin-bottom: 2px; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    color: #1e293b;
+    font-size: 11px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .footer span { color: #334155; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">Leadr · Curriculum Oficial · Mayo–Julio 2026</div>
+  <h1>De Periodista a <span>Periodista Digital</span></h1>
+  <p>3 meses · 12 semanas · ~10 módulos · ~96 clases · $10/mes</p>
+</div>
+
+<!-- ARCO MAESTRO -->
+<div class="arco-maestro">
+  <div class="arco-label">Arco Maestro de Transformación</div>
+  <div class="arco-steps">
+    <div class="arco-step a">
+      <div class="arco-mes">Mayo — Herramientas</div>
+      <div class="arco-desc">Periodista con herramientas tradicionales, sin sistema propio, dependiendo de un medio</div>
+    </div>
+    <div class="arco-arrow">→</div>
+    <div class="arco-step b">
+      <div class="arco-mes">Junio — Sistema</div>
+      <div class="arco-desc">Periodista con flujo de trabajo con IA: más veloz, más preciso, con investigación propia</div>
+    </div>
+    <div class="arco-arrow">→</div>
+    <div class="arco-step c">
+      <div class="arco-mes">Julio — Negocio</div>
+      <div class="arco-desc">Periodista Digital con audiencia propia, marca personal y al menos una fuente de ingreso</div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-card s3"><div class="stat-number">3</div><div class="stat-label">Módulos listos</div></div>
+  <div class="stat-card s4"><div class="stat-number">6</div><div class="stat-label">Módulos en prep.</div></div>
+  <div class="stat-card s1"><div class="stat-number">3</div><div class="stat-label">Por crear</div></div>
+  <div class="stat-card s2"><div class="stat-number">~96</div><div class="stat-label">Clases totales</div></div>
+  <div class="stat-card s5"><div class="stat-number">346</div><div class="stat-label">Lanzamiento base</div></div>
+</div>
+
+<!-- MESES -->
+<div class="meses-grid">
+
+  <!-- MAYO -->
+  <div class="mes-col">
+    <div class="mes-header mayo">
+      <div class="mes-titulo">Mayo 2026</div>
+      <div class="mes-fase">Fase 1 — Herramientas</div>
+      <div class="mes-subtitulo">Dominar la IA como copiloto de trabajo</div>
+    </div>
+
+    <div class="modulo-card mayo-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 1</span>
+        <span class="badge crear">Por crear</span>
+      </div>
+      <div class="modulo-nombre">Onboarding Leadr + Bienvenida</div>
+      <div class="modulo-arco"><strong>A:</strong> Nuevo miembro sin orientación → <strong>B:</strong> Sabe qué hay, cómo navegar y cuál es su camino en los próximos 3 meses</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot red"></span> 0 clases — crear desde cero</span>
+        <span class="meta-item">+ Email lanzamiento a 346</span>
+      </div>
+    </div>
+
+    <div class="modulo-card mayo-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 2</span>
+        <span class="badge parcial">Script existe</span>
+      </div>
+      <div class="modulo-nombre">Perplexity Pro para periodistas</div>
+      <div class="modulo-arco"><strong>A:</strong> Usa Google como único motor de búsqueda → <strong>B:</strong> Investiga con fuentes en tiempo real en minutos</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> create-perplexity-pro.mjs</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+
+    <div class="modulo-card mayo-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 3</span>
+        <span class="badge parcial">Config existe</span>
+      </div>
+      <div class="modulo-nombre">Gemini: investigación y multimodal</div>
+      <div class="modulo-arco"><strong>A:</strong> Solo usa IA para texto → <strong>B:</strong> Analiza imágenes, documentos PDF y audio con IA en su flujo periodístico</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> gemini.json</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+
+    <div class="modulo-card mayo-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 4</span>
+        <span class="badge parcial">Config existe</span>
+      </div>
+      <div class="modulo-nombre">NotebookLM: organizar investigaciones</div>
+      <div class="modulo-arco"><strong>A:</strong> Guarda notas en carpetas sin estructura → <strong>B:</strong> Tiene una base de conocimiento que responde preguntas sobre sus propias investigaciones</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> notebooklm.json</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JUNIO -->
+  <div class="mes-col">
+    <div class="mes-header junio">
+      <div class="mes-titulo">Junio 2026</div>
+      <div class="mes-fase">Fase 2 — Sistema</div>
+      <div class="mes-subtitulo">Flujo de trabajo profesional: preciso y seguro</div>
+    </div>
+
+    <div class="modulo-card junio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 5</span>
+        <span class="badge listo">Config listo</span>
+      </div>
+      <div class="modulo-nombre">Verificación con IA</div>
+      <div class="modulo-arco"><strong>A:</strong> Verifica manualmente con Google y TinEye → <strong>B:</strong> Detecta deepfakes, imágenes falsas y desinformación coordinada en minutos</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot green"></span> verificacion.json</span>
+        <span class="meta-item">8 clases ✅</span>
+      </div>
+    </div>
+
+    <div class="modulo-card junio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 6</span>
+        <span class="badge parcial">Script existe</span>
+      </div>
+      <div class="modulo-nombre">OSINT Periodístico</div>
+      <div class="modulo-arco"><strong>A:</strong> Investiga solo con fuentes que le dan → <strong>B:</strong> Rastrea personas, organizaciones y conexiones usando inteligencia de fuentes abiertas</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> create-osint.mjs</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+
+    <div class="modulo-card junio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 7</span>
+        <span class="badge parcial">Script existe</span>
+      </div>
+      <div class="modulo-nombre">Seguridad Digital para Periodistas</div>
+      <div class="modulo-arco"><strong>A:</strong> Sin protección digital consciente → <strong>B:</strong> Opera con comunicaciones cifradas, fuentes protegidas y dispositivos seguros</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> create-seguridad.mjs</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+
+    <div class="modulo-card junio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 8</span>
+        <span class="badge parcial">Script existe</span>
+      </div>
+      <div class="modulo-nombre">Automatización del flujo de trabajo</div>
+      <div class="modulo-arco"><strong>A:</strong> Hace manualmente tareas repetitivas cada semana → <strong>B:</strong> Tiene flujos automáticos que procesan noticias, generan resúmenes y distribuyen contenido</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot yellow"></span> create-automatiza.mjs</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JULIO -->
+  <div class="mes-col">
+    <div class="mes-header julio">
+      <div class="mes-titulo">Julio 2026</div>
+      <div class="mes-fase">Fase 3 — Negocio</div>
+      <div class="mes-subtitulo">Audiencia propia + ingresos recurrentes</div>
+    </div>
+
+    <div class="modulo-card julio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 9</span>
+        <span class="badge listo">Config listo</span>
+      </div>
+      <div class="modulo-nombre">Redes Sociales con IA</div>
+      <div class="modulo-arco"><strong>A:</strong> Publica improvisado con copia del titular → <strong>B:</strong> Adapta cada artículo a 5 plataformas en 10 minutos con prompts maestros</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot green"></span> redes-sociales.json</span>
+        <span class="meta-item">8 clases ✅</span>
+      </div>
+    </div>
+
+    <div class="modulo-card julio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 10</span>
+        <span class="badge listo">Config listo</span>
+      </div>
+      <div class="modulo-nombre">Monetización del Periodismo</div>
+      <div class="modulo-arco"><strong>A:</strong> Depende del salario del medio o fee freelance → <strong>B:</strong> Tiene una fuente de ingreso propio activa: newsletter, consultoría o curso</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot green"></span> monetizacion.json</span>
+        <span class="meta-item">8 clases ✅</span>
+      </div>
+    </div>
+
+    <div class="modulo-card julio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 11</span>
+        <span class="badge crear">Por crear</span>
+      </div>
+      <div class="modulo-nombre">Marca Personal + Newsletter de Pago</div>
+      <div class="modulo-arco"><strong>A:</strong> Sin presencia digital propia diferenciada → <strong>B:</strong> Tiene una marca editorial reconocible y un newsletter con sus primeros suscriptores pagos</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot red"></span> 0 clases — crear desde cero</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+
+    <div class="modulo-card julio-card">
+      <div class="modulo-top">
+        <span class="modulo-semana">Semana 12</span>
+        <span class="badge crear">Por crear</span>
+      </div>
+      <div class="modulo-nombre">Construir tu Medio Digital</div>
+      <div class="modulo-arco"><strong>A:</strong> Escribe para medios de otros → <strong>B:</strong> Tiene el plan y las herramientas para lanzar su propio medio digital en el año 1</div>
+      <div class="modulo-meta">
+        <span class="meta-item"><span class="dot red"></span> 0 clases — crear desde cero</span>
+        <span class="meta-item">~8 clases</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DOS CAPAS -->
+<div class="capas-section">
+  <div class="capas-title">Dos capas de contenido en Leadr</div>
+  <div class="capas-grid">
+    <div class="capa-card capa1">
+      <div class="capa-card-title">Capa 1 — Enciclopedia (Evergreen)</div>
+      <div class="capa-card-subtitle">Para el que llega desde cero o desactualizado · Siempre disponible · Base permanente</div>
+      <ul class="capa-items">
+        <li class="capa-item">Los 10 módulos del curriculum son la Enciclopedia</li>
+        <li class="capa-item">Cada clase es atemporal: las herramientas cambian, la metodología permanece</li>
+        <li class="capa-item">El recién llegado puede empezar por cualquier módulo según su nivel</li>
+        <li class="capa-item">Se revisan y actualizan trimestralmente para mantener relevancia</li>
+      </ul>
+    </div>
+    <div class="capa-card capa2">
+      <div class="capa-card-title">Capa 2 — Actualización Semanal (Live)</div>
+      <div class="capa-card-subtitle">Para el que ya está y no quiere quedarse atrás · Nuevo cada semana · El motor de retención</div>
+      <ul class="capa-items">
+        <li class="capa-item">Herramientas IA nuevas aplicadas al periodismo esta semana</li>
+        <li class="capa-item">Cambios en algoritmos y medios de LATAM con impacto real</li>
+        <li class="capa-item">Casos reales de periodistas que aplican lo aprendido en Leadr</li>
+        <li class="capa-item">Tutoriales cortos de lo más útil del momento (&lt; 10 min)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- LANZAMIENTO -->
+<div class="lanzamiento-section">
+  <div class="lanzamiento-card">
+    <div class="lanzamiento-title">Plan de Lanzamiento — Mayo 2026</div>
+    <div class="lanzamiento-steps">
+      <div class="lanzamiento-step">
+        <div class="lanzamiento-num">1</div>
+        <div class="lanzamiento-text"><strong>Email a 346 compradores</strong>Secuencia 3 emails: problema → solución → 1 mes gratis. Meta: 20% conversión = 69 suscriptores activos en día 1</div>
+      </div>
+      <div class="lanzamiento-step">
+        <div class="lanzamiento-num">2</div>
+        <div class="lanzamiento-text"><strong>Publicar módulos Fase 1</strong>Cargar Perplexity + Gemini + NotebookLM antes del lanzamiento. Mínimo 3 módulos disponibles en el onboarding</div>
+      </div>
+      <div class="lanzamiento-step">
+        <div class="lanzamiento-num">3</div>
+        <div class="lanzamiento-text"><strong>Primera actualización semanal</strong>Semana 2 de Mayo: primera entrega de Capa 2. Demuestra que el $10/mes entrega valor continuo, no solo el backlog</div>
+      </div>
+      <div class="lanzamiento-step">
+        <div class="lanzamiento-num">4</div>
+        <div class="lanzamiento-text"><strong>Retención fin de mes gratis</strong>Email antes de vencer el mes gratis: mostrar qué viene en Junio + Julio. Que renovar sea la decisión obvia</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Leadr · leadr.cloud · $10/mes · Periodistas Digitales LATAM</span><br>
+  Actualizado Mayo 2026 · Generado con Claude Code
+</div>
+
+</body>
+</html>
