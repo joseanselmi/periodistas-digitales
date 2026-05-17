@@ -70,6 +70,7 @@ const SECCIONES = [
     activeBg: 'bg-violet-400/10',
     activeBorder: 'border-violet-400/30',
     dot: 'bg-violet-400',
+    hasOwnContent: true,
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -84,6 +85,7 @@ const SECCIONES = [
     activeBg: 'bg-emerald-400/10',
     activeBorder: 'border-emerald-400/30',
     dot: 'bg-emerald-400',
+    hasOwnContent: true,
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
@@ -182,10 +184,12 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
                   {s.icon}
                 </span>
                 <span className="flex-1">{s.label}</span>
-                {count > 0 ? (
-                  <span className={`text-xs font-mono px-1.5 py-0.5 rounded-md ${isActive ? `${s.activeBg} ${s.activeText}` : 'bg-slate-800 text-slate-500'}`}>
-                    {count}
-                  </span>
+                {count > 0 || s.hasOwnContent ? (
+                  count > 0 && (
+                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded-md ${isActive ? `${s.activeBg} ${s.activeText}` : 'bg-slate-800 text-slate-500'}`}>
+                      {count}
+                    </span>
+                  )
                 ) : (
                   <span className="text-[10px] text-slate-700 font-medium">pronto</span>
                 )}

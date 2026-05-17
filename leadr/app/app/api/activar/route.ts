@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const { token } = await req.json()
   if (!token) return NextResponse.json({ error: 'Token requerido' }, { status: 400 })
 
-  // Verificar token
+  // Verificar token existe y es válido (para distinguir 404 / 409 / 410)
   const { data: tk, error: tkErr } = await supabaseAdmin
     .from('activation_tokens')
     .select('*')
@@ -27,9 +27,21 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Debés iniciar sesión primero' }, { status: 401 })
 
+  // Marcar token como usado de forma ATÓMICA — previene race condition TOCTOU
+  // Si dos requests llegan al mismo tiempo, solo uno pasa el .is('used_at', null)
+  const { data: claimed } = await supabaseAdmin
+    .from('activation_tokens')
+    .update({ used_at: new Date().toISOString(), used_by: user.id })
+    .eq('token', token)
+    .is('used_at', null)
+    .select('pro_days')
+    .single()
+
+  if (!claimed) return NextResponse.json({ error: 'Este link ya fue utilizado' }, { status: 409 })
+
   // Activar Pro
   const expiresAt = new Date()
-  expiresAt.setDate(expiresAt.getDate() + tk.pro_days)
+  expiresAt.setDate(expiresAt.getDate() + claimed.pro_days)
 
   const { error: updateErr } = await supabaseAdmin
     .from('users')
@@ -38,11 +50,5 @@ export async function POST(req: Request) {
 
   if (updateErr) return NextResponse.json({ error: 'Error activando el plan' }, { status: 500 })
 
-  // Marcar token como usado
-  await supabaseAdmin
-    .from('activation_tokens')
-    .update({ used_at: new Date().toISOString(), used_by: user.id })
-    .eq('token', token)
-
-  return NextResponse.json({ ok: true, pro_days: tk.pro_days, expires_at: expiresAt.toISOString() })
+  return NextResponse.json({ ok: true, pro_days: claimed.pro_days, expires_at: expiresAt.toISOString() })
 }

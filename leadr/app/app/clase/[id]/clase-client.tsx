@@ -27,6 +27,14 @@ type Props = {
   alreadyWatched: boolean
   prevClass: NavClass
   nextClass: NavClass
+  existingRating: { rating: number; comment: string | null } | null
+}
+
+function extractYouTubeId(url: string | null): string | null {
+  if (!url) return null
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return m?.[1] ?? url
 }
 
 function getBody(slides_json: SlidesJson | null): string | null {
@@ -42,10 +50,15 @@ function getPromptData(slides_json: SlidesJson | null): PromptData | null {
   return null
 }
 
-export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass, nextClass }: Props) {
+export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass, nextClass, existingRating }: Props) {
   const [watched, setWatched] = useState(alreadyWatched)
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState('')
+  const [rating, setRating] = useState(existingRating?.rating ?? 0)
+  const [ratingHover, setRatingHover] = useState(0)
+  const [comment, setComment] = useState(existingRating?.comment ?? '')
+  const [ratingLoading, setRatingLoading] = useState(false)
+  const [ratingDone, setRatingDone] = useState(!!existingRating)
 
   const body = getBody(clase.slides_json)
   const promptData = getPromptData(clase.slides_json)
@@ -61,7 +74,7 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
     setLoading(true)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) { setLoading(false); return }
 
     const { error } = await supabase
       .from('user_progress')
@@ -70,6 +83,8 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
     if (!error) {
       setWatched(true)
       showToast('Clase marcada como vista')
+    } else {
+      showToast('Error al guardar el progreso. Intentá de nuevo.')
     }
     setLoading(false)
   }
@@ -77,6 +92,21 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
   function showToast(msg: string) {
     setToast(msg)
     setTimeout(() => setToast(''), 3000)
+  }
+
+  async function submitRating() {
+    if (!rating) return
+    setRatingLoading(true)
+    const res = await fetch('/api/rate-class', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ class_id: clase.id, rating, comment }),
+    })
+    setRatingLoading(false)
+    if (res.ok) {
+      setRatingDone(true)
+      showToast('¡Gracias por tu valoración!')
+    }
   }
 
   return (
@@ -177,7 +207,7 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
         <div className="px-4 pb-5">
           <div className="aspect-video rounded-2xl overflow-hidden bg-slate-900 max-w-5xl mx-auto">
             <iframe
-              src={`https://www.youtube.com/embed/${clase.video_url}`}
+              src={`https://www.youtube.com/embed/${extractYouTubeId(clase.video_url)}`}
               title={clase.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -255,6 +285,85 @@ export default function ClaseClient({ clase, userPlan, alreadyWatched, prevClass
           <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors py-2 px-1">
             Volver al dashboard
           </Link>
+        </div>
+
+        {/* Valoración de la clase */}
+        <div className="py-6 border-t border-slate-800">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
+              <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold text-sm">
+                {ratingDone ? 'Tu valoración' : '¿Qué te pareció esta clase?'}
+              </h3>
+              <p className="text-slate-500 text-xs mt-0.5">
+                {ratingDone ? 'Podés editarla cuando quieras' : 'Tu opinión nos ayuda a mejorar el contenido'}
+              </p>
+            </div>
+          </div>
+
+          {/* Estrellas */}
+          <div className="flex items-center gap-1.5 mb-4">
+            {[1, 2, 3, 4, 5].map(star => (
+              <button
+                key={star}
+                onClick={() => { setRating(star); setRatingDone(false) }}
+                onMouseEnter={() => setRatingHover(star)}
+                onMouseLeave={() => setRatingHover(0)}
+                className="cursor-pointer transition-transform hover:scale-110"
+                aria-label={`Valorar ${star} estrellas`}
+              >
+                <svg
+                  className={`w-8 h-8 transition-colors ${
+                    star <= (ratingHover || rating)
+                      ? 'text-amber-400'
+                      : 'text-slate-700'
+                  }`}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </button>
+            ))}
+            {rating > 0 && (
+              <span className="text-slate-400 text-sm ml-2">
+                {['', 'Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'][rating]}
+              </span>
+            )}
+          </div>
+
+          {/* Comentario opcional */}
+          {rating > 0 && !ratingDone && (
+            <div className="space-y-3">
+              <textarea
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                placeholder="¿Qué mejorarías? ¿Qué fue lo más útil? (opcional)"
+                rows={2}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 resize-none"
+              />
+              <button
+                onClick={submitRating}
+                disabled={ratingLoading}
+                className="px-5 py-2 bg-amber-400 hover:bg-amber-300 text-[#020617] text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                {ratingLoading ? 'Enviando...' : 'Enviar valoración'}
+              </button>
+            </div>
+          )}
+
+          {ratingDone && (
+            <button
+              onClick={() => setRatingDone(false)}
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer underline"
+            >
+              Editar mi valoración
+            </button>
+          )}
         </div>
 
         {/* Navegación clase anterior / siguiente */}
