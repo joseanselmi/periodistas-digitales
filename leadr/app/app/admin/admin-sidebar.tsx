@@ -38,21 +38,8 @@ export default function AdminSidebar() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h8" />
           </svg>
-          Tipos y grupos
+          Clases y grupos
         </Link>
-
-        <div className="ml-4 pl-3 border-l border-slate-800 mt-1 space-y-0.5 pb-1">
-          {TIPOS.map(t => (
-            <Link
-              key={t.key}
-              href={`/admin/grupos#${t.key}`}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-500 hover:text-white hover:bg-slate-800/40 transition-colors"
-            >
-              <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${t.dot}`} />
-              {t.label}
-            </Link>
-          ))}
-        </div>
 
         <Link
           href="/admin/prompts"
