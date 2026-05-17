@@ -68,6 +68,20 @@ export default function AdminSidebar() {
           Prompts
         </Link>
 
+        <Link
+          href="/admin/bonus"
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            isActive('/admin/bonus')
+              ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+          }`}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+          </svg>
+          Bonus
+        </Link>
+
         <div className="pt-3">
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Creación</p>
           <Link

@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import UpgradeModal from '@/components/upgrade-modal'
 import PromptLibrary from './prompt-library'
+import BonusLibrary from './bonus-library'
 
 type Class = {
   id: number
@@ -319,6 +320,11 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
           {/* Librería de prompts — sección especial */}
           {activeSection === 'prompts' && (
             <PromptLibrary />
+          )}
+
+          {/* Bonus */}
+          {activeSection === 'bonus' && (
+            <BonusLibrary />
           )}
 
           {activeSection !== 'prompts' && (
