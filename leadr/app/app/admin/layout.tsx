@@ -1,4 +1,9 @@
+import type { Metadata } from 'next'
 import AdminSidebar from './admin-sidebar'
+
+export const metadata: Metadata = {
+  title: { default: 'Admin — Leadr', template: '%s — Admin Leadr' },
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (

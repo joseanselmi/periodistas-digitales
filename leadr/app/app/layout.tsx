@@ -22,7 +22,10 @@ const newsreader = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Sistema de Ingresos Diarios para Periodistas | José Fiaccini",
+  title: {
+    default: "Sistema de Ingresos Diarios para Periodistas | José Fiaccini",
+    template: "%s — Leadr",
+  },
   description: "Transforma tu experiencia periodística en un medio digital propio que genera ingresos todos los días.",
 };
 
