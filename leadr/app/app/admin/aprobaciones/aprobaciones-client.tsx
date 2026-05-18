@@ -57,11 +57,12 @@ export default function AprobacionesClient() {
       const data = await res.json()
       if (data.titulo) {
         setItems(prev => prev.map(i => i.id === id ? { ...i, titulo: data.titulo, resumen: data.resumen } : i))
-      } else if (data.error) {
-        console.error('Traducción error:', data.error)
+        showToast('Traducido ✓')
+      } else {
+        showToast(`Error: ${data.error ?? `HTTP ${res.status}`}`)
       }
     } catch (e) {
-      console.error('Traducción falló:', e)
+      showToast(`Error de red: ${e instanceof Error ? e.message : 'desconocido'}`)
     } finally {
       setActionLoading(null)
     }
