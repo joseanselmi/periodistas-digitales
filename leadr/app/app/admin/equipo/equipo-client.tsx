@@ -105,8 +105,8 @@ function OrbitalChart({ members, selected, onSelect }: {
     return () => clearInterval(t)
   }, [autoRotate])
 
-  const R_INNER = 148
-  const R_OUTER = 285
+  const R_INNER = 190
+  const R_OUTER = 360
 
   // Group members clustered near their branch angle
   const grouped: Record<string, Member[]> = {}
@@ -462,10 +462,10 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid lg:grid-cols-4 gap-6 flex-1 min-h-0">
 
         {/* ── Radial chart ── */}
-        <div className="lg:col-span-2 flex flex-col min-h-0">
+        <div className="lg:col-span-3 flex flex-col min-h-0">
           <div className="rounded-2xl border border-slate-800 overflow-hidden flex-1 min-h-0" style={{ background: '#07070f' }}>
             <OrbitalChart
               members={activeMembers}
