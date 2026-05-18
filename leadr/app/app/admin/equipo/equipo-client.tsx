@@ -166,9 +166,9 @@ function RadialChart({ members, selected, onSelect }: {
         `}</style>
       </defs>
 
-      {/* Background */}
-      <rect width={VW} height={VH} fill="#07070f" />
-      <rect width={VW} height={VH} fill="url(#grid)" />
+      {/* Background — click para deseleccionar */}
+      <rect width={VW} height={VH} fill="#07070f" onClick={() => { setActiveBranch(null); onSelect(null) }} />
+      <rect width={VW} height={VH} fill="url(#grid)" style={{ pointerEvents: 'none' }} />
 
       {/* Orbit rings */}
       <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#6366f1" strokeWidth="0.5" className="orbit-inner" />
@@ -247,12 +247,12 @@ function RadialChart({ members, selected, onSelect }: {
             />
             <text x="0" textAnchor="middle" y={-NHM/2+19} fontSize="15" style={{ userSelect:'none' }}>{m.emoji}</text>
             <text x="0" textAnchor="middle" y={-NHM/2+34} fontSize="10"
-              fontWeight="600" fill={sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#64748b'}
+              fontWeight="600" fill={sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#94a3b8'}
               style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
               {m.name}
             </text>
             <text x="0" textAnchor="middle" y={-NHM/2+45} fontSize="7"
-              fill={sel || branchActive ? col : '#1e293b'}
+              fill={sel || branchActive ? col : '#475569'}
               style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
               {m.role.length > 18 ? m.role.slice(0,17)+'…' : m.role}
             </text>
