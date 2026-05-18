@@ -559,11 +559,11 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6 flex-1 min-h-0">
+      <div className="grid lg:grid-cols-4 gap-6 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden">
 
         {/* ── Radial chart ── */}
-        <div className="lg:col-span-3 flex flex-col min-h-0">
-          <div className="rounded-2xl border border-slate-800 overflow-hidden flex-1 min-h-0" style={{ background: '#07070f' }}>
+        <div className="lg:col-span-3 flex flex-col" style={{ minHeight: '520px' }}>
+          <div className="rounded-2xl border border-slate-800 overflow-hidden flex-1" style={{ background: '#07070f', minHeight: '520px' }}>
             <OrbitalChart
               members={activeMembers}
               selected={selected}
