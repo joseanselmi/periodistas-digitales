@@ -36,6 +36,21 @@ type Props = {
 
 const SECCIONES = [
   {
+    key: 'noticias',
+    label: 'Noticias',
+    color: 'text-rose-400',
+    activeText: 'text-rose-400',
+    activeBg: 'bg-rose-400/10',
+    activeBorder: 'border-rose-400/30',
+    dot: 'bg-rose-400',
+    hasOwnContent: true,
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      </svg>
+    ),
+  },
+  {
     key: 'clases',
     label: 'Clases',
     color: 'text-cyan-400',
@@ -75,21 +90,6 @@ const SECCIONES = [
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    key: 'noticias',
-    label: 'Noticias',
-    color: 'text-rose-400',
-    activeText: 'text-rose-400',
-    activeBg: 'bg-rose-400/10',
-    activeBorder: 'border-rose-400/30',
-    dot: 'bg-rose-400',
-    hasOwnContent: true,
-    icon: (
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
       </svg>
     ),
   },
