@@ -81,14 +81,16 @@ function getBranch(m: Member) {
 // Ángulos fijos para cada branch (triángulo equilátero, Marketing arriba)
 const BRANCH_ANGLES = [-90, 30, 150] // deg: top, bottom-right, bottom-left
 
-function OrbitalChart({ members, selected, onSelect }: {
+function OrbitalChart({ members, selected, onSelect, selectedBranch, onSelectBranch }: {
   members: Member[]
   selected: Member | null
   onSelect: (m: Member | null) => void
+  selectedBranch: string | null
+  onSelectBranch: (key: string | null) => void
 }) {
-  const [rotation, setRotation]         = useState(0)
-  const [autoRotate, setAutoRotate]     = useState(true)
-  const [activeBranch, setActiveBranch] = useState<string | null>(null)
+  const [rotation, setRotation]     = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const activeBranch = selectedBranch
   const containerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 800, h: 600 })
 
@@ -143,24 +145,24 @@ function OrbitalChart({ members, selected, onSelect }: {
   const handleBranchClick = useCallback((key: string, e: React.MouseEvent) => {
     e.stopPropagation()
     if (activeBranch === key) {
-      setActiveBranch(null); setAutoRotate(true); onSelect(null)
+      onSelectBranch(null); setAutoRotate(true); onSelect(null)
     } else {
-      setActiveBranch(key); setAutoRotate(false); onSelect(null)
+      onSelectBranch(key); setAutoRotate(false); onSelect(null)
     }
-  }, [activeBranch, onSelect])
+  }, [activeBranch, onSelect, onSelectBranch])
 
   const handleMemberClick = useCallback((m: Member, e: React.MouseEvent) => {
     e.stopPropagation()
     if (selected?.id === m.id) {
       onSelect(null); setAutoRotate(true)
     } else {
-      onSelect(m); setAutoRotate(false); setActiveBranch(null)
+      onSelect(m); setAutoRotate(false); onSelectBranch(null)
     }
-  }, [selected, onSelect])
+  }, [selected, onSelect, onSelectBranch])
 
   const handleBgClick = useCallback(() => {
-    setActiveBranch(null); setAutoRotate(true); onSelect(null)
-  }, [onSelect])
+    onSelectBranch(null); setAutoRotate(true); onSelect(null)
+  }, [onSelect, onSelectBranch])
 
   const cx = size.w / 2
   const cy = size.h / 2
@@ -304,7 +306,7 @@ function OrbitalChart({ members, selected, onSelect }: {
               top: '50%', left: '50%',
               transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
               zIndex: active ? 100 : 20,
-              opacity: dim ? 0.2 : 1,
+              opacity: dim ? 0.38 : 1,
             }}
             onClick={(e) => handleBranchClick(b.key, e)}
           >
@@ -351,7 +353,7 @@ function OrbitalChart({ members, selected, onSelect }: {
                 top: '50%', left: '50%',
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ${sel ? 'scale(1.12)' : ''}`,
                 zIndex: sel ? 200 : 15,
-                opacity: dim ? 0.1 : 1,
+                opacity: dim ? 0.38 : 1,
                 transition: 'opacity 0.4s ease, transform 0.3s ease',
               }}
               onClick={(e) => handleMemberClick(m, e)}
@@ -419,9 +421,10 @@ function OrbitalChart({ members, selected, onSelect }: {
 
 export default function EquipoClient({ members: initialMembers }: { members: Member[] }) {
   const supabase = createClient()
-  const [members, setMembers] = useState<Member[]>(initialMembers)
-  const [selected, setSelected] = useState<Member | null>(null)
-  const [editing, setEditing]   = useState<Member | null>(null)
+  const [members, setMembers]           = useState<Member[]>(initialMembers)
+  const [selected, setSelected]         = useState<Member | null>(null)
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null)
+  const [editing, setEditing]           = useState<Member | null>(null)
   const [creating, setCreating] = useState(false)
   const [draft, setDraft]       = useState<Omit<Member, 'id' | 'order_index'>>(BLANK)
   const [saving, setSaving]     = useState(false)
@@ -474,7 +477,7 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
       responsibilities: m.responsibilities, tools: m.tools, color: m.color, emoji: m.emoji, active: m.active })
   }
 
-  function openCreate() { setCreating(true); setEditing(null); setDraft(BLANK); setSelected(null) }
+  function openCreate() { setCreating(true); setEditing(null); setDraft(BLANK); setSelected(null); setSelectedBranch(null) }
 
   const activeMembers   = members.filter(m => m.active)
   const inactiveMembers = members.filter(m => !m.active)
@@ -510,7 +513,9 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
             <OrbitalChart
               members={activeMembers}
               selected={selected}
-              onSelect={m => { setSelected(m); setEditing(null); setCreating(false) }}
+              onSelect={m => { setSelected(m); setSelectedBranch(null); setEditing(null); setCreating(false) }}
+              selectedBranch={selectedBranch}
+              onSelectBranch={key => { setSelectedBranch(key); setSelected(null); setEditing(null); setCreating(false) }}
             />
           </div>
 
@@ -533,7 +538,43 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         {/* ── Panel derecho ── */}
         <div className="space-y-4 overflow-y-auto min-h-0 pr-1">
 
-          {/* Detalle */}
+          {/* Detalle equipo (branch) */}
+          {selectedBranch && !selected && !creating && !editing && (() => {
+            const b    = BRANCHES.find(x => x.key === selectedBranch)!
+            const mems = activeMembers.filter(m => getBranch(m).key === selectedBranch)
+            return (
+              <div className="rounded-xl border p-5 overflow-hidden" style={{ borderColor: b.color + '44', background: b.color + '0d' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: b.color + '20', border: `1.5px solid ${b.color}55` }}>
+                    {b.emoji}
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-base">{b.label}</h3>
+                    <span className="text-xs font-mono" style={{ color: b.color }}>{b.cmd}</span>
+                  </div>
+                </div>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Integrantes — {mems.length}</p>
+                <div className="space-y-2">
+                  {mems.map(m => (
+                    <button
+                      key={m.id}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer hover:opacity-90"
+                      style={{ background: '#111827', border: `1px solid ${b.color}33` }}
+                      onClick={() => { setSelected(m); setSelectedBranch(null) }}
+                    >
+                      <span className="text-lg leading-none">{m.emoji}</span>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-100">{m.name}</p>
+                        <p className="text-[11px]" style={{ color: b.color + 'cc' }}>{m.role}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* Detalle miembro */}
           {selected && !creating && !editing && (
             <div className={`rounded-xl border p-5 ${AVATAR_COLORS[selected.color] ?? AVATAR_COLORS.cyan}`}>
               <div className="flex items-start gap-3 mb-4">
@@ -661,7 +702,7 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
           )}
 
           {/* Placeholder */}
-          {!selected && !creating && !editing && (
+          {!selected && !selectedBranch && !creating && !editing && (
             <div className="rounded-xl border border-slate-800 p-8 text-center" style={{ background: '#07070f' }}>
               <div className="w-10 h-10 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-3">
                 <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
