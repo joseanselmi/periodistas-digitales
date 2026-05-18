@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ActivarPage() {
+  return (
+    <Suspense>
+      <ActivarContent />
+    </Suspense>
+  )
+}
+
+function ActivarContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('t') ?? 'LEADR2026'
