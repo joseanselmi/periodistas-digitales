@@ -6,7 +6,7 @@
       "id": "leadr-l1",
       "asunto": "Lo que ningún editor te va a decir",
       "fecha_envio": "2026-05-17",
-      "enviados": 144,
+      "enviados": 243,
       "errores": 0,
       "completado": true
     },
@@ -14,25 +14,28 @@
       "id": "leadr-l2",
       "asunto": "Lo que construimos para no quedarnos atrás",
       "fecha_envio": "2026-05-17",
-      "enviados": 44,
+      "enviados": 144,
       "errores": 0,
       "completado": true
     },
     {
       "id": "leadr-l3",
       "asunto": "Tu acceso gratuito vence el 31 de mayo",
-      "fecha_envio": null,
-      "enviados": 0,
+      "fecha_envio": "2026-05-17",
+      "enviados": 44,
       "errores": 0,
-      "completado": false
+      "completado": true
     }
   ],
   "total_contactos": 44,
-  "proximo_paso": "leadr-l2",
+  "proximo_paso": "completado",
   "notas": [
     "2026-05-17: compradores.csv generado con 44 contactos del export de Hotmart (Sistema de Ingresos Diarios). El export compartido cubre compras recientes — para llegar a los 346 totales hay que bajar el historial completo de Hotmart y correr parse-compradores.mjs con todos los archivos.",
     "2026-05-16: leadr-l1 — 44 enviados, 0 errores",
     "2026-05-17: leadr-l2 — 44 enviados, 0 errores",
-    "2026-05-17: leadr-l1 — 100 enviados, 0 errores"
+    "2026-05-17: leadr-l1 — 100 enviados, 0 errores",
+    "2026-05-17: leadr-l1 — 99 enviados, 0 errores",
+    "2026-05-17: leadr-l2 — 100 enviados, 0 errores",
+    "2026-05-17: leadr-l3 — 44 enviados, 0 errores"
   ]
 }

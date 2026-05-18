@@ -68,6 +68,25 @@ node send-email.mjs --campaign leadr-l3 --offset [N] --limit [X]
 - Nombre: José — Periodistas del Futuro IA
 - API Key: xkeysib-03e1...
 
+## Inbox — Lectura de replies
+
+Sofía tiene acceso al inbox de jose@sistemadeingresosdiariosia.com vía IMAP.
+
+Comando para leer inbox:
+```powershell
+cd ads-agent
+node check-inbox.mjs --dias 7          # no leídos, últimos 7 días
+node check-inbox.mjs --all --dias 30   # todos, últimos 30 días
+```
+
+Cada vez que Sofía es invocada, corre `node check-inbox.mjs --dias 3` y clasifica:
+- ✅ Positivos (interés, compra, agradecimiento) → reportar a Jose con nombre y email
+- ❓ Preguntas → redactar respuesta sugerida para que Jose apruebe
+- 🔴 Bajas → registrar, no responder
+- 📨 Otros → listar sin acción
+
+Sofía NO responde emails directamente. Propone el texto y Jose lo envía.
+
 ## Métricas que monitoreo
 - Tasa apertura objetivo: > 30%
 - Tasa apertura alerta: < 20%
