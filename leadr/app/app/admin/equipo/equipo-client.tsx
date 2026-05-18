@@ -317,7 +317,8 @@ function OrbitalChart({ members, selected, onSelect }: {
             key={b.key}
             className="absolute transition-all duration-500 cursor-pointer"
             style={{
-              transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
+              top: '50%', left: '50%',
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
               zIndex: active ? 100 : zIndex + 2,
               opacity: dim ? 0.15 : active ? 1 : opacity,
             }}
@@ -325,24 +326,24 @@ function OrbitalChart({ members, selected, onSelect }: {
           >
             {active && (
               <div className="absolute rounded-full pointer-events-none" style={{
-                width: 90, height: 90, left: -14, top: -18,
+                width: 120, height: 120, left: -18, top: -22,
                 background: `radial-gradient(circle, ${b.color}22 0%, transparent 70%)`,
               }} />
             )}
             <div
-              className="relative flex flex-col items-center justify-center rounded-xl px-3 py-2 transition-all duration-300"
+              className="relative flex flex-col items-center justify-center rounded-xl px-4 py-3 transition-all duration-300"
               style={{
                 background: active ? `${b.color}18` : '#0d1426',
-                border: `${active ? 1.5 : 0.8}px solid ${b.color}`,
-                boxShadow: active ? `0 0 20px ${b.color}50, 0 0 6px ${b.color}25` : 'none',
-                minWidth: 84,
+                border: `${active ? 2 : 1}px solid ${b.color}`,
+                boxShadow: active ? `0 0 24px ${b.color}55, 0 0 8px ${b.color}28` : `0 0 0 1px ${b.color}15`,
+                minWidth: 110,
               }}
             >
-              <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ background: b.color, opacity: active ? 1 : 0.55 }} />
-              <span className="text-sm leading-none">{b.emoji}</span>
-              <span className="text-xs font-bold mt-1" style={{ color: active ? '#f1f5f9' : b.color }}>{b.label}</span>
-              <span className="text-[9px] mt-0.5" style={{ color: active ? b.color : '#334155' }}>{b.cmd}</span>
-              <span className="text-[8px]" style={{ color: active ? '#475569' : '#1e293b' }}>{count} {count === 1 ? 'miembro' : 'miembros'}</span>
+              <div className="absolute top-0 left-3 right-3 h-0.5 rounded-full" style={{ background: b.color, opacity: active ? 1 : 0.6 }} />
+              <span className="text-xl leading-none">{b.emoji}</span>
+              <span className="text-sm font-bold mt-1.5" style={{ color: active ? '#f1f5f9' : b.color }}>{b.label}</span>
+              <span className="text-[10px] mt-0.5 font-mono" style={{ color: active ? b.color : '#475569' }}>{b.cmd}</span>
+              <span className="text-[9px] mt-0.5" style={{ color: active ? '#64748b' : '#1e293b' }}>{count} {count === 1 ? 'miembro' : 'miembros'}</span>
             </div>
           </div>
         )
@@ -361,37 +362,38 @@ function OrbitalChart({ members, selected, onSelect }: {
               key={m.id}
               className="absolute cursor-pointer"
               style={{
-                transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%)) ${sel ? 'scale(1.15)' : ''}`,
+                top: '50%', left: '50%',
+                transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ${sel ? 'scale(1.12)' : ''}`,
                 zIndex: sel ? 200 : zIndex + 2,
                 opacity: dim ? 0.07 : sel ? 1 : branchActive ? 1 : opacity,
-                transition: 'opacity 0.4s ease, box-shadow 0.3s ease',
+                transition: 'opacity 0.4s ease, transform 0.3s ease',
               }}
               onClick={(e) => handleMemberClick(m, e)}
             >
               {(sel || branchActive) && (
                 <div className="absolute rounded-full pointer-events-none" style={{
-                  width: 72, height: 58, left: -10, top: -4,
-                  background: `radial-gradient(circle, ${col}22 0%, transparent 70%)`,
+                  width: 100, height: 80, left: -12, top: -8,
+                  background: `radial-gradient(circle, ${col}20 0%, transparent 70%)`,
                   animation: 'equipo-orb 2.2s ease-in-out infinite',
                 }} />
               )}
               <div
-                className="relative flex flex-col items-center justify-center rounded-xl px-2.5 py-2 transition-all duration-300"
+                className="relative flex flex-col items-center justify-center rounded-xl px-3 py-2.5 transition-all duration-300"
                 style={{
-                  background: sel || branchActive ? `${col}12` : '#0b1220',
-                  border: `${sel ? 1.4 : branchActive ? 0.9 : 0.45}px solid ${col}`,
+                  background: sel || branchActive ? `${col}14` : '#0b1220',
+                  border: `${sel ? 1.5 : branchActive ? 1 : 0.6}px solid ${col}`,
                   boxShadow: sel
-                    ? `0 0 24px ${col}55, 0 0 8px ${col}30`
-                    : branchActive ? `0 0 12px ${col}28` : 'none',
-                  minWidth: 72,
+                    ? `0 0 28px ${col}55, 0 0 10px ${col}30`
+                    : branchActive ? `0 0 14px ${col}30` : `0 0 0 1px ${col}10`,
+                  minWidth: 92,
                 }}
               >
-                <div className="absolute top-0 left-1.5 right-1.5 h-0.5 rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.28 }} />
-                <span className="text-sm leading-none">{m.emoji}</span>
-                <span className="text-[10px] font-semibold mt-1" style={{ color: sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#94a3b8' }}>
+                <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.3 }} />
+                <span className="text-lg leading-none">{m.emoji}</span>
+                <span className="text-xs font-semibold mt-1.5" style={{ color: sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#94a3b8' }}>
                   {m.name}
                 </span>
-                <span className="text-[8px] mt-0.5" style={{ color: sel || branchActive ? col : '#475569' }}>
+                <span className="text-[10px] mt-0.5" style={{ color: sel || branchActive ? col : '#475569' }}>
                   {m.role.length > 16 ? m.role.slice(0, 15) + '…' : m.role}
                 </span>
               </div>
@@ -401,7 +403,7 @@ function OrbitalChart({ members, selected, onSelect }: {
       )}
 
       {/* ── Center — Jose ── */}
-      <div className="absolute flex flex-col items-center justify-center" style={{ zIndex: 10, pointerEvents: 'none' }}>
+      <div className="absolute flex flex-col items-center justify-center" style={{ zIndex: 10, pointerEvents: 'none', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div className="absolute rounded-full" style={{
           width: 96, height: 96,
           border: '1px solid rgba(99,102,241,0.22)',
