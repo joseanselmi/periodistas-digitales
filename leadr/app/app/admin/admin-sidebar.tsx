@@ -39,7 +39,7 @@ export default function AdminSidebar() {
       <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5">
         <Link
           href="/admin/cerebro"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors mb-3 ${
+          className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-semibold transition-colors mb-3 ${
             isActive('/admin/cerebro')
               ? 'bg-cyan-400/15 text-cyan-400 border border-cyan-400/25'
               : 'text-slate-200 hover:text-white hover:bg-slate-800/60'
@@ -55,7 +55,7 @@ export default function AdminSidebar() {
 
         <Link
           href="/admin/grupos"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
             isActive('/admin/grupos') || isActive('/admin/clase/')
               ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -69,7 +69,7 @@ export default function AdminSidebar() {
 
         <Link
           href="/admin/prompts"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
             isActive('/admin/prompts')
               ? 'bg-violet-400/10 text-violet-400 border border-violet-400/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -83,7 +83,7 @@ export default function AdminSidebar() {
 
         <Link
           href="/admin/bonus"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
             isActive('/admin/bonus')
               ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20'
               : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -99,7 +99,7 @@ export default function AdminSidebar() {
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Creación</p>
           <Link
             href="/admin/generar-clase"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/generar-clase')
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -112,7 +112,7 @@ export default function AdminSidebar() {
           </Link>
           <Link
             href="/admin/nueva-clase"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/nueva-clase')
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -129,7 +129,7 @@ export default function AdminSidebar() {
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Usuarios</p>
           <Link
             href="/admin/accesos"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/accesos')
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -146,7 +146,7 @@ export default function AdminSidebar() {
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Equipo</p>
           <Link
             href="/admin/equipo"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/equipo')
                 ? 'bg-violet-400/10 text-violet-400 border border-violet-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -163,7 +163,7 @@ export default function AdminSidebar() {
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Bandeja</p>
           <Link
             href="/admin/aprobaciones"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/aprobaciones')
                 ? 'bg-amber-400/10 text-amber-400 border border-amber-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -185,7 +185,7 @@ export default function AdminSidebar() {
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Análisis</p>
           <Link
             href="/admin/usuarios"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/usuarios')
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -198,7 +198,7 @@ export default function AdminSidebar() {
           </Link>
           <Link
             href="/admin/metricas"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
               isActive('/admin/metricas')
                 ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -215,7 +215,7 @@ export default function AdminSidebar() {
       <div className="px-3 py-4 border-t border-slate-800/60">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
+          className="flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
         >
           <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -299,7 +299,7 @@ export default function AdminSidebar() {
           <button
             onClick={() => setOpen(false)}
             aria-label="Cerrar menú"
-            className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -309,8 +309,6 @@ export default function AdminSidebar() {
         {navContent}
       </aside>
 
-      {/* Spacer en mobile para que el contenido no quede debajo del topbar */}
-      <div className="md:hidden h-[57px] shrink-0" aria-hidden="true" />
     </>
   )
 }

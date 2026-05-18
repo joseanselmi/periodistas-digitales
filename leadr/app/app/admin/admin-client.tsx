@@ -115,7 +115,7 @@ export default function AdminClient({ classes, groups: initialGroups }: Props) {
     <div className="text-white">
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header + stats */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <div>
             <h1 className="text-xl font-semibold">Contenido</h1>
             <p className="text-slate-400 text-sm mt-1">
@@ -184,27 +184,49 @@ export default function AdminClient({ classes, groups: initialGroups }: Props) {
                         {cls.status === 'published' ? 'Publicada' : 'Borrador'}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-3 py-4">
+                      <div className="flex items-center justify-end gap-1">
                         <Link
                           href={`/preview/${cls.id}`}
                           target="_blank"
-                          className="flex items-center gap-1 text-slate-400 hover:text-cyan-400 text-xs transition-colors cursor-pointer"
+                          rel="noopener noreferrer"
+                          className="p-2 rounded-md text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
+                          title="Preview"
                         >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          Preview
                         </Link>
-                        <Link href={`/admin/clase/${cls.id}`} className="text-slate-400 hover:text-white text-xs transition-colors cursor-pointer">
-                          Editar
+                        <Link
+                          href={`/admin/clase/${cls.id}`}
+                          className="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                          title="Editar"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
                         </Link>
-                        <button onClick={() => toggleStatus(cls)} className="text-slate-400 hover:text-cyan-400 text-xs transition-colors cursor-pointer">
-                          {cls.status === 'published' ? 'Despublicar' : 'Publicar'}
+                        <button
+                          onClick={() => toggleStatus(cls)}
+                          className="p-2 rounded-md text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
+                          title={cls.status === 'published' ? 'Despublicar' : 'Publicar'}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {cls.status === 'published'
+                              ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                              : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            }
+                          </svg>
                         </button>
-                        <button onClick={() => deleteClass(cls.id)} className="text-slate-400 hover:text-red-400 text-xs transition-colors cursor-pointer">
-                          Eliminar
+                        <button
+                          onClick={() => deleteClass(cls.id)}
+                          className="p-2 rounded-md text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                          title="Eliminar"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </div>
                     </td>
@@ -237,13 +259,13 @@ export default function AdminClient({ classes, groups: initialGroups }: Props) {
           {showNewGroup && (
             <div className="bg-[#0F172A] border border-cyan-400/30 rounded-xl p-4 mb-4">
               <p className="text-white text-sm font-medium mb-3">Nuevo grupo</p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <input
                   type="text"
                   placeholder="Nombre del grupo"
                   value={newGroup.name}
                   onChange={e => setNewGroup(p => ({ ...p, name: e.target.value }))}
-                  className="col-span-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
+                  className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
                   onKeyDown={e => e.key === 'Enter' && createGroup()}
                 />
                 <select
