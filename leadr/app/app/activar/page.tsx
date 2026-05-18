@@ -50,31 +50,43 @@ export default function ActivarPage() {
     const supabase = createClient()
 
     // Intentar registrar. Si ya existe, hacer login.
-    let { error: signUpError } = await supabase.auth.signUp({ email, password })
+    const { error: signUpError } = await supabase.auth.signUp({ email, password })
 
-    if (signUpError?.message?.toLowerCase().includes('already registered')) {
-      const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
-      if (loginError) {
-        setError('Ya tenés cuenta — revisá tu contraseña.')
+    if (signUpError) {
+      const msg = signUpError.message.toLowerCase()
+      if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('user already')) {
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+        if (loginError) {
+          setError('Ya tenés cuenta con ese email — revisá tu contraseña.')
+          setLoading(false)
+          return
+        }
+      } else {
+        setError(signUpError.message)
         setLoading(false)
         return
       }
-    } else if (signUpError) {
-      setError(signUpError.message)
+    }
+
+    // Verificar que la sesión está activa antes de llamar la API
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setError('No se pudo iniciar sesión. Intentá de nuevo.')
       setLoading(false)
       return
     }
 
-    // Activar pro
+    // Activar pro — si falla, mostrar error (no redirigir en silencio)
     setStep('activating')
     try {
       await grantPro()
-    } catch {
-      // No bloquear si falla — el dashboard lo mostrará como basic hasta que se arregle
+      router.push('/dashboard?activated=1')
+      router.refresh()
+    } catch (err) {
+      setStep('form')
+      setError(err instanceof Error ? err.message : 'No se pudo activar el acceso. Escribinos a jose@sistemadeingresosdiariosia.com')
+      setLoading(false)
     }
-
-    router.push('/dashboard?activated=1')
-    router.refresh()
   }
 
   return (
