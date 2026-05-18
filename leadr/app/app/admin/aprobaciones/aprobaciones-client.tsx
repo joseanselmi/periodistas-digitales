@@ -41,6 +41,25 @@ export default function AprobacionesClient() {
     setItems(prev => prev.filter(i => i.id !== id))
   }
 
+  function looksEnglish(text: string) {
+    const englishWords = /\b(the|and|for|with|are|this|that|have|from|they|will|been|when|their|what|said|about|which|were|there|your|more|also|into|than|can|its|our|has|was|not|but|his|her|you|how|who|all|would|could|should|may|any|new|one|two|out|get|use|why|just|now|need|make|know|take|find|give|look|come|over|think|most|some|time|only|long|down|way|each|few|very|after|before|during|while|without|between|through|against|across|along|around|behind|beyond|within|upon|toward)\b/i
+    return englishWords.test(text)
+  }
+
+  async function handleTranslate(id: string) {
+    setActionLoading(id + 'translate')
+    const res = await fetch(`/api/admin/news/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'translate' }),
+    })
+    const data = await res.json()
+    if (data.titulo) {
+      setItems(prev => prev.map(i => i.id === id ? { ...i, titulo: data.titulo, resumen: data.resumen } : i))
+    }
+    setActionLoading(null)
+  }
+
   async function handleUpdateImage(id: string) {
     if (!imageEdit || imageEdit.id !== id || !imageEdit.url) return
     setActionLoading(id + 'img')
@@ -186,6 +205,23 @@ export default function AprobacionesClient() {
                     </svg>
                     Cambiar imagen
                   </button>
+
+                  {looksEnglish(item.titulo) && (
+                    <button
+                      onClick={() => handleTranslate(item.id)}
+                      disabled={!!actionLoading}
+                      className="text-xs text-amber-500/80 hover:text-amber-400 transition-colors flex items-center gap-1 ml-2"
+                    >
+                      {actionLoading === item.id + 'translate' ? (
+                        <span className="w-3 h-3 border border-amber-400/40 border-t-amber-400 rounded-full animate-spin inline-block" />
+                      ) : (
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                        </svg>
+                      )}
+                      Traducir
+                    </button>
+                  )}
 
                   <div className="ml-auto flex items-center gap-2">
                     <button
