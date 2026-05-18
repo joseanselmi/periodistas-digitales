@@ -315,21 +315,21 @@ function OrbitalChart({ members, selected, onSelect }: {
               }} />
             )}
             <div
-              className="relative flex flex-col items-center justify-center rounded-xl px-4 py-3 transition-all duration-300"
+              className="relative flex flex-col items-center justify-center rounded-2xl px-5 py-4 transition-all duration-300"
               style={{
                 background: active ? `${b.color}28` : '#111827',
                 border: `${active ? 2 : 1.5}px solid ${active ? b.color : b.color + '88'}`,
                 boxShadow: active
-                  ? `0 0 28px ${b.color}60, 0 0 10px ${b.color}30, inset 0 0 20px ${b.color}10`
-                  : `0 4px 20px rgba(0,0,0,0.6), inset 0 1px 0 ${b.color}25`,
-                minWidth: 115,
+                  ? `0 0 32px ${b.color}60, 0 0 12px ${b.color}30, inset 0 0 24px ${b.color}10`
+                  : `0 6px 24px rgba(0,0,0,0.7), inset 0 1px 0 ${b.color}25`,
+                minWidth: 140,
               }}
             >
-              <div className="absolute top-0 left-3 right-3 h-0.5 rounded-full" style={{ background: b.color }} />
-              <span className="text-xl leading-none">{b.emoji}</span>
-              <span className="text-sm font-bold mt-1.5" style={{ color: '#f1f5f9' }}>{b.label}</span>
-              <span className="text-[10px] mt-0.5 font-mono" style={{ color: active ? b.color : b.color + 'cc' }}>{b.cmd}</span>
-              <span className="text-[9px] mt-0.5 text-slate-500">{count} {count === 1 ? 'miembro' : 'miembros'}</span>
+              <div className="absolute top-0 left-3 right-3 h-[2px] rounded-full" style={{ background: b.color }} />
+              <span className="text-2xl leading-none">{b.emoji}</span>
+              <span className="text-base font-bold mt-2" style={{ color: '#f1f5f9' }}>{b.label}</span>
+              <span className="text-xs mt-1 font-mono" style={{ color: active ? b.color : b.color + 'cc' }}>{b.cmd}</span>
+              <span className="text-[10px] mt-1 text-slate-500">{count} {count === 1 ? 'miembro' : 'miembros'}</span>
             </div>
           </div>
         )
@@ -364,25 +364,23 @@ function OrbitalChart({ members, selected, onSelect }: {
                 }} />
               )}
               <div
-                className="relative flex flex-col items-center justify-center rounded-xl px-3 py-2.5 transition-all duration-300"
+                className="relative flex flex-col items-center justify-center rounded-xl px-4 py-3 transition-all duration-300"
                 style={{
                   background: sel ? `${col}25` : branchActive ? `${col}18` : '#111827',
                   border: `${sel ? 2 : 1.5}px solid ${sel ? col : branchActive ? col + 'cc' : col + '66'}`,
                   boxShadow: sel
                     ? `0 0 28px ${col}60, 0 0 10px ${col}30, inset 0 0 16px ${col}10`
                     : branchActive
-                    ? `0 0 16px ${col}35, 0 4px 16px rgba(0,0,0,0.5)`
-                    : `0 4px 16px rgba(0,0,0,0.55), inset 0 1px 0 ${col}20`,
-                  minWidth: 95,
+                    ? `0 0 18px ${col}38, 0 4px 18px rgba(0,0,0,0.5)`
+                    : `0 4px 18px rgba(0,0,0,0.6), inset 0 1px 0 ${col}20`,
+                  minWidth: 115,
                 }}
               >
-                <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.5 }} />
-                <span className="text-lg leading-none">{m.emoji}</span>
-                <span className="text-xs font-semibold mt-1.5 text-slate-100">
-                  {m.name}
-                </span>
-                <span className="text-[10px] mt-0.5" style={{ color: sel || branchActive ? col : '#64748b' }}>
-                  {m.role.length > 16 ? m.role.slice(0, 15) + '…' : m.role}
+                <div className="absolute top-0 left-2.5 right-2.5 h-[2px] rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.5 }} />
+                <span className="text-xl leading-none">{m.emoji}</span>
+                <span className="text-sm font-semibold mt-1.5 text-slate-100">{m.name}</span>
+                <span className="text-xs mt-0.5" style={{ color: sel || branchActive ? col : '#64748b' }}>
+                  {m.role.length > 18 ? m.role.slice(0, 17) + '…' : m.role}
                 </span>
               </div>
             </div>
@@ -403,14 +401,14 @@ function OrbitalChart({ members, selected, onSelect }: {
           animation: 'equipo-pulse 3.2s ease-in-out infinite',
         }} />
         <div className="relative flex flex-col items-center justify-center rounded-full" style={{
-          width: 72, height: 72,
+          width: 88, height: 88,
           background: 'radial-gradient(circle at 40% 35%, #1e1b4b, #0d1526)',
-          border: '1.5px solid #6366f1',
-          boxShadow: '0 0 30px rgba(99,102,241,0.4), inset 0 0 20px rgba(99,102,241,0.1)',
+          border: '2px solid #6366f1',
+          boxShadow: '0 0 36px rgba(99,102,241,0.5), inset 0 0 24px rgba(99,102,241,0.12)',
         }}>
-          <span className="text-xl leading-none">👤</span>
-          <span className="text-[11px] font-bold text-white mt-0.5">Jose</span>
-          <span className="text-[8px]" style={{ color: '#818cf8' }}>Fundador</span>
+          <span className="text-2xl leading-none">👤</span>
+          <span className="text-sm font-bold text-white mt-1">Jose</span>
+          <span className="text-[10px]" style={{ color: '#818cf8' }}>Fundador</span>
         </div>
       </div>
     </div>
