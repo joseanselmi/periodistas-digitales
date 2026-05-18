@@ -78,13 +78,14 @@ function getBranch(m: Member) {
   return BRANCHES.find(b => b.areas.includes(m.area)) ?? BRANCHES[0]
 }
 
+// Ángulos fijos para cada branch (triángulo equilátero, Marketing arriba)
+const BRANCH_ANGLES = [-90, 30, 150] // deg: top, bottom-right, bottom-left
+
 function OrbitalChart({ members, selected, onSelect }: {
   members: Member[]
   selected: Member | null
   onSelect: (m: Member | null) => void
 }) {
-  const [rotation, setRotation]         = useState(0)
-  const [autoRotate, setAutoRotate]     = useState(true)
   const [activeBranch, setActiveBranch] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 800, h: 600 })
@@ -99,50 +100,31 @@ function OrbitalChart({ members, selected, onSelect }: {
     return () => ro.disconnect()
   }, [])
 
-  useEffect(() => {
-    if (!autoRotate) return
-    const t = setInterval(() => setRotation(r => (r + 0.22) % 360), 50)
-    return () => clearInterval(t)
-  }, [autoRotate])
+  // Radios que siempre caben en pantalla
+  const R_INNER = Math.min(size.w, size.h) * 0.24
+  const R_OUTER = Math.min(size.w, size.h) * 0.43
 
-  const R_INNER = 190
-  const R_OUTER = 360
-
-  // Group members clustered near their branch angle
   const grouped: Record<string, Member[]> = {}
   BRANCHES.forEach(b => { grouped[b.key] = [] })
   members.forEach(m => { grouped[getBranch(m).key].push(m) })
 
   const getBranchPos = (branchIndex: number) => {
-    const deg = (branchIndex / BRANCHES.length) * 360 + rotation - 90
-    const rad = (deg * Math.PI) / 180
-    return {
-      x:       R_INNER * Math.cos(rad),
-      y:       R_INNER * Math.sin(rad),
-      opacity: Math.max(0.3, 0.3 + 0.7 * ((1 + Math.sin(rad)) / 2)),
-      zIndex:  Math.round(60 + 40 * Math.cos(rad)),
-    }
+    const rad = (BRANCH_ANGLES[branchIndex] * Math.PI) / 180
+    return { x: R_INNER * Math.cos(rad), y: R_INNER * Math.sin(rad) }
   }
 
   const getMemberPos = (branchIndex: number, memberIndex: number, totalInBranch: number) => {
-    const baseAngle   = (branchIndex / BRANCHES.length) * 360 - 90
-    const spread      = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 14, 50)
+    const baseAngle   = BRANCH_ANGLES[branchIndex]
+    const spread      = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 16, 64)
     const memberAngle = totalInBranch <= 1
       ? baseAngle
       : baseAngle - spread / 2 + memberIndex * (spread / (totalInBranch - 1))
-    const deg = memberAngle + rotation
-    const rad = (deg * Math.PI) / 180
-    return {
-      x:       R_OUTER * Math.cos(rad),
-      y:       R_OUTER * Math.sin(rad),
-      opacity: Math.max(0.3, 0.3 + 0.7 * ((1 + Math.sin(rad)) / 2)),
-      zIndex:  Math.round(60 + 40 * Math.cos(rad)),
-    }
+    const rad = (memberAngle * Math.PI) / 180
+    return { x: R_OUTER * Math.cos(rad), y: R_OUTER * Math.sin(rad) }
   }
 
-  // Pre-compute all positions (needed for SVG lines + div nodes)
   const branchPositions = BRANCHES.map((_, i) => getBranchPos(i))
-  const memberPositions: Record<number, ReturnType<typeof getMemberPos>> = {}
+  const memberPositions: Record<number, { x: number; y: number }> = {}
   BRANCHES.forEach((branch, bi) => {
     grouped[branch.key].forEach((m, mi) => {
       memberPositions[m.id] = getMemberPos(bi, mi, grouped[branch.key].length)
@@ -151,24 +133,16 @@ function OrbitalChart({ members, selected, onSelect }: {
 
   const handleBranchClick = useCallback((key: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (activeBranch === key) {
-      setActiveBranch(null); setAutoRotate(true)
-    } else {
-      setActiveBranch(key); setAutoRotate(false); onSelect(null)
-    }
-  }, [activeBranch, onSelect])
+    setActiveBranch(prev => { if (prev === key) { onSelect(null); return null } onSelect(null); return key })
+  }, [onSelect])
 
   const handleMemberClick = useCallback((m: Member, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (selected?.id === m.id) {
-      onSelect(null); setAutoRotate(true)
-    } else {
-      onSelect(m); setAutoRotate(false); setActiveBranch(null)
-    }
+    if (selected?.id === m.id) { onSelect(null) } else { onSelect(m); setActiveBranch(null) }
   }, [selected, onSelect])
 
   const handleBgClick = useCallback(() => {
-    setActiveBranch(null); setAutoRotate(true); onSelect(null)
+    setActiveBranch(null); onSelect(null)
   }, [onSelect])
 
   const cx = size.w / 2
@@ -198,13 +172,15 @@ function OrbitalChart({ members, selected, onSelect }: {
       {/* Orbit ring decorations */}
       <div className="absolute rounded-full pointer-events-none" style={{
         width: R_INNER * 2, height: R_INNER * 2,
-        border: '1px solid rgba(99,102,241,0.1)',
+        border: '1px solid rgba(99,102,241,0.12)',
         animation: 'equipo-orb 7s ease-in-out infinite',
+        top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
       }} />
       <div className="absolute rounded-full pointer-events-none" style={{
         width: R_OUTER * 2, height: R_OUTER * 2,
-        border: '1px solid rgba(51,65,85,0.15)',
+        border: '1px solid rgba(51,65,85,0.18)',
         animation: 'equipo-orb 10s ease-in-out infinite reverse',
+        top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
       }} />
 
       {/* ── SVG lines overlay ── */}
@@ -224,27 +200,23 @@ function OrbitalChart({ members, selected, onSelect }: {
 
         {/* Sector backgrounds per branch (faint colored slice) */}
         {BRANCHES.map((b, i) => {
-          const active  = activeBranch === b.key
-          const dim     = !!activeBranch && !active
-          const mems    = grouped[b.key]
-          const total   = mems.length
-          const spread  = total <= 1 ? 30 : Math.min(total * 14, 50)
-          const baseAng = (i / BRANCHES.length) * 360 - 90 + rotation
-
-          // Draw a swept sector from center to R_OUTER covering the branch's arc
-          const startDeg = baseAng - spread / 2 - 8
-          const endDeg   = baseAng + spread / 2 + 8
+          const active   = activeBranch === b.key
+          const dim      = !!activeBranch && !active
+          const total    = grouped[b.key].length
+          const spread   = total <= 1 ? 30 : Math.min(total * 16, 64)
+          const baseAng  = BRANCH_ANGLES[i]
+          const startDeg = baseAng - spread / 2 - 10
+          const endDeg   = baseAng + spread / 2 + 10
           const sr = (startDeg * Math.PI) / 180
           const er = (endDeg   * Math.PI) / 180
           const x1 = cx + R_OUTER * Math.cos(sr)
           const y1 = cy + R_OUTER * Math.sin(sr)
           const x2 = cx + R_OUTER * Math.cos(er)
           const y2 = cy + R_OUTER * Math.sin(er)
-          const largeArc = (endDeg - startDeg) > 180 ? 1 : 0
           return (
             <path key={`sec-${b.key}`}
-              d={`M ${cx} ${cy} L ${x1} ${y1} A ${R_OUTER} ${R_OUTER} 0 ${largeArc} 1 ${x2} ${y2} Z`}
-              fill={active ? `${b.color}10` : `${b.color}05`}
+              d={`M ${cx} ${cy} L ${x1} ${y1} A ${R_OUTER} ${R_OUTER} 0 0 1 ${x2} ${y2} Z`}
+              fill={active ? `${b.color}12` : `${b.color}06`}
               opacity={dim ? 0 : 1}
               style={{ transition: 'opacity 0.4s' }}
             />
@@ -308,7 +280,7 @@ function OrbitalChart({ members, selected, onSelect }: {
 
       {/* ── Branch nodes (inner ring) ── */}
       {BRANCHES.map((b, i) => {
-        const { x, y, opacity, zIndex } = branchPositions[i]
+        const { x, y } = branchPositions[i]
         const active = activeBranch === b.key
         const dim    = !!activeBranch && !active
         const count  = grouped[b.key].length
@@ -319,8 +291,8 @@ function OrbitalChart({ members, selected, onSelect }: {
             style={{
               top: '50%', left: '50%',
               transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-              zIndex: active ? 100 : zIndex + 2,
-              opacity: dim ? 0.15 : active ? 1 : opacity,
+              zIndex: active ? 100 : 20,
+              opacity: dim ? 0.2 : 1,
             }}
             onClick={(e) => handleBranchClick(b.key, e)}
           >
@@ -352,7 +324,7 @@ function OrbitalChart({ members, selected, onSelect }: {
       {/* ── Member nodes (outer ring, clustered by branch) ── */}
       {BRANCHES.map((branch, bi) =>
         grouped[branch.key].map((m, mi) => {
-          const { x, y, opacity, zIndex } = memberPositions[m.id]
+          const { x, y } = memberPositions[m.id]
           const col          = branch.color
           const sel          = selected?.id === m.id
           const branchActive = activeBranch === branch.key
@@ -364,8 +336,8 @@ function OrbitalChart({ members, selected, onSelect }: {
               style={{
                 top: '50%', left: '50%',
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ${sel ? 'scale(1.12)' : ''}`,
-                zIndex: sel ? 200 : zIndex + 2,
-                opacity: dim ? 0.07 : sel ? 1 : branchActive ? 1 : opacity,
+                zIndex: sel ? 200 : 15,
+                opacity: dim ? 0.1 : 1,
                 transition: 'opacity 0.4s ease, transform 0.3s ease',
               }}
               onClick={(e) => handleMemberClick(m, e)}
