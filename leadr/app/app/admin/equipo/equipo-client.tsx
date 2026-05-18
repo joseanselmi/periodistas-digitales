@@ -125,8 +125,8 @@ function OrbitalChart({ members, selected, onSelect }: {
   }
 
   const getMemberPos = (branchIndex: number, memberIndex: number, totalInBranch: number) => {
-    const baseAngle  = (branchIndex / BRANCHES.length) * 360 - 90
-    const spread     = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 18, 72)
+    const baseAngle   = (branchIndex / BRANCHES.length) * 360 - 90
+    const spread      = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 14, 50)
     const memberAngle = totalInBranch <= 1
       ? baseAngle
       : baseAngle - spread / 2 + memberIndex * (spread / (totalInBranch - 1))
@@ -213,42 +213,94 @@ function OrbitalChart({ members, selected, onSelect }: {
         width={size.w} height={size.h}
         style={{ zIndex: 1 }}
       >
-        {/* Jose → Branch lines */}
+        <defs>
+          {BRANCHES.map(b => (
+            <radialGradient key={`sec-${b.key}`} id={`sec-${b.key}`} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor={b.color} stopOpacity="0.07" />
+              <stop offset="100%" stopColor={b.color} stopOpacity="0" />
+            </radialGradient>
+          ))}
+        </defs>
+
+        {/* Sector backgrounds per branch (faint colored slice) */}
         {BRANCHES.map((b, i) => {
-          const bp     = branchPositions[i]
-          const active = activeBranch === b.key
-          const dim    = !!activeBranch && !active
+          const active  = activeBranch === b.key
+          const dim     = !!activeBranch && !active
+          const mems    = grouped[b.key]
+          const total   = mems.length
+          const spread  = total <= 1 ? 30 : Math.min(total * 14, 50)
+          const baseAng = (i / BRANCHES.length) * 360 - 90 + rotation
+
+          // Draw a swept sector from center to R_OUTER covering the branch's arc
+          const startDeg = baseAng - spread / 2 - 8
+          const endDeg   = baseAng + spread / 2 + 8
+          const sr = (startDeg * Math.PI) / 180
+          const er = (endDeg   * Math.PI) / 180
+          const x1 = cx + R_OUTER * Math.cos(sr)
+          const y1 = cy + R_OUTER * Math.sin(sr)
+          const x2 = cx + R_OUTER * Math.cos(er)
+          const y2 = cy + R_OUTER * Math.sin(er)
+          const largeArc = (endDeg - startDeg) > 180 ? 1 : 0
           return (
-            <line key={`jb-${b.key}`}
-              x1={cx} y1={cy}
-              x2={cx + bp.x} y2={cy + bp.y}
-              stroke={b.color}
-              strokeWidth={active ? 1.2 : 0.6}
-              strokeDasharray={active ? '8 6' : '5 10'}
-              opacity={dim ? 0.05 : active ? 0.85 : 0.3}
-              style={{ animation: `equipo-flow${active ? '-fast' : ''} ${active ? '1.5s' : '3s'} linear infinite` }}
+            <path key={`sec-${b.key}`}
+              d={`M ${cx} ${cy} L ${x1} ${y1} A ${R_OUTER} ${R_OUTER} 0 ${largeArc} 1 ${x2} ${y2} Z`}
+              fill={active ? `${b.color}10` : `${b.color}05`}
+              opacity={dim ? 0 : 1}
+              style={{ transition: 'opacity 0.4s' }}
             />
           )
         })}
 
-        {/* Branch → Member lines */}
+        {/* Jose → Branch: solid base + animated dash */}
+        {BRANCHES.map((b, i) => {
+          const bp     = branchPositions[i]
+          const active = activeBranch === b.key
+          const dim    = !!activeBranch && !active
+          const x2 = cx + bp.x, y2 = cy + bp.y
+          return (
+            <g key={`jb-${b.key}`}>
+              {/* solid base */}
+              <line x1={cx} y1={cy} x2={x2} y2={y2}
+                stroke={b.color} strokeWidth={active ? 1.5 : 0.8}
+                opacity={dim ? 0.06 : active ? 0.5 : 0.35}
+              />
+              {/* animated dash on top */}
+              <line x1={cx} y1={cy} x2={x2} y2={y2}
+                stroke={b.color} strokeWidth={active ? 1.8 : 1}
+                strokeDasharray={active ? '10 8' : '6 12'}
+                opacity={dim ? 0.04 : active ? 0.9 : 0.4}
+                style={{ animation: `equipo-flow${active ? '-fast' : ''} ${active ? '1.4s' : '2.8s'} linear infinite` }}
+              />
+            </g>
+          )
+        })}
+
+        {/* Branch → Member: solid base + animated dash */}
         {BRANCHES.map((branch, bi) => {
-          const bp          = branchPositions[bi]
-          const active      = activeBranch === branch.key
-          const dim         = !!activeBranch && !active
+          const bp     = branchPositions[bi]
+          const active = activeBranch === branch.key
+          const dim    = !!activeBranch && !active
           return grouped[branch.key].map(m => {
             const mp  = memberPositions[m.id]
             const sel = selected?.id === m.id
+            const x1 = cx + bp.x, y1 = cy + bp.y
+            const x2 = cx + mp.x, y2 = cy + mp.y
+            const lit = sel || active
             return (
-              <line key={`bm-${m.id}`}
-                x1={cx + bp.x} y1={cy + bp.y}
-                x2={cx + mp.x} y2={cy + mp.y}
-                stroke={branch.color}
-                strokeWidth={sel ? 1.2 : active ? 0.8 : 0.5}
-                strokeDasharray={sel ? '8 4' : '4 10'}
-                opacity={dim && !sel ? 0.04 : sel ? 1 : active ? 0.65 : 0.2}
-                style={{ animation: `equipo-flow${sel || active ? '-fast' : ''} ${sel ? '1.2s' : active ? '2s' : '4s'} linear infinite` }}
-              />
+              <g key={`bm-${m.id}`}>
+                {/* solid base */}
+                <line x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke={branch.color} strokeWidth={sel ? 1.2 : active ? 0.8 : 0.6}
+                  opacity={dim && !sel ? 0.04 : sel ? 0.6 : active ? 0.45 : 0.28}
+                />
+                {/* animated dash */}
+                <line x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke={branch.color} strokeWidth={sel ? 1.4 : active ? 1 : 0.6}
+                  strokeDasharray={sel ? '8 5' : active ? '6 8' : '4 12'}
+                  opacity={dim && !sel ? 0.03 : sel ? 1 : active ? 0.7 : 0.22}
+                  style={{ animation: `equipo-flow${lit ? '-fast' : ''} ${sel ? '1.1s' : active ? '1.8s' : '4s'} linear infinite` }}
+                />
+              </g>
             )
           })
         })}
