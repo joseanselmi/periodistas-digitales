@@ -1,0 +1,8 @@
+{
+  "ultima_auditoria": null,
+  "rutas_revisadas": [],
+  "criticos_abiertos": [
+    "/api/activar — cualquier usuario auth puede obtener Pro gratis sin verificar pago"
+  ],
+  "proxima_accion": "Auditar /api/activar y /api/activar-redirect — riesgo de escalada de privilegios"
+}
