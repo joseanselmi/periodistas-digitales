@@ -417,6 +417,51 @@ function OrbitalChart({ members, selected, onSelect, selectedBranch, onSelectBra
   )
 }
 
+// ─── Branch detail panel ──────────────────────────────────────────────────────
+
+function BranchPanel({ branchKey, members, onSelectMember }: {
+  branchKey: string
+  members: Member[]
+  onSelectMember: (m: Member) => void
+}) {
+  const b    = BRANCHES.find(x => x.key === branchKey)
+  if (!b) return null
+  const mems = members.filter(m => getBranch(m).key === branchKey)
+  return (
+    <div className="rounded-xl border p-5" style={{ borderColor: b.color + '44', background: b.color + '0d' }}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+          style={{ background: b.color + '20', border: `1.5px solid ${b.color}55` }}>
+          {b.emoji}
+        </div>
+        <div>
+          <h3 className="text-white font-bold text-base">{b.label}</h3>
+          <span className="text-xs font-mono" style={{ color: b.color }}>{b.cmd}</span>
+        </div>
+      </div>
+      <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">
+        Integrantes — {mems.length}
+      </p>
+      <div className="space-y-2">
+        {mems.map(m => (
+          <button
+            key={m.id}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer"
+            style={{ background: '#111827', border: `1px solid ${b.color}33` }}
+            onClick={() => onSelectMember(m)}
+          >
+            <span className="text-lg leading-none">{m.emoji}</span>
+            <div>
+              <p className="text-sm font-semibold text-slate-100">{m.name}</p>
+              <p className="text-[11px]" style={{ color: b.color + 'cc' }}>{m.role}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function EquipoClient({ members: initialMembers }: { members: Member[] }) {
@@ -539,40 +584,13 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         <div className="space-y-4 overflow-y-auto min-h-0 pr-1">
 
           {/* Detalle equipo (branch) */}
-          {selectedBranch && !selected && !creating && !editing && (() => {
-            const b    = BRANCHES.find(x => x.key === selectedBranch)!
-            const mems = activeMembers.filter(m => getBranch(m).key === selectedBranch)
-            return (
-              <div className="rounded-xl border p-5 overflow-hidden" style={{ borderColor: b.color + '44', background: b.color + '0d' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: b.color + '20', border: `1.5px solid ${b.color}55` }}>
-                    {b.emoji}
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-base">{b.label}</h3>
-                    <span className="text-xs font-mono" style={{ color: b.color }}>{b.cmd}</span>
-                  </div>
-                </div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Integrantes — {mems.length}</p>
-                <div className="space-y-2">
-                  {mems.map(m => (
-                    <button
-                      key={m.id}
-                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer hover:opacity-90"
-                      style={{ background: '#111827', border: `1px solid ${b.color}33` }}
-                      onClick={() => { setSelected(m); setSelectedBranch(null) }}
-                    >
-                      <span className="text-lg leading-none">{m.emoji}</span>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-100">{m.name}</p>
-                        <p className="text-[11px]" style={{ color: b.color + 'cc' }}>{m.role}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )
-          })()}
+          {selectedBranch && !selected && !creating && !editing && (
+            <BranchPanel
+              branchKey={selectedBranch}
+              members={activeMembers}
+              onSelectMember={m => { setSelected(m); setSelectedBranch(null) }}
+            />
+          )}
 
           {/* Detalle miembro */}
           {selected && !creating && !editing && (
