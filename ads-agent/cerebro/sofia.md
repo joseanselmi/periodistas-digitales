@@ -110,19 +110,28 @@ node send-email.mjs --campaign leadr-l2 --offset [N] --limit [X]
 node send-email.mjs --campaign leadr-l3 --offset [N] --limit [X]
 ```
 
-## Plan completo de la campaña (estado actual)
+## Secuencia de emails — arco narrativo
 
-| Fecha | Acción | Segmento | Offset | Limit |
-|-------|--------|----------|--------|-------|
-| Sáb 17 (HOY✓) | L1 | A (orig 44) | 0 | 44 |
-| Sáb 17 (HOY✓) | L2 | A | 0 | 44 |
-| Sáb 17 (HOY✓) | L1 | B (nuevos 100) | 44 | 100 |
-| Dom 18 | L1 | C (nuevos 100) | 144 | 100 |
-| Dom 18 | L2 | B | 44 | 100 |
-| Dom 18 | L3 | A | 0 | 44 |
-| Lun 19 | L2 | C | 144 | 100 |
-| Lun 19 | L3 | B | 44 | 100 |
-| Mar 20 | L3 | C | 144 | 100 |
+| ID | Asunto | Propósito |
+|----|--------|-----------|
+| leadr-l1 | "Lo que ningún editor te va a decir" | Problema — la industria cambió, nadie les va a explicar |
+| leadr-l2 | "Lo que construimos en Periodistas Digitales" | Solución — presentar Leadr como herramienta propia |
+| leadr-l3 | "Tu regalo de Periodistas Digitales" | CTA — regalo por ser parte de la academia |
+| leadr-l4 | "Sacamos algo nuevo. Y es para vos." | Reminder — para los que no activaron |
+
+Firma estándar: **Sofía Castañon / Directora de Marketing — Periodistas Digitales**
+Marca en emails: siempre "Periodistas Digitales", no "José" ni solo "Leadr"
+
+## Plan campaña actual (mayo 2026)
+
+| Fecha | Acción | Segmento | Offset | Limit | Estado |
+|-------|--------|----------|--------|-------|--------|
+| Sáb 17 | L1+L2 | A (44) | 0 | 44 | ✓ enviado |
+| Sáb 17 | L1 | B (100) | 44 | 100 | ✓ enviado |
+| Dom 18 | L1+L2+L3 | B+C | varios | varios | ✓ enviado |
+| Lun 19 | L2+L3 | B+C | varios | varios | ✓ enviado |
+| Mar 20 | L3 | C | 144 | 100 | pendiente |
+| Por definir | L4 | A+B+C (no activados) | — | — | pendiente |
 
 ## Remitente
 - Email: jose@sistemadeingresosdiariosia.com

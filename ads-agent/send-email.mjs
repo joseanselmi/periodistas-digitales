@@ -58,10 +58,10 @@ const CAMPAIGNS = {
     html: `
 <p>Hola,</p>
 
-<p>Hace poco hablé con una periodista de 47 años de Quito.<br>
+<p>Hace poco hablamos con una periodista de 47 años de Quito.<br>
 19 años en el mismo medio. De las que realmente saben hacer su trabajo.</p>
 
-<p>Me dijo algo que todavía me resuena: <em>"No me preocupa que me echen. Me preocupa no entender qué está pasando."</em></p>
+<p>Nos dijo algo que todavía resuena: <em>"No me preocupa que me echen. Me preocupa no entender qué está pasando."</em></p>
 
 <p>Eso es exactamente lo que está pasando en las redacciones de LATAM ahora mismo.</p>
 
@@ -71,15 +71,15 @@ const CAMPAIGNS = {
 
 <p>Nadie les va a explicar. Esa es la parte que nadie dice en voz alta.</p>
 
-<p>Mañana te cuento qué hicimos nosotros para no quedarnos del otro lado.</p>
+<p>Mañana te contamos qué construimos desde Periodistas Digitales para que no te pase esto.</p>
 
-<p>José</p>
+<p>El equipo de Periodistas Digitales</p>
     `,
     text: `Hola,
 
-Hace poco hablé con una periodista de 47 años de Quito. 19 años en el mismo medio. De las que realmente saben hacer su trabajo.
+Hace poco hablamos con una periodista de 47 años de Quito. 19 años en el mismo medio. De las que realmente saben hacer su trabajo.
 
-Me dijo algo que todavía me resuena: "No me preocupa que me echen. Me preocupa no entender qué está pasando."
+Nos dijo algo que todavía resuena: "No me preocupa que me echen. Me preocupa no entender qué está pasando."
 
 Eso es exactamente lo que está pasando en las redacciones de LATAM ahora mismo.
 
@@ -89,113 +89,180 @@ Los que no entienden quedan haciendo las mismas notas de siempre, con menos recu
 
 Nadie les va a explicar. Esa es la parte que nadie dice en voz alta.
 
-Mañana te cuento qué hicimos nosotros para no quedarnos del otro lado.
+Mañana te contamos qué construimos desde Periodistas Digitales para que no te pase esto.
 
-José`,
+El equipo de Periodistas Digitales`,
   },
 
   'leadr-l2': {
-    subject:     'Lo que construimos para no quedarnos atrás',
-    previewText: 'Y por qué lo estoy abriendo para vos primero',
+    subject:     'Lo que construimos en Periodistas Digitales',
+    previewText: 'Y por qué es para vos',
     html: `
 <p>Hola,</p>
 
-<p>Ayer te hablé de algo que está pasando en silencio en el periodismo de LATAM.</p>
+<p>Ayer te hablamos de algo que está pasando en silencio en el periodismo de LATAM.</p>
 
-<p>Hoy te cuento qué hicimos al respecto.</p>
+<p>Hoy te contamos qué hicimos al respecto.</p>
 
-<p>Lo llamamos <strong>Leadr</strong>.</p>
+<p>En Periodistas Digitales construimos <strong>Leadr</strong>.</p>
 
-<p>Es la plataforma que construí para que ningún periodista tenga que googlear "qué herramienta de IA sirve para periodistas" y encontrar resultados en inglés, para otro mercado, con ejemplos que no tienen nada que ver con nuestra realidad.</p>
+<p>Es la plataforma que queríamos que existiera y no existía. Para que ningún periodista tenga que buscar "qué herramienta de IA sirve para periodistas" y encontrar resultados en inglés, para otro mercado, con ejemplos que no tienen nada que ver con nuestra realidad.</p>
 
 <p>Adentro hay dos cosas:</p>
 
 <p><strong>Una enciclopedia completa de periodismo digital con IA.</strong><br>
-Todo organizado, en español, con ejemplos reales de Colombia, Ecuador, México, Argentina. Desde cómo hablarle bien a Claude hasta cómo automatizar tu publicación sin tocar código.</p>
+Todo en español, con ejemplos reales de Colombia, Ecuador, México, Argentina. Desde cómo trabajar con Claude hasta cómo automatizar tu publicación sin tocar código.</p>
 
 <p><strong>Y actualización semanal.</strong><br>
-Cada semana subo lo más útil que apareció: la herramienta nueva que vale la pena, el cambio de algoritmo que te afecta, el caso real de un periodista de la región que lo está usando bien. Vos abrís Leadr y ya está filtrado. No tenés que buscar nada.</p>
+Cada semana filtramos lo más útil que apareció: la herramienta nueva que vale la pena, el cambio de algoritmo que te afecta, el caso real de un periodista de la región que lo está usando bien. Vos abrís Leadr y ya está. No tenés que buscar nada.</p>
 
-<p>Mañana te cuento por qué te estoy escribiendo esto a vos específicamente.</p>
+<p>Mañana te contamos por qué te estamos escribiendo esto a vos específicamente.</p>
+
+<p>El equipo de Periodistas Digitales</p>
+    `,
+    text: `Hola,
+
+Ayer te hablamos de algo que está pasando en silencio en el periodismo de LATAM.
+
+Hoy te contamos qué hicimos al respecto.
+
+En Periodistas Digitales construimos Leadr.
+
+Es la plataforma que queríamos que existiera y no existía. Para que ningún periodista tenga que buscar "qué herramienta de IA sirve para periodistas" y encontrar resultados en inglés, para otro mercado, con ejemplos que no tienen nada que ver con nuestra realidad.
+
+Adentro hay dos cosas:
+
+Una enciclopedia completa de periodismo digital con IA. Todo en español, con ejemplos reales de Colombia, Ecuador, México, Argentina. Desde cómo trabajar con Claude hasta cómo automatizar tu publicación sin tocar código.
+
+Y actualización semanal. Cada semana filtramos lo más útil que apareció: la herramienta nueva que vale la pena, el cambio de algoritmo que te afecta, el caso real de un periodista de la región que lo está usando bien. Vos abrís Leadr y ya está. No tenés que buscar nada.
+
+Mañana te contamos por qué te estamos escribiendo esto a vos específicamente.
+
+El equipo de Periodistas Digitales`,
+  },
+
+  'leadr-l3-fix': {
+    subject:     'El link para activar tu acceso a Leadr',
+    previewText: 'El de ayer no funcionaba bien — este sí',
+    html: `
+<p>Hola,</p>
+
+<p>En el email de ayer te mandé un link para activar tu mes gratis de Leadr que no llevaba al lugar correcto. Te pido disculpas.</p>
+
+<p>El link correcto es este:</p>
+
+<p style="font-size:18px;"><strong><a href="https://leadr.cloud/activar" style="color:#6366f1;">→ Activar mi acceso gratuito a Leadr</a></strong></p>
+
+<p>Entrás, creás tu cuenta con este mismo email, y el acceso Pro de 30 días se activa automáticamente. Sin tarjeta, sin compromiso.</p>
+
+<p>Válido hasta el 31 de mayo.</p>
 
 <p>José</p>
     `,
     text: `Hola,
 
-Ayer te hablé de algo que está pasando en silencio en el periodismo de LATAM.
+En el email de ayer te mandé un link para activar tu mes gratis de Leadr que no llevaba al lugar correcto. Te pido disculpas.
 
-Hoy te cuento qué hicimos al respecto.
+El link correcto es este:
+https://leadr.cloud/activar
 
-Lo llamamos Leadr.
+Entrás, creás tu cuenta con este mismo email, y el acceso Pro de 30 días se activa automáticamente. Sin tarjeta, sin compromiso.
 
-Es la plataforma que construí para que ningún periodista tenga que googlear "qué herramienta de IA sirve para periodistas" y encontrar resultados en inglés, para otro mercado, con ejemplos que no tienen nada que ver con nuestra realidad.
-
-Adentro hay dos cosas:
-
-Una enciclopedia completa de periodismo digital con IA. Todo organizado, en español, con ejemplos reales de Colombia, Ecuador, México, Argentina. Desde cómo hablarle bien a Claude hasta cómo automatizar tu publicación sin tocar código.
-
-Y actualización semanal. Cada semana subo lo más útil que apareció: la herramienta nueva que vale la pena, el cambio de algoritmo que te afecta, el caso real de un periodista de la región que lo está usando bien. Vos abrís Leadr y ya está filtrado. No tenés que buscar nada.
-
-Mañana te cuento por qué te estoy escribiendo esto a vos específicamente.
+Válido hasta el 31 de mayo.
 
 José`,
   },
 
   'leadr-l3': {
-    subject:     'Tu acceso gratuito vence el 31 de mayo',
-    previewText: 'Te lo ganaste cuando compraste el curso',
+    subject:     'Tu regalo de Periodistas Digitales',
+    previewText: 'Por ser parte de la academia desde el principio',
     html: `
 <p>Hola,</p>
 
-<p>Cuando compraste el Sistema de Ingresos Diarios, tomaste una decisión que la mayoría de tus colegas no tomó.</p>
+<p>Desde Periodistas Digitales sacamos nuestra nueva herramienta: <strong>Leadr</strong>.</p>
 
-<p>Por eso quiero darte acceso completo a Leadr, gratis, durante un mes entero.</p>
+<p>Y decidimos dársela primero a los que confiaron en nosotros desde el principio.</p>
 
-<p>Sin tarjeta. Sin formularios largos. Sin compromiso.</p>
+<p>Vos compraste el curso. Eso cuenta.</p>
+
+<p>Por eso tenés 30 días gratis en Leadr. Sin tarjeta. Sin formularios. Sin compromiso.</p>
 
 <p style="font-size:18px;"><strong><a href="https://leadr.cloud/activar" style="color:#6366f1;">→ Activar mi acceso gratuito</a></strong></p>
 
-<p>Tenés hasta el 31 de mayo. Después de esa fecha el acceso gratuito cierra.</p>
+<p>Tenés hasta el 31 de mayo.</p>
 
-<p>Esta semana adentro hay:</p>
+<p>Sofía Castañon<br>
+<small style="color:#94a3b8;">Directora de Marketing — Periodistas Digitales</small></p>
 
-<p>— Cómo usar NotebookLM para preparar una cobertura en la mitad del tiempo que te lleva hoy</p>
-
-<p>— El prompt exacto que convierte una entrevista de una hora en cinco formatos distintos listos para publicar</p>
-
-<p>— Por qué los medios de Ecuador están apostando a WhatsApp Channels y cómo arrancar en menos de una tarde</p>
-
-<p>Entrá, explorá, usalo. Al final del mes decidís si querés seguir. Sin presión.</p>
-
-<p>José</p>
-
-<p><small>PD: Si ya activaste tu acceso, ignorá este email.</small></p>
+<p><small>PD: Si ya activaste, ignorá este email. Gracias.</small></p>
     `,
     text: `Hola,
 
-Cuando compraste el Sistema de Ingresos Diarios, tomaste una decisión que la mayoría de tus colegas no tomó.
+Desde Periodistas Digitales sacamos nuestra nueva herramienta: Leadr.
 
-Por eso quiero darte acceso completo a Leadr, gratis, durante un mes entero.
+Y decidimos dársela primero a los que confiaron en nosotros desde el principio.
 
-Sin tarjeta. Sin formularios largos. Sin compromiso.
+Vos compraste el curso. Eso cuenta.
 
-→ Activar mi acceso: https://leadr.cloud/activar
+Por eso tenés 30 días gratis en Leadr. Sin tarjeta. Sin formularios. Sin compromiso.
 
-Tenés hasta el 31 de mayo. Después de esa fecha el acceso gratuito cierra.
+→ leadr.cloud/activar
 
-Esta semana adentro hay:
+Tenés hasta el 31 de mayo.
 
-— Cómo usar NotebookLM para preparar una cobertura en la mitad del tiempo que te lleva hoy
+Sofía Castañon
+Directora de Marketing — Periodistas Digitales
 
-— El prompt exacto que convierte una entrevista de una hora en cinco formatos distintos listos para publicar
+PD: Si ya activaste, ignorá este email. Gracias.`,
+  },
 
-— Por qué los medios de Ecuador están apostando a WhatsApp Channels y cómo arrancar en menos de una tarde
+  'leadr-l4': {
+    subject:     'Sacamos algo nuevo. Y es para vos.',
+    previewText: 'Por ser parte de la academia desde el principio',
+    html: `
+<p>Hola,</p>
 
-Entrá, explorá, usalo. Al final del mes decidís si querés seguir. Sin presión.
+<p>Desde Periodistas Digitales estuvimos construyendo algo.</p>
 
-José
+<p>Se llama <strong>Leadr</strong>.</p>
 
-PD: Si ya activaste tu acceso, ignorá este email.`,
+<p>Es la plataforma de IA para periodistas que queríamos que existiera y no existía. Todo en español. Todo para el trabajo real de cubrir, investigar y publicar.</p>
+
+<p>Decidimos dársela primero a los que confiaron en nosotros desde el principio.</p>
+
+<p>Vos compraste el curso. Eso cuenta.</p>
+
+<p>30 días gratis. Sin tarjeta. Sin formularios.</p>
+
+<p style="font-size:18px;"><strong><a href="https://leadr.cloud/activar" style="color:#6366f1;">→ Activar mi acceso gratuito</a></strong></p>
+
+<p>Válido hasta el 31 de mayo.</p>
+
+<p>El equipo de Periodistas Digitales</p>
+
+<p><small>PD: Si ya activaste, ignorá este email. Gracias.</small></p>
+    `,
+    text: `Hola,
+
+Desde Periodistas Digitales estuvimos construyendo algo.
+
+Se llama Leadr.
+
+Es la plataforma de IA para periodistas que queríamos que existiera y no existía. Todo en español. Todo para el trabajo real de cubrir, investigar y publicar.
+
+Decidimos dársela primero a los que confiaron en nosotros desde el principio.
+
+Vos compraste el curso. Eso cuenta.
+
+30 días gratis. Sin tarjeta. Sin formularios.
+
+→ leadr.cloud/activar
+
+Válido hasta el 31 de mayo.
+
+El equipo de Periodistas Digitales
+
+PD: Si ya activaste, ignorá este email. Gracias.`,
   },
 
 }
