@@ -89,7 +89,6 @@ function RadialChart({ members, selected, onSelect }: {
     <svg
       viewBox={`0 0 ${VW} ${VH}`}
       className="w-full h-full"
-      style={{ maxHeight: 520 }}
     >
       <defs>
         {/* Grid pattern */}
@@ -391,10 +390,10 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
   const inactiveMembers = members.filter(m => !m.active)
 
   return (
-    <div className="min-h-screen p-6 max-w-7xl mx-auto">
+    <div className="flex flex-col h-screen p-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-2 h-7 rounded-full bg-violet-400" />
           <div>
@@ -413,11 +412,11 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6 flex-1 min-h-0">
 
         {/* ── Radial chart ── */}
-        <div className="lg:col-span-2">
-          <div className="rounded-2xl border border-slate-800 overflow-hidden" style={{ background: '#07070f' }}>
+        <div className="lg:col-span-2 flex flex-col min-h-0">
+          <div className="rounded-2xl border border-slate-800 overflow-hidden flex-1 min-h-0" style={{ background: '#07070f' }}>
             <RadialChart
               members={activeMembers}
               selected={selected}
@@ -442,7 +441,7 @@ export default function EquipoClient({ members: initialMembers }: { members: Mem
         </div>
 
         {/* ── Panel derecho ── */}
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-y-auto min-h-0 pr-1">
 
           {/* Detalle */}
           {selected && !creating && !editing && (
