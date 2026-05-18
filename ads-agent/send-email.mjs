@@ -153,7 +153,7 @@ José`,
 
 <p>Sin tarjeta. Sin formularios largos. Sin compromiso.</p>
 
-<p style="font-size:18px;"><strong><a href="https://leadr.cloud" style="color:#6366f1;">→ Activar mi acceso gratuito</a></strong></p>
+<p style="font-size:18px;"><strong><a href="https://leadr.cloud/activar" style="color:#6366f1;">→ Activar mi acceso gratuito</a></strong></p>
 
 <p>Tenés hasta el 31 de mayo. Después de esa fecha el acceso gratuito cierra.</p>
 
@@ -179,7 +179,7 @@ Por eso quiero darte acceso completo a Leadr, gratis, durante un mes entero.
 
 Sin tarjeta. Sin formularios largos. Sin compromiso.
 
-→ Activar mi acceso: https://leadr.cloud
+→ Activar mi acceso: https://leadr.cloud/activar
 
 Tenés hasta el 31 de mayo. Después de esa fecha el acceso gratuito cierra.
 
