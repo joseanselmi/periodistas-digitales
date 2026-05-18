@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Tracker } from "@/components/analytics/tracker"
 import { MetaPixelEvents } from "@/components/analytics/meta-pixel";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,6 +63,7 @@ export default function RootLayout({
         <MetaPixelEvents />
         <Tracker />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
