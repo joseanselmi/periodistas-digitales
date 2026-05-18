@@ -258,18 +258,12 @@ export default function AdminSidebar() {
       </aside>
 
       {/* ── MOBILE: topbar + drawer ── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#0A0F1E] border-b border-slate-800">
-        <div className="flex items-center gap-2" aria-label="Leadr Admin">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center" aria-hidden="true">
-            <span className="text-white font-bold text-xs">L</span>
-          </div>
-          <span className="font-semibold text-white text-sm">Leadr <span className="text-slate-500 font-normal">Admin</span></span>
-        </div>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center gap-3 px-4 py-3 bg-[#0A0F1E] border-b border-slate-800">
         <button
           onClick={() => setOpen(o => !o)}
           aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
           aria-expanded={open}
-          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors flex-shrink-0"
         >
           {open ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -281,6 +275,12 @@ export default function AdminSidebar() {
             </svg>
           )}
         </button>
+        <div className="flex items-center gap-2" aria-label="Leadr Admin">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center" aria-hidden="true">
+            <span className="text-white font-bold text-xs">L</span>
+          </div>
+          <span className="font-semibold text-white text-sm">Leadr <span className="text-slate-500 font-normal">Admin</span></span>
+        </div>
       </div>
 
       {/* Drawer overlay */}

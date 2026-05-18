@@ -151,12 +151,12 @@ export default function CerebroClient({ users, classes, groups, tasks: initialTa
         {/* ── Tareas pendientes ── */}
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-[#0A0F1E] border border-slate-800 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
               <div>
                 <h2 className="text-white font-semibold">Tareas</h2>
                 <p className="text-slate-600 text-xs mt-0.5">{pendingTasks} pendientes · {doneTasks} completadas</p>
               </div>
-              <div className="flex gap-1 bg-slate-900 rounded-lg p-1">
+              <div className="flex gap-1 bg-slate-900 rounded-lg p-1 self-start sm:self-auto">
                 {([
                   { key: 'pending', label: 'Pendientes' },
                   { key: 'done',    label: 'Hechas' },
@@ -176,41 +176,45 @@ export default function CerebroClient({ users, classes, groups, tasks: initialTa
             </div>
 
             {/* Add task */}
-            <div className="flex gap-2 mb-4">
-              <input
-                type="text"
-                placeholder="Nueva tarea…"
-                value={newTask}
-                onChange={e => setNewTask(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && addTask()}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
-              />
-              <select
-                value={newPriority}
-                onChange={e => setNewPriority(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-slate-300 text-xs focus:outline-none cursor-pointer"
-              >
-                <option value="high">🔴 Alta</option>
-                <option value="normal">⚪ Normal</option>
-                <option value="low">🔵 Baja</option>
-              </select>
-              <select
-                value={newCategory}
-                onChange={e => setNewCategory(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-slate-300 text-xs focus:outline-none cursor-pointer"
-              >
-                <option value="contenido">Contenido</option>
-                <option value="plataforma">Plataforma</option>
-                <option value="marketing">Marketing</option>
-                <option value="general">General</option>
-              </select>
-              <button
-                onClick={addTask}
-                disabled={addingTask || !newTask.trim()}
-                className="px-3 py-2 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 text-[#020617] font-bold text-sm rounded-lg transition-colors cursor-pointer"
-              >
-                +
-              </button>
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              <div className="flex gap-2 flex-1">
+                <input
+                  type="text"
+                  placeholder="Nueva tarea…"
+                  value={newTask}
+                  onChange={e => setNewTask(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addTask()}
+                  className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
+                />
+                <button
+                  onClick={addTask}
+                  disabled={addingTask || !newTask.trim()}
+                  className="px-3 py-2 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 text-[#020617] font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <select
+                  value={newPriority}
+                  onChange={e => setNewPriority(e.target.value)}
+                  className="flex-1 sm:flex-none bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-slate-300 text-xs focus:outline-none cursor-pointer"
+                >
+                  <option value="high">🔴 Alta</option>
+                  <option value="normal">⚪ Normal</option>
+                  <option value="low">🔵 Baja</option>
+                </select>
+                <select
+                  value={newCategory}
+                  onChange={e => setNewCategory(e.target.value)}
+                  className="flex-1 sm:flex-none bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-slate-300 text-xs focus:outline-none cursor-pointer"
+                >
+                  <option value="contenido">Contenido</option>
+                  <option value="plataforma">Plataforma</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
             </div>
 
             {/* Task list */}
@@ -276,7 +280,7 @@ export default function CerebroClient({ users, classes, groups, tasks: initialTa
                 const isEmpty = g.total === 0
                 return (
                   <div key={g.id} className="flex items-center gap-3">
-                    <div className="w-36 flex-shrink-0">
+                    <div className="w-24 sm:w-36 flex-shrink-0">
                       <p className={`text-xs truncate ${isEmpty ? 'text-slate-600' : 'text-slate-300'}`}>{g.name}</p>
                     </div>
                     <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -285,7 +289,7 @@ export default function CerebroClient({ users, classes, groups, tasks: initialTa
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <div className="w-28 flex-shrink-0 flex items-center gap-2">
+                    <div className="w-20 sm:w-28 flex-shrink-0 flex items-center gap-2">
                       <span className="text-xs text-slate-500 tabular-nums">{g.published}/{g.total}</span>
                       {g.drafts > 0 && (
                         <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/15 text-amber-400 rounded-full">
