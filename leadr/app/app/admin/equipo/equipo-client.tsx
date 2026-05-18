@@ -87,6 +87,17 @@ function OrbitalChart({ members, selected, onSelect }: {
   const [autoRotate, setAutoRotate]     = useState(true)
   const [activeBranch, setActiveBranch] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ w: 800, h: 600 })
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      setSize({ w: entry.contentRect.width, h: entry.contentRect.height })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
     if (!autoRotate) return
@@ -94,88 +105,158 @@ function OrbitalChart({ members, selected, onSelect }: {
     return () => clearInterval(t)
   }, [autoRotate])
 
-  const calcPos = (index: number, total: number, radius: number, startOffset = -90) => {
-    const deg = (index / total) * 360 + rotation + startOffset
+  const R_INNER = 148
+  const R_OUTER = 285
+
+  // Group members clustered near their branch angle
+  const grouped: Record<string, Member[]> = {}
+  BRANCHES.forEach(b => { grouped[b.key] = [] })
+  members.forEach(m => { grouped[getBranch(m).key].push(m) })
+
+  const getBranchPos = (branchIndex: number) => {
+    const deg = (branchIndex / BRANCHES.length) * 360 + rotation - 90
     const rad = (deg * Math.PI) / 180
     return {
-      x:       radius * Math.cos(rad),
-      y:       radius * Math.sin(rad),
+      x:       R_INNER * Math.cos(rad),
+      y:       R_INNER * Math.sin(rad),
       opacity: Math.max(0.3, 0.3 + 0.7 * ((1 + Math.sin(rad)) / 2)),
       zIndex:  Math.round(60 + 40 * Math.cos(rad)),
     }
   }
 
-  const grouped: Record<string, Member[]> = {}
-  BRANCHES.forEach(b => { grouped[b.key] = [] })
-  members.forEach(m => { grouped[getBranch(m).key].push(m) })
+  const getMemberPos = (branchIndex: number, memberIndex: number, totalInBranch: number) => {
+    const baseAngle  = (branchIndex / BRANCHES.length) * 360 - 90
+    const spread     = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 18, 72)
+    const memberAngle = totalInBranch <= 1
+      ? baseAngle
+      : baseAngle - spread / 2 + memberIndex * (spread / (totalInBranch - 1))
+    const deg = memberAngle + rotation
+    const rad = (deg * Math.PI) / 180
+    return {
+      x:       R_OUTER * Math.cos(rad),
+      y:       R_OUTER * Math.sin(rad),
+      opacity: Math.max(0.3, 0.3 + 0.7 * ((1 + Math.sin(rad)) / 2)),
+      zIndex:  Math.round(60 + 40 * Math.cos(rad)),
+    }
+  }
+
+  // Pre-compute all positions (needed for SVG lines + div nodes)
+  const branchPositions = BRANCHES.map((_, i) => getBranchPos(i))
+  const memberPositions: Record<number, ReturnType<typeof getMemberPos>> = {}
+  BRANCHES.forEach((branch, bi) => {
+    grouped[branch.key].forEach((m, mi) => {
+      memberPositions[m.id] = getMemberPos(bi, mi, grouped[branch.key].length)
+    })
+  })
 
   const handleBranchClick = useCallback((key: string, e: React.MouseEvent) => {
     e.stopPropagation()
     if (activeBranch === key) {
-      setActiveBranch(null)
-      setAutoRotate(true)
+      setActiveBranch(null); setAutoRotate(true)
     } else {
-      setActiveBranch(key)
-      setAutoRotate(false)
-      onSelect(null)
+      setActiveBranch(key); setAutoRotate(false); onSelect(null)
     }
   }, [activeBranch, onSelect])
 
   const handleMemberClick = useCallback((m: Member, e: React.MouseEvent) => {
     e.stopPropagation()
     if (selected?.id === m.id) {
-      onSelect(null)
-      setAutoRotate(true)
+      onSelect(null); setAutoRotate(true)
     } else {
-      onSelect(m)
-      setAutoRotate(false)
-      setActiveBranch(null)
+      onSelect(m); setAutoRotate(false); setActiveBranch(null)
     }
   }, [selected, onSelect])
 
   const handleBgClick = useCallback(() => {
-    setActiveBranch(null)
-    setAutoRotate(true)
-    onSelect(null)
+    setActiveBranch(null); setAutoRotate(true); onSelect(null)
   }, [onSelect])
 
-  const R_INNER = 148
-  const R_OUTER = 285
+  const cx = size.w / 2
+  const cy = size.h / 2
 
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full flex items-center justify-center overflow-hidden select-none"
-      style={{ background: '#07070f', perspective: '1000px' }}
+      style={{ background: '#07070f' }}
       onClick={handleBgClick}
     >
-      {/* Subtle grid */}
+      {/* Grid */}
       <div className="absolute inset-0 pointer-events-none" style={{
         backgroundImage: 'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
         backgroundSize: '48px 48px',
       }} />
 
+      <style>{`
+        @keyframes equipo-orb   { 0%,100%{opacity:.06}  50%{opacity:.2} }
+        @keyframes equipo-pulse { 0%,100%{opacity:.15; transform:scale(1)} 50%{opacity:.4; transform:scale(1.08)} }
+        @keyframes equipo-ping  { 75%,100%{ transform:scale(2); opacity:0 } }
+        @keyframes equipo-flow  { to { stroke-dashoffset: -28; } }
+        @keyframes equipo-flow-fast { to { stroke-dashoffset: -18; } }
+      `}</style>
+
       {/* Orbit ring decorations */}
       <div className="absolute rounded-full pointer-events-none" style={{
         width: R_INNER * 2, height: R_INNER * 2,
-        border: '1px solid rgba(99,102,241,0.12)',
+        border: '1px solid rgba(99,102,241,0.1)',
         animation: 'equipo-orb 7s ease-in-out infinite',
       }} />
       <div className="absolute rounded-full pointer-events-none" style={{
         width: R_OUTER * 2, height: R_OUTER * 2,
-        border: '1px solid rgba(51,65,85,0.2)',
+        border: '1px solid rgba(51,65,85,0.15)',
         animation: 'equipo-orb 10s ease-in-out infinite reverse',
       }} />
 
-      <style>{`
-        @keyframes equipo-orb  { 0%,100%{opacity:.06}  50%{opacity:.18} }
-        @keyframes equipo-pulse{ 0%,100%{opacity:.15; transform:scale(1)} 50%{opacity:.4; transform:scale(1.08)} }
-        @keyframes equipo-ping { 75%,100%{ transform:scale(2); opacity:0 } }
-      `}</style>
+      {/* ── SVG lines overlay ── */}
+      <svg
+        className="absolute inset-0 pointer-events-none"
+        width={size.w} height={size.h}
+        style={{ zIndex: 1 }}
+      >
+        {/* Jose → Branch lines */}
+        {BRANCHES.map((b, i) => {
+          const bp     = branchPositions[i]
+          const active = activeBranch === b.key
+          const dim    = !!activeBranch && !active
+          return (
+            <line key={`jb-${b.key}`}
+              x1={cx} y1={cy}
+              x2={cx + bp.x} y2={cy + bp.y}
+              stroke={b.color}
+              strokeWidth={active ? 1.2 : 0.6}
+              strokeDasharray={active ? '8 6' : '5 10'}
+              opacity={dim ? 0.05 : active ? 0.85 : 0.3}
+              style={{ animation: `equipo-flow${active ? '-fast' : ''} ${active ? '1.5s' : '3s'} linear infinite` }}
+            />
+          )
+        })}
+
+        {/* Branch → Member lines */}
+        {BRANCHES.map((branch, bi) => {
+          const bp          = branchPositions[bi]
+          const active      = activeBranch === branch.key
+          const dim         = !!activeBranch && !active
+          return grouped[branch.key].map(m => {
+            const mp  = memberPositions[m.id]
+            const sel = selected?.id === m.id
+            return (
+              <line key={`bm-${m.id}`}
+                x1={cx + bp.x} y1={cy + bp.y}
+                x2={cx + mp.x} y2={cy + mp.y}
+                stroke={branch.color}
+                strokeWidth={sel ? 1.2 : active ? 0.8 : 0.5}
+                strokeDasharray={sel ? '8 4' : '4 10'}
+                opacity={dim && !sel ? 0.04 : sel ? 1 : active ? 0.65 : 0.2}
+                style={{ animation: `equipo-flow${sel || active ? '-fast' : ''} ${sel ? '1.2s' : active ? '2s' : '4s'} linear infinite` }}
+              />
+            )
+          })
+        })}
+      </svg>
 
       {/* ── Branch nodes (inner ring) ── */}
       {BRANCHES.map((b, i) => {
-        const { x, y, opacity, zIndex } = calcPos(i, BRANCHES.length, R_INNER)
+        const { x, y, opacity, zIndex } = branchPositions[i]
         const active = activeBranch === b.key
         const dim    = !!activeBranch && !active
         const count  = grouped[b.key].length
@@ -184,17 +265,16 @@ function OrbitalChart({ members, selected, onSelect }: {
             key={b.key}
             className="absolute transition-all duration-500 cursor-pointer"
             style={{
-              transform: `translate(${x}px, ${y}px)`,
-              zIndex: active ? 100 : zIndex,
-              opacity: dim ? 0.18 : active ? 1 : opacity,
+              transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
+              zIndex: active ? 100 : zIndex + 2,
+              opacity: dim ? 0.15 : active ? 1 : opacity,
             }}
             onClick={(e) => handleBranchClick(b.key, e)}
           >
-            {/* Glow halo */}
             {active && (
-              <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-                width: 80, height: 80, left: -22, top: -15,
-                background: `radial-gradient(circle, ${b.color}25 0%, transparent 70%)`,
+              <div className="absolute rounded-full pointer-events-none" style={{
+                width: 90, height: 90, left: -14, top: -18,
+                background: `radial-gradient(circle, ${b.color}22 0%, transparent 70%)`,
               }} />
             )}
             <div
@@ -202,89 +282,89 @@ function OrbitalChart({ members, selected, onSelect }: {
               style={{
                 background: active ? `${b.color}18` : '#0d1426',
                 border: `${active ? 1.5 : 0.8}px solid ${b.color}`,
-                boxShadow: active ? `0 0 18px ${b.color}40` : 'none',
-                minWidth: 82,
+                boxShadow: active ? `0 0 20px ${b.color}50, 0 0 6px ${b.color}25` : 'none',
+                minWidth: 84,
               }}
             >
-              <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ background: b.color, opacity: active ? 1 : 0.6 }} />
+              <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ background: b.color, opacity: active ? 1 : 0.55 }} />
               <span className="text-sm leading-none">{b.emoji}</span>
               <span className="text-xs font-bold mt-1" style={{ color: active ? '#f1f5f9' : b.color }}>{b.label}</span>
               <span className="text-[9px] mt-0.5" style={{ color: active ? b.color : '#334155' }}>{b.cmd}</span>
-              <span className="text-[8px]" style={{ color: '#1e293b' }}>{count} {count === 1 ? 'miembro' : 'miembros'}</span>
+              <span className="text-[8px]" style={{ color: active ? '#475569' : '#1e293b' }}>{count} {count === 1 ? 'miembro' : 'miembros'}</span>
             </div>
           </div>
         )
       })}
 
-      {/* ── Member nodes (outer ring) ── */}
-      {members.map((m, i) => {
-        const { x, y, opacity, zIndex } = calcPos(i, members.length, R_OUTER)
-        const branch      = getBranch(m)
-        const col         = branch.color
-        const sel         = selected?.id === m.id
-        const branchActive = activeBranch === branch.key
-        const dim         = !!activeBranch && !branchActive && !sel
-        return (
-          <div
-            key={m.id}
-            className="absolute transition-all duration-700 cursor-pointer"
-            style={{
-              transform: `translate(${x}px, ${y}px) ${sel ? 'scale(1.15)' : ''}`,
-              zIndex: sel ? 200 : zIndex,
-              opacity: dim ? 0.08 : sel ? 1 : branchActive ? 1 : opacity,
-            }}
-            onClick={(e) => handleMemberClick(m, e)}
-          >
-            {/* Energy pulse */}
-            {(sel || branchActive) && (
-              <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-                width: 70, height: 56, left: -9, top: -3,
-                background: `radial-gradient(circle, ${col}20 0%, transparent 70%)`,
-                animation: 'equipo-orb 2s ease-in-out infinite',
-              }} />
-            )}
+      {/* ── Member nodes (outer ring, clustered by branch) ── */}
+      {BRANCHES.map((branch, bi) =>
+        grouped[branch.key].map((m, mi) => {
+          const { x, y, opacity, zIndex } = memberPositions[m.id]
+          const col          = branch.color
+          const sel          = selected?.id === m.id
+          const branchActive = activeBranch === branch.key
+          const dim          = !!activeBranch && !branchActive && !sel
+          return (
             <div
-              className="relative flex flex-col items-center justify-center rounded-xl px-2.5 py-2 transition-all duration-300"
+              key={m.id}
+              className="absolute cursor-pointer"
               style={{
-                background: sel || branchActive ? `${col}12` : '#0b1220',
-                border: `${sel ? 1.2 : branchActive ? 0.8 : 0.4}px solid ${col}`,
-                boxShadow: sel ? `0 0 22px ${col}50, 0 0 6px ${col}30` : branchActive ? `0 0 10px ${col}25` : 'none',
-                minWidth: 72,
+                transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%)) ${sel ? 'scale(1.15)' : ''}`,
+                zIndex: sel ? 200 : zIndex + 2,
+                opacity: dim ? 0.07 : sel ? 1 : branchActive ? 1 : opacity,
+                transition: 'opacity 0.4s ease, box-shadow 0.3s ease',
               }}
+              onClick={(e) => handleMemberClick(m, e)}
             >
-              <div className="absolute top-0 left-1.5 right-1.5 h-0.5 rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.3 }} />
-              <span className="text-sm leading-none">{m.emoji}</span>
-              <span className="text-[10px] font-semibold mt-1" style={{ color: sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#94a3b8' }}>
-                {m.name}
-              </span>
-              <span className="text-[8px] mt-0.5 truncate max-w-[64px]" style={{ color: sel || branchActive ? col : '#475569' }}>
-                {m.role.length > 16 ? m.role.slice(0, 15) + '…' : m.role}
-              </span>
+              {(sel || branchActive) && (
+                <div className="absolute rounded-full pointer-events-none" style={{
+                  width: 72, height: 58, left: -10, top: -4,
+                  background: `radial-gradient(circle, ${col}22 0%, transparent 70%)`,
+                  animation: 'equipo-orb 2.2s ease-in-out infinite',
+                }} />
+              )}
+              <div
+                className="relative flex flex-col items-center justify-center rounded-xl px-2.5 py-2 transition-all duration-300"
+                style={{
+                  background: sel || branchActive ? `${col}12` : '#0b1220',
+                  border: `${sel ? 1.4 : branchActive ? 0.9 : 0.45}px solid ${col}`,
+                  boxShadow: sel
+                    ? `0 0 24px ${col}55, 0 0 8px ${col}30`
+                    : branchActive ? `0 0 12px ${col}28` : 'none',
+                  minWidth: 72,
+                }}
+              >
+                <div className="absolute top-0 left-1.5 right-1.5 h-0.5 rounded-full" style={{ background: col, opacity: sel || branchActive ? 1 : 0.28 }} />
+                <span className="text-sm leading-none">{m.emoji}</span>
+                <span className="text-[10px] font-semibold mt-1" style={{ color: sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#94a3b8' }}>
+                  {m.name}
+                </span>
+                <span className="text-[8px] mt-0.5" style={{ color: sel || branchActive ? col : '#475569' }}>
+                  {m.role.length > 16 ? m.role.slice(0, 15) + '…' : m.role}
+                </span>
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })
+      )}
 
       {/* ── Center — Jose ── */}
-      <div className="absolute z-10 flex flex-col items-center justify-center" style={{ pointerEvents: 'none' }}>
-        {/* Outer ping */}
+      <div className="absolute flex flex-col items-center justify-center" style={{ zIndex: 10, pointerEvents: 'none' }}>
         <div className="absolute rounded-full" style={{
           width: 96, height: 96,
-          border: '1px solid rgba(99,102,241,0.25)',
-          animation: 'equipo-ping 2.5s cubic-bezier(0,0,0.2,1) infinite',
+          border: '1px solid rgba(99,102,241,0.22)',
+          animation: 'equipo-ping 2.8s cubic-bezier(0,0,0.2,1) infinite',
         }} />
-        {/* Pulse ring */}
         <div className="absolute rounded-full" style={{
           width: 86, height: 86,
-          border: '1px solid rgba(99,102,241,0.3)',
-          animation: 'equipo-pulse 3s ease-in-out infinite',
+          border: '1px solid rgba(99,102,241,0.28)',
+          animation: 'equipo-pulse 3.2s ease-in-out infinite',
         }} />
-        {/* Core */}
         <div className="relative flex flex-col items-center justify-center rounded-full" style={{
           width: 72, height: 72,
           background: 'radial-gradient(circle at 40% 35%, #1e1b4b, #0d1526)',
           border: '1.5px solid #6366f1',
-          boxShadow: '0 0 28px rgba(99,102,241,0.35), inset 0 0 20px rgba(99,102,241,0.1)',
+          boxShadow: '0 0 30px rgba(99,102,241,0.4), inset 0 0 20px rgba(99,102,241,0.1)',
         }}>
           <span className="text-xl leading-none">👤</span>
           <span className="text-[11px] font-bold text-white mt-0.5">Jose</span>
