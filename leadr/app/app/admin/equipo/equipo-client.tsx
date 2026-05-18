@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 type Member = {
@@ -66,27 +66,65 @@ const BLANK: Omit<Member, 'id' | 'order_index'> = {
   responsibilities: [], tools: [], color: 'cyan', emoji: '🤖', active: true,
 }
 
-// ─── Radial SVG chart ──────────────────────────────────────────────────────────
+// ─── Two-level radial chart ────────────────────────────────────────────────────
 
-const CX = 340
-const CY = 260
-const R  = 195
-const VW = 680
-const VH = 520
+const CX = 410
+const CY = 320
+const R_INNER = 148   // team ring
+const R_OUTER = 295   // member ring
+const VW = 820
+const VH = 640
+
+const BRANCHES = [
+  { key: 'marketing',   label: 'Marketing',   cmd: '/equipo',               color: '#6366f1', emoji: '📣', areas: ['estrategia','ads','contenido','email','conversion','datos'] },
+  { key: 'it',          label: 'IT',           cmd: '/it',                   color: '#22d3ee', emoji: '🖥️', areas: ['tech'] },
+  { key: 'universidad', label: 'Universidad',  cmd: '/director-universidad', color: '#22c55e', emoji: '🎓', areas: ['educacion'] },
+]
+
+function getBranch(m: Member) {
+  return BRANCHES.find(b => b.areas.includes(m.area)) ?? BRANCHES[0]
+}
 
 function RadialChart({ members, selected, onSelect }: {
   members: Member[]
   selected: Member | null
   onSelect: (m: Member | null) => void
 }) {
-  const n = members.length
-  const positions = members.map((_, i) => {
-    const angle = (-90 + i * (360 / n)) * (Math.PI / 180)
-    return { x: CX + R * Math.cos(angle), y: CY + R * Math.sin(angle) }
+  const [activeBranch, setActiveBranch] = useState<string | null>(null)
+
+  const handleBranchClick = useCallback((key: string) => {
+    setActiveBranch(prev => prev === key ? null : key)
+    onSelect(null)
+  }, [onSelect])
+
+  // Group members per branch
+  const grouped: Record<string, Member[]> = {}
+  BRANCHES.forEach(b => { grouped[b.key] = [] })
+  members.forEach(m => { grouped[getBranch(m).key].push(m) })
+
+  // Team node positions (inner ring, 120° apart)
+  const teamPos = BRANCHES.map((_, i) => {
+    const a = (-90 + i * 120) * (Math.PI / 180)
+    return { x: CX + R_INNER * Math.cos(a), y: CY + R_INNER * Math.sin(a) }
   })
 
-  const NW = 80
-  const NH = 60
+  // Member positions (outer ring, spread around their team angle)
+  const memberPos: Record<number, { x: number; y: number }> = {}
+  BRANCHES.forEach((branch, bi) => {
+    const mems = grouped[branch.key]
+    const n = mems.length
+    if (n === 0) return
+    const baseAngle = -90 + bi * 120
+    const arc = n === 1 ? 0 : Math.min(n * 22, 90)
+    mems.forEach((m, mi) => {
+      const deg = n === 1 ? baseAngle : baseAngle - arc / 2 + mi * (arc / (n - 1))
+      const rad = deg * (Math.PI / 180)
+      memberPos[m.id] = { x: CX + R_OUTER * Math.cos(rad), y: CY + R_OUTER * Math.sin(rad) }
+    })
+  })
+
+  const NWT = 86; const NHT = 52  // team node size
+  const NWM = 76; const NHM = 50  // member node size
 
   return (
     <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full h-full">
@@ -94,121 +132,169 @@ function RadialChart({ members, selected, onSelect }: {
         <pattern id="grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
           <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#0f172a" strokeWidth="1" />
         </pattern>
-
-        <filter id="node-shadow" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.5" />
-        </filter>
-
-        <filter id="glow-sel" x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
+        <filter id="glow-node" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-
+        <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.5" />
+        </filter>
         <filter id="center-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="5" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-
-        {members.map((m, i) => {
-          const col = AREA_HEX[m.area] ?? '#6366f1'
-          const p = positions[i]
-          return (
-            <linearGradient key={`lg-${m.id}`} id={`lg-${m.id}`}
-              gradientUnits="userSpaceOnUse" x1={CX} y1={CY} x2={p.x} y2={p.y}>
-              <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.3" />
-              <stop offset="100%" stopColor={col}     stopOpacity="0.7" />
-            </linearGradient>
-          )
-        })}
-
-        <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0"    />
-        </radialGradient>
-
         <radialGradient id="center-fill" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor="#1e1b4b" />
+          <stop offset="0%" stopColor="#1e1b4b" />
           <stop offset="100%" stopColor="#0d1526" />
         </radialGradient>
-
+        {BRANCHES.map(b => (
+          <radialGradient key={`bg-${b.key}`} id={`bg-${b.key}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={b.color} stopOpacity="0.06" />
+            <stop offset="100%" stopColor={b.color} stopOpacity="0" />
+          </radialGradient>
+        ))}
         <style>{`
-          .line-idle { stroke-dasharray: 5 12; animation: flow 3s linear infinite; }
-          .line-sel  { stroke-dasharray: 8 5;  animation: flow 1.6s linear infinite; }
-          @keyframes flow { to { stroke-dashoffset: -26; } }
-          .orbit { animation: orb 5s ease-in-out infinite; }
-          @keyframes orb { 0%,100% { opacity:.05 } 50% { opacity:.12 } }
-          .pulse { animation: pulse 2.8s ease-in-out infinite; }
-          @keyframes pulse { 0%,100% { opacity:.2; r:50 } 50% { opacity:.4; r:56 } }
+          .dash-team { stroke-dasharray: 6 10; animation: flow 2.5s linear infinite; }
+          .dash-mem  { stroke-dasharray: 4 10; animation: flow 3.5s linear infinite; }
+          .dash-sel  { stroke-dasharray: 8 5;  animation: flow 1.4s linear infinite; }
+          @keyframes flow { to { stroke-dashoffset: -28; } }
+          .pulse { animation: pulse 3s ease-in-out infinite; }
+          @keyframes pulse { 0%,100% { opacity:.15; r:52 } 50% { opacity:.35; r:58 } }
+          .orbit-inner { animation: orb 6s ease-in-out infinite; }
+          .orbit-outer { animation: orb 8s ease-in-out infinite reverse; }
+          @keyframes orb { 0%,100% { opacity:.04 } 50% { opacity:.1 } }
         `}</style>
       </defs>
 
       {/* Background */}
       <rect width={VW} height={VH} fill="#07070f" />
       <rect width={VW} height={VH} fill="url(#grid)" />
-      <circle cx={CX} cy={CY} r={160} fill="url(#bg-glow)" />
 
-      {/* Single orbit ring */}
-      <circle cx={CX} cy={CY} r={R} fill="none" stroke="#6366f1" strokeWidth="0.6" className="orbit" />
+      {/* Orbit rings */}
+      <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#6366f1" strokeWidth="0.5" className="orbit-inner" />
+      <circle cx={CX} cy={CY} r={R_OUTER} fill="none" stroke="#334155" strokeWidth="0.4" className="orbit-outer" />
 
-      {/* Lines */}
-      {members.map((m, i) => {
-        const { x, y } = positions[i]
-        const sel = selected?.id === m.id
+      {/* Branch glow halos */}
+      {BRANCHES.map((b, i) => {
+        const active = activeBranch === b.key
+        return active ? (
+          <circle key={`halo-${b.key}`}
+            cx={teamPos[i].x} cy={teamPos[i].y} r={70}
+            fill={`url(#bg-${b.key})`}
+          />
+        ) : null
+      })}
+
+      {/* Lines: Jose → Team */}
+      {BRANCHES.map((b, i) => {
+        const { x, y } = teamPos[i]
+        const active = activeBranch === b.key
         return (
-          <line key={`l-${m.id}`}
+          <line key={`jt-${b.key}`}
             x1={CX} y1={CY} x2={x} y2={y}
-            stroke={`url(#lg-${m.id})`}
-            strokeWidth={sel ? 1.5 : 0.8}
-            className={sel ? 'line-sel' : 'line-idle'}
-            opacity={sel ? 1 : 0.5}
+            stroke={b.color}
+            strokeWidth={active ? 1.2 : 0.6}
+            className="dash-team"
+            opacity={activeBranch && !active ? 0.15 : active ? 0.9 : 0.4}
           />
         )
       })}
 
-      {/* Agent nodes */}
-      {members.map((m, i) => {
-        const { x, y } = positions[i]
-        const col = AREA_HEX[m.area] ?? '#6366f1'
+      {/* Lines: Team → Member */}
+      {members.map(m => {
+        const branch = getBranch(m)
+        const bi = BRANCHES.findIndex(b => b.key === branch.key)
+        const tp = teamPos[bi]
+        const mp = memberPos[m.id]
+        if (!mp) return null
         const sel = selected?.id === m.id
-
+        const branchActive = activeBranch === branch.key
+        const dim = activeBranch && !branchActive && !sel
         return (
-          <g key={m.id}
-            transform={`translate(${x},${y})`}
-            onClick={() => onSelect(sel ? null : m)}
+          <line key={`tm-${m.id}`}
+            x1={tp.x} y1={tp.y} x2={mp.x} y2={mp.y}
+            stroke={branch.color}
+            strokeWidth={sel ? 1.2 : 0.6}
+            className={sel ? 'dash-sel' : 'dash-mem'}
+            opacity={dim ? 0.08 : sel ? 1 : branchActive ? 0.6 : 0.25}
+          />
+        )
+      })}
+
+      {/* Member nodes (outer ring) */}
+      {members.map(m => {
+        const mp = memberPos[m.id]
+        if (!mp) return null
+        const branch = getBranch(m)
+        const col = branch.color
+        const sel = selected?.id === m.id
+        const branchActive = activeBranch === branch.key
+        const dim = activeBranch && !branchActive && !sel
+        return (
+          <g key={`mem-${m.id}`}
+            transform={`translate(${mp.x},${mp.y})`}
+            onClick={() => { setActiveBranch(null); onSelect(sel ? null : m) }}
             style={{ cursor: 'pointer' }}
-            filter={sel ? 'url(#glow-sel)' : 'url(#node-shadow)'}
+            filter={sel ? 'url(#glow-node)' : 'url(#shadow)'}
+            opacity={dim ? 0.2 : 1}
           >
-            {/* Card */}
-            <rect x={-NW/2} y={-NH/2} width={NW} height={NH} rx="10"
-              fill={sel ? `${col}18` : '#0c1322'}
-              stroke={col} strokeWidth={sel ? 1.2 : 0.5}
-              opacity={sel ? 1 : 0.9}
+            <rect x={-NWM/2} y={-NHM/2} width={NWM} height={NHM} rx="9"
+              fill={sel || branchActive ? `${col}15` : '#0b1220'}
+              stroke={col} strokeWidth={sel ? 1.2 : branchActive ? 0.8 : 0.4}
             />
-
-            {/* Top accent line */}
-            <rect x={-NW/2 + 8} y={-NH/2} width={NW - 16} height="2" rx="1"
-              fill={col} opacity={sel ? 1 : 0.4}
+            <rect x={-NWM/2+7} y={-NHM/2} width={NWM-14} height="2" rx="1"
+              fill={col} opacity={sel || branchActive ? 1 : 0.3}
             />
-
-            {/* Emoji */}
-            <text x="0" textAnchor="middle" y={-NH/2 + 22} fontSize="17"
-              style={{ userSelect: 'none' }}>
-              {m.emoji}
-            </text>
-
-            {/* Name */}
-            <text x="0" textAnchor="middle" y={-NH/2 + 38} fontSize="10.5"
-              fontWeight="600"
-              fill={sel ? '#f1f5f9' : '#94a3b8'}
-              style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
+            <text x="0" textAnchor="middle" y={-NHM/2+19} fontSize="15" style={{ userSelect:'none' }}>{m.emoji}</text>
+            <text x="0" textAnchor="middle" y={-NHM/2+34} fontSize="10"
+              fontWeight="600" fill={sel ? '#f1f5f9' : branchActive ? '#e2e8f0' : '#64748b'}
+              style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
               {m.name}
             </text>
+            <text x="0" textAnchor="middle" y={-NHM/2+45} fontSize="7"
+              fill={sel || branchActive ? col : '#1e293b'}
+              style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
+              {m.role.length > 18 ? m.role.slice(0,17)+'…' : m.role}
+            </text>
+          </g>
+        )
+      })}
 
-            {/* Role — truncate visually with clip */}
-            <text x="0" textAnchor="middle" y={-NH/2 + 51} fontSize="7.5"
-              fill={sel ? col : '#334155'}
-              style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
-              {m.role.length > 18 ? m.role.slice(0, 17) + '…' : m.role}
+      {/* Team nodes (inner ring) */}
+      {BRANCHES.map((b, i) => {
+        const { x, y } = teamPos[i]
+        const active = activeBranch === b.key
+        const dim = activeBranch && !active
+        const memberCount = grouped[b.key].length
+        return (
+          <g key={`team-${b.key}`}
+            transform={`translate(${x},${y})`}
+            onClick={() => handleBranchClick(b.key)}
+            style={{ cursor: 'pointer' }}
+            filter={active ? 'url(#glow-node)' : 'url(#shadow)'}
+            opacity={dim ? 0.3 : 1}
+          >
+            <rect x={-NWT/2} y={-NHT/2} width={NWT} height={NHT} rx="10"
+              fill={active ? `${b.color}20` : '#0d1426'}
+              stroke={b.color} strokeWidth={active ? 1.5 : 0.8}
+            />
+            <rect x={-NWT/2+6} y={-NHT/2} width={NWT-12} height="2.5" rx="1"
+              fill={b.color} opacity={active ? 1 : 0.6}
+            />
+            <text x="0" textAnchor="middle" y={-NHT/2+17} fontSize="11"
+              fontWeight="700" fill={active ? '#f1f5f9' : b.color}
+              style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
+              {b.emoji} {b.label}
+            </text>
+            <text x="0" textAnchor="middle" y={-NHT/2+30} fontSize="7.5"
+              fill={active ? b.color : '#334155'}
+              style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
+              {b.cmd}
+            </text>
+            <text x="0" textAnchor="middle" y={-NHT/2+42} fontSize="7"
+              fill="#1e293b"
+              style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>
+              {memberCount} {memberCount === 1 ? 'miembro' : 'miembros'}
             </text>
           </g>
         )
@@ -216,23 +302,13 @@ function RadialChart({ members, selected, onSelect }: {
 
       {/* Center — Jose */}
       <g filter="url(#center-glow)">
-        <circle cx={CX} cy={CY} r={50} fill="none" stroke="#6366f1"
-          strokeWidth="0.8" className="pulse" />
-        <circle cx={CX} cy={CY} r={42} fill="url(#center-fill)"
-          stroke="#6366f1" strokeWidth="1.2" />
-
-        <text x={CX} textAnchor="middle" y={CY - 8} fontSize="20"
-          style={{ userSelect: 'none' }}>👤</text>
-        <text x={CX} textAnchor="middle" y={CY + 11} fontSize="12"
-          fontWeight="700" fill="#f1f5f9"
-          style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
-          Jose
-        </text>
-        <text x={CX} textAnchor="middle" y={CY + 24} fontSize="8"
-          fill="#818cf8"
-          style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
-          Fundador
-        </text>
+        <circle cx={CX} cy={CY} r={52} fill="none" stroke="#6366f1" strokeWidth="0.8" className="pulse" />
+        <circle cx={CX} cy={CY} r={44} fill="url(#center-fill)" stroke="#6366f1" strokeWidth="1.2" />
+        <text x={CX} textAnchor="middle" y={CY-7} fontSize="20" style={{ userSelect:'none' }}>👤</text>
+        <text x={CX} textAnchor="middle" y={CY+12} fontSize="12" fontWeight="700" fill="#f1f5f9"
+          style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>Jose</text>
+        <text x={CX} textAnchor="middle" y={CY+25} fontSize="8" fill="#818cf8"
+          style={{ userSelect:'none', fontFamily:'system-ui,sans-serif' }}>Fundador</text>
       </g>
     </svg>
   )
