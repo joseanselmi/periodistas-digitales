@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 type NewsItem = {
   id: string
@@ -19,6 +19,12 @@ export default function AprobacionesClient() {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [imageEdit, setImageEdit] = useState<{ id: string; url: string } | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 3000)
+  }, [])
 
   async function fetchDrafts() {
     setLoading(true)
@@ -105,6 +111,7 @@ export default function AprobacionesClient() {
   }
 
   return (
+    <>
     <div className="flex-1 p-6 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
@@ -261,5 +268,11 @@ export default function AprobacionesClient() {
         )}
       </div>
     </div>
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white shadow-xl">
+          {toast}
+        </div>
+      )}
+    </>
   )
 }
