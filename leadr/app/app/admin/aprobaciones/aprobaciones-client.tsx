@@ -48,16 +48,23 @@ export default function AprobacionesClient() {
 
   async function handleTranslate(id: string) {
     setActionLoading(id + 'translate')
-    const res = await fetch(`/api/admin/news/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'translate' }),
-    })
-    const data = await res.json()
-    if (data.titulo) {
-      setItems(prev => prev.map(i => i.id === id ? { ...i, titulo: data.titulo, resumen: data.resumen } : i))
+    try {
+      const res = await fetch(`/api/admin/news/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'translate' }),
+      })
+      const data = await res.json()
+      if (data.titulo) {
+        setItems(prev => prev.map(i => i.id === id ? { ...i, titulo: data.titulo, resumen: data.resumen } : i))
+      } else if (data.error) {
+        console.error('Traducción error:', data.error)
+      }
+    } catch (e) {
+      console.error('Traducción falló:', e)
+    } finally {
+      setActionLoading(null)
     }
-    setActionLoading(null)
   }
 
   async function handleUpdateImage(id: string) {

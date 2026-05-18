@@ -47,39 +47,37 @@ export async function PATCH(
   }
 
   if (action === 'translate') {
-    const { data: item } = await supabaseAdmin.from('news').select('titulo, resumen').eq('id', id).single()
-    if (!item) return NextResponse.json({ error: 'No encontrado' }, { status: 404 })
-
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-    const msg = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 400,
-      messages: [{
-        role: 'user',
-        content: `Traducí al español neutro latinoamericano (sin jerga argentina ni mexicana). Devolvé SOLO JSON válido sin markdown.
-
-Título: ${item.titulo}
-Resumen: ${item.resumen}
-
-{"titulo": "...", "resumen": "..."}`
-      }],
-    })
-
-    const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
-    let traduccion: { titulo: string; resumen: string }
     try {
-      const clean = text.match(/\{[\s\S]*\}/)
-      traduccion = JSON.parse(clean?.[0] ?? text)
-    } catch {
-      return NextResponse.json({ error: 'Error parsing traducción' }, { status: 500 })
-    }
+      const { data: item } = await supabaseAdmin.from('news').select('titulo, resumen').eq('id', id).single()
+      if (!item) return NextResponse.json({ error: 'No encontrado' }, { status: 404 })
 
-    const { error } = await supabaseAdmin
-      .from('news')
-      .update({ titulo: traduccion.titulo, resumen: traduccion.resumen })
-      .eq('id', id)
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json({ titulo: traduccion.titulo, resumen: traduccion.resumen })
+      const apiKey = process.env.ANTHROPIC_API_KEY
+      if (!apiKey) return NextResponse.json({ error: 'ANTHROPIC_API_KEY no configurada en Vercel' }, { status: 500 })
+
+      const anthropic = new Anthropic({ apiKey })
+      const msg = await anthropic.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: `Traducí al español neutro latinoamericano (sin jerga argentina ni mexicana). Devolvé SOLO JSON válido sin markdown.\n\nTítulo: ${item.titulo}\nResumen: ${item.resumen}\n\n{"titulo": "...", "resumen": "..."}`
+        }],
+      })
+
+      const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
+      const clean = text.match(/\{[\s\S]*\}/)
+      const traduccion = JSON.parse(clean?.[0] ?? text) as { titulo: string; resumen: string }
+
+      const { error } = await supabaseAdmin
+        .from('news')
+        .update({ titulo: traduccion.titulo, resumen: traduccion.resumen })
+        .eq('id', id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ titulo: traduccion.titulo, resumen: traduccion.resumen })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Error desconocido'
+      return NextResponse.json({ error: msg }, { status: 500 })
+    }
   }
 
   if (action === 'update_image' && imagen_url) {
