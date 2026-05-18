@@ -142,27 +142,36 @@ function OrbitalChart({ members, selected, onSelect, selectedBranch, onSelectBra
     })
   })
 
-  const handleBranchClick = useCallback((key: string, e: React.MouseEvent) => {
+  function handleBranchClick(key: string, e: React.MouseEvent) {
     e.stopPropagation()
     if (activeBranch === key) {
-      onSelectBranch(null); setAutoRotate(true); onSelect(null)
+      onSelectBranch(null)
+      setAutoRotate(true)
+      onSelect(null)
     } else {
-      onSelectBranch(key); setAutoRotate(false); onSelect(null)
+      onSelectBranch(key)
+      setAutoRotate(false)
+      onSelect(null)
     }
-  }, [activeBranch, onSelect, onSelectBranch])
+  }
 
-  const handleMemberClick = useCallback((m: Member, e: React.MouseEvent) => {
+  function handleMemberClick(m: Member, e: React.MouseEvent) {
     e.stopPropagation()
     if (selected?.id === m.id) {
-      onSelect(null); setAutoRotate(true)
+      onSelect(null)
+      setAutoRotate(true)
     } else {
-      onSelect(m); setAutoRotate(false); onSelectBranch(null)
+      onSelect(m)
+      setAutoRotate(false)
+      onSelectBranch(null)
     }
-  }, [selected, onSelect, onSelectBranch])
+  }
 
-  const handleBgClick = useCallback(() => {
-    onSelectBranch(null); setAutoRotate(true); onSelect(null)
-  }, [onSelect, onSelectBranch])
+  function handleBgClick() {
+    onSelectBranch(null)
+    setAutoRotate(true)
+    onSelect(null)
+  }
 
   const cx = size.w / 2
   const cy = size.h / 2
