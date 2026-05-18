@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import UpgradeModal from '@/components/upgrade-modal'
 import PromptLibrary from './prompt-library'
 import BonusLibrary from './bonus-library'
+import NewsSection from './news-section'
 
 type Class = {
   id: number
@@ -74,6 +75,21 @@ const SECCIONES = [
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
+  {
+    key: 'noticias',
+    label: 'Noticias',
+    color: 'text-rose-400',
+    activeText: 'text-rose-400',
+    activeBg: 'bg-rose-400/10',
+    activeBorder: 'border-rose-400/30',
+    dot: 'bg-rose-400',
+    hasOwnContent: true,
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
       </svg>
     ),
   },
@@ -331,7 +347,21 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
             <BonusLibrary />
           )}
 
-          {activeSection !== 'prompts' && (
+          {/* Noticias */}
+          {activeSection === 'noticias' && (
+            <>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-2 h-7 rounded-full bg-rose-400" />
+                <div>
+                  <h1 className="text-2xl font-bold text-rose-400">Noticias</h1>
+                  <p className="text-slate-500 text-sm mt-0.5">Digest diario del periodismo digital — curado por Clara</p>
+                </div>
+              </div>
+              <NewsSection />
+            </>
+          )}
+
+          {activeSection !== 'prompts' && activeSection !== 'noticias' && (
             <>
               {/* Cabecera de sección */}
               <div className="flex items-center gap-3 mb-8">
