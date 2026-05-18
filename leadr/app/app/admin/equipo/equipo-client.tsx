@@ -85,112 +85,82 @@ function RadialChart({ members, selected, onSelect }: {
     return { x: CX + R * Math.cos(angle), y: CY + R * Math.sin(angle) }
   })
 
+  const NW = 80
+  const NH = 60
+
   return (
-    <svg
-      viewBox={`0 0 ${VW} ${VH}`}
-      className="w-full h-full"
-    >
+    <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full h-full">
       <defs>
-        {/* Grid pattern */}
-        <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" strokeWidth="0.6" />
+        <pattern id="grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+          <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#0f172a" strokeWidth="1" />
         </pattern>
 
-        {/* Glow filter */}
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="node-shadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.5" />
         </filter>
 
-        {/* Strong glow for selected */}
-        <filter id="glow-strong" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="8" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="glow-sel" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
 
-        {/* Line gradients per area */}
-        {members.map(m => {
+        <filter id="center-glow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+
+        {members.map((m, i) => {
           const col = AREA_HEX[m.area] ?? '#6366f1'
+          const p = positions[i]
           return (
-            <linearGradient
-              key={`grad-${m.id}`}
-              id={`lg-${m.id}`}
-              gradientUnits="userSpaceOnUse"
-              x1={CX} y1={CY}
-              x2={positions[members.indexOf(m)].x}
-              y2={positions[members.indexOf(m)].y}
-            >
-              <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.6" />
-              <stop offset="100%" stopColor={col}     stopOpacity="0.9" />
+            <linearGradient key={`lg-${m.id}`} id={`lg-${m.id}`}
+              gradientUnits="userSpaceOnUse" x1={CX} y1={CY} x2={p.x} y2={p.y}>
+              <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.3" />
+              <stop offset="100%" stopColor={col}     stopOpacity="0.7" />
             </linearGradient>
           )
         })}
 
-        {/* Center pulse gradient */}
-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.25" />
+        <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor="#6366f1" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#6366f1" stopOpacity="0"    />
         </radialGradient>
 
-        {/* Dash animation */}
+        <radialGradient id="center-fill" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor="#1e1b4b" />
+          <stop offset="100%" stopColor="#0d1526" />
+        </radialGradient>
+
         <style>{`
-          .flow-line {
-            stroke-dasharray: 10 6;
-            animation: dashFlow 1.8s linear infinite;
-          }
-          .flow-line-slow {
-            stroke-dasharray: 6 14;
-            animation: dashFlow 3s linear infinite;
-          }
-          @keyframes dashFlow {
-            to { stroke-dashoffset: -32; }
-          }
-          .pulse-ring {
-            animation: pulseRing 2.4s ease-in-out infinite;
-          }
-          @keyframes pulseRing {
-            0%, 100% { opacity: 0.15; r: 52; }
-            50%       { opacity: 0.35; r: 60; }
-          }
-          .orbit-ring {
-            animation: orbitPulse 4s ease-in-out infinite;
-          }
-          @keyframes orbitPulse {
-            0%, 100% { opacity: 0.06; }
-            50%       { opacity: 0.14; }
-          }
+          .line-idle { stroke-dasharray: 5 12; animation: flow 3s linear infinite; }
+          .line-sel  { stroke-dasharray: 8 5;  animation: flow 1.6s linear infinite; }
+          @keyframes flow { to { stroke-dashoffset: -26; } }
+          .orbit { animation: orb 5s ease-in-out infinite; }
+          @keyframes orb { 0%,100% { opacity:.05 } 50% { opacity:.12 } }
+          .pulse { animation: pulse 2.8s ease-in-out infinite; }
+          @keyframes pulse { 0%,100% { opacity:.2; r:50 } 50% { opacity:.4; r:56 } }
         `}</style>
       </defs>
 
-      {/* Background grid */}
+      {/* Background */}
       <rect width={VW} height={VH} fill="#07070f" />
       <rect width={VW} height={VH} fill="url(#grid)" />
+      <circle cx={CX} cy={CY} r={160} fill="url(#bg-glow)" />
 
-      {/* Orbit rings */}
-      <circle cx={CX} cy={CY} r={R}      fill="none" stroke="#6366f1" strokeWidth="0.8" className="orbit-ring" />
-      <circle cx={CX} cy={CY} r={R - 30} fill="none" stroke="#22d3ee" strokeWidth="0.4" className="orbit-ring" style={{ animationDelay: '-2s' }} />
+      {/* Single orbit ring */}
+      <circle cx={CX} cy={CY} r={R} fill="none" stroke="#6366f1" strokeWidth="0.6" className="orbit" />
 
-      {/* Center glow blob */}
-      <circle cx={CX} cy={CY} r={120} fill="url(#centerGlow)" />
-
-      {/* Lines from center to each agent */}
+      {/* Lines */}
       {members.map((m, i) => {
         const { x, y } = positions[i]
-        const isSelected = selected?.id === m.id
+        const sel = selected?.id === m.id
         return (
-          <line
-            key={`line-${m.id}`}
+          <line key={`l-${m.id}`}
             x1={CX} y1={CY} x2={x} y2={y}
             stroke={`url(#lg-${m.id})`}
-            strokeWidth={isSelected ? 2 : 1.2}
-            className={isSelected ? 'flow-line' : 'flow-line-slow'}
-            opacity={isSelected ? 1 : 0.45}
+            strokeWidth={sel ? 1.5 : 0.8}
+            className={sel ? 'line-sel' : 'line-idle'}
+            opacity={sel ? 1 : 0.5}
           />
         )
       })}
@@ -199,128 +169,71 @@ function RadialChart({ members, selected, onSelect }: {
       {members.map((m, i) => {
         const { x, y } = positions[i]
         const col = AREA_HEX[m.area] ?? '#6366f1'
-        const isSelected = selected?.id === m.id
-        const NODE_W = 86
-        const NODE_H = 68
+        const sel = selected?.id === m.id
 
         return (
-          <g
-            key={m.id}
-            transform={`translate(${x}, ${y})`}
-            onClick={() => onSelect(isSelected ? null : m)}
+          <g key={m.id}
+            transform={`translate(${x},${y})`}
+            onClick={() => onSelect(sel ? null : m)}
             style={{ cursor: 'pointer' }}
-            filter={isSelected ? 'url(#glow-strong)' : undefined}
+            filter={sel ? 'url(#glow-sel)' : 'url(#node-shadow)'}
           >
-            {/* Selection glow ring */}
-            {isSelected && (
-              <rect
-                x={-NODE_W / 2 - 4} y={-NODE_H / 2 - 4}
-                width={NODE_W + 8} height={NODE_H + 8}
-                rx="16" fill="none"
-                stroke={col} strokeWidth="1.5"
-                opacity="0.6"
-              />
-            )}
+            {/* Card */}
+            <rect x={-NW/2} y={-NH/2} width={NW} height={NH} rx="10"
+              fill={sel ? `${col}18` : '#0c1322'}
+              stroke={col} strokeWidth={sel ? 1.2 : 0.5}
+              opacity={sel ? 1 : 0.9}
+            />
 
-            {/* Card body */}
-            <rect
-              x={-NODE_W / 2} y={-NODE_H / 2}
-              width={NODE_W} height={NODE_H}
-              rx="12"
-              fill={isSelected ? `${col}22` : '#0d1526'}
-              stroke={col}
-              strokeWidth={isSelected ? 1.5 : 0.8}
-              opacity={isSelected ? 1 : 0.85}
+            {/* Top accent line */}
+            <rect x={-NW/2 + 8} y={-NH/2} width={NW - 16} height="2" rx="1"
+              fill={col} opacity={sel ? 1 : 0.4}
             />
 
             {/* Emoji */}
-            <text
-              textAnchor="middle"
-              y={-NODE_H / 2 + 26}
-              fontSize="20"
-              style={{ userSelect: 'none' }}
-            >
+            <text x="0" textAnchor="middle" y={-NH/2 + 22} fontSize="17"
+              style={{ userSelect: 'none' }}>
               {m.emoji}
             </text>
 
             {/* Name */}
-            <text
-              textAnchor="middle"
-              y={-NODE_H / 2 + 44}
-              fontSize="11"
+            <text x="0" textAnchor="middle" y={-NH/2 + 38} fontSize="10.5"
               fontWeight="600"
-              fill={isSelected ? '#f8fafc' : '#cbd5e1'}
-              style={{ userSelect: 'none' }}
-            >
+              fill={sel ? '#f1f5f9' : '#94a3b8'}
+              style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
               {m.name}
             </text>
 
-            {/* Role */}
-            <text
-              textAnchor="middle"
-              y={-NODE_H / 2 + 57}
-              fontSize="8.5"
-              fill={isSelected ? col : '#475569'}
-              style={{ userSelect: 'none' }}
-            >
-              {m.role}
+            {/* Role — truncate visually with clip */}
+            <text x="0" textAnchor="middle" y={-NH/2 + 51} fontSize="7.5"
+              fill={sel ? col : '#334155'}
+              style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
+              {m.role.length > 18 ? m.role.slice(0, 17) + '…' : m.role}
             </text>
           </g>
         )
       })}
 
-      {/* Center node — Jose */}
-      <g filter="url(#glow)">
-        {/* Pulse ring */}
-        <circle cx={CX} cy={CY} r={52} fill="none" stroke="#6366f1" strokeWidth="1" className="pulse-ring" />
+      {/* Center — Jose */}
+      <g filter="url(#center-glow)">
+        <circle cx={CX} cy={CY} r={50} fill="none" stroke="#6366f1"
+          strokeWidth="0.8" className="pulse" />
+        <circle cx={CX} cy={CY} r={42} fill="url(#center-fill)"
+          stroke="#6366f1" strokeWidth="1.2" />
 
-        {/* Inner circle */}
-        <circle cx={CX} cy={CY} r={46} fill="#0d1526" stroke="#6366f1" strokeWidth="1.5" />
-        <circle cx={CX} cy={CY} r={46} fill="#6366f1" fillOpacity="0.12" />
-
-        {/* Emoji */}
-        <text textAnchor="middle" y={CY - 6} fontSize="22" style={{ userSelect: 'none' }}>👤</text>
-
-        {/* Name */}
-        <text
-          textAnchor="middle" y={CY + 14}
-          fontSize="13" fontWeight="700" fill="#f8fafc"
-          style={{ userSelect: 'none' }}
-        >
+        <text x={CX} textAnchor="middle" y={CY - 8} fontSize="20"
+          style={{ userSelect: 'none' }}>👤</text>
+        <text x={CX} textAnchor="middle" y={CY + 11} fontSize="12"
+          fontWeight="700" fill="#f1f5f9"
+          style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
           Jose
         </text>
-
-        {/* Label */}
-        <text
-          textAnchor="middle" y={CY + 28}
-          fontSize="9" fill="#818cf8"
-          style={{ userSelect: 'none' }}
-        >
+        <text x={CX} textAnchor="middle" y={CY + 24} fontSize="8"
+          fill="#818cf8"
+          style={{ userSelect: 'none', fontFamily: 'system-ui, sans-serif' }}>
           Fundador
         </text>
       </g>
-
-      {/* Area label tags next to nodes */}
-      {members.map((m, i) => {
-        const { x, y } = positions[i]
-        const col = AREA_HEX[m.area] ?? '#6366f1'
-        const label = AREA_LABEL[m.area] ?? m.area
-        const labelX = x + (x < CX ? -50 : 50)
-        const labelY = y > CY ? y + 42 : y - 42
-        return (
-          <text
-            key={`tag-${m.id}`}
-            x={labelX} y={labelY}
-            textAnchor="middle"
-            fontSize="8"
-            fill={col}
-            opacity="0.7"
-            style={{ userSelect: 'none' }}
-          >
-            {label}
-          </text>
-        )
-      })}
     </svg>
   )
 }
