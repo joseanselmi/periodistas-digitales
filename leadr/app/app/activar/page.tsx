@@ -2,11 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ActivarPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get('t') ?? 'LEADR2026'
+
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [error, setError]       = useState('')
@@ -14,7 +17,11 @@ export default function ActivarPage() {
   const [step, setStep]         = useState<'form' | 'activating'>('form')
 
   async function grantPro() {
-    const res = await fetch('/api/activar', { method: 'POST' })
+    const res = await fetch('/api/activar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    })
     if (!res.ok) {
       const d = await res.json().catch(() => ({}))
       throw new Error(d.error ?? `HTTP ${res.status}`)
@@ -28,7 +35,7 @@ export default function ActivarPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/api/activar-redirect`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/api/activar-redirect?t=${token}`,
       },
     })
     if (error) { setError('No se pudo conectar con Google.'); setLoading(false) }

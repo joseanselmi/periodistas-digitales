@@ -5,18 +5,19 @@ import { createClient } from '@supabase/supabase-js'
 // Usado como destino del Google OAuth desde /activar
 // Otorga plan pro y redirige al dashboard
 export async function GET(request: Request) {
-  const { origin } = new URL(request.url)
+  const { origin, searchParams } = new URL(request.url)
+  const token = searchParams.get('t') ?? 'LEADR2026'
 
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    await admin.from('users').update({ plan: 'pro', plan_expires_at: expires }).eq('id', user.id)
+    // Reusar la lógica de /api/activar pasando el token
+    await fetch(`${origin}/api/activar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', cookie: request.headers.get('cookie') ?? '' },
+      body: JSON.stringify({ token }),
+    })
   }
 
   return NextResponse.redirect(`${origin}/dashboard?activated=1`)
