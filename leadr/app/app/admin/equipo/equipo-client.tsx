@@ -86,6 +86,8 @@ function OrbitalChart({ members, selected, onSelect }: {
   selected: Member | null
   onSelect: (m: Member | null) => void
 }) {
+  const [rotation, setRotation]         = useState(0)
+  const [autoRotate, setAutoRotate]     = useState(true)
   const [activeBranch, setActiveBranch] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 800, h: 600 })
@@ -100,7 +102,13 @@ function OrbitalChart({ members, selected, onSelect }: {
     return () => ro.disconnect()
   }, [])
 
-  // Radios que siempre caben en pantalla
+  useEffect(() => {
+    if (!autoRotate) return
+    const t = setInterval(() => setRotation(r => (r + 0.18) % 360), 50)
+    return () => clearInterval(t)
+  }, [autoRotate])
+
+  // Radios responsivos: siempre caben en pantalla
   const R_INNER = Math.min(size.w, size.h) * 0.24
   const R_OUTER = Math.min(size.w, size.h) * 0.43
 
@@ -109,12 +117,13 @@ function OrbitalChart({ members, selected, onSelect }: {
   members.forEach(m => { grouped[getBranch(m).key].push(m) })
 
   const getBranchPos = (branchIndex: number) => {
-    const rad = (BRANCH_ANGLES[branchIndex] * Math.PI) / 180
+    const deg = BRANCH_ANGLES[branchIndex] + rotation
+    const rad = (deg * Math.PI) / 180
     return { x: R_INNER * Math.cos(rad), y: R_INNER * Math.sin(rad) }
   }
 
   const getMemberPos = (branchIndex: number, memberIndex: number, totalInBranch: number) => {
-    const baseAngle   = BRANCH_ANGLES[branchIndex]
+    const baseAngle   = BRANCH_ANGLES[branchIndex] + rotation
     const spread      = totalInBranch <= 1 ? 0 : Math.min(totalInBranch * 16, 64)
     const memberAngle = totalInBranch <= 1
       ? baseAngle
@@ -133,16 +142,24 @@ function OrbitalChart({ members, selected, onSelect }: {
 
   const handleBranchClick = useCallback((key: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    setActiveBranch(prev => { if (prev === key) { onSelect(null); return null } onSelect(null); return key })
-  }, [onSelect])
+    if (activeBranch === key) {
+      setActiveBranch(null); setAutoRotate(true); onSelect(null)
+    } else {
+      setActiveBranch(key); setAutoRotate(false); onSelect(null)
+    }
+  }, [activeBranch, onSelect])
 
   const handleMemberClick = useCallback((m: Member, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (selected?.id === m.id) { onSelect(null) } else { onSelect(m); setActiveBranch(null) }
+    if (selected?.id === m.id) {
+      onSelect(null); setAutoRotate(true)
+    } else {
+      onSelect(m); setAutoRotate(false); setActiveBranch(null)
+    }
   }, [selected, onSelect])
 
   const handleBgClick = useCallback(() => {
-    setActiveBranch(null); onSelect(null)
+    setActiveBranch(null); setAutoRotate(true); onSelect(null)
   }, [onSelect])
 
   const cx = size.w / 2
