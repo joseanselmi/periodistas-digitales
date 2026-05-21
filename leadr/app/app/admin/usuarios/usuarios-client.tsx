@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 interface UserRow {
   id: string
@@ -11,6 +10,13 @@ interface UserRow {
   classesWatched: number
 }
 
+interface RatingDetail {
+  user_email: string
+  rating: number
+  comment: string | null
+  created_at: string
+}
+
 interface ClassStats {
   id: number
   title: string
@@ -18,6 +24,7 @@ interface ClassStats {
   watches: number
   avg_rating: number | null
   rating_count: number
+  ratings: RatingDetail[]
 }
 
 interface Stats {
@@ -52,26 +59,35 @@ function Stars({ value }: { value: number | null }) {
 export default function UsuariosClient() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<'usuarios' | 'clases' | 'valoraciones'>('usuarios')
+  const [ratingModal, setRatingModal] = useState<{ title: string; ratings: RatingDetail[] } | null>(null)
+
+  const TEST_EMAILS = ['leadr.test', 'yopmail', 'example.com', 'postman']
+  const isTest = (email: string) => TEST_EMAILS.some(t => email.includes(t))
 
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const supabase = createClient()
+      setError(null)
 
-      const [
-        { data: users },
-        { data: progress },
-        { data: classes },
-        { data: ratings },
-      ] = await Promise.all([
-        supabase.from('users').select('id, email, plan, created_at').order('created_at', { ascending: false }).limit(500),
-        supabase.from('user_progress').select('user_id, class_id').limit(5000),
-        supabase.from('classes').select('id, title, groups(name)').eq('status', 'published'),
-        supabase.from('class_ratings').select('class_id, rating, user_id').limit(5000),
-      ])
+      const res = await fetch('/api/admin/usuarios')
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setError(`Error ${res.status}: ${d.error ?? 'Sin datos'}`)
+        setLoading(false)
+        return
+      }
+      const { users: allUsers, progress, classes, ratings } = await res.json()
 
-      if (!users || !progress || !classes) { setLoading(false); return }
+      if (!allUsers || !progress || !classes) { setLoading(false); return }
+
+      // Filtrar cuentas de prueba
+      const users = allUsers.filter((u: { email: string }) => !isTest(u.email))
+
+      // Mapa userId → email para enriquecer ratings
+      const emailByUserId: Record<string, string> = {}
+      for (const u of allUsers as { id: string; email: string }[]) emailByUserId[u.id] = u.email
 
       const now = Date.now()
       const d7 = now - 7 * 86400000
@@ -90,15 +106,15 @@ export default function UsuariosClient() {
       }
 
       // Ratings por clase
-      const ratingsByClass: Record<number, number[]> = {}
+      const ratingsByClass: Record<number, { rating: number; user_id: string; comment: string | null; created_at: string }[]> = {}
       for (const r of (ratings ?? [])) {
         if (!ratingsByClass[r.class_id]) ratingsByClass[r.class_id] = []
-        ratingsByClass[r.class_id].push(r.rating)
+        ratingsByClass[r.class_id].push(r)
       }
 
       const classStats: ClassStats[] = (classes as { id: number; title: string; groups: { name: string } | null }[]).map(c => {
         const rs = ratingsByClass[c.id] ?? []
-        const avg = rs.length > 0 ? rs.reduce((a, b) => a + b, 0) / rs.length : null
+        const avg = rs.length > 0 ? rs.reduce((a, b) => a + b.rating, 0) / rs.length : null
         return {
           id: c.id,
           title: c.title,
@@ -106,6 +122,12 @@ export default function UsuariosClient() {
           watches: watchesByClass[c.id] ?? 0,
           avg_rating: avg,
           rating_count: rs.length,
+          ratings: rs.map(r => ({
+            user_email: emailByUserId[r.user_id] ?? r.user_id,
+            rating: r.rating,
+            comment: r.comment ?? null,
+            created_at: r.created_at,
+          })),
         }
       })
 
@@ -145,6 +167,7 @@ export default function UsuariosClient() {
     </div>
   )
 
+  if (error) return <p className="text-red-400 p-8">{error}</p>
   if (!stats) return <p className="text-slate-500 p-8">Sin datos</p>
 
   return (
@@ -271,17 +294,63 @@ export default function UsuariosClient() {
                       </div>
                     </td>
                     <td className="px-5 py-3">
-                      <div className="flex flex-col gap-0.5">
-                        <Stars value={c.avg_rating} />
-                        {c.rating_count > 0 && (
-                          <span className="text-slate-600 text-xs">{c.rating_count} reseña{c.rating_count !== 1 ? 's' : ''}</span>
-                        )}
-                      </div>
+                      {c.rating_count > 0 ? (
+                        <button
+                          onClick={() => setRatingModal({ title: c.title, ratings: c.ratings })}
+                          className="flex flex-col gap-0.5 text-left hover:opacity-80 transition-opacity cursor-pointer"
+                        >
+                          <Stars value={c.avg_rating} />
+                          <span className="text-cyan-600 text-xs underline underline-offset-2">{c.rating_count} reseña{c.rating_count !== 1 ? 's' : ''}</span>
+                        </button>
+                      ) : (
+                        <span className="text-slate-600 text-xs">Sin valoraciones</span>
+                      )}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: detalle de valoraciones */}
+      {ratingModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setRatingModal(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 mb-5">
+              <h3 className="text-white font-semibold text-sm leading-snug">{ratingModal.title}</h3>
+              <button
+                onClick={() => setRatingModal(null)}
+                className="text-slate-500 hover:text-white transition-colors shrink-0 mt-0.5"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-3">
+              {ratingModal.ratings.map((r, i) => (
+                <div key={i} className="bg-slate-800 rounded-xl p-4 flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-300 text-xs font-medium truncate">{r.user_email}</span>
+                    <Stars value={r.rating} />
+                  </div>
+                  {r.comment && (
+                    <p className="text-slate-400 text-xs leading-relaxed">{r.comment}</p>
+                  )}
+                  <p className="text-slate-600 text-xs">
+                    {new Date(r.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
