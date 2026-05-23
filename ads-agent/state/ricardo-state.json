@@ -1,11 +1,29 @@
 {
-  "ultima_revision": null,
-  "decisiones_semana": [],
-  "palanca_actual": "Campaña email Leadr — 244 contactos en lista, L3 pendiente",
+  "ultima_revision": "2026-05-23",
+  "decisiones_semana": [
+    {
+      "id": 1,
+      "decision": "Sofía envía L4 (reminder cierre) el domingo 25/05 — filtrar por no-activaciones en Supabase",
+      "responsable": "Sofía",
+      "fecha": "2026-05-25"
+    },
+    {
+      "id": 2,
+      "decision": "Mateo publica campaña v2 con foco en segmento 40-65 — autorizado por Ricardo",
+      "responsable": "Mateo",
+      "fecha": "2026-05-23"
+    },
+    {
+      "id": 3,
+      "decision": "Valentina activa boost S1 hoy — elegir post con más comentarios+compartidos de S1",
+      "responsable": "Valentina",
+      "fecha": "2026-05-23"
+    }
+  ],
+  "palanca_actual": "L4 el domingo 25/05 — cierre de la campaña email sobre los 243 contactos",
   "alertas_abiertas": [
-    "Campaña Meta v2 sin publicar",
-    "Testimonios landing vacíos (3 slots)",
-    "Semana 2 orgánico sin crear",
-    "Emails post-compra sin cargar en Hotmart"
+    "Testimonios landing vacíos (3 slots) — Jose debe subir capturas WhatsApp",
+    "Emails post-compra sin cargar en Hotmart",
+    "landing_events tabla faltante — detectado por Max (Max 23/05)"
   ]
 }

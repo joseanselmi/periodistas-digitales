@@ -1,8 +1,15 @@
 {
-  "ultima_auditoria": null,
-  "landing_status": null,
-  "leadr_status": null,
-  "supabase_status": null,
-  "ultimo_deploy": null,
-  "proxima_accion": "Viernes — auditoría completa"
+  "ultima_auditoria": "2026-05-23",
+  "landing_status": "amarillo",
+  "leadr_status": "verde",
+  "supabase_status": "amarillo",
+  "ultimo_deploy": "2026-05-22",
+  "clases_publicadas": 108,
+  "hallazgos": {
+    "landing_events_404": "Tabla landing_events no existe — request desde iPhone Safari con 404",
+    "auth_is_admin_anon": "SECURITY DEFINER callable por anon — riesgo de seguridad medio",
+    "rls_initplan": "8 tablas con RLS re-evaluando auth.uid() por fila — performance a escala",
+    "activation_tokens_sin_policies": "RLS habilitado pero sin políticas en activation_tokens"
+  },
+  "proxima_accion": "Viernes 2026-05-30 — auditoría completa"
 }

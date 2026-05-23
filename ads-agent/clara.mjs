@@ -12,7 +12,7 @@ import { createClient } from '@supabase/supabase-js'
 // ── Config ───────────────────────────────────────────────────────────────────
 
 // Cargar .env.local si existe (para correr localmente sin setear vars de entorno)
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve as resolvePath } from 'path'
 const envPath = resolvePath(process.cwd(), '../leadr/app/.env.local')
 if (existsSync(envPath)) {
@@ -30,7 +30,7 @@ const ANTHROPIC_KEY        = process.env.ANTHROPIC_API_KEY
 const FAL_KEY              = process.env.FAL_API_KEY
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY })
+const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY, maxRetries: 5 })
 
 // ── Fuentes RSS verificadas ──────────────────────────────────────────────────
 // Solo fuentes de primer nivel — sin scraping libre
@@ -128,11 +128,25 @@ Respondé SOLO con JSON válido, sin markdown, sin explicaciones:
   }
 ]`
 
-  const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 1500,
-    messages: [{ role: 'user', content: prompt }],
-  })
+  let message, lastErr
+  for (let attempt = 0; attempt < 6; attempt++) {
+    try {
+      message = await anthropic.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }],
+      })
+      break
+    } catch (err) {
+      lastErr = err
+      if (err.status === 529 || err.status === 529) {
+        const wait = Math.min(10000 * Math.pow(2, attempt), 120000)
+        console.log(`⏳ API sobrecargada, reintentando en ${wait / 1000}s...`)
+        await new Promise(r => setTimeout(r, wait))
+      } else throw err
+    }
+  }
+  if (!message) throw lastErr
 
   const text = message.content[0].type === 'text' ? message.content[0].text : ''
   try {
@@ -236,6 +250,19 @@ async function main() {
   }
 
   console.log('\n✨ Clara terminó. Los drafts están en /admin/aprobaciones')
+
+  // Actualizar state
+  const statePath = resolvePath(process.cwd(), 'state/clara-state.json')
+  const mañana = new Date(); mañana.setDate(mañana.getDate() + 1)
+  writeFileSync(statePath, JSON.stringify({
+    ultima_ejecucion: hoy,
+    noticias_hoy: seleccionados.length,
+    status: 'ok',
+    proxima_ejecucion: mañana.toISOString().slice(0, 10),
+    responsable: 'Dante',
+    frecuencia: 'diaria',
+    comando: 'node ads-agent/clara.mjs'
+  }, null, 2))
 }
 
 main().catch(err => {

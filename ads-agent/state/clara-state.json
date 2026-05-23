@@ -1,0 +1,9 @@
+{
+  "ultima_ejecucion": "2026-05-23",
+  "noticias_hoy": 5,
+  "status": "ok",
+  "proxima_ejecucion": "2026-05-24",
+  "responsable": "Dante",
+  "frecuencia": "diaria",
+  "comando": "node ads-agent/clara.mjs"
+}

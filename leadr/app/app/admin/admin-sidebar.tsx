@@ -182,6 +182,40 @@ export default function AdminSidebar() {
         </div>
 
         <div className="pt-3">
+          <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Comando</p>
+          <Link
+            href="/admin/comando"
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+              isActive('/admin/comando')
+                ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Centro de Comando
+          </Link>
+        </div>
+
+        <div className="pt-3">
+          <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Marketing</p>
+          <Link
+            href="/admin/campanas"
+            className={`flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+              isActive('/admin/campanas')
+                ? 'bg-violet-400/10 text-violet-400 border border-violet-400/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Campañas
+          </Link>
+        </div>
+
+        <div className="pt-3">
           <p className="px-2 text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">Análisis</p>
           <Link
             href="/admin/costos"
