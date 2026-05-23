@@ -5,8 +5,6 @@ import CerebroClient from './cerebro-client'
 
 export const metadata = { title: 'Cerebro' }
 
-const TEST_DOMAINS = ['leadr.test', 'yopmail', 'example.com', 'postman']
-
 export default async function CerebroPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -34,7 +32,7 @@ export default async function CerebroPage() {
     admin.from('user_progress').select('user_id, class_id').limit(5000),
   ])
 
-  const users = (allUsers ?? []).filter(u => !TEST_DOMAINS.some(d => u.email.includes(d)))
+  const users = allUsers ?? []
 
   return (
     <CerebroClient
