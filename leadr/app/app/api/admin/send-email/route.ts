@@ -108,5 +108,13 @@ export async function POST() {
     await new Promise(r => setTimeout(r, 100))
   }
 
+  // Actualizar estado de Sofía en agent_states
+  await supabaseAdmin.from('agent_states').update({
+    ultima_accion: new Date().toISOString().split('T')[0],
+    estado: 'ok',
+    proxima_accion: `Campaña L1-L4 completa — ${sent} emails enviados. Próximo ciclo por definir.`,
+    updated_at: new Date().toISOString(),
+  }).eq('agent_id', 'sofia')
+
   return NextResponse.json({ ok: true, sent, errors, total: pendientes.length })
 }
