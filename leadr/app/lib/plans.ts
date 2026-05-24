@@ -1,5 +1,5 @@
 // ─── LINKS DE HOTMART ────────────────────────────────────────────────────────
-export const HOTMART_PRO_URL     = 'https://pay.hotmart.com/REEMPLAZAR_CON_LINK_MENSUAL'
+export const HOTMART_PRO_URL     = 'https://pay.hotmart.com/F105860238T?checkoutMode=10'
 export const HOTMART_ANNUAL_URL  = 'https://pay.hotmart.com/F105964002O?checkoutMode=10'
 // ─────────────────────────────────────────────────────────────────────────────
 
