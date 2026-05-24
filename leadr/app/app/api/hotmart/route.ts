@@ -62,11 +62,17 @@ export async function POST(req: Request) {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-  // 2. Cancelación → bajar a basic
+  // 2. Cancelación → bajar a basic y limpiar campos de plan
   if (CANCEL_EVENTS.includes(event)) {
     await supabase
       .from('users')
-      .update({ plan: 'basic', plan_expires_at: null })
+      .update({
+        plan: 'basic',
+        plan_expires_at: null,
+        plan_annual_started_at: null,
+        gift_token_issued: null,
+        gift_token_redeemed_at: null,
+      })
       .eq('email', email)
 
     return NextResponse.json({ ok: true, action: 'downgraded', email })

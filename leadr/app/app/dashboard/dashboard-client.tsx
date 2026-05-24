@@ -116,6 +116,9 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
   const searchParams = useSearchParams()
   const [watched] = useState<Set<number>>(new Set(watchedIds))
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const [showActivated, setShowActivated] = useState(false)
+  const [activeSection, setActiveSection] = useState('clases')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [giftCopied, setGiftCopied] = useState(false)
 
   function copyGiftToken() {
@@ -124,9 +127,6 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
     setGiftCopied(true)
     setTimeout(() => setGiftCopied(false), 2000)
   }
-  const [showActivated, setShowActivated] = useState(false)
-  const [activeSection, setActiveSection] = useState('clases')
-  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (searchParams.get('activated') === '1') {
