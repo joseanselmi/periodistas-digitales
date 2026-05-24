@@ -17,25 +17,26 @@ export default async function DashboardPage() {
   if (!user) redirect('/login')
 
   const [{ data: profile }, { data: groups }, { data: progress }] = await Promise.all([
-    supabase.from('users').select('plan, is_admin, plan_expires_at').eq('id', user.id).single(),
+    supabase.from('users').select('plan, is_admin, plan_expires_at, gift_token_issued, plan_annual_started_at').eq('id', user.id).single(),
     supabase.from('groups').select('*, description, classes(*)').order('order_index'),
     supabase.from('user_progress').select('class_id').eq('user_id', user.id),
   ])
 
   // Si el plan expiró → bajar a basic en DB y en sesión
   let plan = profile?.plan ?? 'basic'
-  if (plan === 'pro' && profile?.plan_expires_at) {
+  if ((plan === 'pro' || plan === 'pro_annual') && profile?.plan_expires_at) {
     const expired = new Date(profile.plan_expires_at) < new Date()
     if (expired) {
       plan = 'basic'
-      // Bajar en DB de forma no bloqueante
       const service = createServiceClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       )
-      service.from('users').update({ plan: 'basic', plan_expires_at: null }).eq('id', user.id)
+      service.from('users').update({ plan: 'basic', plan_expires_at: null, plan_annual_started_at: null }).eq('id', user.id)
     }
   }
+
+  const isPro = plan === 'pro' || plan === 'pro_annual'
 
   return (
     <DashboardClient
@@ -43,7 +44,8 @@ export default async function DashboardPage() {
         email: user.email!,
         plan,
         isAdmin: profile?.is_admin ?? false,
-        planExpiresAt: plan === 'pro' && profile?.plan_expires_at ? profile.plan_expires_at : null,
+        planExpiresAt: isPro && profile?.plan_expires_at ? profile.plan_expires_at : null,
+        giftToken: plan === 'pro_annual' ? (profile?.gift_token_issued ?? null) : null,
       }}
       groups={groups ?? []}
       watchedIds={progress?.map(p => p.class_id) ?? []}

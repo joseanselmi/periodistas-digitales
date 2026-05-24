@@ -1,8 +1,9 @@
 {
-  "ultima_auditoria": null,
-  "rutas_revisadas": [],
+  "ultima_auditoria": "2026-05-23",
+  "rutas_revisadas": ["/api/activar", "/api/activar-redirect", "/api/hotmart", "/api/admin/tokens"],
   "criticos_abiertos": [
-    "/api/activar — cualquier usuario auth puede obtener Pro gratis sin verificar pago"
+    "LEADR2026 token multi-uso sin expires_at — setear expires_at 2026-05-31 desde admin/accesos",
+    "HOTMART_ANNUAL_PRODUCT_ID no configurado en .env — plan anual no activa hasta que exista el producto en Hotmart"
   ],
-  "proxima_accion": "Auditar /api/activar y /api/activar-redirect — riesgo de escalada de privilegios"
+  "proxima_accion": "Aplicar migración SQL plan anual. Extender /api/hotmart con lógica anual. Crear /api/votar, /api/certificados/[id], /api/certificado/generar."
 }

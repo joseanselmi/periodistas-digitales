@@ -12,6 +12,8 @@ const CANCEL_EVENTS = ['PURCHASE_REFUNDED', 'PURCHASE_CHARGEBACK', 'SUBSCRIPTION
 
 // Producto del curso "Sistema de Ingresos Diarios" → da 30 días de Pro (no renovable)
 const CURSO_PRODUCT_ID = '5475737'
+// Producto Leadr PRO anual → da 365 días de pro_annual + gift token
+const ANNUAL_PRODUCT_ID = process.env.HOTMART_ANNUAL_PRODUCT_ID ?? ''
 
 async function sendPurchaseToMeta(email: string, value: number, currency: string) {
   try {
@@ -85,7 +87,9 @@ export async function POST(req: Request) {
       ''
     )
     const isCurso = productId === CURSO_PRODUCT_ID
+    const isAnual = ANNUAL_PRODUCT_ID && productId === ANNUAL_PRODUCT_ID
     const isRenewal = event === 'SUBSCRIPTION_REACTIVATED'
+    const daysToAdd = isAnual ? 365 : 30
 
     // Verificar si el usuario ya existe
     const { data: existingUser } = await supabase
@@ -94,9 +98,7 @@ export async function POST(req: Request) {
       .eq('email', email)
       .single()
 
-    // Calcular nueva fecha de vencimiento:
-    // - Renovación con plan vigente → sumar 30 días desde el vencimiento actual
-    // - Primera compra o plan expirado → sumar 30 días desde hoy
+    // Calcular nueva fecha de vencimiento
     const expiresAt = new Date()
     if (isRenewal && existingUser?.plan_expires_at) {
       const currentExpiry = new Date(existingUser.plan_expires_at)
@@ -104,20 +106,39 @@ export async function POST(req: Request) {
         expiresAt.setTime(currentExpiry.getTime())
       }
     }
-    expiresAt.setDate(expiresAt.getDate() + 30)
+    expiresAt.setDate(expiresAt.getDate() + daysToAdd)
+
+    // Gift token para plan anual
+    let giftToken: string | undefined
+    if (isAnual) {
+      const { randomBytes } = await import('crypto')
+      giftToken = 'GIFT-' + randomBytes(4).toString('hex').toUpperCase()
+      await supabase.from('activation_tokens').insert({
+        token: giftToken,
+        single_use: true,
+        pro_days: 30,
+        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      })
+    }
+
+    const planValue = isAnual ? 'pro_annual' : 'pro'
+    const updatePayload: Record<string, unknown> = {
+      plan: planValue,
+      plan_expires_at: expiresAt.toISOString(),
+      ...(isAnual && {
+        plan_annual_started_at: new Date().toISOString(),
+        gift_token_issued: giftToken,
+      }),
+    }
 
     if (existingUser) {
-      // Cuenta existente → upgrade directo
-      await supabase
-        .from('users')
-        .update({ plan: 'pro', plan_expires_at: expiresAt.toISOString() })
-        .eq('email', email)
+      await supabase.from('users').update(updatePayload).eq('email', email)
 
       return NextResponse.json({
         ok: true,
         action: 'upgraded',
         email,
-        source: isCurso ? 'curso' : 'subscription',
+        source: isAnual ? 'annual' : isCurso ? 'curso' : 'subscription',
       })
     }
 
@@ -132,12 +153,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
     }
 
-    // Insertar en tabla users con plan pro
+    // Insertar en tabla users
     await supabase.from('users').upsert({
       id: authUser.user.id,
       email,
-      plan: 'pro',
-      plan_expires_at: expiresAt.toISOString(),
+      ...updatePayload,
     })
 
     // Mandar email con link para crear contraseña (ignorar error si el email es inválido)
@@ -151,7 +171,7 @@ export async function POST(req: Request) {
       ok: true,
       action: 'created_and_upgraded',
       email,
-      source: isCurso ? 'curso' : 'subscription',
+      source: isAnual ? 'annual' : isCurso ? 'curso' : 'subscription',
     })
   }
 

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import UpgradeModal from '@/components/upgrade-modal'
+import WhatsNewModal from '@/components/whats-new-modal'
 import PromptLibrary from './prompt-library'
 import BonusLibrary from './bonus-library'
 import NewsSection from './news-section'
@@ -29,7 +30,7 @@ type Group = {
 }
 
 type Props = {
-  user: { email: string; plan: string; isAdmin: boolean; planExpiresAt?: string | null }
+  user: { email: string; plan: string; isAdmin: boolean; planExpiresAt?: string | null; giftToken?: string | null }
   groups: Group[]
   watchedIds: number[]
 }
@@ -115,6 +116,14 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
   const searchParams = useSearchParams()
   const [watched] = useState<Set<number>>(new Set(watchedIds))
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const [giftCopied, setGiftCopied] = useState(false)
+
+  function copyGiftToken() {
+    if (!user.giftToken) return
+    navigator.clipboard.writeText(user.giftToken)
+    setGiftCopied(true)
+    setTimeout(() => setGiftCopied(false), 2000)
+  }
   const [showActivated, setShowActivated] = useState(false)
   const [activeSection, setActiveSection] = useState('clases')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -156,6 +165,8 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
 
   return (
     <div className="h-screen bg-[#020617] text-white flex overflow-hidden">
+
+      <WhatsNewModal />
 
       {/* ── Overlay móvil ── */}
       {sidebarOpen && (
@@ -225,6 +236,32 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
           </div>
         </div>
 
+        {/* Gift token — solo para miembros anuales */}
+        {user.plan === 'pro_annual' && user.giftToken && (
+          <div className="px-4 py-3 border-t border-slate-800/60">
+            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Mes de regalo</p>
+            <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-3">
+              <p className="text-[10px] text-slate-400 mb-2 leading-relaxed">
+                Regalale 30 días gratis a un colega periodista
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs font-mono text-cyan-300 bg-slate-900/60 px-2 py-1.5 rounded-lg truncate">
+                  {user.giftToken}
+                </code>
+                <button
+                  onClick={copyGiftToken}
+                  className="shrink-0 px-2 py-1.5 text-[10px] font-semibold rounded-lg transition-colors cursor-pointer border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                >
+                  {giftCopied ? '✓' : 'Copiar'}
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-600 mt-2">
+                Tu colega entra a leadr.cloud/activar y pega el código
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Usuario */}
         <div className="px-4 py-4 border-t border-slate-800/60">
           <div className="flex items-center gap-2.5">
@@ -235,13 +272,15 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
               <p className="text-xs text-slate-300 truncate">{user.email}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
-                  user.plan === 'pro'
+                  user.plan === 'pro_annual'
+                    ? 'bg-cyan-500/20 text-cyan-300'
+                    : user.plan === 'pro'
                     ? 'bg-violet-500/20 text-violet-300'
                     : 'bg-slate-700 text-slate-400'
                 }`}>
-                  {user.plan === 'pro' ? 'Pro' : 'Basic'}
+                  {user.plan === 'pro_annual' ? 'Anual' : user.plan === 'pro' ? 'Pro' : 'Basic'}
                 </span>
-                {user.plan === 'pro' && user.planExpiresAt && (
+                {(user.plan === 'pro' || user.plan === 'pro_annual') && user.planExpiresAt && (
                   <span className="text-[10px] text-slate-600">
                     vence {new Date(user.planExpiresAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
                   </span>
@@ -313,23 +352,21 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
         )}
 
         {user.plan === 'basic' && (
-          <div className="bg-gradient-to-r from-violet-500/10 to-cyan-400/10 border-b border-violet-500/20">
-            <div className="px-6 py-3 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <svg className="w-4 h-4 text-violet-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <p className="text-sm text-slate-300 truncate">
-                  <span className="text-white font-medium">Algunas clases son Pro.</span>
-                  {' '}Desbloqueá todo el contenido.
+          <div className="bg-gradient-to-r from-amber-500/15 to-violet-500/10 border-b border-amber-400/25">
+            <div className="px-6 py-3.5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="text-xl flex-shrink-0">🎁</span>
+                <p className="text-sm text-slate-300 leading-snug">
+                  <span className="text-white font-semibold">Según nuestros registros, compraste el Sistema de Ingresos Diarios con Periodistas Digitales.</span>
+                  <span className="text-amber-300 ml-1">¡Tenés un mes de Pro gratis que no canjeaste todavía!</span>
                 </p>
               </div>
-              <button
-                onClick={() => setShowUpgrade(true)}
-                className="flex-shrink-0 px-4 py-1.5 bg-violet-500 hover:bg-violet-400 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              <a
+                href="/activar"
+                className="flex-shrink-0 px-4 py-1.5 bg-amber-400 hover:bg-amber-300 text-[#020617] text-xs font-bold rounded-lg transition-colors whitespace-nowrap"
               >
-                Ver planes
-              </button>
+                Canjearlo ahora →
+              </a>
             </div>
           </div>
         )}
@@ -430,23 +467,42 @@ export default function DashboardClient({ user, groups, watchedIds }: Props) {
                           <p className="text-slate-400 text-sm leading-relaxed line-clamp-2">{group.description}</p>
                         )}
 
-                        <div className="mt-auto pt-3 border-t border-slate-800/60 flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3 text-xs text-slate-500">
-                            <span>{published.length} {published.length === 1 ? 'clase' : 'clases'}</span>
-                            <span className="w-1 h-1 rounded-full bg-slate-700" />
-                            {isComplete ? (
-                              <span className="text-emerald-400">Todas vistas</span>
-                            ) : doneCount > 0 ? (
-                              <span>{remaining} {remaining === 1 ? 'restante' : 'restantes'}</span>
-                            ) : (
-                              <span>Sin empezar</span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full transition-all ${activeSeccion.dot}`} style={{ width: `${pct}%` }} />
+                        <div className="mt-auto pt-3 border-t border-slate-800/60 space-y-2.5">
+                          {/* Free vs Pro breakdown */}
+                          {user.plan !== 'pro' && (() => {
+                            const freeCount = published.filter(c => c.plan_required !== 'pro').length
+                            const proCount  = published.filter(c => c.plan_required === 'pro').length
+                            return proCount > 0 ? (
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="flex items-center gap-1 text-slate-400">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                                  {freeCount} gratis
+                                </span>
+                                <span className="flex items-center gap-1 text-violet-400">
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" /></svg>
+                                  {proCount} solo Pro
+                                </span>
+                              </div>
+                            ) : null
+                          })()}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 text-xs text-slate-500">
+                              <span>{published.length} {published.length === 1 ? 'clase' : 'clases'}</span>
+                              <span className="w-1 h-1 rounded-full bg-slate-700" />
+                              {isComplete ? (
+                                <span className="text-emerald-400">Todas vistas</span>
+                              ) : doneCount > 0 ? (
+                                <span>{remaining} {remaining === 1 ? 'restante' : 'restantes'}</span>
+                              ) : (
+                                <span>Sin empezar</span>
+                              )}
                             </div>
-                            <span className="text-slate-600 text-xs">{pct}%</span>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div className={`h-full rounded-full transition-all ${activeSeccion.dot}`} style={{ width: `${pct}%` }} />
+                              </div>
+                              <span className="text-slate-600 text-xs">{pct}%</span>
+                            </div>
                           </div>
                         </div>
                       </Link>
