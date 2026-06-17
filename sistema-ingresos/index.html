@@ -59,17 +59,6 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
     /* ── STICKY BAR ── */
-    .sticky-bar {
-        position: fixed; bottom: 0; left: 0; right: 0; z-index: 99;
-        display: flex; align-items: center; justify-content: center; gap: 20px;
-        padding: 12px 24px;
-        background: rgba(6,6,15,.95); backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(255,255,255,.1);
-        transform: translateY(100%); transition: transform .4s var(--ease);
-    }
-    .sticky-bar.show { transform: translateY(0); }
-    .sticky-price { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--green); }
-    .sticky-original { font-size: .78rem; color: var(--muted); text-decoration: line-through; }
 
     /* ── BTN ── */
     .btn { display: inline-flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; border-radius: 999px; padding: 16px 32px; font-size: 1rem; transition: transform .2s, opacity .2s; cursor: pointer; }
@@ -349,7 +338,6 @@
         .price-box { padding: 32px 24px; }
         .nav-logo-text { display: none; }
         section { padding: 72px 0; }
-        .sticky-bar { flex-wrap: wrap; gap: 12px; }
         .location-badge { font-size: .85rem; padding: 10px 18px; }
         .mechanism-diff-box { padding: 24px; }
         .hero h1 { font-size: clamp(2.1rem, 8vw, 3rem); }
@@ -481,18 +469,6 @@
         <span id="navText" class="nav-logo-text">Periodistas Digitales</span>
     </div>
 </nav>
-
-<!-- ─── STICKY BAR ─── -->
-<div class="sticky-bar" id="stickyBar">
-    <div>
-        <div class="sticky-original" style="color:#f87171;font-size:.8rem;">⚡ Solo <strong id="cuposSticky" style="color:#fff">--</strong> cupos disponibles</div>
-        <div class="sticky-price">HOY solo $17 USD</div>
-    </div>
-    <a href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2" class="btn btn-green">
-        Quiero el acceso ahora
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
-</div>
 
 <!-- ═══════════════════════════════════
      1. HERO
@@ -1231,19 +1207,6 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-scale').forEach(el => observer.observe(el));
 
-/* ── STICKY BAR — aparece solo después de ver los bonos ── */
-const stickyBar = document.getElementById('stickyBar');
-const bonosSection = document.getElementById('bonos');
-const stickyObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            stickyBar.classList.add('show');
-            stickyObserver.unobserve(e.target);
-        }
-    });
-}, { threshold: 0.1 });
-if (bonosSection) stickyObserver.observe(bonosSection);
-
 /* ── LOCATION BADGE + URGENCIA ── */
 const locationBadge = document.getElementById('locationBadge');
 const locationText  = document.getElementById('locationText');
@@ -1285,7 +1248,7 @@ document.querySelectorAll('.faq-q').forEach(q => {
     if (isNaN(cupos) || cupos > INIT_CUPOS) cupos = INIT_CUPOS;
     cupos = Math.max(MIN_CUPOS, cupos - 1);
     localStorage.setItem(STORAGE_KEY, cupos);
-    document.querySelectorAll('#cuposNum, #cuposSticky').forEach(el => { if (el) el.textContent = cupos; });
+    document.querySelectorAll('#cuposNum').forEach(el => { if (el) el.textContent = cupos; });
 })();
 
 /* ── VALUE STACK REVEAL ── */
