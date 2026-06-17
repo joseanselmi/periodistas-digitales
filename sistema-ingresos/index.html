@@ -165,6 +165,8 @@
     .section-sub { font-size: 1.05rem; color: var(--muted-hi); max-width: 560px; line-height: 1.7; }
 
     /* ── PROBLEM ── */
+    .problem-img-wrap { border-radius: 16px; overflow: hidden; margin: 28px 0 32px; border: 1px solid var(--border); }
+    .problem-img { width: 100%; height: auto; display: block; }
     .problem-text { font-size: 1.1rem; line-height: 1.8; color: var(--muted-hi); margin-bottom: 24px; }
     .problem-text strong { color: var(--text); }
     .problem-quote {
@@ -216,7 +218,8 @@
     .module-item { display: flex; gap: 20px; padding: 28px 0; border-bottom: 1px solid var(--border); }
     .module-item:first-child { border-top: 1px solid var(--border); }
     .module-num { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: rgba(99,102,241,.25); line-height: 1; min-width: 52px; padding-top: 4px; }
-    .module-body h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .module-body h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text); display: flex; align-items: center; gap: 10px; }
+    .module-icon { color: var(--indigo); flex-shrink: 0; }
     .module-body p { font-size: .95rem; color: var(--muted-hi); line-height: 1.6; }
 
     /* life access item */
@@ -528,13 +531,15 @@
         <p class="section-eyebrow reveal">El problema real</p>
         <h2 class="section-title reveal">Sabés hacer periodismo.<br>Nadie te enseñó a vivir de él en internet.</h2>
 
-        <p class="problem-text reveal">Sabés escribir, sabés contar historias, sabés lo que la gente quiere leer. Pero el modelo tradicional te tiene atrapado: <strong>trabajando para otros, ganando poco, dependiendo de un jefe que puede despedirte mañana.</strong></p>
+        <div class="problem-img-wrap reveal">
+            <img src="img/sistema-ingresos-problema-split.png" alt="De la redacción tradicional al periódico digital con IA" class="problem-img">
+        </div>
 
-        <p class="problem-text reveal">Mientras tanto, la IA está redefiniendo el periodismo. Instagram y Facebook se convirtieron en los nuevos medios masivos. Los que aprendieron a usarlos generan ingresos reales todos los días — sin redacción, sin jefe, desde cualquier lugar.</p>
+        <p class="problem-text reveal">Sabés escribir, contar historias y lo que la gente quiere leer — pero el modelo tradicional te tiene atrapado: <strong>trabajando para otros, ganando poco, dependiendo de un jefe que puede despedirte mañana.</strong> Mientras tanto, Instagram y Facebook se convirtieron en los nuevos medios masivos, y los periodistas que aprendieron a usarlos con IA generan ingresos reales todos los días, sin redacción y sin jefe.</p>
 
         <blockquote class="problem-quote reveal">"Sé hacer periodismo. No sé cómo vivir de él en internet."</blockquote>
 
-        <p class="problem-text reveal">El problema no eres tú. Es que <strong>nadie te enseñó el sistema.</strong> Tenés el conocimiento más valioso: la credencial, las fuentes, el criterio editorial. Solo necesitás convertirlo en un negocio digital.</p>
+        <p class="problem-text reveal">El problema no sos vos. Es que <strong>nadie te enseñó el sistema.</strong> Ya tenés el activo más valioso — la credencial, las fuentes, el criterio editorial. Solo falta convertirlo en un negocio digital.</p>
     </div>
 </section>
 
@@ -596,35 +601,35 @@
             <div class="module-item reveal">
                 <div class="module-num">01</div>
                 <div class="module-body">
-                    <h3>Elegí tu nicho periodístico</h3>
+                    <h3><svg class="module-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Elegí tu nicho periodístico</h3>
                     <p>Descubrís cuál es el tema que más te apasiona y que tiene audiencia lista para seguirte en IG y Facebook. El método para elegir el nicho correcto desde el primer día.</p>
                 </div>
             </div>
             <div class="module-item reveal">
                 <div class="module-num">02</div>
                 <div class="module-body">
-                    <h3>Creá tu periódico digital en 24hs</h3>
+                    <h3><svg class="module-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Creá tu periódico digital en 24hs</h3>
                     <p>Nombre, identidad visual y primera publicación. Sin saber de diseño ni tecnología. Al terminar este módulo tenés tu medio online y listo para crecer.</p>
                 </div>
             </div>
             <div class="module-item reveal">
                 <div class="module-num">03</div>
                 <div class="module-body">
-                    <h3>El sistema de contenido diario con IA en 30 min/día</h3>
+                    <h3><svg class="module-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z"/></svg>El sistema de contenido diario con IA en 30 min/día</h3>
                     <p>Cómo publicar todos los días en menos de 30 minutos usando IA y plantillas probadas. Sin agotarte. Sin quedarte sin ideas. El sistema hace el 80%.</p>
                 </div>
             </div>
             <div class="module-item reveal">
                 <div class="module-num">04</div>
                 <div class="module-body">
-                    <h3>Monetización desde el primer mes</h3>
+                    <h3><svg class="module-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Monetización desde el primer mes</h3>
                     <p>Las 3 fuentes de ingreso del sistema: publicidad local, suscripciones y marcas aliadas. El paso a paso para cerrar tu primer anunciante antes de tener 1.000 seguidores.</p>
                 </div>
             </div>
             <div class="module-item reveal">
                 <div class="module-num">05</div>
                 <div class="module-body">
-                    <h3>Crecimiento orgánico en redes</h3>
+                    <h3><svg class="module-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Crecimiento orgánico en redes</h3>
                     <p>El método para pasar de 0 a tu primera comunidad de lectores sin gastar en anuncios. Estrategias de alcance específicas para medios periodísticos.</p>
                 </div>
             </div>
