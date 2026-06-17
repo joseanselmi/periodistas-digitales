@@ -103,7 +103,7 @@
 
 | Elemento | Por qué se mantiene |
 |---|---|
-| Precio ($17) y estructura de oferta | Funciona |
+| Precio ($10) y estructura de oferta | Funciona |
 | Garantía 7 días | Bien posicionada |
 | Bono 1 — 100 Plantillas Canva | Válido tal como está |
 | Bono 3 — Gestión del tiempo (6 horas) | Válido tal como está |
