@@ -56,9 +56,6 @@
     .nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--indigo); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
     @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.6)} 50%{box-shadow:0 0 0 6px rgba(99,102,241,0)} }
 
-    .nav-visitor { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted-hi); opacity: 0; transition: opacity .5s; max-width: 0; overflow: hidden; white-space: nowrap; }
-    .nav-visitor.show { opacity: 1; max-width: 300px; }
-    .nav-visitor-dot { width: 7px; height: 7px; border-radius: 50%; background: #ef4444; animation: blink 1.2s ease-in-out infinite; flex-shrink: 0; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
     /* ── STICKY BAR ── */
@@ -264,9 +261,9 @@
     .bonuses-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 40px; }
     .bonus-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color .3s; }
     .bonus-card:hover { border-color: rgba(99,102,241,.4); }
-    .bonus-img-wrap { width: 100%; height: 320px; display: flex; align-items: center; justify-content: center; padding: 28px; background: radial-gradient(circle at 50% 40%, rgba(99,102,241,.12), transparent 70%); }
+    .bonus-img-wrap { width: 100%; height: 320px; display: flex; align-items: center; justify-content: center; padding: 12px; background: radial-gradient(circle at 50% 40%, rgba(99,102,241,.12), transparent 70%); }
     .bonus-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
-    @media (max-width: 700px) { .bonus-img-wrap { height: 220px; padding: 16px; } }
+    @media (max-width: 700px) { .bonus-img-wrap { height: 220px; padding: 8px; } }
     .bonus-num { font-family: 'Space Grotesk', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--indigo); background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.2); border-radius: 999px; padding: 4px 10px; flex-shrink: 0; margin-bottom: 12px; display: inline-block; }
     .bonus-body { padding: 28px; }
     .bonus-body h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
@@ -356,6 +353,15 @@
         .location-badge { font-size: .85rem; padding: 10px 18px; }
         .mechanism-diff-box { padding: 24px; }
         .hero h1 { font-size: clamp(2.1rem, 8vw, 3rem); }
+
+        /* tabla comparativa -> tarjetas apiladas en mobile (evita texto cortado) */
+        .comparacion-table thead { display: none; }
+        .comparacion-table, .comparacion-table tbody, .comparacion-table tr, .comparacion-table td { display: block; width: 100%; }
+        .comparacion-table tr { padding: 16px 20px; }
+        .comparacion-table td { padding: 3px 0; border-bottom: none; text-align: left !important; font-size: .9rem; }
+        .comparacion-table td:first-child { color: var(--text); font-weight: 700; margin-bottom: 6px; font-size: .95rem; }
+        .comparacion-table td.cell-sin::before { content: "✕ Sin el sistema: "; font-weight: 600; }
+        .comparacion-table td.cell-con::before { content: "✓ Con el sistema: "; font-weight: 600; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -363,15 +369,6 @@
     }
 
     /* ── CUPOS URGENCIA ── */
-    .cupos-urgencia {
-        display: inline-flex; align-items: center; gap: 10px;
-        background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.28);
-        border-radius: 999px; padding: 11px 22px;
-        font-size: .88rem; font-weight: 600; color: #fca5a5;
-        margin-top: 22px;
-    }
-    .cupos-urgencia strong { color: #fff; }
-    .cupos-dot { width: 7px; height: 7px; border-radius: 50%; background: #ef4444; animation: blink 1s ease-in-out infinite; flex-shrink: 0; box-shadow: 0 0 6px #ef4444; }
 
     /* ── VALUE STACK ── */
     .value-stack { max-width: 560px; margin: 0 auto 32px; }
@@ -391,6 +388,8 @@
     }
     .vs-total-label { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--text); font-size: 1rem; }
     .vs-total-price { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: var(--muted); text-decoration: line-through; }
+    .vs-stack-img { display: flex; justify-content: center; margin: 18px 0 4px; }
+    .vs-stack-img img { max-width: 260px; width: 100%; height: auto; border-radius: 12px; }
     .vs-final {
         display: flex; align-items: center; justify-content: space-between;
         padding: 20px 20px 0; margin-top: 8px;
@@ -480,10 +479,6 @@
     <div class="nav-logo">
         <span class="nav-logo-dot"></span>
         <span id="navText" class="nav-logo-text">Periodistas Digitales</span>
-        <span class="nav-visitor" id="navVisitor">
-            <span class="nav-visitor-dot"></span>
-            <span id="visitorText"></span>
-        </span>
     </div>
 </nav>
 
@@ -527,10 +522,6 @@
             Quiero crear mi periódico digital
         </a>
 
-        <div class="cupos-urgencia" id="cuposHero">
-            <span class="cupos-dot"></span>
-            Solo quedan <strong id="cuposNum">--</strong> accesos a $17 — después sube a $47
-        </div>
     </div>
 
     <div class="hero-scroll">
@@ -921,7 +912,7 @@
     <div class="container">
         <p class="section-eyebrow reveal">Comprando hoy obtenés bonos exclusivos</p>
         <h2 class="section-title reveal">3 bonos que valen más <em style="font-style:italic;background:linear-gradient(135deg,var(--indigo),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">que el curso mismo</em></h2>
-        <p class="section-sub reveal">Valor total de bonos: <strong style="color:var(--text)">$171 USD</strong> — incluidos sin costo extra cuando comprás hoy.</p>
+        <p class="section-sub reveal">Valor total de bonos: <strong style="color:var(--text)">$92 USD</strong> — incluidos sin costo extra cuando comprás hoy.</p>
 
         <div class="bonuses-grid">
             <div class="bonus-card reveal">
@@ -933,7 +924,7 @@
                     <h3>100 Plantillas Canva para Periódico Digital</h3>
                     <p>Diseños listos para publicar en IG y Facebook. Solo editás el texto y subís. Sin experiencia en diseño, sin contratar a nadie. 100 plantillas para los primeros 3 meses de contenido.</p>
                     <div class="bonus-value">
-                        <span class="bonus-strike">Valor: $57 USD</span>
+                        <span class="bonus-strike">Valor: $35 USD</span>
                         <span class="bonus-incl">Incluido</span>
                     </div>
                 </div>
@@ -947,7 +938,7 @@
                     <h3>Guía de IA aplicada al Periodismo</h3>
                     <p>Dominás ChatGPT, Copilot y las mejores herramientas de IA para generar contenido periodístico de calidad en minutos. El periodista que dirige la tecnología, no el que le teme. Incluye prompts probados y flujos de trabajo reales.</p>
                     <div class="bonus-value">
-                        <span class="bonus-strike">Valor: $97 USD</span>
+                        <span class="bonus-strike">Valor: $47 USD</span>
                         <span class="bonus-incl">Incluido</span>
                     </div>
                 </div>
@@ -969,7 +960,7 @@
         </div>
 
         <div class="bonuses-total reveal">
-            Valor total de bonos: <strong>$171 USD</strong> — incluidos sin costo extra.
+            Valor total de bonos: <strong>$92 USD</strong> — incluidos sin costo extra.
         </div>
 
         <div style="text-align:center;margin-top:32px;" class="reveal">
@@ -993,7 +984,7 @@
             <div class="reveal-l">
                 <div class="instructor-img-wrap">
                     <img
-                        src="http://sistemadeingresosdiariosia.com/wp-content/uploads/2026/01/Sistema-de-ingresos-diarios-para-periodistas-3_11zon.webp"
+                        src="img/sistema-ingresos-instructor-foto.png"
                         alt="José Fiaccini — Periodista y Creador de Medios Digitales"
                         class="instructor-img"
                         loading="lazy"
@@ -1056,31 +1047,31 @@
         <div class="value-stack reveal">
             <div class="vs-row">
                 <div class="vs-label"><span>MÓDULO 1</span>Elegí tu nicho periodístico</div>
-                <div class="vs-price">$47</div>
+                <div class="vs-price">$27</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>MÓDULO 2</span>Tu periódico digital en 24hs</div>
-                <div class="vs-price">$47</div>
+                <div class="vs-price">$27</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>MÓDULO 3</span>Contenido diario con IA en 30 min</div>
-                <div class="vs-price">$47</div>
+                <div class="vs-price">$27</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>MÓDULO 4</span>Monetización desde el primer mes</div>
-                <div class="vs-price">$47</div>
+                <div class="vs-price">$27</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>MÓDULO 5</span>Crecimiento orgánico en redes</div>
-                <div class="vs-price">$47</div>
+                <div class="vs-price">$27</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>BONO 1</span>100 Plantillas Canva para Periódico Digital</div>
-                <div class="vs-price">$57</div>
+                <div class="vs-price">$35</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>BONO 2</span>Guía de IA aplicada al Periodismo</div>
-                <div class="vs-price">$97</div>
+                <div class="vs-price">$47</div>
             </div>
             <div class="vs-row">
                 <div class="vs-label"><span>BONO 3</span>Acceso gratis para siempre a Leadr</div>
@@ -1088,7 +1079,10 @@
             </div>
             <div class="vs-total">
                 <div class="vs-total-label">Valor total real</div>
-                <div class="vs-total-price">$399 USD</div>
+                <div class="vs-total-price">$227 USD</div>
+            </div>
+            <div class="vs-stack-img">
+                <img src="img/sistema-ingresos-checkout.png" alt="Todo lo que incluye el Sistema de Ingresos Diarios: curso, plantillas, guía de IA y acceso a Leadr" loading="lazy">
             </div>
             <div class="vs-final">
                 <div class="vs-final-label">Tuyo hoy por solo</div>
@@ -1108,11 +1102,11 @@
                 </div>
                 <div class="price-item">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                    100 Plantillas Canva — Bono 1 <span style="color:var(--muted);margin-left:6px;text-decoration:line-through;font-size:.85rem">$57</span>
+                    100 Plantillas Canva — Bono 1 <span style="color:var(--muted);margin-left:6px;text-decoration:line-through;font-size:.85rem">$35</span>
                 </div>
                 <div class="price-item">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                    Guía de IA aplicada al Periodismo — Bono 2 <span style="color:var(--muted);margin-left:6px;text-decoration:line-through;font-size:.85rem">$97</span>
+                    Guía de IA aplicada al Periodismo — Bono 2 <span style="color:var(--muted);margin-left:6px;text-decoration:line-through;font-size:.85rem">$47</span>
                 </div>
                 <div class="price-item">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1271,25 +1265,6 @@ fetch('https://ipapi.co/json/')
     .then(r => r.json())
     .then(d => setBadge(d.city || fallbackCities[0]))
     .catch(() => setBadge(fallbackCities[Math.floor(Math.random() * fallbackCities.length)]));
-
-/* ── NAV VISITOR BADGE ── */
-const navVisitor = document.getElementById('navVisitor');
-const visitorText = document.getElementById('visitorText');
-const navText     = document.getElementById('navText');
-const navCities   = ['Madrid','Barcelona','Buenos Aires','Ciudad de México','Bogotá','Lima','Santiago','Caracas'];
-function showNavVisitor() {
-    const city  = navCities[Math.floor(Math.random() * navCities.length)];
-    const count = randomCount();
-    visitorText.textContent = count + ' personas de ' + city + ' están viendo esto';
-    if (navText) navText.style.opacity = '0';
-    navVisitor.classList.add('show');
-    setTimeout(() => {
-        navVisitor.classList.remove('show');
-        setTimeout(() => { if (navText) navText.style.opacity = '1'; }, 400);
-    }, 5000);
-}
-setTimeout(showNavVisitor, 4000);
-setInterval(showNavVisitor, 20000);
 
 /* ── FAQ ── */
 document.querySelectorAll('.faq-q').forEach(q => {
