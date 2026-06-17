@@ -262,12 +262,13 @@
 
     /* ── BONUSES ── */
     .bonuses-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 40px; }
-    .bonus-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; gap: 20px; align-items: flex-start; transition: border-color .3s; }
+    .bonus-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color .3s; }
     .bonus-card:hover { border-color: rgba(99,102,241,.4); }
-    .bonus-img-wrap { flex-shrink: 0; width: 96px; height: 96px; border-radius: 12px; overflow: hidden; background: var(--bg); }
-    .bonus-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    @media (max-width: 700px) { .bonus-img-wrap { width: 72px; height: 72px; } }
-    .bonus-num { font-family: 'Space Grotesk', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--indigo); background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.2); border-radius: 999px; padding: 4px 10px; flex-shrink: 0; margin-top: 2px; }
+    .bonus-img-wrap { width: 100%; height: 320px; display: flex; align-items: center; justify-content: center; padding: 28px; background: radial-gradient(circle at 50% 40%, rgba(99,102,241,.12), transparent 70%); }
+    .bonus-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+    @media (max-width: 700px) { .bonus-img-wrap { height: 220px; padding: 16px; } }
+    .bonus-num { font-family: 'Space Grotesk', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--indigo); background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.2); border-radius: 999px; padding: 4px 10px; flex-shrink: 0; margin-bottom: 12px; display: inline-block; }
+    .bonus-body { padding: 28px; }
     .bonus-body h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
     .bonus-body p { font-size: .92rem; color: var(--muted-hi); line-height: 1.6; margin-bottom: 12px; }
     .bonus-value { display: flex; align-items: center; gap: 10px; font-size: .85rem; }
@@ -927,8 +928,8 @@
                 <div class="bonus-img-wrap">
                     <img src="img/sistema-ingresos-bono-1-templates-ig.png" alt="Mockup celular con grid de plantillas Canva para periódico digital" loading="lazy">
                 </div>
-                <div class="bonus-num">BONO 1</div>
                 <div class="bonus-body">
+                    <div class="bonus-num">BONO 1</div>
                     <h3>100 Plantillas Canva para Periódico Digital</h3>
                     <p>Diseños listos para publicar en IG y Facebook. Solo editás el texto y subís. Sin experiencia en diseño, sin contratar a nadie. 100 plantillas para los primeros 3 meses de contenido.</p>
                     <div class="bonus-value">
@@ -941,8 +942,8 @@
                 <div class="bonus-img-wrap">
                     <img src="img/sistema-ingresos-bono-2-guia-ia.png" alt="Ebook 3D Guía de IA aplicada al Periodismo" loading="lazy">
                 </div>
-                <div class="bonus-num">BONO 2</div>
                 <div class="bonus-body">
+                    <div class="bonus-num">BONO 2</div>
                     <h3>Guía de IA aplicada al Periodismo</h3>
                     <p>Dominás ChatGPT, Copilot y las mejores herramientas de IA para generar contenido periodístico de calidad en minutos. El periodista que dirige la tecnología, no el que le teme. Incluye prompts probados y flujos de trabajo reales.</p>
                     <div class="bonus-value">
@@ -955,8 +956,8 @@
                 <div class="bonus-img-wrap">
                     <img src="img/sistema-ingresos-bono-3-leadr-laptop.png" alt="Laptop con acceso gratis para siempre a Leadr" loading="lazy">
                 </div>
-                <div class="bonus-num">BONO 3</div>
                 <div class="bonus-body">
+                    <div class="bonus-num">BONO 3</div>
                     <h3>Acceso gratis para siempre a Leadr — la plataforma creada para periodistas</h3>
                     <p>Leadr es la plataforma de formación diseñada exclusivamente para periodistas que quieren construir un negocio digital. Clases nuevas cada semana, prompts de IA listos para usar, comunidad activa de periodistas que ya generan ingresos. No es un curso genérico: cada módulo está pensado para tu realidad. Tu acceso es gratis para siempre, sin tarjeta — y si querés, dentro podés subir a Pro.</p>
                     <div class="bonus-value">
