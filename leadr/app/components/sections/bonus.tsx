@@ -48,7 +48,7 @@ export function BonusSection() {
               que el curso mismo
             </em>
           </h2>
-          <p className="text-zinc-500 mt-3 text-sm">Valor total de bonos: $171 USD — incluidos sin costo extra.</p>
+          <p className="text-zinc-500 mt-3 text-sm">Valor total de bonos: $101 USD — incluidos sin costo extra.</p>
         </motion.div>
 
         <div className="flex flex-col gap-4">
@@ -93,7 +93,7 @@ export function BonusSection() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
-            Quiero todo esto por $17 USD
+            Quiero todo esto por $10 USD
           </a>
           <p className="flex items-center justify-center gap-1.5 text-zinc-600 text-xs mt-3">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">

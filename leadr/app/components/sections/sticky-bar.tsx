@@ -25,7 +25,7 @@ export function StickyBar() {
     >
       <div>
         <p className="text-xs text-zinc-500 line-through">Valor total: $227 USD</p>
-        <p className="text-xl font-bold text-green-400 tracking-tight">HOY solo $17 USD</p>
+        <p className="text-xl font-bold text-green-400 tracking-tight">HOY solo $10 USD</p>
       </div>
       <a
         href="https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2" data-track="cta_sticky"

@@ -21,6 +21,7 @@ const AGENTS = [
   { id: 'valentina', nombre: 'Valentina', rol: 'Contenido Orgánico',   color: 'emerald' as const, endpoint: null,                     confirm: false },
   { id: 'mateo',     nombre: 'Mateo',     rol: 'Media Buyer',          color: 'amber'   as const, endpoint: null,                     confirm: false },
   { id: 'dante',     nombre: 'Dante',     rol: 'Analytics',            color: 'blue'    as const, endpoint: null,                     confirm: false },
+  { id: 'miguel',    nombre: 'Miguel',    rol: 'Comunidad / WhatsApp', color: 'teal'    as const, endpoint: null,                     confirm: false },
   { id: 'ricardo',   nombre: 'Ricardo',   rol: 'CMO',                  color: 'rose'    as const, endpoint: null,                     confirm: false },
   { id: 'luna',      nombre: 'Luna',      rol: 'CRO / Landing',        color: 'yellow'  as const, endpoint: null,                     confirm: false },
 ]
@@ -33,6 +34,7 @@ const COLORS = {
   blue:    { border: 'border-blue-500/20',    dot: 'bg-blue-400',    btn: 'bg-blue-500 hover:bg-blue-400'    },
   rose:    { border: 'border-rose-500/20',    dot: 'bg-rose-400',    btn: 'bg-rose-500 hover:bg-rose-400'    },
   yellow:  { border: 'border-yellow-500/20',  dot: 'bg-yellow-400',  btn: 'bg-yellow-500 hover:bg-yellow-400'  },
+  teal:    { border: 'border-teal-500/20',    dot: 'bg-teal-400',    btn: 'bg-teal-500 hover:bg-teal-400'      },
 }
 
 function EstadoBadge({ estado }: { estado: AgentEstado }) {

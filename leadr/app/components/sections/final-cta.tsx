@@ -48,7 +48,7 @@ export function FinalCta() {
           >
             <em>+5.500 periodistas ya crearon su medio en IG y Facebook.</em>
             <span className="block not-italic text-zinc-600 text-base mt-2">
-              Con IA, con Canva, con el sistema. Por $17, hoy mismo.
+              Con IA, con Canva, con el sistema. Por $10, hoy mismo.
             </span>
           </p>
 
@@ -63,7 +63,7 @@ export function FinalCta() {
           </a>
 
           <p className="text-zinc-600 text-xs mt-5">
-            $17 USD · Pago único · Acceso inmediato · Garantía 7 días · Sin suscripción
+            $10 USD · Pago único · Acceso inmediato · Garantía 7 días · Sin suscripción
           </p>
         </motion.div>
 

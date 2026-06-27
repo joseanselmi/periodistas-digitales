@@ -112,6 +112,27 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
           </div>
         </div>
 
+        {/* Banner resumen free/pro para usuarios basic */}
+        {user.plan === 'basic' && (() => {
+          const freeCount = published.filter(c => c.plan_required !== 'pro').length
+          const proCount  = published.filter(c => c.plan_required === 'pro').length
+          return proCount > 0 ? (
+            <div className="mb-6 bg-violet-500/10 border border-violet-500/25 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-white text-sm font-medium mb-0.5">
+                  Tenés acceso a <span className="text-cyan-400">{freeCount} clases gratis</span> de este módulo.
+                </p>
+                <p className="text-slate-400 text-sm">
+                  <span className="text-violet-300 font-medium">{proCount} clases más</span> están disponibles con Pro — activá tu mes gratis.
+                </p>
+              </div>
+              <a href="/activar" className="flex-shrink-0 px-4 py-2 bg-violet-500 hover:bg-violet-400 text-white text-xs font-bold rounded-lg transition-colors whitespace-nowrap">
+                Activar Pro →
+              </a>
+            </div>
+          ) : null
+        })()}
+
         {/* Lista de clases */}
         {published.length === 0 ? (
           <p className="text-slate-500 text-sm">Sin clases publicadas aún.</p>
@@ -127,19 +148,25 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
                     role="button"
                     tabIndex={locked ? -1 : 0}
                     aria-disabled={locked}
-                    onClick={() => !locked && router.push(`/clase/${cls.id}`)}
-                    onKeyDown={e => { if (!locked && (e.key === 'Enter' || e.key === ' ')) router.push(`/clase/${cls.id}`) }}
+                    onClick={() => locked ? setShowUpgrade(true) : router.push(`/clase/${cls.id}`)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { locked ? setShowUpgrade(true) : router.push(`/clase/${cls.id}`) } }}
                     className={`flex items-center gap-4 px-6 py-5 transition-colors group ${
-                      locked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-800/40 cursor-pointer'
+                      locked ? 'cursor-pointer bg-violet-500/5 hover:bg-violet-500/10' : 'hover:bg-slate-800/40 cursor-pointer'
                     }`}
                   >
-                    {/* Número / check */}
+                    {/* Número / check / lock */}
                     <span className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors ${
-                      isDone
-                        ? 'bg-cyan-400/15 text-cyan-400'
-                        : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'
+                      locked
+                        ? 'bg-violet-500/20 text-violet-400'
+                        : isDone
+                          ? 'bg-cyan-400/15 text-cyan-400'
+                          : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'
                     }`}>
-                      {isDone ? (
+                      {locked ? (
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+                        </svg>
+                      ) : isDone ? (
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
                         </svg>
@@ -148,7 +175,7 @@ export default function GrupoClient({ group, user, watchedIds }: Props) {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium leading-snug ${isDone ? 'text-slate-400' : 'text-white'}`}>
+                      <p className={`font-medium leading-snug ${locked ? 'text-violet-200' : isDone ? 'text-slate-400' : 'text-white'}`}>
                         {cls.title}
                       </p>
                       {cls.description && (

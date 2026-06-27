@@ -70,7 +70,7 @@ PERFIL DEL ALUMNO (ICP — nunca perder esto de vista):
 - Países: Ecuador, Colombia, México, Argentina, Chile, Puerto Rico
 - Sin formación técnica — entiende una redacción mejor que un IDE
 - El miedo a quedar desactualizado supera al miedo a aprender
-- Ya apostó $17 — quiere ver resultados reales, no teoría
+- Ya apostó $10 — quiere ver resultados reales, no teoría
 - Lo detiene: sentirse tonto, no tener tiempo, "esto no es para mí"
 - Lo motiva: mantenerse relevante, poder enseñar a colegas, agregar una habilidad concreta
 

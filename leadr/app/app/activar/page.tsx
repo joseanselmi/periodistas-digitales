@@ -58,7 +58,13 @@ function ActivarContent() {
     const supabase = createClient()
 
     // Intentar registrar. Si ya existe, hacer login.
-    const { error: signUpError } = await supabase.auth.signUp({ email, password })
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/api/activar-redirect?t=${token}`,
+      },
+    })
 
     if (signUpError) {
       const msg = signUpError.message.toLowerCase()

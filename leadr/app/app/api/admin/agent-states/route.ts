@@ -51,6 +51,17 @@ export async function GET() {
     },
   }
 
+  // Miguel: próxima acción desde Supabase o default
+  if (!agentes['miguel']) {
+    agentes['miguel'] = {
+      agent_id: 'miguel',
+      estado: 'pendiente',
+      ultima_accion: null,
+      proxima_accion: 'Contactar pakoandrade@gmail.com por WhatsApp — usuario activo con 3 clases vistas.',
+      datos: {},
+    }
+  }
+
   // Sofía: enriquecer datos con conteos live
   const activados = proRes.count ?? 0
   const totalCompradores = 243

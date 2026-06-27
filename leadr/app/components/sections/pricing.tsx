@@ -30,7 +30,7 @@ export function PricingSection() {
             className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-white mb-8"
             
           >
-            $227 en valor real.<br />Por solo $17 hoy.
+            $227 en valor real.<br />Por solo $10 hoy.
           </h2>
         </motion.div>
 
@@ -70,7 +70,7 @@ export function PricingSection() {
               className="text-[clamp(3.5rem,10vw,5.5rem)] font-bold tracking-[-0.04em] leading-none bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-2"
               
             >
-              $17 USD
+              $10 USD
             </div>
             <p className="text-zinc-600 text-xs mb-9">
               Pago único · Acceso inmediato · Sin suscripción · Acceso de por vida
@@ -83,7 +83,7 @@ export function PricingSection() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-              Quiero mi sistema por $17 ahora
+              Quiero mi sistema por $10 ahora
             </a>
 
             <p className="flex items-center justify-center gap-1.5 text-zinc-600 text-xs mt-4">
