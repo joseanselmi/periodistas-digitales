@@ -73,7 +73,8 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  // 1. Verificar firma de Hotmart
+  // 1. Verificar firma de Hotmart (webhook v2.0 manda el hottok en el header
+  // x-hotmart-hottok; es el token único de la cuenta de Hotmart)
   const token = (req.headers['x-hotmart-hottok'] || '').trim()
   if (!HOTMART_TOKEN || token !== HOTMART_TOKEN) {
     return res.status(401).json({ error: 'Unauthorized' })
