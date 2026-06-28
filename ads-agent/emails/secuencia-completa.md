@@ -21,7 +21,7 @@ Hola,
 
 Ya tenés acceso al Sistema de Ingresos Diarios para Periodistas.
 
-Entrá acá → https://pay.hotmart.com/H99593850B
+Entrá acá → https://pay.hotmart.com/P106404871J
 
 Lo primero que te recomiendo hacer: no intentes ver todo de una vez.
 Arrancá por el Módulo 1. Solo eso. Hoy.

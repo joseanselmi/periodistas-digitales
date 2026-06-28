@@ -1,13 +1,13 @@
 # CEREBRO — Ecosistema completo Periodistas del Futuro IA
-**Última actualización: 10 mayo 2026**
+**Última actualización: 27 junio 2026**
 
 ---
 
 ## EL NEGOCIO
 
 **Producto activo:** Sistema de Ingresos Diarios para Periodistas
-**Precio:** $17 USD (valor percibido $227)
-**Checkout:** Hotmart `https://pay.hotmart.com/H99593850B`
+**Precio:** $27 USD (valor percibido $227)
+**Checkout:** Hotmart `https://pay.hotmart.com/P106404871J`
 **Diferencial único:** Incluye 1 mes de Leadr ($97) — nadie más puede dar este bono
 **Historial Meta Ads:** $4.364 gastados → 346 compras → CPA promedio $10.19
 
@@ -165,6 +165,6 @@ carousels/semana-DD-MM/para-subir/
 
 ## EL ICP (cliente ideal)
 
-Periodista latinoamericana/o de **40-55 años**. 10+ años en medios. Siente el piso moverse. No fue despedido/a todavía pero la señal llegó. Colombia, México, Ecuador o Chile. Usa Facebook más que Instagram. $17 USD no es barrera — es una prueba de que esto es serio sin ser una apuesta.
+Periodista latinoamericana/o de **40-55 años**. 10+ años en medios. Siente el piso moverse. No fue despedido/a todavía pero la señal llegó. Colombia, México, Ecuador o Chile. Usa Facebook más que Instagram. $27 USD no es barrera — es una prueba de que esto es serio sin ser una apuesta.
 
 **Mercados top reales:** Ecuador, Puerto Rico, Colombia, México, EEUU hispano, Chile.

@@ -1,9 +1,9 @@
 export const BRAND = {
   product: 'Sistema de Ingresos Diarios para Periodistas',
-  price: 17,
+  price: 27,
   perceivedValue: 227,
   landingUrl: 'https://sistemadeingresosdiariosia.com',
-  hotmartUrl: 'https://pay.hotmart.com/H99593850B?checkoutMode=10&src=Landing-page-1&sck=b2',
+  hotmartUrl: 'https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2',
 
   audience: {
     description: 'Periodistas latinoamericanos 30-55 años',
@@ -43,7 +43,7 @@ export const BRAND = {
 
   // Oferta actual (mayo 2026) — DIFERENTE a campañas anteriores
   offer: {
-    price: 17,
+    price: 10,
     perceivedValue: 227,
     keyDifferentiator: 'Incluye 1 mes de Leadr — plataforma propia de formación IA para periodistas ($97 valor). Nadie más puede dar este bono.',
     bonuses: [
@@ -81,7 +81,7 @@ export const BRAND = {
     cpmRange: [3.0, 6.0],    // CPM histórico USD
     realRoasTarget: 2.5,     // ROAS real incluyendo order bumps (~$26-30 AOV)
     // Nota: ROAS reportado en Meta parece bajo (0.89-1.03) porque
-    // solo trackea front-end $17 — el real con OBs es ~2.5x
+    // solo trackea front-end $10 — el real con OBs es ~2.5x
   },
 
   // Mercados reales por volumen de ventas históricas

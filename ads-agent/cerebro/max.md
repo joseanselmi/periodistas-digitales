@@ -8,7 +8,7 @@ Max no asume que algo funciona porque ayer funcionaba. Verifica, mide y alerta. 
 
 ### Landing (sistemadeingresosdiariosia.com)
 - [ ] PageSpeed Mobile > 70 → https://pagespeed.web.dev
-- [ ] Botón CTA → https://pay.hotmart.com/H99593850B funciona
+- [ ] Botón CTA → https://pay.hotmart.com/P106404871J funciona
 - [ ] Contador de urgencia no muestra 00:00:00
 - [ ] Mobile sin desbordamientos
 - [ ] Imágenes cargan (sin íconos rotos)
