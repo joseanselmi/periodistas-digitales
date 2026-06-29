@@ -76,6 +76,35 @@ literales a Hotmart. Ahora el handler de click reenvía las UTMs **reales** con 
 que llegó la visita (de `window.location.search`) y, si no vino ninguna, borra los
 placeholders.
 
+## Atribución por anuncio — qué anuncio generó cada venta (CRÍTICO)
+
+Para decidir a qué anuncio escalar presupuesto hay que saber, por cada venta, de
+qué anuncio salió. **Reemplaza el método viejo de 10 landings** (`/1`…`/10`, una
+por anuncio) por UNA sola landing:
+
+1. Cada anuncio de Meta apunta a la landing con un código corto en `src`:
+   `https://sistemadeingresosdiariosia.com/?src=ad4` (o `?src=fomo-ia`, lo que sea
+   legible). Se puede usar el macro de Meta `?src={{ad.name}}` para automatizarlo,
+   pero un código corto manual es más limpio de leer en el reporte.
+2. La landing (`applyAdAttribution` en index.html) reenvía ese `src` (y `sck`/UTMs)
+   al link de Hotmart **al cargar la página, sobre todos los botones de compra** —
+   así la atribución no depende de cómo el usuario haga clic.
+3. En Hotmart → reporte de ventas → columna **SRC** = el anuncio de cada venta.
+   Determinístico, no depende de Meta.
+
+Doble fuente de verdad: **Hotmart SRC** (manual, exacto) + **Meta Ads Manager**
+(automático, vía fbc) → se cruzan para decidir qué escalar.
+
+> `sck` queda reservado para la cookie de Facebook (fbp/fbc) → en el reporte se ve
+> "cargado", ignorarlo. **Para el anuncio, leer la columna SRC.**
+
+### Verificarlo antes de confiar en él
+- La compra de prueba HP3163097103 se hizo con el `src` por defecto `Landing-page-1`
+  → en el reporte de Hotmart su columna SRC debe mostrar `Landing-page-1`. Si lo
+  muestra, el mecanismo landing→Hotmart-SRC ya está probado.
+- Con el código nuevo: abrir `...com/?src=PRUEBA-AD`, comprar, y confirmar que la
+  venta aparece en Hotmart con SRC=`PRUEBA-AD`.
+
 ## Pasos manuales (Meta / Hotmart) — los hace Jose, guiado
 
 1. **Conversión personalizada en Meta** (para no mezclar con compras de Leadr):
