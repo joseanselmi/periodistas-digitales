@@ -450,7 +450,13 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1086780383211630');
     fbq('track', 'PageView');
-    fbq('track', 'ViewContent');
+    fbq('track', 'ViewContent', {
+      content_ids: ['curso-sistema-ingresos'],
+      content_name: 'Sistema de Ingresos Diarios para Periodistas',
+      content_type: 'product',
+      value: 27.00,
+      currency: 'USD'
+    });
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1086780383211630&ev=PageView&noscript=1"
@@ -1054,10 +1060,53 @@
 </footer>
 
 <script>
-/* ── META PIXEL: InitiateCheckout en clicks a Hotmart ── */
+/* ── META PIXEL: InitiateCheckout + traspaso de datos al checkout de Hotmart ──
+   Al ir al checkout (otra web, pay.hotmart.com) llevamos todo lo que sabemos del
+   visitante para que vuelva en el webhook y el Purchase tenga buen match quality:
+     · fbp/fbc  → la cookie de Facebook, empaquetada dentro de `sck` (delimitador "~").
+     · utm_*    → las UTMs REALES con las que llegó esta visita (Meta reemplaza los
+                  macros {{campaign.name}} en la URL del anuncio → la landing, no acá;
+                  por eso hay que reenviarlas desde la URL de la landing, no hardcodearlas). */
+function getCookie(name) {
+    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+}
 document.addEventListener('click', e => {
     const link = e.target.closest('a[href*="hotmart"]');
-    if (link && window.fbq) fbq('track', 'InitiateCheckout');
+    if (!link) return;
+
+    if (window.fbq) fbq('track', 'InitiateCheckout', {
+        content_ids: ['curso-sistema-ingresos'],
+        content_type: 'product',
+        value: 27.00,
+        currency: 'USD'
+    });
+
+    try {
+        const landing = new URLSearchParams(window.location.search);
+        const url = new URL(link.href);
+
+        // 1) Reenviar las UTMs reales de esta visita; si no vino ninguna, limpiar
+        //    los placeholders {{...}} que quedaron literales en el href.
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => {
+            const v = landing.get(k);
+            if (v) url.searchParams.set(k, v);
+            else if ((url.searchParams.get(k) || '').includes('{{')) url.searchParams.delete(k);
+        });
+
+        // 2) Empaquetar fbp/fbc dentro de sck, preservando el sck de atribución.
+        const fbp = getCookie('_fbp');
+        const fbc = getCookie('_fbc');
+        if (fbp || fbc) {
+            const baseSck = (url.searchParams.get('sck') || '').split('~')[0];
+            let packed = baseSck;
+            if (fbp) packed += '~fbp:' + fbp;
+            if (fbc) packed += '~fbc:' + fbc;
+            url.searchParams.set('sck', packed);
+        }
+
+        link.href = url.toString();
+    } catch (err) { /* si algo falla, el checkout sigue andando igual */ }
 });
 
 /* ── REVEAL ON SCROLL ── */
