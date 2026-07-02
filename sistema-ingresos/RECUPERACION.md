@@ -92,18 +92,18 @@ Todas ya existen menos el interruptor:
 - `CRON_SECRET` — auth del endpoint.
 - `RECUP_ENABLED` — **falta**: setear en `1` para el go-live.
 
-## Estado
+## Estado: ✅ LIVE (2026-07-02)
 
 - ✅ Código: `api/_lib/wa.js`, envío instantáneo en `api/hotmart.js`, motor diario en
-  `api/recuperacion.js`. Deployado a prod. Probado en dry (Juan → paso 1,
-  `recup_abandono_1`). Webhook carga OK.
+  `api/recuperacion.js`. Deployado a prod.
 - ✅ Migración de columnas aplicada (`paso_recuperacion`, `ultimo_contacto_en`).
-- ✅ 4 plantillas creadas y **enviadas a aprobación de Meta** (status `PENDING`).
-- ⏳ **Falta para go-live:**
-  1. Que Meta **apruebe las 4 plantillas** (queda esperar; se chequea con
-     `GET /{WABA}/message_templates`).
-  2. **Prueba real**: mandar una plantilla a un número propio para ver que llega bien.
-  3. Setear **`RECUP_ENABLED=1`** en Vercel → ahí empieza a recuperar de verdad.
+- ✅ Las 4 plantillas **APROBADAS por Meta**.
+- ✅ **Prueba real** enviada al WhatsApp de Jose (+34 677239574, `recup_abandono_1`) →
+  llegó bien, confirmado.
+- ✅ **`RECUP_ENABLED=1`** seteado en Vercel + redeploy; `enabled:true` verificado.
+
+Operativa: cada carrito/rechazo nuevo recibe el WhatsApp al instante; el recordatorio y el
+backlog pendiente (Juan) los manda el cron de las 12:00 ART.
 
 ## Historial
 
