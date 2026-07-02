@@ -74,6 +74,12 @@ const EXCLUDE_EMAILS = (process.env.HOTMART_EXCLUDE_EMAILS || 'joseanselmi27@gma
   .toLowerCase().split(',').map(s => s.trim()).filter(Boolean)
 const isExcluded = email => EXCLUDE_EMAILS.includes(String(email || '').toLowerCase())
 
+// Opcional: restringir a ciertos productos (lista de ids coma-separada). Vacío = TODOS
+// los productos de la cuenta (default — así el cross-sell/recomendador también se cuenta).
+const ONLY_PRODUCTS = (process.env.HOTMART_ONLY_PRODUCTS || '')
+  .split(',').map(s => s.trim()).filter(Boolean)
+const productoOk = id => ONLY_PRODUCTS.length === 0 || ONLY_PRODUCTS.includes(String(id))
+
 // Rechazos recuperables (tarjeta #36). Mismo criterio que classifyPotencial() del
 // webhook: intentó pagar y no se concretó. Un rechazo de tarjeta cae en NO_FUNDS
 // (sin fondos) o BLOCKED (banco/antifraude); CANCELLED/EXPIRED/OVERDUE cubren pagos
@@ -128,12 +134,16 @@ async function getAccessToken() {
 }
 
 // ─── 2) Traer todas las ventas (paginado) ─────────────────────────────────────
+// Trae TODOS los productos de la cuenta (curso + order bumps + upsells + lo que venda
+// el recomendador/cross-sell de Hotmart), NO solo el curso: esas ventas del cross-sell
+// puede que ni pasen por el webhook, así que la API es la única forma segura de contarlas.
+// Cada fila guarda su producto_id/producto, así en Metabase se filtra por producto.
+// (Se puede restringir con HOTMART_ONLY_PRODUCTS = lista de ids coma-separada.)
 async function fetchAllSales(token) {
   const items = []
   let pageToken = null
   do {
     const url = new URL(SALES_URL)
-    url.searchParams.set('product_id', PRODUCT_ID)
     url.searchParams.set('max_results', '100')
     if (SINCE) url.searchParams.set('start_date', String(new Date(SINCE).getTime()))
     if (pageToken) url.searchParams.set('page_token', pageToken)
@@ -169,6 +179,7 @@ function mapToVenta(item) {
     nombre: pick(buyer.name, buyer.first_name && `${buyer.first_name} ${buyer.last_name || ''}`.trim()),
     telefono: onlyDigits(buyer.phone_local_code, pick(buyer.checkout_phone, buyer.phone)),
     producto: pick(product.name, 'Sistema de Ingresos Diarios para Periodistas'),
+    producto_id: pick(product.id),   // para distinguir curso vs upsells/cross-sells en Metabase
     valor: pick(price.value, purchase.full_price && purchase.full_price.value),
     moneda: pick(price.currency_value, price.currency_code, 'USD'),
     evento_hotmart: `API_SYNC:${status || 'SALE'}`,   // marca que la fila vino del sync, no del webhook live
@@ -445,7 +456,7 @@ if (!SOLO_RECHAZOS) {
   console.log(`   🧾 De esas, ${sales.length} son ventas (${SALE_STATUSES.join('/')})`)
 
   const existing = await fetchExistingTx()
-  const records = sales.map(mapToVenta).filter(r => r.transaction_id && !isExcluded(r.email))
+  const records = sales.map(mapToVenta).filter(r => r.transaction_id && !isExcluded(r.email) && productoOk(r.producto_id))
   const missing = records.filter(r => !existing.has(r.transaction_id))
 
   console.log(`   📊 Ya en la tabla: ${sales.length - missing.length} · Faltan: ${missing.length}`)

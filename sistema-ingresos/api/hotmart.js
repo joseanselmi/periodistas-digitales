@@ -354,6 +354,7 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
     nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
     telefono: onlyDigits(pick(buyerRaw.phone_local_code, buyerRaw.ddi), pick(buyerRaw.checkout_phone, buyerRaw.phone)),
     producto: pick(product.name, CONTENT_NAME),
+    producto_id: pick(product.id),
     valor: value,
     moneda: currency,
     evento_hotmart: event,

@@ -98,12 +98,24 @@ y (b) reconciliar a futuro (garantizar que no se escape ninguna venta).
    una credencial de **producción** (Sandbox destildado) y esas claves funcionan. La pantalla
    "Crear credencial" de Hotmart NO tiene selector de scopes; lo único que importa es **NO
    tildar Sandbox**.
-4. ✅ **BACKFILL HECHO (2026-07-03).** El histórico trajo **4 transacciones = 4 ventas**
-   (`sales/history`). 3 son ventas reales por `ad1-fomo` (Francisco Benjumea/CO,
-   Yamilex Galán/DO, Mariano Rodríguez/CR) — **confirma la atribución por anuncio end-to-end**
-   (`src=ad1-fomo` = "Origen" de Hotmart). La 4ª es la compra de PRUEBA del propio Jose
-   (joseanselmi27@gmail.com) → **excluida** (ver `EXCLUDE_EMAILS`). Las 3 reales se
-   insertaron en `ventas` por la conexión directa a la base.
+4. ✅ **BACKFILL HECHO (2026-07-03) — TODOS los productos, no solo el curso.** El histórico
+   trajo **9 transacciones**: 1 es la compra de PRUEBA de Jose (joseanselmi27@gmail.com) →
+   **excluida** (`EXCLUDE_EMAILS`); las otras **8 son ventas reales** y se cargaron en `ventas`.
+   - **Insight:** la cuenta vende 6 productos. Además del curso ($27), Hotmart **cross-sellea /
+     recomienda** otros productos de Jose en el checkout y los vende solos (order bumps + el
+     recomendador). Ej.: Francisco (CO) compró curso + Hashtags $10 + Guía 1.000 lectores $12
+     (transacciones `...C1/C2/C3`, misma raíz, todas con `src=ad1-fomo` → **los upsells heredan
+     la atribución del anuncio**). Mariano (CR) sumó Máquina de Dinero $9.99 y hasta "Método
+     Espalda Fuerte" (nicho bebés) $6.99 vía el recomendador.
+   - **Decisión de Jose ("cuéntalo"):** contar TODOS los productos, no filtrar por el curso.
+     El script ahora trae todos los productos de la cuenta (sin `product_id` en `fetchAllSales`);
+     opcional restringir con `HOTMART_ONLY_PRODUCTS`. Cada fila guarda `producto_id`+`producto`.
+   - **Por qué importa el sync (no solo el webhook):** las ventas del cross-sell/recomendador
+     puede que ni disparen el webhook del curso → la API de Hotmart es la única forma segura de
+     contarlas. El webhook también guarda `producto_id` ahora (deploy 2026-07-03).
+   - **Total backfill: 8 ventas · $122.82 bruto · $104.20 neto.** Curso: 3 ventas ($81.03),
+     todas por `ad1-fomo` → confirma atribución end-to-end. Columna nueva `producto_id`
+     (migración `ventas_agregar_producto_id`).
 5. ✅ **MONTO EN USD + MÁXIMO DE DATOS DEL CLIENTE (pedido de Jose).** `sales/history` NO
    trae USD ni tel/dirección → se agregaron dos llamadas por transacción:
    - `sales/commissions` → **USD**: comisión neta del productor (`comision_usd` ≈ 23.84) y
