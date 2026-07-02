@@ -60,13 +60,43 @@ Hotmart. Decisión de Jose: **"créala, debería estar."**
 5. ⏳ **Pendiente de confirmar con la 1ª venta REAL:** que los campos de Hotmart matcheen el
    mapeo (sobre todo `src` = "Origen", y `es_afiliado`). El `payload` crudo se guarda entero,
    así que cualquier ajuste posterior es recuperable.
-6. ⚠️ **Las 3 ventas del 30/06–02/07 NO quedan retroactivas** en la tabla (no hay acceso a
-   Hotmart para backfill). La tabla captura de la próxima venta en adelante. Si hace falta,
-   se pueden cargar a mano con los datos de Hotmart.
+6. ⚠️ **Las 3 ventas del 30/06–02/07 NO entran por el webhook** (es de acá en adelante).
+   Se resuelven con el sync de la API de Hotmart → ver "Actualización (2026-07-03)" abajo.
 
 **Nota de naming:** el esquema propuesto abajo listaba esta tabla como `purchases` (inglés),
 pero se creó como `ventas` (español) para ser consistente con `clientes_potenciales` y que
 Jose la lea fácil en Metabase. Mismo criterio a futuro para el resto.
+
+## Actualización (2026-07-03): sync + reconciliación con la API de Hotmart
+
+Motivo: el webhook solo captura de ahora en adelante, y las ventas viejas (y cualquier
+venta que el webhook llegue a perderse un día) no quedaban en la tabla. Jose eligió la
+opción robusta: **conectar la API de Hotmart** para (a) backfill del histórico completo
+y (b) reconciliar a futuro (garantizar que no se escape ninguna venta).
+
+- **Script:** `ads-agent/hotmart-sync.mjs` (Node ESM, usa `dotenv`). Autentica por OAuth
+  client_credentials contra Hotmart, trae el histórico de ventas del producto (paginado),
+  filtra a ventas concretadas (`APPROVED`/`COMPLETE`) e inserta en `ventas` **solo las que
+  faltan** (compara por `transaction_id`; `resolution=ignore-duplicates` → nunca pisa las
+  filas que cargó el webhook ni duplica). **No re-dispara Meta ni el bono de Leadr** (solo
+  lee de Hotmart y escribe en la base) — ésa es la ventaja sobre reenviar webhooks. Las
+  filas que inserta el sync se marcan con `evento_hotmart = 'API_SYNC:<status>'` para
+  distinguirlas de las del webhook live. Flags: `--dry-run` (solo reporta), `--since YYYY-MM-DD`.
+- **Producto:** `HOTMART_PRODUCT_ID` default `7966973` (el curso; código público `P106404871J`).
+- **Endpoints usados:** OAuth `api-sec-vlc.hotmart.com/security/oauth/token`; ventas
+  `developers.hotmart.com/payments/api/v1/sales/history`. Construido contra la API pública v1;
+  el mapeo se confirma en la 1ª corrida real (igual se guarda el JSON crudo en `payload`).
+
+**Estado (2026-07-03):**
+1. ✅ Script escrito, sintaxis validada, falla con mensaje claro si faltan credenciales.
+2. ⏳ **BLOQUEADO esperando credenciales de Hotmart** (las genera Jose): Hotmart → Herramientas
+   → "Credenciales para API" → crear credencial → copiar **Client ID**, **Client Secret** y el
+   token **Basic**. Van en `ads-agent/.env.local` como `HOTMART_CLIENT_ID` / `HOTMART_CLIENT_SECRET`
+   / `HOTMART_BASIC` (+ `SUPABASE_SERVICE_ROLE_KEY` de la base de marketing).
+3. ⏳ Cuando estén las credenciales: correr `node hotmart-sync.mjs --dry-run` (verifica mapeo),
+   luego sin flag (backfillea las 3+ ventas). Confirmar que `valor`/`src`/`pais` llegan bien.
+4. 🔮 Futuro (opcional): dejarlo de cron diario (routine en la nube o Vercel cron) para
+   reconciliar todas las mañanas. Así, aunque el webhook falle un día, la venta igual aparece.
 
 ## Actualización (2026-07-02): motor de recuperación (tarjeta #34)
 
