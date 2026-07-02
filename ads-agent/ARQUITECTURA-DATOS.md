@@ -24,8 +24,9 @@ Avance de la tarjeta Trello #25 ("Crear el objeto cliente potencial").
 **Estado de puesta en producción (act. 2026-07-02):**
 1. ✅ Env vars cargadas en Vercel (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) en Production.
 2. ✅ Deploy a producción hecho (`vercel --prod`, aliased a sistemadeingresosdiariosia.com) y **probado end-to-end**: se disparó al webhook real un evento simulado de carrito abandonado (con el hottok real de Hotmart) y la fila entró correcta en `clientes_potenciales` (tipo, contacto, valor, `src`, fbp/fbc bien parseados). Dato de prueba borrado. Test: POST a `/api/hotmart` con `event: PURCHASE_OUT_OF_SHOPPING_CART`.
-3. ⏳ **Falta (Jose, en Hotmart):** habilitar los eventos de carrito abandonado y de compra cancelada/vencida/rechazada en la config del webhook del curso (por defecto puede estar activada solo la compra aprobada). Hasta eso, no entran carritos reales. Cuando lleguen los primeros, confirmar el mapeo de eventos contra el `raw payload` real (logs de Vercel).
-4. ⚠️ **Código en prod pero SIN commitear a git:** los cambios de `sistema-ingresos/api/hotmart.js` y este doc se deployaron desde local; el repo todavía no los tiene versionados. Commitear para que git no quede atrasado de producción.
+3. ✅ **Eventos habilitados en Hotmart (2026-07-02):** Abandono de carrito, Compra cancelada, Compra con plazo vencido (+ las de compra que ya estaban). Sistema LIVE — los carritos reales entran solos.
+4. ✅ **Código commiteado y pusheado a master** (commit `36cfc56`).
+5. ⏳ **Único pendiente para cerrar la tarjeta #25:** confirmar con el 1er carrito/pago fallido REAL que el nombre del evento de Hotmart coincide con el mapeo en `classifyPotencial` (revisar el `raw payload` en logs de Vercel y que la fila aparezca en `clientes_potenciales`). Si el string real difiere (ej. Hotmart no usa exactamente `PURCHASE_OUT_OF_SHOPPING_CART`), ajustar el mapeo — el payload crudo se guarda entero, así que no se pierde nada.
 
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
