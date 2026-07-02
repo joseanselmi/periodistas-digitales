@@ -57,6 +57,11 @@ const SUPABASE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 // Remitente de los emails (mismo que ya usa el motor de WhatsApp para el reporte).
 const SENDER = { name: 'Jose · Sistema de Ingresos', email: 'jose@sistemadeingresosdiariosia.com' };
 const REPORTE_A = 'joseanselmi27@gmail.com';
+// Adónde caen las RESPUESTAS del cliente: al Gmail de Jose (el que tiene en el celu),
+// aunque el mail salga desde el dominio. Así puede contestar desde el teléfono como
+// cualquier mail. Si no se pusiera esto, las respuestas irían a jose@dominio (una
+// casilla que Jose no lee).
+const REPLY_TO = { name: 'Jose', email: REPORTE_A };
 
 // Espera mínima entre un email y el siguiente (robustez ante corridas seguidas).
 const MIN_GAP_HORAS = 12;
@@ -225,10 +230,11 @@ async function enviarEmail(to, subject, html) {
     headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
     body: JSON.stringify({
       sender: SENDER,
+      replyTo: REPLY_TO, // las respuestas del cliente caen en el Gmail de Jose
       to: [{ email: to }],
       subject,
       htmlContent: html,
-      headers: { 'List-Unsubscribe': `<mailto:${SENDER.email}?subject=BAJA>` },
+      headers: { 'List-Unsubscribe': `<mailto:${REPLY_TO.email}?subject=BAJA>` },
       tags: ['recuperacion'],
     }),
   });
