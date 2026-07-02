@@ -8,6 +8,6 @@
   },
   "crons": [
     { "path": "/api/wa-funnel", "schedule": "0 13 * * *" },
-    { "path": "/api/recuperacion", "schedule": "0 */6 * * *" }
+    { "path": "/api/recuperacion", "schedule": "0 15 * * *" }
   ]
 }

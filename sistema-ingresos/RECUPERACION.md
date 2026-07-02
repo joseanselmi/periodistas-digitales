@@ -27,9 +27,10 @@ versionado, sin depender de que nadie toque una UI de Make.
 
 ## Cómo funciona (`api/recuperacion.js`)
 
-- **Corre** por Vercel Cron cada 6 h (`0 */6 * * *`, ver `vercel.json`). Si el plan de
-  Vercel solo dispara crons 1 vez/día, el primer email llega dentro de las 24 h — es
-  aceptable para v1; para acelerar se puede subir a plan que permita crons sub-diarios.
+- **Corre** por Vercel Cron **1 vez/día** (`0 15 * * *` = 12:00 ART, ver `vercel.json`).
+  El plan de Vercel es **Hobby**, que solo permite crons diarios — por eso el primer email
+  llega dentro de las 24 h (aceptable para v1). Para acelerar a +1h real habría que pasar a
+  plan Pro (crons sub-diarios) o que el webhook de Hotmart dispare el primer toque inline.
 - **Fuente:** filas de `clientes_potenciales` con `estado_recuperacion in (pendiente, contactado)`.
 - **Estado por persona** (columnas de la tabla):
   - `estado_recuperacion`: `pendiente → contactado → recuperado | perdido`
