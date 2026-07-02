@@ -89,14 +89,82 @@ y (b) reconciliar a futuro (garantizar que no se escape ninguna venta).
 
 **Estado (2026-07-03):**
 1. ✅ Script escrito, sintaxis validada, falla con mensaje claro si faltan credenciales.
-2. ⏳ **BLOQUEADO esperando credenciales de Hotmart** (las genera Jose): Hotmart → Herramientas
-   → "Credenciales para API" → crear credencial → copiar **Client ID**, **Client Secret** y el
-   token **Basic**. Van en `ads-agent/.env.local` como `HOTMART_CLIENT_ID` / `HOTMART_CLIENT_SECRET`
-   / `HOTMART_BASIC` (+ `SUPABASE_SERVICE_ROLE_KEY` de la base de marketing).
-3. ⏳ Cuando estén las credenciales: correr `node hotmart-sync.mjs --dry-run` (verifica mapeo),
-   luego sin flag (backfillea las 3+ ventas). Confirmar que `valor`/`src`/`pais` llegan bien.
-4. 🔮 Futuro (opcional): dejarlo de cron diario (routine en la nube o Vercel cron) para
-   reconciliar todas las mañanas. Así, aunque el webhook falle un día, la venta igual aparece.
+2. ✅ Credenciales de Hotmart generadas por Jose y guardadas en `ads-agent/.env.local`
+   (`HOTMART_CLIENT_ID` / `HOTMART_CLIENT_SECRET` / `HOTMART_BASIC` sin el prefijo "Basic ").
+   **La autenticación OAuth funciona** (devuelve access_token).
+3. ✅ **RESUELTO — era una credencial SANDBOX.** La 1ª credencial autenticaba pero daba
+   403 `unauthorized_client` en todo (token con `scope: undefined`). Causa: estaba creada
+   con la opción **Sandbox** tildada → autentica pero no lee datos de producción. Jose creó
+   una credencial de **producción** (Sandbox destildado) y esas claves funcionan. La pantalla
+   "Crear credencial" de Hotmart NO tiene selector de scopes; lo único que importa es **NO
+   tildar Sandbox**.
+4. ✅ **BACKFILL HECHO (2026-07-03).** El histórico trajo **4 transacciones = 4 ventas**
+   (`sales/history`). 3 son ventas reales por `ad1-fomo` (Francisco Benjumea/CO,
+   Yamilex Galán/DO, Mariano Rodríguez/CR) — **confirma la atribución por anuncio end-to-end**
+   (`src=ad1-fomo` = "Origen" de Hotmart). La 4ª es la compra de PRUEBA del propio Jose
+   (joseanselmi27@gmail.com) → **excluida** (ver `EXCLUDE_EMAILS`). Las 3 reales se
+   insertaron en `ventas` por la conexión directa a la base.
+5. ✅ **MONTO EN USD + MÁXIMO DE DATOS DEL CLIENTE (pedido de Jose).** `sales/history` NO
+   trae USD ni tel/dirección → se agregaron dos llamadas por transacción:
+   - `sales/commissions` → **USD**: comisión neta del productor (`comision_usd` ≈ 23.84) y
+     `exchange_rate_currency_payout` para calcular el **bruto** (`valor_usd` = local × exchange
+     ≈ 27, el precio del curso). Se conserva además el `valor`/`moneda` local (lo que se cobró).
+   - `sales/users` (rol BUYER) → **datos del comprador**: `telefono` (con código de país),
+     `pais`, `ciudad`, `provincia`, `codigo_postal`, `documento`.
+   Columnas nuevas en `ventas` (migración `ventas_agregar_usd_y_datos_cliente`): `valor_usd`,
+   `comision_usd`, `ciudad`, `provincia`, `codigo_postal`, `documento`. Las 3 ventas quedaron
+   enriquecidas (ciudad/provincia vinieron vacías: el checkout de esos compradores no las pidió).
+   El script `enrichVentas()` completa **también las filas que cargó el webhook** (PATCH solo de
+   esos campos, no pisa src/fbp/evento_hotmart), así toda venta termina con el máximo de datos.
+6. ⏳ **Para automatizar (cron diario) falta la `SUPABASE_SERVICE_ROLE_KEY`** en el entorno que
+   corra el script. Vercel la tiene marcada "Sensitive" → `vercel env pull` la trae vacía. Opciones:
+   (a) pegarla a mano en `ads-agent/.env.local`, o (b) —mejor— deployar el sync como **Vercel
+   cron en sistema-ingresos**, donde esa key ya existe en runtime (habría que sumar las 3 vars
+   de Hotmart a ese proyecto). El backfill de hoy no la necesitó (se hizo por conexión directa).
+
+## Actualización (2026-07-03): captura de rechazos de tarjeta (tarjeta #36)
+
+Motivo: los rechazos de tarjeta (informe **Motivos de rechazo de la tarjeta** de Hotmart)
+NO entraban solos a `clientes_potenciales`, así que no disparaban recuperación. Follow-up
+de la #34.
+
+**Hallazgo que cambió el plan (verificado contra la doc de Hotmart, no asumido):** el plan
+original de la tarjeta ("averiguar qué evento del webhook dispara un rechazo y habilitarlo")
+**no tiene solución** — ese evento **no existe**. Los estados del webhook de Hotmart son
+`approved/canceled/billet_printed/refunded/dispute/completed/blocked/chargeback/delayed/expired`;
+ninguno es "tarjeta rechazada". Un rechazo al instante no crea un `purchase` que notificar
+(la persona sigue en el checkout). El informe "Motivos de rechazo" es **solo un panel**
+exportable a CSV/XLS (`app.hotmart.com/reports/cancellation/reason`), sin webhook ni API
+propia. `PURCHASE_CANCELED`/`PURCHASE_EXPIRED` (que sí habilitamos) son otra cosa
+(cancelaciones y plazos de boleto/pix vencidos), no el rechazo de tarjeta del momento.
+
+**Solución elegida — vía Sales History API (reusa el sync de ventas):** la Sales History
+API **sí** devuelve las transacciones rechazadas con estados `NO_FUNDS`, `BLOCKED`,
+`CANCELLED`, `EXPIRED`, `OVERDUE`. Se extendió `ads-agent/hotmart-sync.mjs`: además de las
+ventas, ahora trae esos rechazos (de los últimos `--rechazos-dias` días, default 3) y los
+inserta en `clientes_potenciales` como `pago_rechazado` (upsert por `dedup_key`
+`hotmart:<transaction>`, `ignore-duplicates` → nunca pisa el estado de recuperación de una
+fila ya capturada). El **cron diario de `api/recuperacion.js`** los agarra y manda
+`recup_rechazo_1` solo (no es instantáneo como el webhook, es batch con hasta ~1 día de
+demora, pero entra solo). La ventana de días evita reactivar rechazos viejos en el 1er
+backfill; el anti-acoso (cruce con `ventas`) ya cubre a quien después compró.
+
+**Por qué NO se usó el CSV del panel:** la API es automática y reusa la credencial que Jose
+ya tiene que habilitar para el backfill de ventas; el CSV sería un import manual recurrente.
+Queda como stopgap si hace falta capturar rechazos antes de destrabar la API.
+
+**Estado (2026-07-03):**
+1. ✅ Código escrito y sintaxis validada (`fetchRechazos`, `mapToPotencial`, `syncRechazos`,
+   flags `--rechazos-dias N` / `--no-rechazos` / `--solo-rechazos`).
+2. 🔴 **BLOQUEADO — misma credencial que el sync de ventas:** la API de Hotmart da 403
+   (`unauthorized_client`, sin scope de Ventas/Reportes). Al habilitar ese permiso se
+   destraban las dos cosas juntas (backfill de ventas + captura de rechazos).
+3. ⏳ Falta `SUPABASE_SERVICE_ROLE_KEY` en `ads-agent/.env.local` para que el script escriba.
+4. ⏳ E2E cuando se destrabe: `node hotmart-sync.mjs --dry-run --solo-rechazos` (verifica que
+   la API devuelva rechazos y confirma el mapeo/param `transaction_status`), luego sin
+   `--dry-run`, y confirmar que el cron de recuperación le manda `recup_rechazo_1`.
+5. 🔮 Para que "entren solos" a diario: dejar `hotmart-sync.mjs` de cron (mismo cron que
+   reconcilia ventas). Correrlo 1×/día antes del cron de recuperación de las 12:00 ART.
 
 ## Actualización (2026-07-02): motor de recuperación (tarjeta #34)
 
