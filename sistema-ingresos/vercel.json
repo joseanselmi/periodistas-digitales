@@ -1,5 +1,13 @@
 {
   "buildCommand": null,
   "outputDirectory": ".",
-  "framework": null
+  "framework": null,
+  "functions": {
+    "api/wa-funnel.js": { "maxDuration": 60 },
+    "api/recuperacion.js": { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/api/wa-funnel", "schedule": "0 13 * * *" },
+    { "path": "/api/recuperacion", "schedule": "0 */6 * * *" }
+  ]
 }
