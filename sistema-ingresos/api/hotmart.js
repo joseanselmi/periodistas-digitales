@@ -16,18 +16,36 @@
 //     optimice SOLO compras del curso).
 //   · event_id: id de transacción de Hotmart → deduplica reintentos del webhook.
 //
+// Clientes potenciales (ver ARQUITECTURA-DATOS.md): además de la compra, este
+// webhook registra a quien entró al checkout y NO compró — carrito abandonado o
+// pago rechazado — en la tabla `clientes_potenciales` de la base de marketing
+// (Supabase periodistas-marketing), para poder recuperarlos después por mail/WhatsApp.
+//
 // Variables de entorno (proyecto Vercel sistema-ingresos-landing):
 //   HOTMART_WEBHOOK_TOKEN_CURSO  — token del webhook de Hotmart de ESTE producto
 //   META_PIXEL_ID, META_CAPI_TOKEN — para enviar el evento Purchase a Meta CAPI
 //   META_TEST_EVENT_CODE         — (opcional) para validar en "Probar eventos" sin compra real
 //   LEADR_INTERNAL_API_URL       — https://www.leadr.cloud (CON www)
 //   LEADR_INTERNAL_SECRET        — secret compartido con el endpoint de Leadr
+//   SUPABASE_URL                 — https://wxyimqkjlwfncvzozpjy.supabase.co (base de marketing)
+//   SUPABASE_SERVICE_ROLE_KEY    — service_role key de esa base (secreta; escribe saltando RLS)
 
 const crypto = require('crypto')
 
 const HOTMART_TOKEN = (process.env.HOTMART_WEBHOOK_TOKEN_CURSO || '').trim()
 const TEST_EVENT_CODE = (process.env.META_TEST_EVENT_CODE || '').trim()
 const PURCHASE_EVENTS = ['PURCHASE_COMPLETE', 'PURCHASE_APPROVED']
+
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '')
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim()
+
+// Eventos de Hotmart que NUNCA son "cliente potencial" (esa gente SÍ compró):
+// reembolsos, contracargos y las propias compras aprobadas. Se excluyen explícito
+// para no ensuciar la tabla de recuperación con ex-clientes.
+const NO_POTENCIAL_EVENTS = [
+  'PURCHASE_COMPLETE', 'PURCHASE_APPROVED',
+  'PURCHASE_REFUNDED', 'PURCHASE_CHARGEBACK', 'PURCHASE_PROTEST',
+]
 
 const CONTENT_ID = 'curso-sistema-ingresos'
 const CONTENT_NAME = 'Sistema de Ingresos Diarios para Periodistas'
@@ -152,6 +170,116 @@ async function grantLeadrAccess(email) {
   }
 }
 
+// Convierte cualquier fecha de Hotmart (epoch en seg o ms, o string ISO) a ISO-8601.
+function toIso(v) {
+  if (v === undefined || v === null || v === '') return undefined
+  const n = Number(v)
+  const d = Number.isFinite(n) ? new Date(n > 1e12 ? n : n * 1000) : new Date(v)
+  return isNaN(d.getTime()) ? undefined : d.toISOString()
+}
+
+function onlyDigits(...parts) {
+  const d = parts.map(p => (p == null ? '' : String(p))).join('').replace(/\D/g, '')
+  return d || undefined
+}
+
+// Decide si un evento que NO es compra representa un "cliente potencial" y de qué
+// tipo. Mapeo best-effort según el webhook v2 de Hotmart — CONFIRMAR contra el
+// `raw payload` real en los logs de Vercel la primera vez que llegue cada evento
+// (el payload crudo se guarda en la columna `payload`, así que una mala
+// clasificación es recuperable y ajustable después sin perder datos).
+function classifyPotencial(event, purchase) {
+  const e = String(event || '').toUpperCase()
+  if (NO_POTENCIAL_EVENTS.includes(e)) return null
+
+  const status = String((purchase && purchase.status) || '').toUpperCase()
+
+  // Abandono de carrito: entró al checkout y se fue sin terminar.
+  if (e === 'PURCHASE_OUT_OF_SHOPPING_CART' || e.includes('ABANDON')) {
+    return 'carrito_abandonado'
+  }
+  // Pago rechazado / no concretado: intentó pagar y no se aprobó (tarjeta
+  // rechazada, sin fondos, boleto/pix vencido, compra cancelada sin aprobar).
+  if (
+    e === 'PURCHASE_EXPIRED' ||
+    e === 'PURCHASE_CANCELED' ||
+    ['EXPIRED', 'CANCELLED', 'NO_FUNDS', 'BLOCKED', 'DENIED', 'REFUSED', 'REJECTED'].includes(status)
+  ) {
+    return 'pago_rechazado'
+  }
+  return null
+}
+
+// Inserta (o actualiza, idempotente) el cliente potencial en la base de marketing.
+// No hace fallar el webhook si Supabase no responde: loguea y sigue devolviendo 200
+// para que Hotmart no reintente en loop por un problema transitorio.
+async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, body }) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('[curso webhook] Supabase sin configurar (falta SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY) — no se guarda el cliente potencial')
+    return false
+  }
+
+  const tracking = purchase.tracking || data.tracking || {}
+  const sck = pick(tracking.source_sck, tracking.sck, body.sck)
+  const fb = parseSck(sck)
+
+  const product = data.product || {}
+  const transaction = pick(purchase.transaction, data.transaction)
+
+  // Clave de idempotencia: por transacción si existe; si no (abandono sin
+  // transacción), por tipo+email+producto → reintentos actualizan la misma fila.
+  const productKey = String(pick(product.id, product.ucode, product.name, 'curso'))
+  const dedupKey = transaction ? `hotmart:${transaction}` : `${tipo}:${email}:${productKey}`
+
+  const record = {
+    tipo,
+    email,
+    nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
+    telefono: onlyDigits(pick(buyerRaw.phone_local_code, buyerRaw.ddi), pick(buyerRaw.checkout_phone, buyerRaw.phone)),
+    producto: pick(product.name, CONTENT_NAME),
+    valor: pick(purchase.price && purchase.price.value, purchase.full_price && purchase.full_price.value),
+    moneda: pick(purchase.price && purchase.price.currency_value, 'USD'),
+    evento_hotmart: event,
+    motivo_rechazo:
+      tipo === 'pago_rechazado'
+        ? pick(purchase.status, purchase.payment && (purchase.payment.refusal_reason || purchase.payment.type))
+        : undefined,
+    transaction_id: transaction,
+    src: pick(tracking.source, tracking.src),
+    fbp: fb.fbp || undefined,
+    fbc: fb.fbc || undefined,
+    utm_source: pick(tracking.utm_source),
+    utm_medium: pick(tracking.utm_medium),
+    utm_campaign: pick(tracking.utm_campaign),
+    estado_recuperacion: 'pendiente',
+    ocurrido_en: toIso(pick(body.creation_date, purchase.order_date, purchase.date)),
+    dedup_key: dedupKey,
+    payload: body,
+  }
+  Object.keys(record).forEach(k => record[k] === undefined && delete record[k])
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clientes_potenciales?on_conflict=dedup_key`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(record),
+    })
+    if (!res.ok) {
+      console.error('[curso webhook] Supabase insert HTTP', res.status, await res.text())
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('[curso webhook] error guardando cliente potencial:', e)
+    return false
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -191,9 +319,17 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'No email in payload' })
   }
 
-  // 3. Solo procesar compras aprobadas/completas (curso = pago único)
+  // 3. Bifurcar según el evento:
+  //    · compra aprobada/completa      → Meta CAPI + bono Leadr (sigue abajo)
+  //    · carrito abandonado / rechazado → registrar cliente potencial y terminar
+  //    · cualquier otra cosa            → ignorar
   if (!PURCHASE_EVENTS.includes(event)) {
-    return res.status(200).json({ ok: true, action: 'ignored', event })
+    const tipo = classifyPotencial(event, purchase)
+    if (!tipo) {
+      return res.status(200).json({ ok: true, action: 'ignored', event })
+    }
+    const saved = await savePotencial({ tipo, event, email, buyerRaw, data, purchase, body })
+    return res.status(200).json({ ok: true, action: 'cliente_potencial', tipo, saved })
   }
 
   // 4. Reunir todo para el evento de Meta.
