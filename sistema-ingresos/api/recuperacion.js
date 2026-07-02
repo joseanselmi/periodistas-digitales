@@ -33,6 +33,7 @@
 //      WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET, RECUP_ENABLED.
 
 const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
+const { runHotmartSync } = require('./_lib/hotmart-sync');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;
@@ -205,6 +206,19 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Antes de recuperar: sincronizar con Hotmart (reconcilia ventas + captura pagos
+    // rechazados frescos → clientes_potenciales, para que la recuperación los agarre en
+    // esta misma corrida). Best-effort: si falla, no afecta la recuperación. Solo en la
+    // corrida real del cron / live (no en modos de solo lectura).
+    if (mode === 'cron' || mode === 'live') {
+      try {
+        const sync = await runHotmartSync();
+        console.log(JSON.stringify({ type: 'hotmart_sync', ...sync }));
+      } catch (e) {
+        console.error('hotmart-sync (no frena la recuperación):', e.message);
+      }
+    }
+
     const now = Date.now();
     const [potenciales, ventas] = await Promise.all([sbGetPotenciales(), sbGetVentasEmails()]);
 

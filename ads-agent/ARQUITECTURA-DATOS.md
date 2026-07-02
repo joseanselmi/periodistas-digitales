@@ -128,11 +128,23 @@ y (b) reconciliar a futuro (garantizar que no se escape ninguna venta).
    enriquecidas (ciudad/provincia vinieron vacías: el checkout de esos compradores no las pidió).
    El script `enrichVentas()` completa **también las filas que cargó el webhook** (PATCH solo de
    esos campos, no pisa src/fbp/evento_hotmart), así toda venta termina con el máximo de datos.
-6. ⏳ **Para automatizar (cron diario) falta la `SUPABASE_SERVICE_ROLE_KEY`** en el entorno que
-   corra el script. Vercel la tiene marcada "Sensitive" → `vercel env pull` la trae vacía. Opciones:
-   (a) pegarla a mano en `ads-agent/.env.local`, o (b) —mejor— deployar el sync como **Vercel
-   cron en sistema-ingresos**, donde esa key ya existe en runtime (habría que sumar las 3 vars
-   de Hotmart a ese proyecto). El backfill de hoy no la necesitó (se hizo por conexión directa).
+6. ✅ **AUTOMATIZADO (2026-07-03) — cron diario en Vercel.** Como Hobby permite solo 2 crons y
+   ya estaban (wa-funnel + recuperacion), el sync **NO tiene cron propio**: corre pegado al de
+   recuperación (`api/recuperacion.js` llama `runHotmartSync()` al inicio de su corrida de las
+   15:00 UTC). Así, en la misma pasada: sincroniza Hotmart → captura rechazos frescos → la
+   recuperación los agarra al toque.
+   - **Módulo:** `sistema-ingresos/api/_lib/hotmart-sync.js` (`runHotmartSync()`), equivalente
+     serverless de `ads-agent/hotmart-sync.mjs`. Reconcilia ventas (todos los productos,
+     enriquecidas con USD+comprador) + captura pagos rechazados. Best-effort (si falla no frena
+     la recuperación). Env de Hotmart cargadas en Vercel producción.
+   - **Endpoint manual:** `api/hotmart-sync.js` (guard `CRON_SECRET`) para disparar/testear a mano.
+   - **Probado en prod 2026-07-03:** 1ª corrida trajo 0 ventas nuevas (las 8 ya estaban) y capturó
+     rechazos. ⚠️ **Bug encontrado y corregido:** dedupeaba rechazos por transacción → Nelson
+     (9 intentos de tarjeta) generaba 9 filas = 9 WhatsApps. **Fix:** dedup por PERSONA (email),
+     `dedup_key=rechazo:<email>`, y saltea a quien ya está en `clientes_potenciales` o ya compró
+     (está en `ventas`). Re-corrida: 0 rechazos nuevos (idempotente). Filas duplicadas borradas.
+   - **`ads-agent/hotmart-sync.mjs`** sigue existiendo para correr el sync a mano desde la compu
+     (necesita la `service_role` pegada en `.env.local`); el cron usa la de Vercel.
 
 ## Actualización (2026-07-03): captura de rechazos de tarjeta (tarjeta #36)
 
