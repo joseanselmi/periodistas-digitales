@@ -74,15 +74,15 @@ Construida la automatización que **recupera** las filas de `clientes_potenciale
 (lo que la #25 solo capturaba, ahora se acciona). Detalle completo y copy en
 [sistema-ingresos/RECUPERACION.md](../sistema-ingresos/RECUPERACION.md).
 
-- **Disparador (decisión base de la #34):** un motor propio en **Vercel Cron**
-  (`sistema-ingresos/api/recuperacion.js`) que consulta Supabase cada 6 h — **no**
-  Make ni disparar desde el webhook de Hotmart. Motivo: una secuencia de recuperación
-  es una cadencia con delays (+1h/+24h/+72h) → necesita un poller con estado igual, y
-  ya existe ese molde probado y entendido (`api/wa-funnel.js`). Reutilizarlo es más
-  barato y mantenible que meter la lógica en una UI de Make.
-- **Dos secuencias por `tipo`:** `carrito_abandonado` (3 emails +1h/+24h/+72h) y
-  `pago_rechazado` (2 emails +1h/+24h). Canal v1: **email por Brevo**. WhatsApp queda
-  para fase 2 (requiere plantilla aprobada por Meta).
+- **Canal: WhatsApp** (lo pidió Jose — más cercano que el email). El 1er mensaje es
+  **instantáneo**, lo dispara el **webhook de Hotmart** (`api/hotmart.js` → `instantRecup`)
+  apenas Hotmart avisa. El recordatorio (paso 2) lo manda el **motor diario**
+  (`api/recuperacion.js`, Vercel Cron 1×/día), que además es red de seguridad del paso 1.
+  Esto es la opción (b) de la tarjeta. WhatsApp exige **plantillas aprobadas por Meta**
+  (recup_abandono_1/2, recup_rechazo_1/2 — enviadas a aprobación 2026-07-02).
+- **Dos secuencias por `tipo`:** `carrito_abandonado` y `pago_rechazado`, 2 WhatsApp cada
+  una (instantáneo + recordatorio al día siguiente). Helper compartido `api/_lib/wa.js`.
+  El reporte interno a Jose sigue por email (Brevo, no necesita aprobación de Meta).
 - **Columnas nuevas en `clientes_potenciales`** (migración `recuperacion_agrega_paso_y_ultimo_contacto`):
   `paso_recuperacion` (int, cuántos emails se mandaron) y `ultimo_contacto_en` (timestamptz).
   Máquina de estados: `estado_recuperacion` = pendiente → contactado → recuperado | perdido.
@@ -93,9 +93,10 @@ Construida la automatización que **recupera** las filas de `clientes_potenciale
 - **Interruptor:** no manda nada hasta `RECUP_ENABLED=1` en Vercel (igual que
   `WA_FUNNEL_ENABLED`). El cron corre en modo dry mientras esté apagado.
 
-**Estado:** ✅ motor + migración + cron listos y probados en dry (lógica validada contra
-la fila real de Juan Aguilera). ⏳ Go-live pendiente de aprobación de Jose (OK al copy →
-deploy → `?mode=dry` en prod → `RECUP_ENABLED=1`).
+**Estado:** ✅ código (webhook instantáneo + motor diario + helper WhatsApp) deployado y
+probado en dry. ✅ 4 plantillas enviadas a aprobación de Meta (PENDING). ⏳ Go-live: que
+Meta apruebe las plantillas → prueba real a un número propio → `RECUP_ENABLED=1`. Detalle
+y copy en [sistema-ingresos/RECUPERACION.md](../sistema-ingresos/RECUPERACION.md).
 
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
