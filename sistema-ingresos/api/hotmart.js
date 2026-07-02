@@ -39,6 +39,11 @@ const PURCHASE_EVENTS = ['PURCHASE_COMPLETE', 'PURCHASE_APPROVED']
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '')
 const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim()
 
+// Recuperación instantánea por WhatsApp (tarjeta #34). Gateada por RECUP_ENABLED:
+// mientras no sea "1", el webhook solo guarda el cliente potencial (no manda nada).
+const RECUP_ENABLED = (process.env.RECUP_ENABLED || '').trim()
+const { normalizePhone, sendRecupTemplate, TEMPLATES } = require('./_lib/wa')
+
 // Eventos de Hotmart que NUNCA son "cliente potencial" (esa gente SÍ compró):
 // reembolsos, contracargos y las propias compras aprobadas. Se excluyen explícito
 // para no ensuciar la tabla de recuperación con ex-clientes.
@@ -210,6 +215,49 @@ function classifyPotencial(event, purchase) {
   return null
 }
 
+// Recuperación INSTANTÁNEA: manda el 1er WhatsApp apenas entra el cliente potencial.
+// Gateada por RECUP_ENABLED (apagada = no manda). Idempotente: "reserva" el envío con
+// un PATCH condicional (solo si paso_recuperacion sigue en 0), así un reintento del
+// webhook no duplica el mensaje. Si el envío falla, revierte para que el cron reintente.
+async function instantRecup({ tipo, dedupKey, telefono, nombre }) {
+  if (RECUP_ENABLED !== '1') return false
+  const to = normalizePhone(telefono)
+  const tmpl = TEMPLATES[tipo] && TEMPLATES[tipo][1]
+  if (!to || to.length < 8 || !tmpl) return false
+
+  const sbHead = (extra) => ({
+    apikey: SUPABASE_SERVICE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+    'Content-Type': 'application/json',
+    ...extra,
+  })
+  const key = encodeURIComponent(dedupKey)
+  try {
+    const claim = await fetch(`${SUPABASE_URL}/rest/v1/clientes_potenciales?dedup_key=eq.${key}&paso_recuperacion=eq.0`, {
+      method: 'PATCH',
+      headers: sbHead({ Prefer: 'return=representation' }),
+      body: JSON.stringify({ estado_recuperacion: 'contactado', paso_recuperacion: 1, ultimo_contacto_en: new Date().toISOString() }),
+    })
+    const claimed = await claim.json().catch(() => [])
+    if (!Array.isArray(claimed) || claimed.length === 0) return false // ya estaba contactado
+
+    const sent = await sendRecupTemplate({ to, tmpl, nombre })
+    if (sent.ok) return true
+
+    // Envío falló → revertir para que el cron reintente el paso 1 más tarde.
+    await fetch(`${SUPABASE_URL}/rest/v1/clientes_potenciales?dedup_key=eq.${key}`, {
+      method: 'PATCH',
+      headers: sbHead({ Prefer: 'return=minimal' }),
+      body: JSON.stringify({ estado_recuperacion: 'pendiente', paso_recuperacion: 0, ultimo_contacto_en: null }),
+    }).catch(() => {})
+    console.error('[curso webhook] WA instant fallo', sent.status, JSON.stringify(sent.body))
+    return false
+  } catch (e) {
+    console.error('[curso webhook] error en recuperación instantánea:', e)
+    return false
+  }
+}
+
 // Inserta (o actualiza, idempotente) el cliente potencial en la base de marketing.
 // No hace fallar el webhook si Supabase no responde: loguea y sigue devolviendo 200
 // para que Hotmart no reintente en loop por un problema transitorio.
@@ -251,7 +299,9 @@ async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, bod
     utm_source: pick(tracking.utm_source),
     utm_medium: pick(tracking.utm_medium),
     utm_campaign: pick(tracking.utm_campaign),
-    estado_recuperacion: 'pendiente',
+    // estado_recuperacion NO se setea acá: la columna tiene default 'pendiente' para
+    // filas nuevas, y así un reintento del webhook (upsert) no pisa el estado si la
+    // persona ya fue contactada.
     ocurrido_en: toIso(pick(body.creation_date, purchase.order_date, purchase.date)),
     dedup_key: dedupKey,
     payload: body,
@@ -271,11 +321,76 @@ async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, bod
     })
     if (!res.ok) {
       console.error('[curso webhook] Supabase insert HTTP', res.status, await res.text())
+      return { saved: false, waSent: false }
+    }
+    // Guardado OK → intentar la recuperación instantánea por WhatsApp (best-effort).
+    const waSent = await instantRecup({ tipo, dedupKey, telefono: record.telefono, nombre: record.nombre })
+    return { saved: true, waSent }
+  } catch (e) {
+    console.error('[curso webhook] error guardando cliente potencial:', e)
+    return { saved: false, waSent: false }
+  }
+}
+
+// Registra la venta confirmada en la tabla `ventas` de la base de marketing.
+// Mismo criterio que savePotencial: best-effort, no hace fallar el webhook si
+// Supabase no responde (loguea y sigue). Idempotente por transacción (dedup_key)
+// → si Hotmart manda PURCHASE_APPROVED y luego PURCHASE_COMPLETE de la misma
+// compra, se actualiza la MISMA fila en vez de duplicar la venta.
+async function saveVenta({ event, email, buyerRaw, address, data, purchase, tracking, fb, value, currency, transaction, bonoOk, body }) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('[curso webhook] Supabase sin configurar — no se guarda la venta')
+    return false
+  }
+
+  const product = data.product || {}
+  const productKey = String(pick(product.id, product.ucode, product.name, 'curso'))
+  const dedupKey = transaction ? `hotmart:${transaction}` : `venta:${email}:${productKey}`
+
+  const afiliado = pick(data.affiliate, purchase.affiliate)
+
+  const record = {
+    email,
+    nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
+    telefono: onlyDigits(pick(buyerRaw.phone_local_code, buyerRaw.ddi), pick(buyerRaw.checkout_phone, buyerRaw.phone)),
+    producto: pick(product.name, CONTENT_NAME),
+    valor: value,
+    moneda: currency,
+    evento_hotmart: event,
+    transaction_id: transaction,
+    src: pick(tracking.source, tracking.src),
+    fbp: fb.fbp || undefined,
+    fbc: fb.fbc || undefined,
+    utm_source: pick(tracking.utm_source),
+    utm_medium: pick(tracking.utm_medium),
+    utm_campaign: pick(tracking.utm_campaign),
+    pais: pick(address.country_iso, data.checkout_country && data.checkout_country.iso, address.country),
+    es_afiliado: typeof afiliado === 'boolean' ? afiliado : undefined,
+    leadr_bono_otorgado: bonoOk,
+    ocurrido_en: toIso(pick(purchase.approved_date, purchase.order_date, purchase.date, body.creation_date)),
+    dedup_key: dedupKey,
+    payload: body,
+  }
+  Object.keys(record).forEach(k => record[k] === undefined && delete record[k])
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/ventas?on_conflict=dedup_key`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(record),
+    })
+    if (!res.ok) {
+      console.error('[curso webhook] Supabase insert venta HTTP', res.status, await res.text())
       return false
     }
     return true
   } catch (e) {
-    console.error('[curso webhook] error guardando cliente potencial:', e)
+    console.error('[curso webhook] error guardando la venta:', e)
     return false
   }
 }
@@ -328,8 +443,8 @@ module.exports = async (req, res) => {
     if (!tipo) {
       return res.status(200).json({ ok: true, action: 'ignored', event })
     }
-    const saved = await savePotencial({ tipo, event, email, buyerRaw, data, purchase, body })
-    return res.status(200).json({ ok: true, action: 'cliente_potencial', tipo, saved })
+    const r = await savePotencial({ tipo, event, email, buyerRaw, data, purchase, body })
+    return res.status(200).json({ ok: true, action: 'cliente_potencial', tipo, saved: r.saved, wa_instantaneo: r.waSent })
   }
 
   // 4. Reunir todo para el evento de Meta.
@@ -362,10 +477,20 @@ module.exports = async (req, res) => {
   })
   const bonoOk = await grantLeadrAccess(email)
 
+  // Registrar la venta en la base de marketing (para conteo de ventas,
+  // facturación y atribución por anuncio). Best-effort: no bloquea la respuesta.
+  const ventaGuardada = await saveVenta({
+    event, email, buyerRaw, address, data, purchase,
+    tracking, fb, value, currency,
+    transaction: purchase.transaction,
+    bonoOk, body,
+  })
+
   return res.status(200).json({
     ok: true,
     action: 'purchase_processed',
     email,
     leadr_bono: bonoOk,
+    venta_guardada: ventaGuardada,
   })
 }

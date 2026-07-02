@@ -1,184 +1,73 @@
 // Motor de recuperación de clientes potenciales (carritos abandonados + pagos
-// rechazados). Corre por Vercel Cron (ver vercel.json). Tarjeta Trello #34.
+// rechazados). Tarjeta Trello #34. Canal: WhatsApp.
 //
-// POR QUÉ ESTO Y NO MAKE / NI DISPARAR DESDE EL WEBHOOK (decisión base de la #34):
-// una secuencia de recuperación es una CADENCIA con delays (+1h / +24h / +72h),
-// o sea necesita un scheduler con estado. Disparar al insertar la fila (Supabase
-// webhook o el propio webhook de Hotmart) solo resuelve el PRIMER toque; los
-// siguientes igual necesitan un poller. Así que un poller es inevitable — y ya
-// existe exactamente este molde funcionando y entendido: api/wa-funnel.js. Este
-// archivo lo copia: lee una fuente, calcula quién está en el paso N desde que
-// ocurrió el evento, manda por API (acá Brevo email), guarda estado para no
-// repetir, tiene modos dry/live y reporte diario. Todo en código, versionado,
-// sin depender de que nadie toque una UI.
+// ARQUITECTURA (decisión base de la #34, revisada 2026-07-02):
+//   · 1er mensaje = INSTANTÁNEO, lo dispara el webhook de Hotmart (api/hotmart.js)
+//     apenas Hotmart avisa el abandono/rechazo. Es lo más cercano posible al "momento
+//     exacto" (Hotmart define cuándo nos notifica; nosotros reaccionamos al toque).
+//   · Recordatorio (paso 2) = ESTE motor, que corre 1 vez/día por Vercel Cron y manda
+//     el siguiente paso a quien corresponda. También actúa de RED DE SEGURIDAD: si el
+//     envío instantáneo del webhook falló o la persona no tenía teléfono cuando entró,
+//     el cron reintenta el paso 1.
 //
-// FUENTE: tabla clientes_potenciales de la base de marketing (Supabase
-// periodistas-marketing). La llena solo el webhook de Hotmart (ver
-// api/hotmart.js y ARQUITECTURA-DATOS.md). Dos flujos según la columna `tipo`:
-//   tipo = carrito_abandonado → 3 emails para que vuelvan y compren.
-//   tipo = pago_rechazado     → 2 emails "tu pago no se procesó" + link a reintentar.
+// POR QUÉ WHATSAPP CON PLANTILLA: Meta exige plantilla aprobada para escribirle primero
+// a alguien que no nos escribió (da igual que el texto sea fijo). Las 4 plantillas
+// (recup_abandono_1/2, recup_rechazo_1/2) están en la WABA. El envío usa api/_lib/wa.js.
 //
-// ESTADO POR PERSONA (columnas en clientes_potenciales):
+// FUENTE: tabla clientes_potenciales (Supabase periodistas-marketing), la llena el
+// webhook de Hotmart. Estado por persona:
 //   estado_recuperacion: pendiente → contactado → recuperado | perdido
-//   paso_recuperacion:   0/1/2/3   (cuántos emails de la secuencia ya se mandaron)
-//   ultimo_contacto_en:  timestamp del último email (para respetar la cadencia)
+//   paso_recuperacion:   0/1/2   (cuántos mensajes se mandaron)
+//   ultimo_contacto_en:  timestamp del último mensaje (respeta un gap mínimo)
 //   recuperado_en:       cuándo se detectó la compra (cruce con la tabla `ventas`)
-// Se manda como máximo UN email por persona por corrida (avanza un escalón).
 //
-// ANTI-ACOSO: antes de mandar, se cruza el email con la tabla `ventas`. Si ya
-// compró → estado=recuperado y no se le escribe más (esto además mide cuántos
-// recuperamos). A quien ya está 'recuperado'/'perdido' nunca se lo re-contacta.
+// ANTI-ACOSO: antes de mandar, cruza el email con `ventas`. Si ya compró → recuperado y
+// no se le escribe más (además mide cuántos recuperamos). Máximo 1 mensaje por persona
+// por corrida. A quien ya está recuperado/perdido nunca se lo re-contacta.
 //
-// MODOS (query ?mode=):
-//   inspect — muestra las filas candidatas con lo que el motor calculó. No manda.
-//   dry     — calcula a quién le toca hoy y qué email, SIN mandar ni tocar la DB.
-//   stats   — devuelve el resumen del embudo de recuperación (no manda).
-//   report  — manda el reporte diario por email a Jose (no manda recuperaciones).
-//   live    — manda de verdad y actualiza la DB. Requiere ADEMÁS RECUP_ENABLED=1.
-//   (el cron llama sin mode → equivale a live+report, pero si RECUP_ENABLED != 1
-//    se degrada a dry: NO manda nada hasta que Jose lo habilite).
+// MODOS (?mode=): inspect | dry | stats | report | live. El cron (sin mode) equivale a
+// live+report, pero si RECUP_ENABLED != 1 se degrada a dry (no manda nada).
+// SEGURIDAD: CRON_SECRET (header Authorization: Bearer <secret> o ?key=<secret>).
 //
-// SEGURIDAD: protegida por CRON_SECRET (header Authorization: Bearer <secret> que
-// agrega Vercel Cron, o ?key=<secret> para probar a mano).
-//
-// Variables de entorno (proyecto Vercel sistema-ingresos-landing):
-//   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY — base de marketing (lee/escribe saltando RLS)
-//   BREVO_API_KEY                           — para mandar los emails y el reporte
-//   CRON_SECRET                             — auth del endpoint
-//   RECUP_ENABLED                           — "1" habilita el envío real (interruptor)
+// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY (solo el reporte a Jose),
+//      WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET, RECUP_ENABLED.
+
+const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
 
 const BREVO = 'https://api.brevo.com/v3';
-const BASE = 'https://sistemadeingresosdiariosia.com';
 const HORA = 3600000;
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
 const SUPABASE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
-// Remitente de los emails (mismo que ya usa el motor de WhatsApp para el reporte).
-const SENDER = { name: 'Jose · Sistema de Ingresos', email: 'jose@sistemadeingresosdiariosia.com' };
+// El reporte diario (interno, a Jose) va por email — no necesita aprobación de Meta.
+const SENDER_EMAIL = 'jose@sistemadeingresosdiariosia.com';
 const REPORTE_A = 'joseanselmi27@gmail.com';
-// Adónde caen las RESPUESTAS del cliente: al Gmail de Jose (el que tiene en el celu),
-// aunque el mail salga desde el dominio. Así puede contestar desde el teléfono como
-// cualquier mail. Si no se pusiera esto, las respuestas irían a jose@dominio (una
-// casilla que Jose no lee).
-const REPLY_TO = { name: 'Jose', email: REPORTE_A };
 
-// Espera mínima entre un email y el siguiente (robustez ante corridas seguidas).
+// Espera mínima entre un mensaje y el siguiente (robustez ante corridas seguidas).
 const MIN_GAP_HORAS = 12;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COPY  (fuente única; RECUPERACION.md lo documenta). Regla: no quemar el precio
-// hasta el cierre; tono servicial. El link vuelve a la landing con ?src= para
-// atribuir la venta recuperada en la tabla `ventas`.
-// ─────────────────────────────────────────────────────────────────────────────
-
-function primerNombre(nombre) {
-  const n = String(nombre || '').trim().split(/\s+/)[0] || '';
-  return n;
-}
-function saludo(nombre) {
-  const n = primerNombre(nombre);
-  return n ? `Hola ${n}:` : 'Hola:';
-}
-function boton(link, texto) {
-  return `<p style="margin:24px 0"><a href="${link}" style="background:#6366f1;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block">${texto}</a></p>`;
-}
-function pie() {
-  return `<hr style="border:none;border-top:1px solid #eee;margin:28px 0 12px">
-<p style="color:#888;font-size:12px">Te escribo porque dejaste tu correo al entrar al checkout del Sistema de Ingresos Diarios. Si no querés recibir más estos mensajes, respondé este correo con <b>BAJA</b> y listo.</p>`;
-}
-function envolver(inner) {
-  return `<div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1a1a2e;max-width:560px;margin:auto">${inner}${pie()}</div>`;
-}
-
-// — Carrito abandonado —
-function emailAbandono1(nombre, link) {
-  return {
-    subject: `${primerNombre(nombre) ? primerNombre(nombre) + ', ¿' : '¿'}te quedó una duda con el Sistema de Ingresos?`,
-    html: envolver(`
-      <p>${saludo(nombre)}</p>
-      <p>Vi que estuviste a un paso de sumarte al <b>Sistema de Ingresos Diarios</b> y algo te frenó justo antes de terminar. Es súper normal — quería asegurarme de que tengas todo claro.</p>
-      <p>Es el método paso a paso para armar ingresos con tu conocimiento aunque hoy no sepas por dónde empezar. Te queda todo grabado y podés ir a tu ritmo.</p>
-      <p>Si te quedó alguna duda concreta, <b>respondé este correo</b> y te contesto yo mismo.</p>
-      <p>Y si solo se te cortó, retomá donde lo dejaste:</p>
-      ${boton(link, 'Volver a mi lugar')}`),
-  };
-}
-function emailAbandono2(nombre, link) {
-  return {
-    subject: 'Lo que más me preguntan antes de empezar',
-    html: envolver(`
-      <p>${saludo(nombre)}</p>
-      <p>Cuando alguien duda antes de entrar, casi siempre es por una de dos cosas: <i>"¿me va a alcanzar el tiempo?"</i> o <i>"¿esto sirve para mi caso?"</i>.</p>
-      <p>El sistema está pensado justo para eso: son pasos cortos, aplicás sobre lo que ya sabés hacer, y no necesitás una audiencia gigante ni conocimientos técnicos para arrancar.</p>
-      <p>No hace falta que lo hagas todo hoy. Solo dar el primer paso.</p>
-      ${boton(link, 'Retomar mi inscripción')}
-      <p>Cualquier duda, respondé este mail. Lo leo yo.</p>`),
-  };
-}
-function emailAbandono3(nombre, link) {
-  return {
-    subject: 'Última vez que te escribo por esto',
-    html: envolver(`
-      <p>${saludo(nombre)}</p>
-      <p>No quiero ser insistente, así que este es el último correo que te mando por tu inscripción al <b>Sistema de Ingresos Diarios</b>.</p>
-      <p>Si era el momento, dejarlo para "después" casi siempre termina en nunca. Y si tenías una duda, de verdad respondé este mail — prefiero que decidas con la info que sin ella.</p>
-      <p>Si querés entrar, tu lugar sigue disponible acá:</p>
-      ${boton(link, 'Completar mi inscripción')}</p>`),
-  };
-}
-
-// — Pago rechazado —
-function emailRechazo1(nombre, link) {
-  return {
-    subject: `${primerNombre(nombre) ? primerNombre(nombre) + ', tu' : 'Tu'} pago no se completó (se soluciona en 1 minuto)`,
-    html: envolver(`
-      <p>${saludo(nombre)}</p>
-      <p>Intentaste sumarte al <b>Sistema de Ingresos Diarios</b> pero tu pago <b>no llegó a procesarse</b>. Suele ser algo menor: un límite del banco, un dato mal tipeado o un rechazo automático de la tarjeta.</p>
-      <p>La buena noticia es que se arregla en un minuto. Reintentá acá (podés usar otro medio de pago si preferís):</p>
-      ${boton(link, 'Reintentar mi pago')}
-      <p>Si te vuelve a rechazar, respondé este correo y lo resolvemos juntos.</p>`),
-  };
-}
-function emailRechazo2(nombre, link) {
-  return {
-    subject: '¿Seguís queriendo entrar al Sistema de Ingresos?',
-    html: envolver(`
-      <p>${saludo(nombre)}</p>
-      <p>Te guardé el lugar. Tu pago quedó pendiente ayer, así que si todavía querés entrar, podés reintentarlo cuando quieras:</p>
-      ${boton(link, 'Completar mi pago')}
-      <p>Y si tuviste algún problema con el medio de pago, escribime respondiendo este mail y te ayudo a que quede resuelto.</p>`),
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SECUENCIAS  (config por tipo)
+// SECUENCIAS por tipo. paso 1: minHoras 0 → el cron lo manda solo como fallback
+// (normalmente ya lo mandó el webhook al instante). paso 2: al día siguiente.
 // ─────────────────────────────────────────────────────────────────────────────
 const SECUENCIAS = {
   carrito_abandonado: {
-    src: 'recup-abandono',
-    perdidoTrasHoras: 72 + 96, // tras el último paso, si pasan ~4 días más sin compra → perdido
+    perdidoTrasHoras: 24 + 96, // tras el paso 2, ~4 días sin compra → perdido
     pasos: [
-      { paso: 1, minHoras: 1, email: emailAbandono1 },
-      { paso: 2, minHoras: 24, email: emailAbandono2 },
-      { paso: 3, minHoras: 72, email: emailAbandono3 },
+      { paso: 1, minHoras: 0 },
+      { paso: 2, minHoras: 24 },
     ],
   },
   pago_rechazado: {
-    src: 'recup-rechazo',
     perdidoTrasHoras: 24 + 72,
     pasos: [
-      { paso: 1, minHoras: 1, email: emailRechazo1 },
-      { paso: 2, minHoras: 24, email: emailRechazo2 },
+      { paso: 1, minHoras: 0 },
+      { paso: 2, minHoras: 24 },
     ],
   },
 };
 
-function linkDe(seq) {
-  return `${BASE}/?src=${seq.src}`;
-}
-
-// Dada la antigüedad y el paso ya enviado, decide qué paso mandar (el próximo debido).
 function proximoPaso(seq, pasoEnviado, horasOld, horasDesdeUltimo) {
   for (const p of seq.pasos) {
     if (pasoEnviado < p.paso && horasOld >= p.minHoras) {
@@ -222,29 +111,7 @@ async function sbUpdate(id, patch) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Brevo (email transaccional)
-// ─────────────────────────────────────────────────────────────────────────────
-async function enviarEmail(to, subject, html) {
-  const r = await fetch(`${BREVO}/smtp/email`, {
-    method: 'POST',
-    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      sender: SENDER,
-      replyTo: REPLY_TO, // las respuestas del cliente caen en el Gmail de Jose
-      to: [{ email: to }],
-      subject,
-      htmlContent: html,
-      headers: { 'List-Unsubscribe': `<mailto:${REPLY_TO.email}?subject=BAJA>` },
-      tags: ['recuperacion'],
-    }),
-  });
-  const body = await r.text();
-  return { ok: r.ok, status: r.status, body };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Núcleo: arma el plan (quién recibe qué), separado de la ejecución para poder
-// correrlo en dry sin efectos.
+// Núcleo: arma el plan (quién recibe qué), separado de la ejecución (dry sin efectos).
 // ─────────────────────────────────────────────────────────────────────────────
 function construirPlan(potenciales, ventas, now) {
   const plan = [];
@@ -271,8 +138,8 @@ function construirPlan(potenciales, ventas, now) {
     const due = proximoPaso(seq, pasoEnviado, horasOld, horasDesdeUltimo);
     if (due) {
       plan.push({
-        id: row.id, email, tipo: row.tipo, nombre: row.nombre,
-        paso: due.paso, horasOld: Math.round(horasOld), emailFn: due.email, link: linkDe(seq),
+        id: row.id, email, tipo: row.tipo, nombre: row.nombre, telefono: row.telefono,
+        paso: due.paso, horasOld: Math.round(horasOld), tmpl: TEMPLATES[row.tipo][due.paso],
       });
       continue;
     }
@@ -296,21 +163,22 @@ function resumen(potenciales, ventas) {
   return s;
 }
 
+// Reporte diario interno a Jose (por email vía Brevo).
 async function mandarReporte(res) {
   const html = `<h2>📊 Recuperación de carritos — reporte diario</h2>
     <ul>
-      <li><b>Enviados hoy:</b> ${res.enviados} email(s) de recuperación</li>
+      <li><b>Mensajes de WhatsApp enviados hoy:</b> ${res.enviados}</li>
       <li><b>Recuperados (compraron):</b> ${res.recuperados_hoy} nuevos hoy</li>
       <li><b>En seguimiento ahora:</b> ${res.en_seguimiento}
         (carrito abandonado: ${res.abandonados}, pago rechazado: ${res.rechazados})</li>
       <li><b>Marcados como perdidos hoy:</b> ${res.perdidos_hoy}</li>
     </ul>
-    <p style="color:#888;font-size:12px">Motor: api/recuperacion.js · ${res.live ? 'ENVÍO REAL' : 'modo prueba (RECUP_ENABLED apagado)'} </p>`;
+    <p style="color:#888;font-size:12px">Motor: api/recuperacion.js · ${res.live ? 'ENVÍO REAL' : 'modo prueba (RECUP_ENABLED apagado)'} · el 1er mensaje lo dispara el webhook al instante; este cron manda el recordatorio.</p>`;
   const r = await fetch(`${BREVO}/smtp/email`, {
     method: 'POST',
     headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
     body: JSON.stringify({
-      sender: { name: 'Reporte Recuperación', email: SENDER.email },
+      sender: { name: 'Reporte Recuperación', email: SENDER_EMAIL },
       to: [{ email: REPORTE_A }],
       subject: '📊 Recuperación de carritos — reporte diario',
       htmlContent: html,
@@ -326,7 +194,6 @@ module.exports = async (req, res) => {
   const { searchParams } = new URL(req.url, 'http://localhost');
   const mode = searchParams.get('mode') || 'cron';
 
-  // Auth
   const secret = process.env.CRON_SECRET || '';
   const authOk = !secret
     || req.headers.authorization === `Bearer ${secret}`
@@ -347,8 +214,9 @@ module.exports = async (req, res) => {
     if (mode === 'inspect') {
       const { plan } = construirPlan(potenciales, ventas, now);
       const sample = potenciales.slice(0, 10).map(r => ({
-        email: r.email, tipo: r.tipo, estado: r.estado_recuperacion,
-        paso: r.paso_recuperacion, ocurrido_en: r.ocurrido_en, ultimo_contacto_en: r.ultimo_contacto_en,
+        email: r.email, tipo: r.tipo, estado: r.estado_recuperacion, paso: r.paso_recuperacion,
+        telefono: r.telefono ? '…' + String(r.telefono).slice(-4) : null,
+        ocurrido_en: r.ocurrido_en, ultimo_contacto_en: r.ultimo_contacto_en,
       }));
       return res.status(200).json({ mode, total: potenciales.length, would_send: plan.length, sample });
     }
@@ -368,18 +236,19 @@ module.exports = async (req, res) => {
     }
 
     if (!live) {
-      // dry: mostrar el plan sin ejecutar nada
       return res.status(200).json({
         mode, live: false, enabled,
         would_send: plan.length,
         recuperados_detectados: marcarRecuperado.length,
         perdidos_detectados: marcarPerdido.length,
-        plan: plan.map(p => ({ email: p.email, tipo: p.tipo, paso: p.paso, horasOld: p.horasOld, subject: p.emailFn(p.nombre, p.link).subject })),
+        plan: plan.map(p => ({
+          tipo: p.tipo, paso: p.paso, tmpl: p.tmpl, horasOld: p.horasOld,
+          nombre: primerNombre(p.nombre), tel: p.telefono ? '…' + String(p.telefono).slice(-4) : 'SIN TELEFONO',
+        })),
       });
     }
 
     // ── live ──
-    // 1) actualizar recuperados / perdidos (no mandan email).
     for (const m of marcarRecuperado) {
       await sbUpdate(m.id, { estado_recuperacion: 'recuperado', recuperado_en: m.recuperado_en }).catch(e => console.error('recuperado', m.email, e.message));
     }
@@ -387,13 +256,13 @@ module.exports = async (req, res) => {
       await sbUpdate(m.id, { estado_recuperacion: 'perdido' }).catch(e => console.error('perdido', m.email, e.message));
     }
 
-    // 2) mandar la secuencia (cap por corrida para no pasar el timeout serverless).
     const LIMIT = 80;
     const batch = plan.slice(0, LIMIT);
     const results = [];
     for (const p of batch) {
-      const { subject, html } = p.emailFn(p.nombre, p.link);
-      const sent = await enviarEmail(p.email, subject, html);
+      const to = normalizePhone(p.telefono);
+      if (!to || to.length < 8) { results.push({ email: p.email, paso: p.paso, skipped: 'sin telefono valido' }); continue; }
+      const sent = await sendRecupTemplate({ to, tmpl: p.tmpl, nombre: p.nombre });
       if (sent.ok) {
         try {
           await sbUpdate(p.id, {
@@ -401,22 +270,21 @@ module.exports = async (req, res) => {
             paso_recuperacion: p.paso,
             ultimo_contacto_en: new Date(now).toISOString(),
           });
-          results.push({ email: p.email, tipo: p.tipo, paso: p.paso });
+          results.push({ email: p.email, tipo: p.tipo, paso: p.paso, wamid: sent.wamid || null });
         } catch (e) {
           results.push({ email: p.email, paso: p.paso, warn: 'enviado pero falló update: ' + e.message });
         }
       } else {
-        results.push({ email: p.email, paso: p.paso, error: sent.status });
+        results.push({ email: p.email, paso: p.paso, error: (sent.body && sent.body.error && sent.body.error.message) || sent.status });
       }
       console.log(JSON.stringify({ type: 'recuperacion', email: p.email, tipo: p.tipo, paso: p.paso, ok: sent.ok }));
     }
 
-    // 3) reporte diario (solo en la corrida del cron).
     let reporte = null;
     if (mode === 'cron') {
       const r = resumen(potenciales, ventas);
       reporte = await mandarReporte({
-        enviados: results.filter(x => !x.error).length,
+        enviados: results.filter(x => x.wamid || (!x.error && !x.skipped && !x.warn)).length,
         recuperados_hoy: marcarRecuperado.length,
         perdidos_hoy: marcarPerdido.length,
         en_seguimiento: r.total,
