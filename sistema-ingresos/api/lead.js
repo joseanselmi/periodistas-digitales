@@ -70,6 +70,21 @@ module.exports = async (req, res) => {
   const createdIso = toIso(pick(body.created_time, body.dateCreated))
   const campaignName = pick(body.campaign_name, body.campaignName)
 
+  // El formulario tiene una pregunta sí/no: "¿Eres periodista o trabajas en un
+  // medio de comunicación?". Make reenvía la respuesta cruda ("Sí"/"No") en
+  // `periodista`; acá se convierte a booleano para poder segmentar directo
+  // (where es_periodista = true = campaña solo a periodistas). La respuesta
+  // literal y cualquier otra pregunta del form quedan igual guardadas en `payload`.
+  const periodistaRaw = pick(body.periodista, body.es_periodista, body.profesion)
+  const es_periodista =
+    periodistaRaw === undefined || periodistaRaw === null || periodistaRaw === ''
+      ? undefined
+      : /^(s[ií]|y|t|1)/i.test(String(periodistaRaw).trim())
+        ? true
+        : /^(n|f|0)/i.test(String(periodistaRaw).trim())
+          ? false
+          : undefined
+
   // Idempotencia: por leadgen_id si viene (siempre en FB Lead Ads); si no, por email+fecha.
   const dedupKey = leadgenId
     ? `fb:${leadgenId}`
@@ -79,6 +94,7 @@ module.exports = async (req, res) => {
     email,
     nombre: pick(body.nombre, body.full_name, body.name),
     telefono: onlyDigits(pick(body.telefono, body.phone_number, body.phone)),
+    es_periodista,
     fuente: pick(body.fuente, FUENTE_DEFAULT),
     funnel: pick(body.funnel, FUNNEL_DEFAULT),
     // Atribución que sí trae FB Lead Ads (no hay fbp/fbc/src acá: eso llega en la landing).

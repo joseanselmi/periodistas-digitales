@@ -353,6 +353,45 @@ puede calcular CPA/ROAS por anuncio dentro de la base (migración `crear_tabla_c
   tabla es el espejo consultable para Metabase/queries. Al monitorear, actualizar `gasto_usd`/
   métricas/`decision` acá también (o a futuro, traerlas por la API de Meta).
 
+## Actualización (2026-07-03): tracking de `events` (instrumentación) + gasto de Meta en `campanas`
+
+Las dos piezas que quedaban como "pendiente de construir".
+
+### `events` — tracking de las landings (✅ LIVE)
+- **Endpoint** `sistema-ingresos/api/event.js` — público (lo dispara el navegador, como un
+  pixel de analytics; no lleva secreto). Best-effort, responde 204, nunca frena la navegación.
+  Anti-spam básico: solo acepta beacons cuyo Origin/Referer es del dominio propio. Escribe con
+  la service_role (misma que el resto de `api/`). Captura `user_agent`, `ip` y **`pais`** (del
+  header `x-vercel-ip-country`).
+- **Beacon** `sistema-ingresos/track.js` — script liviano en las landings. Manda un evento por
+  **pageview** y por **clic de checkout** (link de Hotmart), con atribución (`src`/`sck`/`utm_*`/
+  `fbp`/`fbc`) + un `session_id` anónimo persistente (localStorage). Cada página declara su lugar
+  en el embudo: `window.PD_TRACK={funnel,step}` (landing en index.html, gracias en gracias.html).
+- **Resolución del paso:** el beacon manda `funnel`/`step` por slug; un **trigger en Postgres**
+  (`events_resolve_step`) los mapea a los FKs `funnel_step_id`/`funnel_id` en el insert, así el
+  endpoint queda tonto. Verificado e2e (deploy prod): pageview con `src=ad1-fomo` entró con
+  país + fbp + session + `funnel_step` resuelto a `meta-ads-directo/landing`; beacon de otro
+  origin rechazado. Fila de prueba borrada; `events` en 0 esperando tráfico real.
+- Wireado en `index.html` y `gracias.html` (script antes de `</body>`).
+
+### `campanas.gasto_usd` — sync automático desde Meta (⏳ código listo, falta credencial)
+- **Script** `ads-agent/meta-spend-sync.mjs` — complemento de `hotmart-sync.mjs`: ese trae las
+  VENTAS, éste el GASTO. Trae los insights por anuncio (Marketing API v21.0), extrae la matrícula
+  `src` (`adN-angulo`) del nombre del **conjunto o anuncio** en Meta, agrega por `src` y hace PATCH
+  de `gasto_usd`/`impresiones`/`clics`/`ctr`/`frecuencia`/`ultimo_chequeo_en` en la ficha de
+  `campanas` (solo esas columnas; no pisa config ni `decision`). Solo ACTUALIZA fichas existentes;
+  si un anuncio de Meta no tiene ficha, lo reporta para que Mateo la registre. Flags: `--dry-run`,
+  `--preset`. Sintaxis validada; falla con mensaje claro sin credenciales.
+- **🔴 BLOQUEADO por credencial (la genera Jose):** necesita `META_ACCESS_TOKEN` con permiso
+  **`ads_read`** (System User de Business Manager = no vence) + `META_AD_ACCOUNT_ID` (`act_...`).
+  El `FB_PAGE_TOKEN` que ya está en `.env.local` **NO sirve** (es token de Página: su `/me` es la
+  fanpage y no puede leer la cuenta publicitaria — verificado). Placeholders comentados dejados en
+  `ads-agent/.env.local`.
+- **Go-live cuando haya credencial:** `node meta-spend-sync.mjs --dry-run` (confirma el matcheo
+  de nombres → src), luego sin `--dry-run`, verificar `campanas.gasto_usd`, y recién ahí
+  automatizarlo (mismo criterio que hotmart-sync: pegarlo al cron de `recuperacion.js` con un
+  `runMetaSpendSync()` en `api/_lib/`, ya que Hobby solo permite 2 crons).
+
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
@@ -371,7 +410,8 @@ puede calcular CPA/ROAS por anuncio dentro de la base (migración `crear_tabla_c
 
 - ~~**Crear el proyecto de Supabase nuevo**~~ ✅ hecho 2026-07-02 (`periodistas-marketing`).
 - ~~**Crear las tablas** del esquema de arriba (con SQL real).~~ ✅ **TODAS creadas 2026-07-03:** `clientes_potenciales`, `ventas`, `customers`, `leads`, `products`, `funnels`, `funnel_steps`, `events`.
-- **Cómo se llena `events` automáticamente**: hace falta un pixel/script de tracking en las landings (sistema-ingresos, leadr) que mande cada visita/click a esta base. Sin esto, la tabla de eventos queda vacía — es la pieza de instrumentación que falta diseñar.
+- ~~**Cómo se llena `events` automáticamente**~~ ✅ hecho 2026-07-03 para la landing del curso (`track.js` + `api/event.js` + trigger). **Falta extenderlo a Leadr** (leadr.cloud) si se quiere trackear ese sitio también.
+- **Gasto de Meta en `campanas`**: código listo (`ads-agent/meta-spend-sync.mjs`), 🔴 falta que Jose genere el token `ads_read` + `META_AD_ACCOUNT_ID` (ver sección arriba).
 - **Conectar Metabase**: una vez que la base y las tablas existan, dar de alta la conexión Postgres en Metabase con credenciales de solo lectura (no usar la `service_role` key para esto).
 - Definir si `leads`/`events` se llenan en tiempo real (vía Make, como ya hacemos con Facebook Lead Ads) o en batch.
 
