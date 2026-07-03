@@ -256,11 +256,57 @@ Flujo post-compra del cliente (lo que pasa cuando alguien **COMPRA**, contracara
 6. ⏳ **Confirmar con la 1ª venta real** que entra la fila en `customers` (no se simuló para no
    disparar Meta CAPI/bono/venta con datos falsos).
 
+## Actualización (2026-07-03): tabla `leads` + ingesta desde Make (tarjeta #6)
+
+Primera pieza del "paraguas" que quedaba de la tarjeta #6. Hasta ahora los leads de
+Facebook Lead Ads solo vivían en Brevo (lista 5) y en el email del regalo; no quedaban
+en ninguna tabla propia. Ahora entran solos a `leads` en la base de marketing.
+
+- **Tabla `leads`** (creada 2026-07-03, migración `crear_tabla_leads`): una fila por
+  contacto capturado antes de comprar (FB Lead Ads y cualquier form futuro). Mismas
+  convenciones que el resto (nombres en español, RLS activo sin políticas, `dedup_key`
+  idempotente, `payload` crudo, trigger `set_updated_at`). Columnas: contacto
+  (`email`/`nombre`/`telefono`), `fuente` (`facebook_lead_ads`|`form_web`), `funnel`
+  (id legible, ej. `meta-leadgen-guia-claude`), atribución (`src`/`fbp`/`fbc`/`utm_*`),
+  ids de FB (`leadgen_id`/`form_id`/`ad_id`/`campaign_id`), `estado`
+  (`nuevo`→`contactado`→`convertido`|`descartado`) y `dedup_key`. Índices por
+  `email`/`ocurrido_en`/`fuente`/`funnel`.
+- **Endpoint de ingesta:** `sistema-ingresos/api/lead.js` (Vercel Function del proyecto
+  del curso). Make pega acá un POST por cada lead. **Por qué un endpoint propio y no meter
+  Supabase directo en Make:** así la `service_role` key (que lee/escribe TODA la base,
+  incluida PII de ventas/customers) NO vive dentro de Make — queda en Vercel, donde ya
+  está, igual que el resto de `api/`. Make solo conoce un secreto acotado
+  (`LEAD_INGEST_SECRET`, header `x-lead-secret`) que únicamente sirve para insertar leads.
+  Idempotente: `dedup_key = fb:<leadgen_id>` + `on_conflict` con `resolution=ignore-duplicates`
+  → si Make reprocesa el mismo lead no duplica ni pisa el `estado` de trabajo del lead.
+- **Paso agregado a Make** (escenario `Facebook Lead Ads _ Step 1`, id 9433023): se sumó un
+  **módulo 5** (HTTP POST a `/api/lead`) al final del flujo existente
+  (WatchLeads → email Regalo 1 → alta contacto Brevo → **insert lead**). Va último y con
+  `stopOnHttpError:false`, así si el insert fallara el regalo ya salió igual. Se editó por la
+  API de Make con el escenario **desactivado** y verificando que los cuerpos de los módulos de
+  Brevo quedaran byte-idénticos, antes de reactivar (cero ventana de riesgo sobre el flujo en vivo).
+
+**Estado (2026-07-03):**
+1. ✅ Tabla `leads` creada (migración aplicada).
+2. ✅ Endpoint `/api/lead` escrito, `LEAD_INGEST_SECRET` cargado en Vercel producción, y
+   **deployado** (`vercel --prod`). Probado e2e por HTTP: GET→405, POST sin secreto→401,
+   POST con secreto→200 e inserta bien (campos mapeados: nombre/telefono/fuente/funnel/
+   utm/leadgen_id/ocurrido_en/estado); idempotencia confirmada (2 POSTs = 1 fila). Fila de
+   prueba borrada; `leads` queda en 0.
+3. ✅ Módulo 5 agregado al escenario 9433023 y **reactivado** (Brevo intacto).
+4. ⏳ **Confirmar con el 1er lead REAL** que el módulo 5 corre OK y la fila entra en `leads`
+   (revisar en la próxima ejecución del escenario / los logs de Vercel de `/api/lead`).
+5. 🔒 **Pendiente menor de higiene:** `api/lead.js` está deployado pero todavía **sin commitear**
+   a git (mismo criterio que el resto: se commitea cuando Jose lo pida).
+
+**Naming:** el esquema de abajo la listaba como `leads` (ya estaba en inglés/genérico); se
+creó con ese mismo nombre. `estado`/`fuente`/`funnel` en español para leer fácil en Metabase.
+
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
 |---|---|---|
-| `leads` | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | se llena desde Make (Facebook Lead Ads) y desde cualquier form futuro |
+| `leads` ✅ | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | **creada 2026-07-03** — se llena desde Make (escenario 9433023) vía el endpoint `api/lead.js`; ver "Actualización (2026-07-03): tabla `leads`" arriba |
 | `clientes_potenciales` ✅ | quien entró al checkout y NO compró (carrito abandonado / pago rechazado) | **creada 2026-07-02** — se llena desde el webhook de Hotmart; ver "Actualización (2026-07-02)" arriba |
 | `customers` ✅ | quién compró al menos una vez | **creada 2026-07-03** — se llena desde el webhook (`saveCustomer`); ver "Actualización (2026-07-03): tabla `customers`" arriba |
 | `products` | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | |
@@ -272,7 +318,7 @@ Flujo post-compra del cliente (lo que pasa cuando alguien **COMPRA**, contracara
 ## Pendiente / no resuelto todavía
 
 - ~~**Crear el proyecto de Supabase nuevo**~~ ✅ hecho 2026-07-02 (`periodistas-marketing`).
-- **Crear las tablas** del esquema de arriba (con SQL real). ✅ `clientes_potenciales`, ✅ `ventas` y ✅ `customers` ya creadas; faltan `leads`, `products`, `funnels`, `funnel_steps`, `events`.
+- **Crear las tablas** del esquema de arriba (con SQL real). ✅ `clientes_potenciales`, ✅ `ventas`, ✅ `customers` y ✅ `leads` ya creadas; faltan `products`, `funnels`, `funnel_steps`, `events`.
 - **Cómo se llena `events` automáticamente**: hace falta un pixel/script de tracking en las landings (sistema-ingresos, leadr) que mande cada visita/click a esta base. Sin esto, la tabla de eventos queda vacía — es la pieza de instrumentación que falta diseñar.
 - **Conectar Metabase**: una vez que la base y las tablas existan, dar de alta la conexión Postgres en Metabase con credenciales de solo lectura (no usar la `service_role` key para esto).
 - Definir si `leads`/`events` se llenan en tiempo real (vía Make, como ya hacemos con Facebook Lead Ads) o en batch.
@@ -280,4 +326,4 @@ Flujo post-compra del cliente (lo que pasa cuando alguien **COMPRA**, contracara
 ## Relación con lo ya construido
 
 - El funnel "Meta Lead Ads + embudo de regalos" (Canal 2 en `ads-agent/dashboards/FUNNELS.html`) es el primer caso real que esta base debería trackear: Anuncio → Formulario → Regalo 1 (email) → Regalo 2 (email +48h, Brevo) → Regalo 3/4 (WhatsApp, pendiente de construir) → Oferta del curso → Checkout → Order Bump → Upsell → Downsell.
-- El escenario de Make "Integration Facebook Lead Ads" (id `9433023`) ya captura el lead y dispara los regalos — cuando se cree la base nueva, ese mismo escenario debería agregar un paso más: insertar el lead en la tabla `leads`.
+- El escenario de Make "Facebook Lead Ads _ Step 1" (id `9433023`) ya captura el lead y dispara los regalos — y desde el **2026-07-03** también inserta el lead en la tabla `leads` (módulo 5 → `api/lead.js`). ✅ hecho.
