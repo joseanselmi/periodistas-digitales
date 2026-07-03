@@ -14,7 +14,7 @@ import { createClient } from '@supabase/supabase-js'
 // Cargar .env.local si existe (para correr localmente sin setear vars de entorno)
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve as resolvePath } from 'path'
-const envPath = resolvePath(process.cwd(), '../leadr/app/.env.local')
+const envPath = resolvePath(process.cwd(), '../../Leadr/app/.env.local')
 if (existsSync(envPath)) {
   readFileSync(envPath, 'utf-8').split('\n').forEach(line => {
     const [key, ...val] = line.split('=')
@@ -212,16 +212,31 @@ async function main() {
     return
   }
 
+  // 2b. Deduplicar contra Supabase (últimos 14 días)
+  const hace14dias = new Date(); hace14dias.setDate(hace14dias.getDate() - 14)
+  const { data: recientes } = await supabase
+    .from('news')
+    .select('fuente_url')
+    .gte('created_at', hace14dias.toISOString())
+  const urlsYaVistas = new Set((recientes || []).map(r => r.fuente_url))
+  const itemsNuevos = todosLosItems.filter(it => !urlsYaVistas.has(it.link))
+  console.log(`   ${itemsNuevos.length} artículos nuevos (${todosLosItems.length - itemsNuevos.length} ya publicados antes)`)
+
+  if (itemsNuevos.length === 0) {
+    console.log('⚠️  Todas las noticias de hoy ya fueron publicadas. Saliendo.')
+    return
+  }
+
   // 3. Filtrar y resumir con Claude
   console.log('🧠 Filtrando y resumiendo con Claude...')
-  const seleccionados = await filtrarYResumirConClaude(todosLosItems)
+  const seleccionados = await filtrarYResumirConClaude(itemsNuevos)
   console.log(`   ${seleccionados.length} noticias seleccionadas`)
 
   // 4. Generar imágenes y guardar en Supabase
   console.log('🖼️  Generando imágenes con fal.ai...')
   for (const item of seleccionados) {
     // Buscar imagen original del feed primero
-    const itemOriginal = todosLosItems.find(
+    const itemOriginal = itemsNuevos.find(
       i => i.link === item.fuente_url || i.titulo === item.titulo
     )
     let imagenUrl = itemOriginal?.imagen ?? null
