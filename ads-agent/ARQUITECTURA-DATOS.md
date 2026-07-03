@@ -302,6 +302,36 @@ en ninguna tabla propia. Ahora entran solos a `leads` en la base de marketing.
 **Naming:** el esquema de abajo la listaba como `leads` (ya estaba en inglés/genérico); se
 creó con ese mismo nombre. `estado`/`fuente`/`funnel` en español para leer fácil en Metabase.
 
+## Actualización (2026-07-03): tablas `products`, `funnels`, `funnel_steps`, `events` (tarjeta #6)
+
+Se crearon las 4 tablas que faltaban del esquema (migración `crear_tablas_products_funnels_events`).
+Con esto **el esquema completo de la tarjeta #6 existe en Supabase**: `clientes_potenciales`,
+`ventas`, `customers`, `leads`, `products`, `funnels`, `funnel_steps`, `events`. Mismas
+convenciones (RLS activo sin políticas, `updated_at` por trigger). Tres se sembraron con datos
+reales; `events` queda vacía a propósito.
+
+- **`products`** — catálogo. Sembrada con los **6 productos reales** que aparecen en `ventas`
+  (curso principal + 2 order bumps + 3 cross-sell del recomendador de Hotmart) **+ Leadr Pro**
+  ($10/mes). Cada fila trae `producto_id_hotmart` → cruza directo con `ventas.producto_id`
+  (verificado: el curso matchea sus 3 ventas, cada order bump/cross-sell su venta). `tipo`:
+  `curso_principal`/`order_bump`/`upsell`/`downsell`/`cross_sell`/`membresia`/`lead_magnet`.
+- **`funnels`** + **`funnel_steps`** — espejo del mapa `ads-agent/dashboards/FUNNELS.html`.
+  2 embudos sembrados: **Canal 1 "Meta Ads directo"** (7 pasos: ads→landing→checkout→order
+  bump→upsell→downsell→gracias) y **Canal 2 "Meta Lead Ads + regalos"** (11 pasos:
+  anuncio→formulario→regalos 1-4→oferta→checkout→order bump→upsell→downsell). Ambos venden el
+  curso y convergen en Leadr. `funnel_steps.tipo` = `trafico`/`checkout`/`monetizacion`/`gracias`;
+  `estado` = `activo`/`pendiente` (Regalo 4 = pendiente). **El slug del Canal 2 es
+  `meta-leadgen-guia-claude`, igual que el default de `leads.funnel`** → los leads joinean con su embudo.
+- **`events`** — creada con las columnas del diseño (tipo_evento, funnel_id/funnel_step_id, url,
+  atribución `src`/`sck`/`utm_*`/`fbp`/`fbc`, `lead_id`/`customer_id`/`session_id`, ip/ua/país,
+  `payload`) y FKs a `funnels`/`funnel_steps`/`leads`/`customers`. **VACÍA a propósito:** se llena
+  cuando exista el pixel/script de tracking en las landings — esa instrumentación es la única
+  pieza de la tarjeta #6 que sigue pendiente de diseñar/construir.
+
+**Estado (2026-07-03):** ✅ 4 tablas creadas; ✅ products/funnels/funnel_steps sembradas y
+verificadas (7 products, 2 funnels, 18 steps, cruces OK); ⏳ `events` espera el tracking;
+⏳ conectar Metabase (postergado, ver nota abajo).
+
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
@@ -309,16 +339,16 @@ creó con ese mismo nombre. `estado`/`fuente`/`funnel` en español para leer fá
 | `leads` ✅ | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | **creada 2026-07-03** — se llena desde Make (escenario 9433023) vía el endpoint `api/lead.js`; ver "Actualización (2026-07-03): tabla `leads`" arriba |
 | `clientes_potenciales` ✅ | quien entró al checkout y NO compró (carrito abandonado / pago rechazado) | **creada 2026-07-02** — se llena desde el webhook de Hotmart; ver "Actualización (2026-07-02)" arriba |
 | `customers` ✅ | quién compró al menos una vez | **creada 2026-07-03** — se llena desde el webhook (`saveCustomer`); ver "Actualización (2026-07-03): tabla `customers`" arriba |
-| `products` | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | |
+| `products` ✅ | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | **creada 2026-07-03** — sembrada con 6 productos de Hotmart + Leadr Pro; cruza con `ventas.producto_id` |
 | `ventas` ✅ (era `purchases`) | quién compró qué, cuándo, cuánto, con atribución por anuncio | **creada 2026-07-02** — se llena desde el webhook (`saveVenta`); ver "Actualización (2026-07-02): tabla `ventas`" arriba |
-| `funnels` | definición de cada embudo (ver `ads-agent/dashboards/FUNNELS.html` para el mapa visual actual) | cada funnel tiene un `id` legible, ej. `meta-leadgen-guia-claude` |
-| `funnel_steps` | los pasos de cada funnel, en orden, con su URL/identificador | espejo de los nodos del diagrama de FUNNELS.html |
-| `events` | cada visita/click real, con URL, parámetro `sck`/UTM, a qué `funnel_step` corresponde, y `lead_id`/`customer_id` si ya se identificó a la persona | esta es la tabla que falta "alimentar" — ver pendiente abajo |
+| `funnels` ✅ | definición de cada embudo (ver `ads-agent/dashboards/FUNNELS.html` para el mapa visual actual) | **creada 2026-07-03** — 2 embudos sembrados; `slug` legible, ej. `meta-leadgen-guia-claude` |
+| `funnel_steps` ✅ | los pasos de cada funnel, en orden, con su URL/identificador | **creada 2026-07-03** — 18 pasos sembrados, espejo de los nodos de FUNNELS.html |
+| `events` ✅ (vacía) | cada visita/click real, con URL, parámetro `sck`/UTM, a qué `funnel_step` corresponde, y `lead_id`/`customer_id` si ya se identificó a la persona | **creada 2026-07-03** — la tabla existe; falta "alimentarla" con el tracking (ver pendiente abajo) |
 
 ## Pendiente / no resuelto todavía
 
 - ~~**Crear el proyecto de Supabase nuevo**~~ ✅ hecho 2026-07-02 (`periodistas-marketing`).
-- **Crear las tablas** del esquema de arriba (con SQL real). ✅ `clientes_potenciales`, ✅ `ventas`, ✅ `customers` y ✅ `leads` ya creadas; faltan `products`, `funnels`, `funnel_steps`, `events`.
+- ~~**Crear las tablas** del esquema de arriba (con SQL real).~~ ✅ **TODAS creadas 2026-07-03:** `clientes_potenciales`, `ventas`, `customers`, `leads`, `products`, `funnels`, `funnel_steps`, `events`.
 - **Cómo se llena `events` automáticamente**: hace falta un pixel/script de tracking en las landings (sistema-ingresos, leadr) que mande cada visita/click a esta base. Sin esto, la tabla de eventos queda vacía — es la pieza de instrumentación que falta diseñar.
 - **Conectar Metabase**: una vez que la base y las tablas existan, dar de alta la conexión Postgres en Metabase con credenciales de solo lectura (no usar la `service_role` key para esto).
 - Definir si `leads`/`events` se llenan en tiempo real (vía Make, como ya hacemos con Facebook Lead Ads) o en batch.
