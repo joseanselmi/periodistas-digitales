@@ -220,13 +220,49 @@ probado en dry. ✅ 4 plantillas enviadas a aprobación de Meta (PENDING). ⏳ G
 Meta apruebe las plantillas → prueba real a un número propio → `RECUP_ENABLED=1`. Detalle
 y copy en [sistema-ingresos/RECUPERACION.md](../sistema-ingresos/RECUPERACION.md).
 
+## Actualización (2026-07-03): tabla `customers` (compradores) + página de gracias (tarjeta #24)
+
+Flujo post-compra del cliente (lo que pasa cuando alguien **COMPRA**, contracara de
+`clientes_potenciales`). Detalle completo y copy en
+[sistema-ingresos/POST-COMPRA.md](../sistema-ingresos/POST-COMPRA.md).
+
+- **Tabla `customers`** (creada 2026-07-03, migración `crear_tabla_customers`) — la tabla `customers`
+  del esquema propuesto abajo (cruza con la tarjeta #6). **Una fila por PERSONA** que compró al
+  menos una vez, clave `email`. Guarda **identidad** (`email`/`nombre`/`telefono`/`pais`/`ciudad`/
+  `provincia`/`codigo_postal`/`documento`) + **ciclo de compra** (`primera_compra_en` fija en el
+  insert, `ultima_compra_en`, `ultimo_producto`, `ultimo_src`) + **estado de flujos post-compra**
+  (`leadr_bono_otorgado`, **`telegram_estado`** = `pendiente`|`invitado`|`unido`|`baja`). El detalle
+  por transacción (montos, atribución completa, USD) sigue en `ventas`. RLS activo sin políticas
+  (mismo criterio); índice por `telegram_estado`; trigger `set_updated_at`.
+- **Webhook** (`sistema-ingresos/api/hotmart.js` → `saveCustomer()`): en la rama de compra aprobada,
+  además de Meta CAPI + bono Leadr + `saveVenta`, ahora da de alta/actualiza el `customer`. Upsert
+  por `email` (`merge-duplicates`): NO reenvía `primera_compra_en` (queda fija) ni `telegram_estado`
+  (lo maneja el flujo de Telegram); `leadr_bono_otorgado` solo se pone en `true`. Best-effort.
+- **Página de gracias** `/gracias` ([sistema-ingresos/gracias.html](../sistema-ingresos/gracias.html),
+  rewrite en `vercel.json`): identidad de la landing, `noindex`, Pixel solo `PageView` (el `Purchase`
+  lo manda el webhook server-side, no se duplica en el cliente). Bloque de Telegram construido pero
+  **apagado** (constante `TELEGRAM_INVITE` vacía → estado "muy pronto"; el canal todavía no existe).
+
+**Estado (2026-07-03):**
+1. ✅ Tabla `customers` creada; upsert por email validado en DB (insert 1ª compra + upsert 2ª:
+   `primera_compra_en` no se pisa, `ultima_*` sí, `telegram_estado` queda en `pendiente`).
+2. ✅ Webhook (`saveCustomer`) — sintaxis validada.
+3. ✅ Página `/gracias` construida y **deployada a prod** (`vercel --prod`, aliased al dominio):
+   responde 200 (clean URL y `.html`), Telegram en estado "muy pronto".
+4. ✅ Webhook deployado sin romper (401 sin token = vivo).
+5. ⏳ **Pendiente de Jose:** configurar en el panel de Hotmart la redirección post-compra a
+   `/gracias` (hasta entonces se ve la página genérica de Hotmart; el alta del customer va por el
+   webhook igual). Y crear el canal de Telegram → pegar el link en `TELEGRAM_INVITE`.
+6. ⏳ **Confirmar con la 1ª venta real** que entra la fila en `customers` (no se simuló para no
+   disparar Meta CAPI/bono/venta con datos falsos).
+
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
 |---|---|---|
 | `leads` | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | se llena desde Make (Facebook Lead Ads) y desde cualquier form futuro |
 | `clientes_potenciales` ✅ | quien entró al checkout y NO compró (carrito abandonado / pago rechazado) | **creada 2026-07-02** — se llena desde el webhook de Hotmart; ver "Actualización (2026-07-02)" arriba |
-| `customers` | quién compró al menos una vez | puede originarse de un `lead`, o entrar directo (ej. compra sin pasar por lead-gen) |
+| `customers` ✅ | quién compró al menos una vez | **creada 2026-07-03** — se llena desde el webhook (`saveCustomer`); ver "Actualización (2026-07-03): tabla `customers`" arriba |
 | `products` | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | |
 | `ventas` ✅ (era `purchases`) | quién compró qué, cuándo, cuánto, con atribución por anuncio | **creada 2026-07-02** — se llena desde el webhook (`saveVenta`); ver "Actualización (2026-07-02): tabla `ventas`" arriba |
 | `funnels` | definición de cada embudo (ver `ads-agent/dashboards/FUNNELS.html` para el mapa visual actual) | cada funnel tiene un `id` legible, ej. `meta-leadgen-guia-claude` |
@@ -236,7 +272,7 @@ y copy en [sistema-ingresos/RECUPERACION.md](../sistema-ingresos/RECUPERACION.md
 ## Pendiente / no resuelto todavía
 
 - ~~**Crear el proyecto de Supabase nuevo**~~ ✅ hecho 2026-07-02 (`periodistas-marketing`).
-- **Crear las tablas** del esquema de arriba (con SQL real). ✅ `clientes_potenciales` y ✅ `ventas` ya creadas; faltan `leads`, `customers`, `products`, `funnels`, `funnel_steps`, `events`.
+- **Crear las tablas** del esquema de arriba (con SQL real). ✅ `clientes_potenciales`, ✅ `ventas` y ✅ `customers` ya creadas; faltan `leads`, `products`, `funnels`, `funnel_steps`, `events`.
 - **Cómo se llena `events` automáticamente**: hace falta un pixel/script de tracking en las landings (sistema-ingresos, leadr) que mande cada visita/click a esta base. Sin esto, la tabla de eventos queda vacía — es la pieza de instrumentación que falta diseñar.
 - **Conectar Metabase**: una vez que la base y las tablas existan, dar de alta la conexión Postgres en Metabase con credenciales de solo lectura (no usar la `service_role` key para esto).
 - Definir si `leads`/`events` se llenan en tiempo real (vía Make, como ya hacemos con Facebook Lead Ads) o en batch.

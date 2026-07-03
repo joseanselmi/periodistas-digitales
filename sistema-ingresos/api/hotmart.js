@@ -396,6 +396,62 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
   }
 }
 
+// Da de alta (o actualiza, idempotente) al COMPRADOR como `customer` en la base de
+// marketing — tarjeta #6/#24. Una fila por persona (clave: email); el detalle por
+// transacción vive en `ventas`. Mismo criterio best-effort: no hace fallar el webhook
+// si Supabase no responde (loguea y sigue). Idempotente por email (on_conflict=email):
+// una 2ª compra actualiza la misma fila (nombre/tel/última compra/producto/src), sin
+// pisar `primera_compra_en` (que no se envía → queda fija en el insert) ni el
+// `telegram_estado` (que lo maneja el flujo de Telegram, no el webhook).
+async function saveCustomer({ email, buyerRaw, address, data, purchase, tracking, ocurrido, bonoOk, body }) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('[curso webhook] Supabase sin configurar — no se da de alta el customer')
+    return false
+  }
+
+  const product = data.product || {}
+
+  const record = {
+    email,
+    nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
+    telefono: onlyDigits(pick(buyerRaw.phone_local_code, buyerRaw.ddi), pick(buyerRaw.checkout_phone, buyerRaw.phone)),
+    pais: pick(address.country_iso, data.checkout_country && data.checkout_country.iso, address.country),
+    ciudad: pick(address.city),
+    provincia: pick(address.state),
+    codigo_postal: pick(address.zip_code, address.zipcode, address.zip),
+    ultima_compra_en: ocurrido,
+    ultimo_producto: pick(product.name, CONTENT_NAME),
+    ultimo_src: pick(tracking.source, tracking.src),
+    origen: 'webhook_hotmart',
+  }
+  // Solo marcamos el bono en true (nunca pisar true→false si una 2ª compra no lo re-otorga).
+  if (bonoOk) record.leadr_bono_otorgado = true
+  // OJO: NO enviar primera_compra_en (queda fija por el default del insert) ni
+  // telegram_estado (lo maneja el flujo de Telegram, no el webhook de compra).
+  Object.keys(record).forEach(k => record[k] === undefined && delete record[k])
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?on_conflict=email`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(record),
+    })
+    if (!res.ok) {
+      console.error('[curso webhook] Supabase upsert customer HTTP', res.status, await res.text())
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('[curso webhook] error dando de alta el customer:', e)
+    return false
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -487,11 +543,18 @@ module.exports = async (req, res) => {
     bonoOk, body,
   })
 
+  // Alta del comprador como `customer` (identidad + flujos post-compra). Best-effort.
+  const ocurrido = toIso(pick(purchase.approved_date, purchase.order_date, purchase.date, body.creation_date))
+  const customerGuardado = await saveCustomer({
+    email, buyerRaw, address, data, purchase, tracking, ocurrido, bonoOk, body,
+  })
+
   return res.status(200).json({
     ok: true,
     action: 'purchase_processed',
     email,
     leadr_bono: bonoOk,
     venta_guardada: ventaGuardada,
+    customer_guardado: customerGuardado,
   })
 }
