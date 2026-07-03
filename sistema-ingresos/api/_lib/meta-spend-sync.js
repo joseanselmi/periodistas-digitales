@@ -78,6 +78,43 @@ async function patchCampana(src, campos) {
   return Array.isArray(rows) ? rows.length : 0;
 }
 
+// Gasto de Meta a NIVEL CUENTA por mes calendario (TODAS las campañas) → gastos_meta_mensual.
+// Es lo que consume el P&L (línea "Meta Ads"): a diferencia de campanas (solo ads registrados
+// y gasto lifetime), esto captura toda la cuenta y por mes real. time_increment=monthly da una
+// fila por mes; re-correr actualiza el mes en curso (parcial). Best-effort.
+async function fetchGastoMensual() {
+  const u = new URL(`${API}/act_${ACCOUNT}/insights`);
+  u.searchParams.set('access_token', TOKEN);
+  u.searchParams.set('level', 'account');
+  u.searchParams.set('fields', 'spend');
+  u.searchParams.set('time_increment', 'monthly');
+  u.searchParams.set('date_preset', 'maximum');
+  u.searchParams.set('limit', '60');
+  const r = await fetch(u.toString());
+  const d = await r.json();
+  if (d.error) throw new Error(`Meta API ${d.error.code}: ${d.error.message}`);
+  // date_start puede no caer en día 1 (arranque de cuenta) → normalizo a primer día del mes.
+  return (d.data || [])
+    .map(x => ({ mes: `${String(x.date_start).slice(0, 7)}-01`, spend_usd: +parseFloat(x.spend || 0).toFixed(2) }))
+    .filter(x => x.spend_usd > 0);
+}
+
+async function upsertGastoMensual(filas) {
+  if (!filas.length) return 0;
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/gastos_meta_mensual?on_conflict=mes`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=minimal',
+    },
+    body: JSON.stringify(filas.map(f => ({ ...f, updated_at: new Date().toISOString() }))),
+  });
+  if (!r.ok) { console.error(`[meta-spend] gastos_meta_mensual upsert ${r.status} ${await r.text().catch(() => '')}`); return 0; }
+  return filas.length;
+}
+
 // Devuelve un resumen (no lanza: best-effort). El cron lo loguea.
 async function runMetaSpendSync() {
   if (!TOKEN || !ACCOUNT) return { skipped: 'faltan META_ACCESS_TOKEN / META_AD_ACCOUNT_ID' };
@@ -95,7 +132,13 @@ async function runMetaSpendSync() {
     });
     if (n > 0) actualizadas++; else sinFicha.push(g.src);
   }
-  return { anuncios: grupos.length, actualizadas, sin_ficha: sinFicha };
+
+  // Gasto mensual a nivel cuenta (para el P&L). No pisa lo de campanas (que sigue para CPA/ROAS).
+  let mesesMensual = 0;
+  try { mesesMensual = await upsertGastoMensual(await fetchGastoMensual()); }
+  catch (e) { console.error('[meta-spend] mensual:', e.message); }
+
+  return { anuncios: grupos.length, actualizadas, sin_ficha: sinFicha, meses_mensual: mesesMensual };
 }
 
 module.exports = { runMetaSpendSync };
