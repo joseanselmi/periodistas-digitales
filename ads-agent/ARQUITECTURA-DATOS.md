@@ -332,6 +332,27 @@ reales; `events` queda vacía a propósito.
 verificadas (7 products, 2 funnels, 18 steps, cruces OK); ⏳ `events` espera el tracking;
 ⏳ conectar Metabase (postergado, ver nota abajo).
 
+## Actualización (2026-07-03): tabla `campanas` (gasto de ads ↔ ventas)
+
+Faltaba la tabla que ata el **gasto publicitario** con las ventas/leads — sin ella no se
+puede calcular CPA/ROAS por anuncio dentro de la base (migración `crear_tabla_campanas`).
+
+- **`campanas`** — catálogo de anuncios de ads. **Grain = un anuncio por su "matrícula" `src`**
+  (`adN-angulo`, el sistema de Mateo que aparece igual en Meta / la URL `?src=` / Hotmart
+  "Origen"). Guarda identidad + config + ciclo de vida (`estado`:
+  `activa`/`en_preparacion`/`pausada`/`finalizada`) + **gasto y métricas de Meta**
+  (`gasto_usd`, `ctr`, `frecuencia`, `impresiones`, `clics`, `ultimo_chequeo_en`, `decision`)
+  que **no salen de la base**. Relaciones a `funnels` y `products`.
+- **Cómo cruza:** por `src` con `ventas`/`leads`/`clientes_potenciales`/`events` (esas tablas ya
+  tienen la columna `src`, así que **NO se agregaron FKs nuevas**). Las ventas/CPA/ROAS se
+  **calculan** con el join; solo el gasto se guarda. Verificado: `ad1-fomo` (gasto $32.72) cruza
+  con sus 5 ventas ($103.03 bruto) → **CPA curso $10.91 · ROAS 3.15**, idéntico al chequeo de Mateo.
+- **Sembrada** con los 2 anuncios del registro (`ads-agent/registro-anuncios.md`): `ad1-fomo`
+  (🟢 activa) y `ad2-fomo2` (🟡 en preparación).
+- **Fuente de la verdad operativa sigue siendo `registro-anuncios.md`** (lo escribe Mateo); esta
+  tabla es el espejo consultable para Metabase/queries. Al monitorear, actualizar `gasto_usd`/
+  métricas/`decision` acá también (o a futuro, traerlas por la API de Meta).
+
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
@@ -344,6 +365,7 @@ verificadas (7 products, 2 funnels, 18 steps, cruces OK); ⏳ `events` espera el
 | `funnels` ✅ | definición de cada embudo (ver `ads-agent/dashboards/FUNNELS.html` para el mapa visual actual) | **creada 2026-07-03** — 2 embudos sembrados; `slug` legible, ej. `meta-leadgen-guia-claude` |
 | `funnel_steps` ✅ | los pasos de cada funnel, en orden, con su URL/identificador | **creada 2026-07-03** — 18 pasos sembrados, espejo de los nodos de FUNNELS.html |
 | `events` ✅ (vacía) | cada visita/click real, con URL, parámetro `sck`/UTM, a qué `funnel_step` corresponde, y `lead_id`/`customer_id` si ya se identificó a la persona | **creada 2026-07-03** — la tabla existe; falta "alimentarla" con el tracking (ver pendiente abajo) |
+| `campanas` ✅ | catálogo de anuncios de ads + gasto/métricas de Meta; ata el gasto con las ventas por `src` | **creada 2026-07-03** (no estaba en el boceto original) — cruza por `src` para CPA/ROAS; ver "Actualización (2026-07-03): tabla `campanas`" arriba |
 
 ## Pendiente / no resuelto todavía
 
