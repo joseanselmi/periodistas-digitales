@@ -34,6 +34,7 @@
 
 const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
+const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;
@@ -216,6 +217,13 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'hotmart_sync', ...sync }));
       } catch (e) {
         console.error('hotmart-sync (no frena la recuperación):', e.message);
+      }
+      // Gasto de Meta → campanas (para CPA/ROAS por anuncio). Best-effort, misma corrida.
+      try {
+        const meta = await runMetaSpendSync();
+        console.log(JSON.stringify({ type: 'meta_spend_sync', ...meta }));
+      } catch (e) {
+        console.error('meta-spend-sync (no frena la recuperación):', e.message);
       }
     }
 

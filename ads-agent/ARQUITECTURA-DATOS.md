@@ -279,12 +279,15 @@ en ninguna tabla propia. Ahora entran solos a `leads` en la base de marketing.
   (`LEAD_INGEST_SECRET`, header `x-lead-secret`) que únicamente sirve para insertar leads.
   Idempotente: `dedup_key = fb:<leadgen_id>` + `on_conflict` con `resolution=ignore-duplicates`
   → si Make reprocesa el mismo lead no duplica ni pisa el `estado` de trabajo del lead.
-- **Paso agregado a Make** (escenario `Facebook Lead Ads _ Step 1`, id 9433023): se sumó un
-  **módulo 5** (HTTP POST a `/api/lead`) al final del flujo existente
-  (WatchLeads → email Regalo 1 → alta contacto Brevo → **insert lead**). Va último y con
-  `stopOnHttpError:false`, así si el insert fallara el regalo ya salió igual. Se editó por la
-  API de Make con el escenario **desactivado** y verificando que los cuerpos de los módulos de
-  Brevo quedaran byte-idénticos, antes de reactivar (cero ventana de riesgo sobre el flujo en vivo).
+- **Paso de insert (`/api/lead`)** = último módulo del escenario del funnel de leads, con
+  `stopOnHttpError:false` (si el insert fallara, el regalo ya salió igual).
+  > ⚠️ **MIGRADO 2026-07-03:** el funnel pasó de polling (escenario viejo `9433023`, hoy
+  > DESACTIVADO) al **webhook instantáneo `9474482`** "Funnel Leads - Instantaneo (webhook)"
+  > — ver [ads-agent/MONITOR-FUNNEL-LEADS.md](MONITOR-FUNNEL-LEADS.md) y tarjeta Trello #29.
+  > El módulo de insert se replicó en el `9474482` (módulo 5, mismo endpoint + secreto). **OJO
+  > mapeo:** en el trigger instantáneo los campos del lead vienen como array → email/nombre/tel
+  > se leen con `{{first(1.data.email)}}` etc.; los top-level (`{{1.leadgenId}}`, `{{1.campaignId}}`…)
+  > quedan igual. Con token pelado el dato entra roto.
 
 **Estado (2026-07-03):**
 1. ✅ Tabla `leads` creada (migración aplicada).
@@ -293,9 +296,12 @@ en ninguna tabla propia. Ahora entran solos a `leads` en la base de marketing.
    POST con secreto→200 e inserta bien (campos mapeados: nombre/telefono/fuente/funnel/
    utm/leadgen_id/ocurrido_en/estado); idempotencia confirmada (2 POSTs = 1 fila). Fila de
    prueba borrada; `leads` queda en 0.
-3. ✅ Módulo 5 agregado al escenario 9433023 y **reactivado** (Brevo intacto).
-4. ⏳ **Confirmar con el 1er lead REAL** que el módulo 5 corre OK y la fila entra en `leads`
-   (revisar en la próxima ejecución del escenario / los logs de Vercel de `/api/lead`).
+3. ✅ Módulo de insert en el escenario del funnel (migrado al webhook `9474482` el 03/07).
+4. ✅ **CONFIRMADO con leads REALES:** la tabla `leads` tiene 2 filas insertadas por el
+   módulo `/api/lead`, incluida una de un **lead real** (`juancadesco@gmail.com` "Juan Carlos
+   Forra", 03/07 00:25) — mapeo nombre/telefono/fuente/funnel/leadgen_id OK. (Estas 2 las
+   metió la config del insert mientras corría en `9433023`; falta ver una corrida del insert
+   ya **dentro del `9474482`** — se confirma con el próximo lead real, es el mismo módulo.)
 5. 🔒 **Pendiente menor de higiene:** `api/lead.js` está deployado pero todavía **sin commitear**
    a git (mismo criterio que el resto: se commitea cuando Jose lo pida).
 
@@ -374,7 +380,7 @@ Las dos piezas que quedaban como "pendiente de construir".
   origin rechazado. Fila de prueba borrada; `events` en 0 esperando tráfico real.
 - Wireado en `index.html` y `gracias.html` (script antes de `</body>`).
 
-### `campanas.gasto_usd` — sync automático desde Meta (⏳ código listo, falta credencial)
+### `campanas.gasto_usd` — sync automático desde Meta (✅ LIVE 2026-07-03)
 - **Script** `ads-agent/meta-spend-sync.mjs` — complemento de `hotmart-sync.mjs`: ese trae las
   VENTAS, éste el GASTO. Trae los insights por anuncio (Marketing API v21.0), extrae la matrícula
   `src` (`adN-angulo`) del nombre del **conjunto o anuncio** en Meta, agrega por `src` y hace PATCH
@@ -382,21 +388,27 @@ Las dos piezas que quedaban como "pendiente de construir".
   `campanas` (solo esas columnas; no pisa config ni `decision`). Solo ACTUALIZA fichas existentes;
   si un anuncio de Meta no tiene ficha, lo reporta para que Mateo la registre. Flags: `--dry-run`,
   `--preset`. Sintaxis validada; falla con mensaje claro sin credenciales.
-- **🔴 BLOQUEADO por credencial (la genera Jose):** necesita `META_ACCESS_TOKEN` con permiso
-  **`ads_read`** (System User de Business Manager = no vence) + `META_AD_ACCOUNT_ID` (`act_...`).
-  El `FB_PAGE_TOKEN` que ya está en `.env.local` **NO sirve** (es token de Página: su `/me` es la
-  fanpage y no puede leer la cuenta publicitaria — verificado). Placeholders comentados dejados en
-  `ads-agent/.env.local`.
-- **Go-live cuando haya credencial:** `node meta-spend-sync.mjs --dry-run` (confirma el matcheo
-  de nombres → src), luego sin `--dry-run`, verificar `campanas.gasto_usd`, y recién ahí
-  automatizarlo (mismo criterio que hotmart-sync: pegarlo al cron de `recuperacion.js` con un
-  `runMetaSpendSync()` en `api/_lib/`, ya que Hobby solo permite 2 crons).
+- **✅ Credencial RESUELTA (2026-07-03):** `META_ACCESS_TOKEN` (System User "Claude publisher",
+  token permanente con `ads_read`/`ads_management`/`read_insights`) + `META_AD_ACCOUNT_ID`
+  `act_583636631091469`. En `ads-agent/.env.local` (local) y en Vercel Production (para el cron).
+  **Aprendizajes para no repetir:** (a) el `FB_PAGE_TOKEN` NO sirve (es de Página; `/me` = fanpage).
+  (b) El token hay que generarlo eligiendo la **app del píxel** ("Periodistas digitales"), NO la app
+  de WhatsApp ("Periodistas Digitales WP") — esa solo ofrece scopes de WhatsApp, sin `ads_read`.
+  (c) Además de generar el token con `ads_read`, hay que **asignarle la cuenta publicitaria** al
+  System User (Agregar activos), o Meta da error #200. El anuncio matchea aunque su `ad_name` en
+  Meta sea genérico ("Nuevo anuncio de Ventas"): la matrícula vive en el nombre del **conjunto**.
+- **✅ AUTOMATIZADO (cron diario):** módulo serverless `sistema-ingresos/api/_lib/meta-spend-sync.js`
+  (`runMetaSpendSync()`), lo llama `api/recuperacion.js` en su corrida de las 15:00 UTC justo después
+  de `runHotmartSync` (Hobby solo permite 2 crons → va pegado). Best-effort. 1ª corrida verificada:
+  `ad1-fomo` → gasto $33.49 / 390 clics / CTR 7.99% en `campanas`; el cruce con `ventas` da
+  **CPA curso $11.16 · ROAS 3.08** en vivo. El `.mjs` sigue para correr a mano (`--dry-run`/`--preset`);
+  el write local necesita la `service_role` (el cron usa la de Vercel).
 
 ## Esquema propuesto (boceto, todavía NO creado en Supabase)
 
 | Tabla | Para qué | Notas |
 |---|---|---|
-| `leads` ✅ | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | **creada 2026-07-03** — se llena desde Make (escenario 9433023) vía el endpoint `api/lead.js`; ver "Actualización (2026-07-03): tabla `leads`" arriba |
+| `leads` ✅ | cada contacto capturado (email, teléfono, fuente, fecha, funnel de origen) | **creada 2026-07-03** — se llena desde Make (escenario `9474482` webhook instantáneo, antes 9433023) vía el endpoint `api/lead.js`; ver "Actualización (2026-07-03): tabla `leads`" arriba |
 | `clientes_potenciales` ✅ | quien entró al checkout y NO compró (carrito abandonado / pago rechazado) | **creada 2026-07-02** — se llena desde el webhook de Hotmart; ver "Actualización (2026-07-02)" arriba |
 | `customers` ✅ | quién compró al menos una vez | **creada 2026-07-03** — se llena desde el webhook (`saveCustomer`); ver "Actualización (2026-07-03): tabla `customers`" arriba |
 | `products` ✅ | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | **creada 2026-07-03** — sembrada con 6 productos de Hotmart + Leadr Pro; cruza con `ventas.producto_id` |
@@ -411,11 +423,11 @@ Las dos piezas que quedaban como "pendiente de construir".
 - ~~**Crear el proyecto de Supabase nuevo**~~ ✅ hecho 2026-07-02 (`periodistas-marketing`).
 - ~~**Crear las tablas** del esquema de arriba (con SQL real).~~ ✅ **TODAS creadas 2026-07-03:** `clientes_potenciales`, `ventas`, `customers`, `leads`, `products`, `funnels`, `funnel_steps`, `events`.
 - ~~**Cómo se llena `events` automáticamente**~~ ✅ hecho 2026-07-03 para la landing del curso (`track.js` + `api/event.js` + trigger). **Falta extenderlo a Leadr** (leadr.cloud) si se quiere trackear ese sitio también.
-- **Gasto de Meta en `campanas`**: código listo (`ads-agent/meta-spend-sync.mjs`), 🔴 falta que Jose genere el token `ads_read` + `META_AD_ACCOUNT_ID` (ver sección arriba).
+- ~~**Gasto de Meta en `campanas`**~~ ✅ LIVE 2026-07-03 (token `ads_read` + cuenta resueltos; cron diario en `recuperacion.js`). CPA/ROAS por anuncio ya se calculan cruzando con `ventas`.
 - **Conectar Metabase**: una vez que la base y las tablas existan, dar de alta la conexión Postgres en Metabase con credenciales de solo lectura (no usar la `service_role` key para esto).
 - Definir si `leads`/`events` se llenan en tiempo real (vía Make, como ya hacemos con Facebook Lead Ads) o en batch.
 
 ## Relación con lo ya construido
 
 - El funnel "Meta Lead Ads + embudo de regalos" (Canal 2 en `ads-agent/dashboards/FUNNELS.html`) es el primer caso real que esta base debería trackear: Anuncio → Formulario → Regalo 1 (email) → Regalo 2 (email +48h, Brevo) → Regalo 3/4 (WhatsApp, pendiente de construir) → Oferta del curso → Checkout → Order Bump → Upsell → Downsell.
-- El escenario de Make "Facebook Lead Ads _ Step 1" (id `9433023`) ya captura el lead y dispara los regalos — y desde el **2026-07-03** también inserta el lead en la tabla `leads` (módulo 5 → `api/lead.js`). ✅ hecho.
+- El escenario de Make que capta el lead y dispara los regalos — desde el **2026-07-03** es `9474482` "Funnel Leads - Instantaneo (webhook)" (antes `9433023`, polling, hoy desactivado) — también inserta el lead en la tabla `leads` (módulo `/api/lead`). ✅ hecho.
