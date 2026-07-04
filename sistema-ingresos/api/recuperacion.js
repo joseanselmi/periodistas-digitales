@@ -35,6 +35,7 @@
 const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
+const { runSyncEstados } = require('./_lib/sync-estados');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;
@@ -224,6 +225,14 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'meta_spend_sync', ...meta }));
       } catch (e) {
         console.error('meta-spend-sync (no frena la recuperación):', e.message);
+      }
+      // Estado de los agentes → agentes_estado (para que el Panel de Comando de la nube
+      // los lea por MCP; la nube no puede clonar el repo). Best-effort. Tarjeta #32.
+      try {
+        const est = await runSyncEstados();
+        console.log(JSON.stringify({ type: 'sync_estados', count: est.count, errores: est.errores }));
+      } catch (e) {
+        console.error('sync-estados (no frena la recuperación):', e.message);
       }
     }
 
