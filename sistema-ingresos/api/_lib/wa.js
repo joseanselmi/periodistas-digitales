@@ -115,10 +115,33 @@ async function logConversacion({ telefono, direccion, origen, texto, tipo, wamid
         tipo: tipo || null,
         wamid: wamid || null,
         intent: intent || null,
+        // Los salientes arrancan en "enviado"; el webhook los sube a entregado/leido.
+        estado_entrega: direccion === 'out' ? 'enviado' : null,
       }),
     });
   } catch (e) {
     console.error('[wa logConversacion] no se pudo registrar en el hilo:', e && e.message || e);
+  }
+}
+
+// Sube el estado de entrega de un mensaje saliente (por wamid) cuando WhatsApp avisa
+// sent/delivered/read/failed → enviado/entregado/leido/fallido. El RPC solo sube de
+// nivel (los avisos llegan desordenados). Best-effort: nunca throwea.
+async function marcarEntrega({ wamid, estado, ts }) {
+  try {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !wamid || !estado) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/marcar_entrega`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'content-type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ p_wamid: wamid, p_estado: estado, p_ts: ts || new Date().toISOString() }),
+    });
+  } catch (e) {
+    console.error('[wa marcarEntrega] no se pudo actualizar el estado:', e && e.message || e);
   }
 }
 
@@ -237,4 +260,4 @@ async function sendButtons({ to, body, buttons, header, footer }) {
   return { ok: r.ok, status: r.status, body: j, wamid };
 }
 
-module.exports = { GRAPH, BASE, LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate, sendText, sendButtons, logMensaje, logConversacion };
+module.exports = { GRAPH, BASE, LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate, sendText, sendButtons, logMensaje, logConversacion, marcarEntrega };
