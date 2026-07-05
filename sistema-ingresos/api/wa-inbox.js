@@ -314,7 +314,11 @@ module.exports = async (req, res) => {
                 await asistente.marcarBot(telKey, accion.intent);
               } catch (e) { console.error('[wa-inbox] enviar accion:', e); }
               try { await asistente.logChat({ telefono: telKey, direccion: 'out', origen: 'bot', texto: accion.body, tipo: accion.clase, intent: accion.intent }); } catch {}
-              await avisar(from, nombre, `${accion.resumen}\n${encabezado}\n💬 me escribió: “${texto}”\n\n(para tomar la charla vos: respondé acá mismo)`);
+              // El bot resolvió solo (menú / info+link / reenvío de guía / pago / acceso…) →
+              // NO se avisa a Telegram, para no llenar a Jose de pings de cosas ya atendidas.
+              // El intercambio igual queda en `conversaciones_wa` → inbox de Leadr. Solo las
+              // ESCALACIONES (rama de arriba: "hablar con equipo" / audio-imagen / botón raro)
+              // le llegan a Telegram, que es cuando de verdad tiene que meterse una persona.
             }
           } else {
             // --- MODO BORRADOR (apagado) o EN PAUSA (Jose ya está en el chat) ---
