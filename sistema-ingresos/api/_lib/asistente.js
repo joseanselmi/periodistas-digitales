@@ -79,6 +79,7 @@ const RESP = {
   leadr: '¡Tu regalo! 🎁 Con la compra tenés 1 mes gratis de Leadr Pro.\n\nSe activa con el mail de tu compra. Si todavía no lo ves activo, respondé "activar Leadr" y lo dejamos listo.',
   ack_humano: '¡Dale, {nombre}! 🙌 Ya le aviso al equipo y te responde a la brevedad por acá.',
   ack_media: '¡Recibí tu mensaje, {nombre}! 🙌 Ya se lo paso al equipo y te responde en un rato.',
+  aun_no: '¡Sin problema, {nombre}! 🙌 Cuando quieras te muestro cómo se arma, sin apuro. Igual te dejo todo acá por si le querés dar una mirada 👉 {LANDING}\n\nY si te queda alguna duda, escribime por acá.',
 };
 
 // ── Utilidades ───────────────────────────────────────────────────────────────
@@ -142,6 +143,20 @@ function clasificar(texto) {
   return null;
 }
 
+// Botones de las PLANTILLAS del embudo (Regalos 3 y 4) → intención. Llegan como type
+// 'button' (quick-reply de plantilla), SIN un id nuestro. Antes caían en "no es texto →
+// escalar" y el lead quedaba esperando a una persona; ahora los respondemos al toque.
+//   "Quiero saber cómo" (Regalo 3) / "Sí, mostrámelo" (Regalo 4) → info + link
+//   "Todavía no" (Regalo 4)                                       → respuesta sin presión
+function intentDeBotonPlantilla(texto) {
+  const t = norm(texto);
+  if (!t) return null;
+  if (/quiero saber como/.test(t)) return 'como';
+  if (/mostramelo|mostrame|si,? mostra/.test(t)) return 'como';
+  if (/todavia no|aun no|mas tarde|despues|luego/.test(t)) return 'aun_no';
+  return null;
+}
+
 // Construye la acción para un MENÚ del segmento.
 function accionMenu(segmento, nombre) {
   const m = MENUS[segmento] || MENUS.nuevo;
@@ -183,7 +198,8 @@ function resolver(segmento, intent, nombre, estado, diasRegistro) {
   if (intent === 'acceso') return accionTexto(fill(RESP.acceso, nombre), 'acceso', `🤖 Le di los pasos de acceso a ${n}.`);
   if (intent === 'leadr') return accionTexto(fill(RESP.leadr, nombre), 'leadr', `🤖 Le expliqué lo del mes de Leadr a ${n}.`);
   if (intent === 'duda') return accionTexto(fill(RESP.duda, nombre), 'duda', `🤖 Le pedí a ${n} que me cuente su duda.`);
-  if (intent === 'como' || intent === 'precio' || intent === 'info') return accionTexto(fill(RESP.info, nombre), 'info', `🤖 Le pasé la info del curso a ${n}.`);
+  if (intent === 'aun_no') return accionTexto(fill(RESP.aun_no, nombre), 'aun_no', `🤖 ${n} dijo "todavía no"; le respondí sin presión y le dejé el link.`);
+  if (intent === 'como' || intent === 'precio' || intent === 'info') return accionTexto(fill(RESP.info, nombre), 'info', `🤖 Le pasé la info del curso (con el link) a ${n}.`);
 
   // Sin intención clara → menú del segmento.
   return accionMenu(segmento, nombre);
@@ -199,13 +215,22 @@ function resolver(segmento, intent, nombre, estado, diasRegistro) {
 function decidir({ ctx, nombre, texto, tipoMsg, buttonId, estado, diasRegistro }) {
   const segmento = segmentoDe(ctx);
 
-  // 1) Tocó un botón del menú.
+  // 1) Tocó un botón de NUESTRO menú (interactive con id propio).
   if (buttonId) {
     if (buttonId === 'humano' || buttonId === 'compre') return accionEscalar(nombre);
     return resolver(segmento, buttonId === 'info' ? 'como' : buttonId, nombre, estado, diasRegistro);
   }
 
-  // 2) Mensaje que no es texto (audio/imagen/etc.) → lo atiende una persona.
+  // 2) Tocó un botón de una PLANTILLA del embudo ("Quiero saber cómo" / "Sí, mostrámelo" /
+  //    "Todavía no"). Llega como type 'button' sin id nuestro → lo respondemos al toque
+  //    (antes caía en el punto 3 y escalaba a un humano que casi nunca contestaba).
+  if (tipoMsg === 'button') {
+    const btnIntent = intentDeBotonPlantilla(texto);
+    if (btnIntent) return resolver(segmento, btnIntent, nombre, estado, diasRegistro);
+    return accionEscalar(nombre, RESP.ack_media); // botón desconocido → lo atiende una persona
+  }
+
+  // 3) Mensaje que no es texto (audio/imagen/etc.) → lo atiende una persona.
   if (tipoMsg && tipoMsg !== 'text') return accionEscalar(nombre, RESP.ack_media);
 
   // 3) Texto libre → clasificar.
