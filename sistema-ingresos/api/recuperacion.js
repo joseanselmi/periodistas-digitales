@@ -1,5 +1,7 @@
 // Motor de recuperación de clientes potenciales (carritos abandonados + pagos
-// rechazados). Tarjeta Trello #34. Canal: WhatsApp.
+// rechazados). Tarjeta Trello #34. Canal: WhatsApp, con FALLBACK A EMAIL cuando el
+// cliente potencial no dejó teléfono (así ninguno queda sin contactar — p. ej. un
+// abandono de Hotmart que no capturó el número).
 //
 // ARQUITECTURA (decisión base de la #34, revisada 2026-07-02):
 //   · 1er mensaje = INSTANTÁNEO, lo dispara el webhook de Hotmart (api/hotmart.js)
@@ -29,12 +31,14 @@
 // live+report, pero si RECUP_ENABLED != 1 se degrada a dry (no manda nada).
 // SEGURIDAD: CRON_SECRET (header Authorization: Bearer <secret> o ?key=<secret>).
 //
-// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY (solo el reporte a Jose),
-//      WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET, RECUP_ENABLED.
+// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY (reporte a Jose + emails
+//      de recuperación cuando no hay teléfono), WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID,
+//      CRON_SECRET, RECUP_ENABLED.
 
 const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
+const { runMetaDailySync } = require('./_lib/meta-daily-sync');
 const { runSyncEstados } = require('./_lib/sync-estados');
 
 const BREVO = 'https://api.brevo.com/v3';
@@ -170,7 +174,8 @@ function resumen(potenciales, ventas) {
 async function mandarReporte(res) {
   const html = `<h2>📊 Recuperación de carritos — reporte diario</h2>
     <ul>
-      <li><b>Mensajes de WhatsApp enviados hoy:</b> ${res.enviados}</li>
+      <li><b>Mensajes enviados hoy:</b> ${res.enviados}
+        (WhatsApp: ${res.enviados_wa != null ? res.enviados_wa : res.enviados}, Email sin teléfono: ${res.enviados_email || 0})</li>
       <li><b>Recuperados (compraron):</b> ${res.recuperados_hoy} nuevos hoy</li>
       <li><b>En seguimiento ahora:</b> ${res.en_seguimiento}
         (carrito abandonado: ${res.abandonados}, pago rechazado: ${res.rechazados})</li>
@@ -187,6 +192,86 @@ async function mandarReporte(res) {
       htmlContent: html,
     }),
   });
+  return { ok: r.ok, status: r.status };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fallback por EMAIL (Brevo) cuando el cliente potencial NO dejó teléfono.
+// Hotmart no siempre captura el número en un abandono/rechazo; para no perder a esa
+// persona se le manda el MISMO mensaje por email, con el link de atribución (?src=recup-…)
+// para que la venta recuperada quede medida en `ventas`. No necesita aprobación de Meta.
+// ─────────────────────────────────────────────────────────────────────────────
+const EMAIL_COPY = {
+  carrito_abandonado: {
+    subject: (p) => (p >= 2 ? 'Tu lugar sigue reservado — últimas horas' : 'Te guardamos tu lugar en el Sistema de Ingresos Diarios'),
+    titulo: 'Te quedó tu lugar reservado 🎯',
+    cuerpo: 'Empezaste a sumarte al <b>Sistema de Ingresos Diarios para Periodistas</b> pero no llegaste a completar la compra. Tu lugar sigue guardado, con la <b>garantía de 7 días</b>: si no es para vos, te devolvemos el 100%.',
+    cta: 'Retomar mi lugar',
+  },
+  pago_rechazado: {
+    subject: (p) => (p >= 2 ? 'Tu pago quedó pendiente — completalo en 1 clic' : 'Tu pago no se procesó — probá de nuevo'),
+    titulo: 'Tu pago no llegó a procesarse 💳',
+    cuerpo: 'Intentaste sumarte al <b>Sistema de Ingresos Diarios para Periodistas</b> pero el pago no se completó — suele pasar con tarjetas que bloquean cobros internacionales, no es un error tuyo. Podés reintentar con <b>otra tarjeta</b> o pagar con <b>PayPal</b>. Tu lugar sigue reservado, con <b>garantía de 7 días</b>.',
+    cta: 'Completar mi pago',
+  },
+};
+
+function emailRecupHtml({ nombre, titulo, cuerpo, cta, link }) {
+  return `<div style="margin:0;padding:0;background:#f4f4f7;">
+  <div style="max-width:520px;margin:0 auto;padding:28px 20px;font-family:Arial,Helvetica,sans-serif;">
+    <div style="background:#07070f;border-radius:14px 14px 0 0;padding:20px;text-align:center;">
+      <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:.3px;">Periodistas Digitales</span>
+    </div>
+    <div style="background:#ffffff;border-radius:0 0 14px 14px;padding:28px 24px;">
+      <p style="font-size:16px;margin:0 0 6px;color:#1a1a2e;">Hola ${nombre},</p>
+      <h1 style="font-size:20px;line-height:1.3;margin:8px 0 14px;color:#07070f;">${titulo}</h1>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 22px;color:#333333;">${cuerpo}</p>
+      <div style="text-align:center;margin:26px 0;">
+        <a href="${link}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:15px 38px;border-radius:10px;">${cta} &rarr;</a>
+      </div>
+      <p style="font-size:12px;line-height:1.5;color:#999999;margin:18px 0 0;text-align:center;">Si ya completaste tu compra, ignorá este mensaje. · Garantía de 7 días.</p>
+    </div>
+  </div>
+</div>`;
+}
+
+// Registra el email en `mensajes` (canal=email, costo 0) para el historial. Best-effort.
+async function logEmailRecup(email, tipo, paso, ok) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/mensajes`, {
+      method: 'POST',
+      headers: sbHeaders({ Prefer: 'return=minimal' }),
+      body: JSON.stringify({
+        automatizacion: 'recuperacion', canal: 'email', tipo: `recup_${tipo}_${paso}`,
+        categoria_meta: null, costo_estimado_usd: 0, ok: !!ok,
+      }),
+    });
+  } catch (e) { /* best-effort: el log no frena la recuperación */ }
+}
+
+async function sendRecupEmail({ to, tipo, paso, nombre }) {
+  const c = EMAIL_COPY[tipo];
+  if (!c) return { ok: false, status: 0, error: `sin copy para tipo ${tipo}` };
+  if (!process.env.BREVO_API_KEY) return { ok: false, status: 0, error: 'BREVO_API_KEY sin configurar' };
+  // Directo al checkout de Hotmart; utm_medium=email para distinguir el canal en `ventas`.
+  const link = `${LINKS[tipo]}&utm_source=recuperacion&utm_medium=email`;
+  const html = emailRecupHtml({ nombre: primerNombre(nombre), titulo: c.titulo, cuerpo: c.cuerpo, cta: c.cta, link });
+  let r;
+  try {
+    r = await fetch(`${BREVO}/smtp/email`, {
+      method: 'POST',
+      headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sender: { name: 'Periodistas Digitales', email: SENDER_EMAIL },
+        to: [{ email: to, name: nombre || undefined }],
+        subject: c.subject(paso),
+        htmlContent: html,
+      }),
+    });
+  } catch (e) {
+    return { ok: false, status: 0, error: e.message };
+  }
+  await logEmailRecup(to, tipo, paso, r.ok);
   return { ok: r.ok, status: r.status };
 }
 
@@ -225,6 +310,13 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'meta_spend_sync', ...meta }));
       } catch (e) {
         console.error('meta-spend-sync (no frena la recuperación):', e.message);
+      }
+      // Métricas de Meta POR DÍA → meta_insights_diario (las lee la rutina autónoma de Mateo).
+      try {
+        const metaDia = await runMetaDailySync();
+        console.log(JSON.stringify({ type: 'meta_daily_sync', ...metaDia }));
+      } catch (e) {
+        console.error('meta-daily-sync (no frena la recuperación):', e.message);
       }
       // Estado de los agentes → agentes_estado (para que el Panel de Comando de la nube
       // los lea por MCP; la nube no puede clonar el repo). Best-effort. Tarjeta #32.
@@ -272,10 +364,16 @@ module.exports = async (req, res) => {
         would_send: plan.length,
         recuperados_detectados: marcarRecuperado.length,
         perdidos_detectados: marcarPerdido.length,
-        plan: plan.map(p => ({
-          tipo: p.tipo, paso: p.paso, tmpl: p.tmpl, horasOld: p.horasOld,
-          nombre: primerNombre(p.nombre), tel: p.telefono ? '…' + String(p.telefono).slice(-4) : 'SIN TELEFONO',
-        })),
+        plan: plan.map(p => {
+          const to = normalizePhone(p.telefono);
+          const porEmail = !to || to.length < 8;
+          return {
+            tipo: p.tipo, paso: p.paso, horasOld: p.horasOld, nombre: primerNombre(p.nombre),
+            canal: porEmail ? 'email' : 'whatsapp',
+            destino: porEmail ? `EMAIL → ${p.email}` : '…' + String(p.telefono).slice(-4),
+            envio: porEmail ? `email_recup_${p.tipo}` : p.tmpl,
+          };
+        }),
       });
     }
 
@@ -292,8 +390,13 @@ module.exports = async (req, res) => {
     const results = [];
     for (const p of batch) {
       const to = normalizePhone(p.telefono);
-      if (!to || to.length < 8) { results.push({ email: p.email, paso: p.paso, skipped: 'sin telefono valido' }); continue; }
-      const sent = await sendRecupTemplate({ to, tmpl: p.tmpl, nombre: p.nombre });
+      // Excepción: sin teléfono válido → la recuperación sale por EMAIL (Brevo). Así ningún
+      // abandono/rechazo sin teléfono queda sin contactar. Mismo estado, misma atribución.
+      const porEmail = !to || to.length < 8;
+      const canal = porEmail ? 'email' : 'whatsapp';
+      const sent = porEmail
+        ? await sendRecupEmail({ to: p.email, tipo: p.tipo, paso: p.paso, nombre: p.nombre })
+        : await sendRecupTemplate({ to, tmpl: p.tmpl, nombre: p.nombre });
       if (sent.ok) {
         try {
           await sbUpdate(p.id, {
@@ -301,28 +404,45 @@ module.exports = async (req, res) => {
             paso_recuperacion: p.paso,
             ultimo_contacto_en: new Date(now).toISOString(),
           });
-          results.push({ email: p.email, tipo: p.tipo, paso: p.paso, wamid: sent.wamid || null });
+          results.push({ email: p.email, tipo: p.tipo, paso: p.paso, canal, wamid: sent.wamid || null });
         } catch (e) {
-          results.push({ email: p.email, paso: p.paso, warn: 'enviado pero falló update: ' + e.message });
+          results.push({ email: p.email, paso: p.paso, canal, warn: 'enviado pero falló update: ' + e.message });
         }
       } else {
-        results.push({ email: p.email, paso: p.paso, error: (sent.body && sent.body.error && sent.body.error.message) || sent.status });
+        const errMsg = porEmail
+          ? (sent.error || sent.status)
+          : ((sent.body && sent.body.error && sent.body.error.message) || sent.status);
+        results.push({ email: p.email, paso: p.paso, canal, error: errMsg });
       }
-      console.log(JSON.stringify({ type: 'recuperacion', email: p.email, tipo: p.tipo, paso: p.paso, ok: sent.ok }));
+      console.log(JSON.stringify({ type: 'recuperacion', email: p.email, tipo: p.tipo, paso: p.paso, canal, ok: sent.ok }));
     }
 
     let reporte = null;
     if (mode === 'cron') {
-      const r = resumen(potenciales, ventas);
-      reporte = await mandarReporte({
-        enviados: results.filter(x => x.wamid || (!x.error && !x.skipped && !x.warn)).length,
-        recuperados_hoy: marcarRecuperado.length,
-        perdidos_hoy: marcarPerdido.length,
-        en_seguimiento: r.total,
-        abandonados: r.por_tipo.carrito_abandonado || 0,
-        rechazados: r.por_tipo.pago_rechazado || 0,
-        live: true,
-      }).catch(e => ({ ok: false, error: e.message }));
+      // Reporte individual de recuperación: APAGADO por default (lo cubre el Panel de Salud).
+      if (process.env.REPORTE_RECUP_INDIVIDUAL === '1') {
+        const r = resumen(potenciales, ventas);
+        const enviadosWA = results.filter(x => x.canal === 'whatsapp' && !x.error).length;
+        const enviadosEmail = results.filter(x => x.canal === 'email' && !x.error).length;
+        reporte = await mandarReporte({
+          enviados: enviadosWA + enviadosEmail,
+          enviados_wa: enviadosWA,
+          enviados_email: enviadosEmail,
+          recuperados_hoy: marcarRecuperado.length,
+          perdidos_hoy: marcarPerdido.length,
+          en_seguimiento: r.total,
+          abandonados: r.por_tipo.carrito_abandonado || 0,
+          rechazados: r.por_tipo.pago_rechazado || 0,
+          live: true,
+        }).catch(e => ({ ok: false, error: e.message }));
+      }
+      // PANEL DE SALUD unificado (el "uno con todo"): se dispara acá, tras el trabajo del día,
+      // para no gastar un cron aparte (Hobby limita a 2). Best-effort: nunca frena la recuperación.
+      try {
+        const { enviarPanelSalud } = require('./salud');
+        const p = await enviarPanelSalud('send');
+        console.log(JSON.stringify({ type: 'panel_salud', ...p }));
+      } catch (e) { console.error('panel salud (no frena la recuperación):', e && e.message || e); }
     }
 
     return res.status(200).json({

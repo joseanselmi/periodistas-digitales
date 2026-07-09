@@ -709,7 +709,9 @@ export default async function handler(req, res) {
     await Promise.allSettled(pendingLogs);
     // En la corrida automática del cron, mandar además el reporte diario por email.
     let report = null;
-    if (mode === 'cron') {
+    // Reporte individual del funnel: APAGADO por default (lo cubre el Panel de Salud unificado).
+    // Se puede reactivar con REPORTE_FUNNEL_INDIVIDUAL=1 (trae el diagnóstico con datos de la corrida).
+    if (mode === 'cron' && process.env.REPORTE_FUNNEL_INDIVIDUAL === '1') {
       // Datos de ESTA corrida para el diagnóstico interpretado del reporte.
       const runInfo = {
         due_oferta: plan.filter((p) => p.channel === 'wa' && p.send === 5).length,
