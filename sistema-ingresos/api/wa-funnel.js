@@ -472,8 +472,66 @@ function diagnosticarFunnel(stats, runInfo) {
   };
 }
 
+// ── Continuidad diaria (cuadro "debía vs enviado vs en cola") ────────────────
+// Nota fija de cómo se obtiene el "Debía" (transparencia que pidió Jose).
+const NOTA_DEBIA = '<b>Cómo se obtiene el "Debía":</b> el <b>Regalo 3</b> son los leads nuevos que ese día cumplen 5 días (la entrada del embudo — depende de cuántos entran por Facebook, no se puede saber de antemano). El <b>Regalo 4</b>, el <b>5</b>, la <b>Oferta</b> y el <b>Seguimiento</b> están <b>determinados por los envíos de días previos</b>: nadie llega a un paso sin haber recibido el anterior, así que ese número es exacto. "En cola" = lo que quedó para la próxima corrida (o "apagado" si el paso está desactivado por flag).';
+
+function filaEtapa(e) {
+  const env = (e.enviado || 0) > 0 ? `<span style="color:#22c58a;font-weight:700;">${e.enviado}</span>` : '0';
+  const cola = e.apagado
+    ? '<span style="color:#8a8aa0;">apagado</span>'
+    : ((e.cola || 0) > 0 ? `<span style="color:#e0a83a;font-weight:700;">${e.cola}</span>` : '0');
+  return `<tr>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;color:#e8e8f0;">${e.label}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;color:#e8e8f0;">${e.debido}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${env}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${cola}</td>
+      </tr>`;
+}
+
+// Dibuja un cuadro de continuidad (título + tabla + nota/veredicto). Reutilizado por hoy y ayer.
+function tablaContinuidad(titulo, etapas, nota) {
+  if (!Array.isArray(etapas) || !etapas.length) return '';
+  return `<div style="background:#0f0f1a;border-radius:12px;padding:16px 18px;margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:15px;font-weight:800;color:#ffffff;margin-bottom:8px;">${titulo}</div>
+      <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:14px;">
+        <tr>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;">Etapa</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Debía</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Enviado</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">En cola</td>
+        </tr>
+        ${etapas.map(filaEtapa).join('')}
+      </table>
+      ${nota ? `<div style="font-size:12px;color:#8a8aa0;line-height:1.65;margin-top:12px;">${nota}</div>` : ''}
+    </div>`;
+}
+
+// Lee el snapshot de continuidad de una fecha (YYYY-MM-DD). Best-effort.
+async function leerSnapshotDia(fecha) {
+  if (!SB_URL || !SB_KEY) return null;
+  try {
+    const r = await sbRest(`funnel_reporte_diario?fecha=eq.${fecha}&select=fecha,etapas,resumen&limit=1`, {});
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return (rows && rows[0]) || null;
+  } catch { return null; }
+}
+
+// Guarda (upsert) el snapshot de continuidad de HOY → mañana es el "ayer" del reporte.
+async function guardarSnapshotDiario(fecha, etapas, resumen) {
+  if (!SB_URL || !SB_KEY) return;
+  try {
+    await sbRest('funnel_reporte_diario?on_conflict=fecha', {
+      method: 'POST',
+      headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ fecha, etapas, resumen: resumen || null, creado_en: new Date().toISOString() }),
+    });
+  } catch (e) { console.error('[wa-funnel] guardar snapshot:', e && e.message || e); }
+}
+
 // Manda el reporte diario por email vía Brevo (a Jose).
-async function sendReport(stats, runInfo) {
+async function sendReport(stats, runInfo, snapAyer) {
   const key = process.env.BREVO_API_KEY;
   const a = stats.enviados;
   // Diagnóstico interpretado arriba de todo (verde/amarillo/rojo + por qué).
@@ -493,41 +551,19 @@ async function sendReport(stats, runInfo) {
   const r5open = o.disponible
     ? `<li style="margin-left:18px;list-style:circle;">De ese Regalo 5: <b>${o.aperturas_unicas ?? 0}</b> lo abrieron, <b>${o.clics_unicos ?? 0}</b> hicieron clic en la guía</li>`
     : '';
-  // Tabla de continuidad de HOY (qué debía salir vs qué salió vs qué quedó en cola), con la
-  // fuente de cada "debía" bien explícita. Solo si la corrida trajo datos por etapa.
-  const et = (runInfo && runInfo.etapas) || [];
-  const filaEtapa = (e) => {
-    const env = e.enviado > 0 ? `<span style="color:#22c58a;font-weight:700;">${e.enviado}</span>` : '0';
-    const cola = e.apagado
-      ? '<span style="color:#8a8aa0;">apagado</span>'
-      : (e.cola > 0 ? `<span style="color:#e0a83a;font-weight:700;">${e.cola}</span>` : '0');
-    return `<tr>
-        <td style="padding:7px 10px;border-top:1px solid #23233a;color:#e8e8f0;">${e.label}</td>
-        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;color:#e8e8f0;">${e.debido}</td>
-        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${env}</td>
-        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${cola}</td>
-      </tr>`;
-  };
-  const contHtml = et.length ? `<div style="background:#0f0f1a;border-radius:12px;padding:16px 18px;margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:15px;font-weight:800;color:#ffffff;margin-bottom:8px;">📆 Hoy: qué debía salir vs qué salió</div>
-      <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:14px;">
-        <tr>
-          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;">Etapa</td>
-          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Debía</td>
-          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Enviado</td>
-          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">En cola</td>
-        </tr>
-        ${et.map(filaEtapa).join('')}
-      </table>
-      <div style="font-size:12px;color:#8a8aa0;line-height:1.65;margin-top:12px;">
-        <b>Cómo se obtiene el "Debía":</b> el <b>Regalo 3</b> son los leads nuevos que hoy cumplen 5 días
-        (la entrada del embudo — depende de cuántos entran por Facebook, no se puede saber de antemano).
-        El <b>Regalo 4</b>, el <b>5</b>, la <b>Oferta</b> y el <b>Seguimiento</b> están <b>determinados por los
-        envíos de días previos</b>: nadie llega a un paso sin haber recibido el anterior, así que ese número es
-        exacto. "En cola" = lo que quedó para la próxima corrida (o "apagado" si el paso está desactivado por flag).
-      </div>
-    </div>` : '';
-  const html = `${saludHtml}${contHtml}<h2>📊 Funnel WhatsApp — reporte diario</h2>
+  // Cuadro de HOY (qué debía salir vs qué salió) + cuadro de AYER (cómo cerró), con veredicto.
+  const contHoy = tablaContinuidad('📆 Hoy: qué debía salir vs qué salió', (runInfo && runInfo.etapas) || [], NOTA_DEBIA);
+  let contAyer = '';
+  if (snapAyer && Array.isArray(snapAyer.etapas) && snapAyer.etapas.length) {
+    const pend = snapAyer.etapas.filter((e) => !e.apagado && (e.cola || 0) > 0);
+    const ver = pend.length === 0
+      ? '✅ <b>Día completo:</b> ayer salió todo lo que debía.'
+      : '⚠️ <b>Faltó:</b> ayer quedó en cola ' + pend.map((e) => `${e.label} (${e.cola})`).join(', ') + ' → se arrastró a hoy.';
+    contAyer = tablaContinuidad('📅 Ayer: cómo cerró el día', snapAyer.etapas, ver);
+  } else if (runInfo && runInfo.etapas) {
+    contAyer = '<p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a8aa0;margin:-8px 0 18px;">📅 (El cuadro comparativo de <b>ayer</b> aparece a partir de mañana — desde hoy se guarda el cierre de cada día.)</p>';
+  }
+  const html = `${saludHtml}${contHoy}${contAyer}<h2>📊 Funnel WhatsApp — reporte diario</h2>
     <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8a8aa0;margin:0 0 4px;"><b>Estado del embudo</b> — dónde está parado cada lead ahora (esto NO es lo que se envió hoy):</p>
     <ul>
       <li>En <b>Regalo 3</b> (ya lo recibieron, esperan el 4): <b>${a.regalo3}</b></li>
@@ -771,7 +807,12 @@ export default async function handler(req, res) {
           etapaRow('🔔 Seguimiento (reactivación)', 'previos', plan.filter((p) => p.channel === 'seguimiento').length, results.filter((x) => x.sent === 'seguimiento').length, !seguimientoEnabled),
         ],
       };
-      try { report = await sendReport(await computeStats(await brevoGetContacts()), runInfo); } catch (e) { report = { ok: false, error: String(e && e.message || e) }; }
+      const hoyISO = new Date().toISOString().slice(0, 10);
+      const ayerISO = new Date(Date.now() - DAY).toISOString().slice(0, 10);
+      const snapAyer = await leerSnapshotDia(ayerISO);
+      try { report = await sendReport(await computeStats(await brevoGetContacts()), runInfo, snapAyer); } catch (e) { report = { ok: false, error: String(e && e.message || e) }; }
+      // Guardar el cierre de HOY → mañana es el "ayer" del reporte (continuidad día a día).
+      await guardarSnapshotDiario(hoyISO, runInfo.etapas, { attempted: runInfo.attempted, enviados_ok: runInfo.enviados_ok, fallidos: runInfo.fallidos, remaining: runInfo.remaining });
     }
     res.status(200).json({ mode, live: true, due_total: plan.length, attempted: batch.length, remaining: plan.length - batch.length, report: report ? report.ok : null, results });
   } catch (e) {
