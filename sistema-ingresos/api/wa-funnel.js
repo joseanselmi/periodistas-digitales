@@ -48,6 +48,75 @@ const LIST_ID = 5; // "Leadgen - Guía Claude"
 // Registro de mensajes (gasto variable por automatización) → Contabilidad en Leadr.
 // logConversacion → deja el regalo en el hilo del inbox (Leadr), como PRIMER mensaje nuestro.
 const { logMensaje, logConversacion } = require('./_lib/wa');
+// Telegram: para el recordatorio diario de escalaciones sin responder (ver más abajo).
+const tg = require('./_lib/tg');
+
+// Supabase (base de marketing) — solo para el recordatorio de escalaciones pendientes.
+const SB_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
+const SB_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+async function sbRest(path, opts) {
+  return fetch(`${SB_URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'content-type': 'application/json', ...(opts && opts.headers) },
+  });
+}
+
+// Emails que YA compraron el curso → salen del funnel: no más regalos ni oferta (le estaríamos
+// vendiendo algo ya comprado + gastando plantillas de marketing). Cruce con `ventas`, igual que
+// hace la recuperación. Best-effort: si Supabase falla, no excluye a nadie (no frena el envío).
+async function ventasEmailsSet() {
+  if (!SB_URL || !SB_KEY) return new Set();
+  try {
+    const r = await sbRest('ventas?select=email', {});
+    if (!r.ok) return new Set();
+    const rows = await r.json();
+    return new Set((rows || []).map((v) => String(v.email || '').toLowerCase().trim()).filter(Boolean));
+  } catch { return new Set(); }
+}
+
+// Teléfonos que YA nos escribieron por WhatsApp (tienen mensajes entrantes en el hilo). El
+// seguimiento no se manda a quien ya respondió (criterio: "no compró NI respondió"). Best-effort.
+async function respondieronSet() {
+  if (!SB_URL || !SB_KEY) return new Set();
+  try {
+    const r = await sbRest('conversaciones_wa?select=telefono&direccion=eq.in', {});
+    if (!r.ok) return new Set();
+    const rows = await r.json();
+    return new Set((rows || []).map((x) => normalizePhone(x.telefono)).filter(Boolean));
+  } catch { return new Set(); }
+}
+function haceHoras(iso) {
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return '';
+  const h = Math.floor((Date.now() - t) / 3600000);
+  if (h < 1) return 'hace menos de 1 h';
+  if (h < 24) return `hace ${h} h`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'hace 1 día' : `hace ${d} días`;
+}
+
+// Recordatorio de escalaciones SIN RESPONDER. El bot, cuando pasa un chat a una persona,
+// deja el número en modo 'esperando' con `escalado_en`. Acá buscamos los que llevan +3 h
+// esperando y que todavía no fueron recordados, y le pingamos a Jose por Telegram (al tema
+// del cliente) para que no queden en el olvido — como pasó con 4 pedidos de "hablar con
+// equipo" del 3–8 jul que nunca recibieron respuesta. Best-effort: nunca throwea.
+async function recordarEscalacionesPendientes() {
+  if (!SB_URL || !SB_KEY) return { ok: false, motivo: 'sin supabase' };
+  const corte = new Date(Date.now() - 3 * 3600000).toISOString();
+  const r = await sbRest(`wa_bot_estado?modo=eq.esperando&escalado_en=lt.${encodeURIComponent(corte)}&recordatorio_en=is.null&select=telefono,escalado_en&limit=25`, {});
+  if (!r.ok) return { ok: false, status: r.status };
+  const rows = await r.json();
+  let avisados = 0;
+  for (const row of (rows || [])) {
+    try {
+      const dest = await tg.destinoPara(row.telefono, `+${row.telefono}`);
+      await tg.enviar({ ...dest, text: `⏰ Recordatorio: +${row.telefono} pidió hablar con una persona ${haceHoras(row.escalado_en)} y todavía no le respondiste.\n\n↩️ Respondé acá mismo para contestarle.` });
+      await sbRest(`wa_bot_estado?telefono=eq.${encodeURIComponent(row.telefono)}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ recordatorio_en: new Date().toISOString() }) });
+      avisados++;
+    } catch (e) { console.error('[wa-funnel] recordatorio escalacion:', e && e.message || e); }
+  }
+  return { ok: true, pendientes: (rows || []).length, avisados };
+}
 
 // Texto legible del hilo (inbox) para cada plantilla del embudo (el body real lo renderiza
 // Meta; acá guardamos qué se envió para que el hilo se lea claro).
@@ -55,6 +124,7 @@ const REGALO_TEXTO = {
   regalo3_periodico_digital: '🎁 Regalo 3 — Guía del periódico digital (PDF, WhatsApp)',
   regalo4_sistema_completo: '🎁 Regalo 4 — Guía de los 5 pilares (PDF, WhatsApp)',
   oferta_sistema_ingresos: '💰 Oferta — el mensaje con el precio',
+  seguimiento_lead: '🔔 Seguimiento — reactivación (no compró tras la oferta)',
 };
 
 const PDF_R3 = 'https://sistemadeingresosdiariosia.com/guia-periodico-digital-ig-fb.pdf';
@@ -66,6 +136,12 @@ const STAGES = [
   { stage: 4, minDays: 7, tmpl: 'regalo4_sistema_completo' },
   { stage: 5, minDays: 9, tmpl: 'oferta_sistema_ingresos' },
 ];
+
+// Seguimiento de leads fríos (plantilla seguimiento_lead) — reactiva a quien recibió la OFERTA
+// (WA_STAGE 5) y a los N días NO compró (ya filtrado por `ventas`) ni respondió nunca por
+// WhatsApp. Gateado por SEGUIMIENTO_ENABLED (default OFF), además de WA_FUNNEL_ENABLED. Se
+// marca con su propio atributo SEG_AT (no toca WA_STAGE) → un solo seguimiento por lead.
+const SEGUIMIENTO = { minDiasDesdeOferta: 7, tmpl: 'seguimiento_lead' };
 
 // Regalo 5 (EMAIL) — "La revolución de los agentes de IA". Último regalo de VALOR,
 // después del Regalo 4 (WhatsApp, día 7) y antes de la oferta (día 9). Se dispara por
@@ -167,10 +243,33 @@ function buildTemplatePayload(stage, to, nombre) {
       },
     };
   }
-  // stage 5 — Oferta: sin header ni variables (el botón URL es estático).
+  // stage 5 — Oferta. La v2 (reescrita 2026-07) saluda "Hola {{1}}" → requiere pasar el nombre;
+  // la v1 (sin variable) no. Enviar el parámetro que no corresponde = Meta rechaza el envío.
+  // Como la aprobación de Meta es asíncrona, se controla por env OFERTA_V2: poner "1" en Vercel
+  // EN CUANTO Meta apruebe la v2 (surte efecto sin redeploy). Mientras, se envía la v1.
+  if (process.env.OFERTA_V2 === '1') {
+    return {
+      messaging_product: 'whatsapp', to, type: 'template',
+      template: {
+        name: 'oferta_sistema_ingresos', language: { code: 'es' },
+        components: [{ type: 'body', parameters: [{ type: 'text', text: nombre }] }],
+      },
+    };
+  }
   return {
     messaging_product: 'whatsapp', to, type: 'template',
     template: { name: 'oferta_sistema_ingresos', language: { code: 'es' } },
+  };
+}
+
+// Body de la plantilla de seguimiento (1 variable = nombre; botón URL estático a la landing).
+function buildSeguimientoPayload(to, nombre) {
+  return {
+    messaging_product: 'whatsapp', to, type: 'template',
+    template: {
+      name: 'seguimiento_lead', language: { code: 'es' },
+      components: [{ type: 'body', parameters: [{ type: 'text', text: nombre }] }],
+    },
   };
 }
 
@@ -226,6 +325,17 @@ async function brevoCreateMail5Attribute() {
   return { ok: r.ok, status: r.status, body: await r.text() };
 }
 
+// Crea el atributo SEG_AT (texto ISO) que marca a quién ya se le mandó el seguimiento.
+async function brevoCreateSegAttribute() {
+  const key = process.env.BREVO_API_KEY;
+  const r = await fetch(`${BREVO}/contacts/attributes/normal/SEG_AT`, {
+    method: 'POST',
+    headers: { 'api-key': key, 'content-type': 'application/json' },
+    body: JSON.stringify({ type: 'text' }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.text() };
+}
+
 // Envía el email del Regalo 5 a un lead vía Brevo (transaccional).
 // El `tag` deja que Brevo trackee aperturas/clics de EXACTAMENTE este envío
 // (filtrable en Statistics → Transactional por el tag, o vía aggregatedReport).
@@ -271,6 +381,17 @@ async function brevoSetMail5(email) {
   if (!r.ok) throw new Error(`Brevo setMail5 ${r.status}: ${await r.text()}`);
 }
 
+// Marca en Brevo que a este lead ya se le mandó el seguimiento (para no repetir).
+async function brevoSetSeg(email) {
+  const key = process.env.BREVO_API_KEY;
+  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
+    method: 'PUT',
+    headers: { 'api-key': key, 'content-type': 'application/json' },
+    body: JSON.stringify({ attributes: { SEG_AT: todayISO() } }),
+  });
+  if (!r.ok) throw new Error(`Brevo setSeg ${r.status}: ${await r.text()}`);
+}
+
 async function sendTemplate(payload) {
   const token = process.env.WHATSAPP_TOKEN;
   const pn = process.env.WHATSAPP_PHONE_NUMBER_ID;
@@ -289,11 +410,12 @@ async function sendTemplate(payload) {
 
 // Métricas del funnel: enviados por etapa (dato propio) + entregas/lecturas de Meta (cuando estén).
 async function computeStats(contacts) {
-  const st = { r3: 0, r4: 0, oferta: 0, sin_enviar: 0, con_tel: 0, mail5: 0 };
+  const st = { r3: 0, r4: 0, oferta: 0, sin_enviar: 0, con_tel: 0, mail5: 0, seg: 0 };
   for (const c of contacts) {
     const a = c.attributes || {};
     if (a.SMS || a.WHATSAPP) st.con_tel++;
     if (a.MAIL5_AT) st.mail5++;
+    if (a.SEG_AT) st.seg++;
     const s = Number(a.WA_STAGE || 0);
     if (s >= 5) st.oferta++; else if (s === 4) st.r4++; else if (s === 3) st.r3++; else st.sin_enviar++;
   }
@@ -308,7 +430,7 @@ async function computeStats(contacts) {
     const j = await r.json();
     analytics = j.error ? { disponible: false, motivo: j.error.error_user_title || j.error.message } : j;
   } catch (e) { analytics = { disponible: false, motivo: String(e && e.message || e) }; }
-  return { total_contactos: contacts.length, enviados: { regalo3: st.r3, regalo4: st.r4, regalo5_email: st.mail5, oferta: st.oferta, aun_sin_regalo: st.sin_enviar, con_telefono: st.con_tel }, entregas_lecturas: analytics };
+  return { total_contactos: contacts.length, enviados: { regalo3: st.r3, regalo4: st.r4, regalo5_email: st.mail5, oferta: st.oferta, seguimiento: st.seg, aun_sin_regalo: st.sin_enviar, con_telefono: st.con_tel }, entregas_lecturas: analytics };
 }
 
 // Manda el reporte diario por email vía Brevo (a Jose).
@@ -331,6 +453,7 @@ async function sendReport(stats) {
       <li><b>Regalo 5</b> (email agentes IA) enviado a <b>${a.regalo5_email}</b></li>
       ${r5open}
       <li><b>Oferta</b> enviada a <b>${a.oferta}</b></li>
+      <li><b>Seguimiento</b> (reactivación de fríos) enviado a <b>${a.seguimiento || 0}</b></li>
       <li>Todavía sin su primer regalo: ${a.aun_sin_regalo} (esperan llegar al día 5)</li>
       <li>Leads con teléfono: ${a.con_telefono} de ${stats.total_contactos}</li>
     </ul>${leidos}`;
@@ -373,10 +496,22 @@ export default async function handler(req, res) {
   if (!authOk) { res.status(401).json({ error: 'unauthorized' }); return; }
 
   try {
+    // Recordatorio de escalaciones sin responder: en la corrida del cron (siempre, aunque
+    // el funnel esté apagado) y en modo manual ?mode=recordatorios para probarlo aislado.
+    if (mode === 'cron') {
+      try { await recordarEscalacionesPendientes(); } catch (e) { console.error('[wa-funnel] recordatorios cron:', e && e.message || e); }
+    }
+    if (mode === 'recordatorios') {
+      const rec = await recordarEscalacionesPendientes();
+      res.status(200).json({ mode, ...rec });
+      return;
+    }
+
     if (mode === 'setup') {
       const wa = await brevoCreateAttribute();
       const m5 = await brevoCreateMail5Attribute();
-      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5 });
+      const seg = await brevoCreateSegAttribute();
+      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg });
       return;
     }
 
@@ -413,8 +548,16 @@ export default async function handler(req, res) {
     const live = (mode === 'live' || mode === 'cron') && enabled;
     const mail5Enabled = process.env.MAIL5_ENABLED === '1';
 
+    // Los que ya compraron no reciben más regalos ni la oferta.
+    const compradores = await ventasEmailsSet();
+    const seguimientoEnabled = process.env.SEGUIMIENTO_ENABLED === '1';
+    // Para el seguimiento: quién ya nos escribió (no se le manda si ya respondió).
+    const respondieron = await respondieronSet();
+
     const plan = [];
     for (const c of contacts) {
+      const emailLc = String(c.email || '').toLowerCase().trim();
+      if (emailLc && compradores.has(emailLc)) continue; // ya compró → fuera del funnel
       const attrs = c.attributes || {};
       const stageSent = Number(attrs.WA_STAGE || 0);
       const daysOld = Math.floor((now - new Date(c.createdAt).getTime()) / DAY);
@@ -432,6 +575,16 @@ export default async function handler(req, res) {
         const phoneRaw = pickPhone(attrs);
         const to = normalizePhone(phoneRaw);
         plan.push({ channel: 'wa', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: due.stage, tmpl: due.tmpl, phoneRaw, to });
+      }
+
+      // Seguimiento (reactivación): recibió la oferta (stage 5), pasaron N días desde el último
+      // envío, no compró (ya filtrado arriba) ni respondió por WhatsApp, y no se le mandó aún.
+      if (!attrs.SEG_AT && stageSent >= 5 && daysSinceLast >= SEGUIMIENTO.minDiasDesdeOferta) {
+        const phoneRaw = pickPhone(attrs);
+        const to = normalizePhone(phoneRaw);
+        if (to && !respondieron.has(to)) {
+          plan.push({ channel: 'seguimiento', email: c.email, nombre: pickName(attrs), daysOld, to, phoneRaw });
+        }
       }
     }
 
@@ -456,6 +609,19 @@ export default async function handler(req, res) {
           results.push({ email: p.email, send: 'mail5', error: sent.status });
         }
         console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'mail5', ok: sent.ok }));
+        continue;
+      }
+      if (p.channel === 'seguimiento') {
+        if (!seguimientoEnabled) { results.push({ email: p.email, skipped: 'SEGUIMIENTO_ENABLED!=1 (seguimiento apagado)' }); continue; }
+        if (!p.to || p.to.length < 8) { results.push({ email: p.email, skipped: 'sin telefono valido', phoneRaw: p.phoneRaw }); continue; }
+        const sent = await sendTemplate(buildSeguimientoPayload(p.to, p.nombre));
+        if (sent.ok) {
+          try { await brevoSetSeg(p.email); } catch (e) { results.push({ email: p.email, sent: 'seguimiento', warn: 'enviado pero fallo setSeg: ' + e.message }); continue; }
+          results.push({ email: p.email, sent: 'seguimiento' });
+        } else {
+          results.push({ email: p.email, send: 'seguimiento', error: sent.body?.error?.message || sent.status });
+        }
+        console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'seguimiento', ok: sent.ok }));
         continue;
       }
       if (!p.to || p.to.length < 8) { results.push({ email: p.email, skipped: 'sin telefono valido', phoneRaw: p.phoneRaw }); continue; }

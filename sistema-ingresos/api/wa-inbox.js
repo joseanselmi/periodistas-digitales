@@ -53,6 +53,22 @@ async function fetchT(url, opts, ms) {
   finally { clearTimeout(t); }
 }
 
+// ¿Ya procesamos este mensaje entrante (por wamid)? Meta reintenta el webhook cuando la
+// función tarda; sin esto el bot podría responder DOS veces al mismo mensaje. Se apoya en
+// el historial (conversaciones_wa) donde el entrante ya queda logueado. Best-effort: si la
+// consulta falla o no hay Supabase, devuelve false (procesa igual, no bloquea nada).
+async function yaProcesado(wamid) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !wamid) return false;
+  try {
+    const r = await fetchT(`${SUPABASE_URL}/rest/v1/conversaciones_wa?wamid=eq.${encodeURIComponent(wamid)}&direccion=eq.in&select=id&limit=1`, {
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` },
+    }, 2000);
+    if (!r.ok) return false;
+    const rows = await r.json();
+    return Array.isArray(rows) && rows.length > 0;
+  } catch { return false; }
+}
+
 // Resumen legible del mensaje entrante según su tipo (texto o adjunto).
 function describeMsg(m) {
   switch (m.type) {
@@ -274,6 +290,9 @@ module.exports = async (req, res) => {
         for (const m of messages) {
           const from = m.from;
           const telKey = normalizePhone(from);
+          // Dedup: si Meta reintenta el webhook, no reprocesar el mismo mensaje (evita que el
+          // bot conteste dos veces). Best-effort: si la consulta falla, sigue normal.
+          if (await yaProcesado(m.id)) continue;
           const waName = nameByWa[from] || null;
           const texto = describeMsg(m) || `[${m.type}]`;
           const buttonId = buttonIdDe(m);
@@ -300,20 +319,39 @@ module.exports = async (req, res) => {
           let paused = false;
           try { paused = await asistente.enPausa(telKey); } catch { paused = false; }
 
+          // Anti-bucle: si el bot ya resolvió hace poco el MISMO intent y la persona vuelve
+          // a caer en lo mismo (típico: "no me llegó" una y otra vez, o "hola" repetido),
+          // no repetir el mismo texto al infinito → escalar a una persona. Solo aplica a
+          // intents "de bucle" y con un umbral por intent; se descarta si pasaron +30 min
+          // (ahí ya es una consulta nueva, no un loop de frustración).
+          let accionEnv = accion;
+          let repesNuevas = 1;
+          if (ASISTENTE_ENABLED && !paused && accion.clase !== 'escalar') {
+            const UMBRAL = { no_llego: 2, menu: 2, pago: 2, acceso: 2, leadr: 2, info: 3, duda: 3 };
+            let rep = { ultimoIntent: null, repes: 0, ultimoBotEn: null };
+            try { rep = await asistente.leerRepeticion(telKey); } catch {}
+            const reciente = rep.ultimoBotEn && (Date.now() - new Date(rep.ultimoBotEn).getTime() < 30 * 60000);
+            const mismo = reciente && rep.ultimoIntent === accion.intent;
+            repesNuevas = mismo ? (rep.repes || 0) + 1 : 1;
+            const umbral = UMBRAL[accion.intent];
+            if (umbral && mismo && repesNuevas >= umbral) accionEnv = asistente.accionBucle(nombre);
+          }
+
           if (ASISTENTE_ENABLED && !paused) {
             // --- MODO REAL: el bot responde de verdad ---
-            if (accion.clase === 'escalar') {
-              try { await sendText({ to: telKey, body: accion.body }); } catch (e) { console.error('[wa-inbox] ack escalar:', e); }
-              try { await asistente.marcarHumano(telKey); } catch {}
-              try { await asistente.logChat({ telefono: telKey, direccion: 'out', origen: 'bot', texto: accion.body, tipo: 'ack', intent: 'humano' }); } catch {}
-              await avisar(from, nombre, `🧑 ${nombre} pidió hablar con vos — ya le dije que le respondés en un rato.\n\n${encabezado}${bloqueFicha}\n\n💬 “${texto}”\n\n↩️ Respondé acá mismo para contestarle.`);
+            if (accionEnv.clase === 'escalar') {
+              try { await sendText({ to: telKey, body: accionEnv.body }); } catch (e) { console.error('[wa-inbox] ack escalar:', e); }
+              try { await asistente.marcarEsperando(telKey); } catch {}
+              try { await asistente.logChat({ telefono: telKey, direccion: 'out', origen: 'bot', texto: accionEnv.body, tipo: 'ack', intent: 'humano' }); } catch {}
+              const cabeza = accionEnv.resumen || `🧑 ${nombre} pidió hablar con vos.`;
+              await avisar(from, nombre, `${cabeza}\nYa le dije que le respondés en un rato.\n\n${encabezado}${bloqueFicha}\n\n💬 “${texto}”\n\n↩️ Respondé acá mismo para contestarle.`);
             } else {
               try {
-                if (accion.clase === 'menu') await sendButtons({ to: telKey, body: accion.body, buttons: accion.buttons });
-                else await sendText({ to: telKey, body: accion.body });
-                await asistente.marcarBot(telKey, accion.intent);
+                if (accionEnv.clase === 'menu') await sendButtons({ to: telKey, body: accionEnv.body, buttons: accionEnv.buttons });
+                else await sendText({ to: telKey, body: accionEnv.body });
+                await asistente.marcarBot(telKey, accionEnv.intent, repesNuevas);
               } catch (e) { console.error('[wa-inbox] enviar accion:', e); }
-              try { await asistente.logChat({ telefono: telKey, direccion: 'out', origen: 'bot', texto: accion.body, tipo: accion.clase, intent: accion.intent }); } catch {}
+              try { await asistente.logChat({ telefono: telKey, direccion: 'out', origen: 'bot', texto: accionEnv.body, tipo: accionEnv.clase, intent: accionEnv.intent }); } catch {}
               // El bot resolvió solo (menú / info+link / reenvío de guía / pago / acceso…) →
               // NO se avisa a Telegram, para no llenar a Jose de pings de cosas ya atendidas.
               // El intercambio igual queda en `conversaciones_wa` → inbox de Leadr. Solo las

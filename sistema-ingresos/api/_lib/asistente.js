@@ -12,7 +12,18 @@ const { BASE, primerNombre, logConversacion } = require('./wa');
 
 // ── Links que usan las respuestas ────────────────────────────────────────────
 const LANDING = `${BASE}/?src=wa-asistente`;
-const CHECKOUT = `${BASE}/?src=wa-asistente-pago`;
+// Link de pago = SIEMPRE el checkout de Hotmart (no la landing): quien tiene un problema
+// de pago ya decidió comprar; necesita completar el pago, no volver a la página de ventas.
+// El ?src= alimenta el campo "Origen" de Hotmart, con un identificador PROPIO del asistente
+// (separado del de recuperación) para medir si el bot cierra ventas. La venta recuperada se
+// cuenta igual por cruce de email en `ventas`, así que separar el src NO rompe esa métrica.
+const HOTMART_CHECKOUT = 'https://pay.hotmart.com/P106404871J?checkoutMode=10';
+function checkoutFor(segmento) {
+  const src = segmento === 'carrito' ? 'wa-asistente-abandono'
+            : segmento === 'rechazo' ? 'wa-asistente-rechazo'
+            : 'wa-asistente-pago';
+  return `${HOTMART_CHECKOUT}&src=${src}&utm_source=wa-asistente&utm_medium=whatsapp`;
+}
 // Las 5 guías del embudo, en orden cronológico de envío (R1 día 0 … R5 día 8). El link
 // pasa por /api/d (redirige al PDF y registra la descarga). src=WhatsApp-Reenvio para
 // distinguir en las métricas los reenvíos del asistente.
@@ -72,14 +83,21 @@ const MENUS = {
 // ── Respuestas fijas (las {..} se reemplazan solas) ──────────────────────────
 const RESP = {
   info: 'Te cuento rápido, {nombre} 👇\n\n"Sistema de Ingresos Diarios" es un método para que, usando IA, un periodista arme ingresos propios sin depender de un medio. Toda la info y cómo empezar están acá:\n{LANDING}\n\nSi tenés una duda puntual, escribime y te respondo. 🙌',
-  pago: '¡Tranqui, {nombre}, lo resolvemos! 🙌\n\nProbá el pago de nuevo desde acá (muchas veces es solo reintentar):\n{CHECKOUT}\n\nSi te vuelve a fallar, escribí "no puedo pagar" y te paso otra forma.',
+  pago: '¡Tranqui, {nombre}, lo resolvemos! 🙌\n\nProbá de nuevo desde acá (muchas veces es solo reintentar):\n{CHECKOUT}\n\nSi la tarjeta te rechaza, casi siempre es que bloquea cobros del exterior: probá con *otra tarjeta* o con *PayPal* (está en la misma página). Si aún así no sale, escribí *equipo* y te damos una mano. 🙌',
   duda: '¡Dale, contame! 🙌 Escribime en una línea qué duda tenés y te respondo.\n\n(Toda la info también está acá: {LANDING})',
-  acceso: '¡Vamos a resolverlo, {nombre}! 🔑\n\nEl acceso llega al mail con el que compraste (revisá también spam), desde Hotmart. Si no lo encontrás, respondé "no me llegó el acceso" y te lo reenvío.',
-  // TODO Jose: si hay un link para auto-activar Leadr, lo pego acá.
-  leadr: '¡Tu regalo! 🎁 Con la compra tenés 1 mes gratis de Leadr Pro.\n\nSe activa con el mail de tu compra. Si todavía no lo ves activo, respondé "activar Leadr" y lo dejamos listo.',
+  acceso: '¡Vamos a resolverlo, {nombre}! 🔑\n\nEl acceso llega al mail con el que compraste (revisá también spam), de parte de Hotmart. Si no lo encontrás, escribí *equipo* y una persona te lo reenvía enseguida.',
+  // El mes de Leadr Pro se activa SOLO con la compra (API interna course-access); no hay
+  // link de auto-activación → si no aparece, se escala a una persona con la palabra "equipo".
+  leadr: '¡Tu regalo! 🎁 Con la compra ya tenés *1 mes de Leadr Pro activado*.\n\nEntrá a www.leadr.cloud con el *mismo mail* de tu compra y ya lo vas a ver como Pro. Si no aparece, escribí *equipo* y lo dejamos listo. 🙌',
   ack_humano: '¡Dale, {nombre}! 🙌 Ya le aviso al equipo y te responde a la brevedad por acá.',
   ack_media: '¡Recibí tu mensaje, {nombre}! 🙌 Ya se lo paso al equipo y te responde en un rato.',
   aun_no: '¡Sin problema, {nombre}! 🙌 Cuando quieras te muestro cómo se arma, sin apuro. Igual te dejo todo acá por si le querés dar una mirada 👉 {LANDING}\n\nY si te queda alguna duda, escribime por acá.',
+  // Cierre cordial: cuando la persona agradece o dice "lo reviso". NO lleva botones ni link
+  // ni CTA — solo una respuesta cálida para que no quede en visto (antes caía en el menú).
+  cierre: '¡Genial, {nombre}! 🙌 Cualquier cosa que necesites, me escribís por acá cuando quieras.',
+  // Anti-bucle: la persona repitió lo mismo varias veces y el bot no lo pudo resolver →
+  // se corta el loop y se le pasa a una persona (no se le manda el mismo texto otra vez).
+  bucle: '¡Perdón, {nombre}! 🙏 Veo que esto no se te está resolviendo por acá. Ya le aviso a una persona del equipo para que te dé una mano directo.',
 };
 
 // ── Utilidades ───────────────────────────────────────────────────────────────
@@ -90,11 +108,14 @@ function norm(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(DIACRITICOS, '');
 }
 
-function fill(tpl, nombre) {
+// `segmento` (opcional) define el ?src= del link de pago: carrito→abandono, rechazo→rechazo,
+// resto→genérico. Sin segmento (la mayoría de las respuestas, que no llevan {CHECKOUT}) da
+// el link genérico, pero como esos textos no contienen {CHECKOUT} el reemplazo no aplica.
+function fill(tpl, nombre, segmento) {
   return String(tpl || '')
     .replace(/\{nombre\}/g, primerNombre(nombre))
     .replace(/\{LANDING\}/g, LANDING)
-    .replace(/\{CHECKOUT\}/g, CHECKOUT);
+    .replace(/\{CHECKOUT\}/g, checkoutFor(segmento));
 }
 
 // Segmento a partir del contexto de la base (ficha).
@@ -129,16 +150,31 @@ function ultimoRegalo(estado, diasRegistro) {
   return PDF[1];                                          // sin datos → la guía principal
 }
 
+// ¿El mensaje es un cierre cordial ("gracias", "lo reviso", "estaré en contacto")?
+// Se chequea ANTES que 'como/precio' pero devuelve false si trae una pregunta/interés
+// real sobre el curso, para no confundir "gracias, ¿cuánto sale?" con un simple cierre.
+function esCierre(t) {
+  if (!t) return false;
+  if (/quiero saber|como (funciona|empiezo|es|arranco|uso|acced|entro|hago|puedo)|de que se trata|me interesa|explica|contame|cuanto|precio|cuesta|vale|costo|no (me )?(lleg|abre|aparec)/.test(t)) return false;
+  if (/^(muchas gracias|mil gracias|gracias|ok+|oka+|okey|okay|dale|listo|perfecto|genial|buenisimo|barbaro|de acuerdo|entendido|excelente)\b/.test(t)) return true;
+  if (/\bgracias\b|(lo|la) (reviso|revisare|voy a revisar|veo|vere|leo|leere|lee|mirare|miro|chequeo|checo|dare lectura)\b|doy lectura|revisare|lo revisare|en breve|mas tarde|mas rato|espero\b|esperare|quedo esperando|aguardo|estare (en contacto|pendiente|atento|atenta)|quedo (atento|atenta|pendiente)|muy interesante|si tengo (alguna )?(duda|consulta)|cualquier (duda|cosa)|ya (te|les) (aviso|cuento|escribo)/.test(t)) return true;
+  return false;
+}
+
 // Clasifica el texto libre en una intención. Devuelve null si no matchea nada claro.
 function clasificar(texto) {
   const t = norm(texto);
   if (!t) return null;
-  if (/\b(hablar|habla|comunicar|contactar)\b.*(persona|alguien|jose|humano|asesor|vos|uds|ustedes)|hablar con|quiero hablar|atencion al cliente|un asesor|una persona real|operador|\bequipo\b|no (me |se )?abre|no (me )?abrio|no puedo abrir|sigue sin abrir|no (anda|funciona) el link|link (roto|no anda|no funciona)/.test(t)) return 'humano';
+  if (/\b(hablar|habla|comunicar|contactar)\b.*(persona|alguien|jose|humano|asesor|vos|uds|ustedes)|hablar con|quiero hablar|atencion al cliente|un asesor|una persona real|operador|\bequipo\b|no (me |se )?abre|no (me )?abrio|no puedo abrir|sigue sin abrir|no (anda|funciona) el link|link (roto|no anda|no funciona)|con quien (hablo|interactuo|estoy hablando|me comunico)|(sos|eres|es|hablo con) (un |una )?(bot|robot|maquina|maquina|persona|humano|humana)|hay (alguien|una persona|un humano|un asesor)|ampliacion de (su|el|tu) aviso|ampliar (la |el |su |mas )?(info|informacion|aviso)/.test(t)) return 'humano';
   if (/no.*(lleg|recib|aparec|puedo ver)|donde.*(esta|regalo|guia|pdf|link|material|archivo)|no me llega|no me aparece|no lo tengo/.test(t)) return 'no_llego';
-  if (/pag|tarjeta|rechaz|debit|credit|transferenc|no puedo pagar|error al pagar|no me deja pagar|checkout|no se proceso/.test(t)) return 'pago';
+  // Problema de pago o intención de pagar — NO una pregunta de precio. Requiere contexto de
+  // problema/compra ("no puedo pagar", "me rechazó", "quiero pagar"), no el suelto "pag":
+  // así "¿es pago?" / "¿hay que pagar?" caen en 'precio' (más abajo), no acá.
+  if (/no puedo pagar|no me deja pagar|error al pagar|falla el pago|no se proceso|no se concreto|problema.*(pag|tarjeta|cobr)|(tarjeta|pago|cobro).*(rechaz|fall|error|no anda|no funciona)|rechaz|tarjeta|debit|credit|transferenc|checkout|medio de pago|forma de pago|metodo de pago|quiero pagar|como pago|donde pago|link de pago/.test(t)) return 'pago';
   if (/acces|acceder|entrar|ingresar|no me deja entrar|clave|contrasen|usuario|login|donde veo el curso|no puedo ver el curso/.test(t)) return 'acceso';
   if (/leadr|mes gratis|bono|regalo del curso/.test(t)) return 'leadr';
-  if (/precio|cuanto|sale|cuesta|vale|cuanto es/.test(t)) return 'precio';
+  if (/precio|cuanto|sale|cuesta|vale|cuanto es|costo|gratis|gratuit|es pago|de pago|se paga|hay que pagar|tiene (algun )?(costo|precio)/.test(t)) return 'precio';
+  if (esCierre(t)) return 'cierre';
   if (/como (funciona|empiezo|es|arranco|uso|acced|entro)|de que se trata|se trata|informacion|info\b|quiero saber|me interesa|contame|explicame|duda|consulta/.test(t)) return 'como';
   return null;
 }
@@ -183,6 +219,18 @@ function accionEscalar(nombre, ack) {
   };
 }
 
+// Anti-bucle: la persona repitió el mismo pedido varias veces y el bot no lo resolvió.
+// Se corta el loop (no se le manda el mismo texto de nuevo) y se escala a una persona.
+function accionBucle(nombre) {
+  return {
+    clase: 'escalar',
+    body: fill(RESP.bucle, nombre),
+    buttons: null,
+    intent: 'humano',
+    resumen: `🔁 ${primerNombre(nombre)} repitió lo mismo varias veces y el bot no lo pudo resolver — te lo paso.`,
+  };
+}
+
 // Mapea (segmento, intención) → acción concreta.
 function resolver(segmento, intent, nombre, estado, diasRegistro) {
   const n = primerNombre(nombre);
@@ -194,10 +242,11 @@ function resolver(segmento, intent, nombre, estado, diasRegistro) {
     const body = `¡Perdón por eso, ${n}! 🙏 Acá va de nuevo ${g.label} 👇\n${g.link}\n\nSi aún así no se te abre, escribí *equipo* y te paso con una persona que te da una mano. 🙌`;
     return accionTexto(body, 'no_llego', `🤖 Le reenvié ${g.label} a ${n} (dijo que no le llegó).`);
   }
-  if (intent === 'pago') return accionTexto(fill(RESP.pago, nombre), 'pago', `🤖 Le reenvié el link de pago a ${n}.`);
+  if (intent === 'pago') return accionTexto(fill(RESP.pago, nombre, segmento), 'pago', `🤖 Le reenvié el link de pago a ${n}.`);
   if (intent === 'acceso') return accionTexto(fill(RESP.acceso, nombre), 'acceso', `🤖 Le di los pasos de acceso a ${n}.`);
   if (intent === 'leadr') return accionTexto(fill(RESP.leadr, nombre), 'leadr', `🤖 Le expliqué lo del mes de Leadr a ${n}.`);
   if (intent === 'duda') return accionTexto(fill(RESP.duda, nombre), 'duda', `🤖 Le pedí a ${n} que me cuente su duda.`);
+  if (intent === 'cierre') return accionTexto(fill(RESP.cierre, nombre), 'cierre', `🤖 ${n} agradeció / dijo que lo revisa; le respondí cordial sin presionar (sin menú).`);
   if (intent === 'aun_no') return accionTexto(fill(RESP.aun_no, nombre), 'aun_no', `🤖 ${n} dijo "todavía no"; le respondí sin presión y le dejé el link.`);
   if (intent === 'como' || intent === 'precio' || intent === 'info') return accionTexto(fill(RESP.info, nombre), 'info', `🤖 Le pasé la info del curso (con el link) a ${n}.`);
 
@@ -261,7 +310,10 @@ async function sbFetch(path, opts, ms = 2500) {
   } finally { clearTimeout(t); }
 }
 
-// ¿El bot está en pausa para este número porque Jose tomó la conversación?
+// ¿El bot está en pausa para este número? Sí cuando Jose ya tomó la conversación
+// (modo 'humano') o cuando el bot escaló y está ESPERANDO que conteste una persona
+// (modo 'esperando'). En ambos casos respeta el vencimiento (humano_hasta): pasado ese
+// plazo el bot vuelve a atender solo, para que nadie quede en silencio permanente.
 async function enPausa(telefono) {
   if (!SB_URL || !SB_KEY) return false;
   try {
@@ -269,10 +321,25 @@ async function enPausa(telefono) {
     if (!r.ok) return false;
     const rows = await r.json();
     const row = rows && rows[0];
-    if (!row || row.modo !== 'humano') return false;
+    if (!row || (row.modo !== 'humano' && row.modo !== 'esperando')) return false;
     if (!row.humano_hasta) return true;
     return new Date(row.humano_hasta).getTime() > Date.now();
   } catch { return false; }
+}
+
+// Lee el estado de repetición para el anti-bucle: qué intent resolvió el bot por última
+// vez, cuántas veces seguidas y cuándo. Best-effort (si Supabase falla → arranca de cero).
+async function leerRepeticion(telefono) {
+  const vacio = { ultimoIntent: null, repes: 0, ultimoBotEn: null };
+  if (!SB_URL || !SB_KEY) return vacio;
+  try {
+    const r = await sbFetch(`wa_bot_estado?telefono=eq.${encodeURIComponent(telefono)}&select=ultimo_intent,repes,ultimo_bot_en`, {});
+    if (!r.ok) return vacio;
+    const rows = await r.json();
+    const row = rows && rows[0];
+    if (!row) return vacio;
+    return { ultimoIntent: row.ultimo_intent || null, repes: row.repes || 0, ultimoBotEn: row.ultimo_bot_en || null };
+  } catch { return vacio; }
 }
 
 async function upsertEstado(telefono, patch) {
@@ -286,15 +353,26 @@ async function upsertEstado(telefono, patch) {
   } catch { /* best-effort */ }
 }
 
-// Jose respondió por Telegram → el bot cede el control por HUMANO_HORAS.
+// Jose respondió por Telegram → el bot cede el control por HUMANO_HORAS. Además limpia
+// el estado de escalación pendiente (ya la atendió una persona → no hace falta recordarla).
 async function marcarHumano(telefono) {
   const hasta = new Date(Date.now() + HUMANO_HORAS * 3600000).toISOString();
-  await upsertEstado(telefono, { modo: 'humano', humano_hasta: hasta });
+  await upsertEstado(telefono, { modo: 'humano', humano_hasta: hasta, escalado_en: null, recordatorio_en: null });
+}
+
+// El bot escaló a una persona y queda ESPERANDO que Jose conteste. Deja el bot en pausa
+// (con vencimiento, por si nadie contesta) y marca `escalado_en` para el recordatorio
+// diario de "escalaciones sin responder" (api/wa-funnel.js).
+const ESPERA_HORAS = 48; // tope de pausa esperando a un humano; luego el bot retoma
+async function marcarEsperando(telefono) {
+  const hasta = new Date(Date.now() + ESPERA_HORAS * 3600000).toISOString();
+  await upsertEstado(telefono, { modo: 'esperando', humano_hasta: hasta, escalado_en: new Date().toISOString(), recordatorio_en: null, repes: 0 });
 }
 
 // El bot hizo una acción automática → deja registro (y vuelve/queda en modo 'bot').
-async function marcarBot(telefono, intent) {
-  await upsertEstado(telefono, { modo: 'bot', ultimo_intent: intent || null, ultimo_bot_en: new Date().toISOString(), humano_hasta: null });
+// `repes` = cuántas veces seguidas resolvió el MISMO intent (para el anti-bucle).
+async function marcarBot(telefono, intent, repes) {
+  await upsertEstado(telefono, { modo: 'bot', ultimo_intent: intent || null, ultimo_bot_en: new Date().toISOString(), humano_hasta: null, ...(repes != null ? { repes } : {}) });
 }
 
 // ── Temas de Telegram (buzón por cliente) ────────────────────────────────────
@@ -331,4 +409,4 @@ async function logChat(row) {
   return logConversacion(row);
 }
 
-module.exports = { decidir, segmentoDe, clasificar, MENUS, RESP, enPausa, marcarHumano, marcarBot, getTopicId, setTopicId, getPhoneByTopic, logChat };
+module.exports = { decidir, segmentoDe, clasificar, esCierre, accionBucle, MENUS, RESP, enPausa, leerRepeticion, marcarHumano, marcarEsperando, marcarBot, getTopicId, setTopicId, getPhoneByTopic, logChat };
