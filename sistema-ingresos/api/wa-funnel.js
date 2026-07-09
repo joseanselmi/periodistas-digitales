@@ -438,10 +438,52 @@ async function computeStats(contacts) {
   return { total_contactos: contacts.length, enviados: { regalo3: st.r3, regalo4: st.r4, regalo5_email: st.mail5, oferta: st.oferta, seguimiento: st.seg, aun_sin_regalo: st.sin_enviar, con_telefono: st.con_tel }, entregas_lecturas: analytics };
 }
 
+// Diagnóstico INTERPRETADO del funnel: no solo números, sino un veredicto en criollo de si
+// está sano o roto, y por qué. Va arriba de todo en el reporte y define el asunto del mail
+// (para que un problema se vea sin abrirlo). `runInfo` = datos de la corrida; `stats` = estado
+// parado por etapa. Es el MOLDE de "verificación interpretada" para replicar en cada flujo.
+function diagnosticarFunnel(stats, runInfo) {
+  const r = runInfo || {};
+  const e = stats.enviados || {};
+  const problemas = [];
+  // 1) El mensaje que VENDE no está saliendo (el fallo silencioso que nos costó una semana).
+  if ((r.due_oferta || 0) > 0 && (r.sent_oferta || 0) === 0) {
+    problemas.push({ n: 'critico', t: `La OFERTA no está saliendo: ${r.due_oferta} leads listos y 0 enviadas en esta corrida. Es el mensaje que vende — revisar ya: plantilla en Meta, flag OFERTA_V2 o errores de envío.` });
+  } else if ((e.oferta || 0) === 0 && ((e.regalo4 || 0) + (e.regalo3 || 0)) > 20) {
+    // 2) Nadie llegó NUNCA a la oferta pese a haber gente en etapas previas (embudo no completa).
+    problemas.push({ n: 'critico', t: `0 personas recibieron la oferta pese a ${(e.regalo4 || 0) + (e.regalo3 || 0)} en etapas previas. El embudo no está completando hasta la venta.` });
+  }
+  // 3) Muchos envíos fallan (plantilla rechazada / problema con Meta).
+  if ((r.attempted || 0) >= 10 && (r.fallidos || 0) / r.attempted > 0.4) {
+    problemas.push({ n: 'critico', t: `Fallan ${r.fallidos} de ${r.attempted} envíos (${Math.round((100 * r.fallidos) / r.attempted)}%). Probable plantilla rechazada o problema con Meta.` });
+  }
+  // 4) Backlog creciendo: entran leads más rápido de lo que se procesan.
+  if ((r.remaining || 0) > 80) {
+    problemas.push({ n: 'alerta', t: `Cola grande: quedan ${r.remaining} sin procesar tras la corrida. El funnel va más lento que la entrada de leads y puede demorar a los que esperan.` });
+  }
+  if (!problemas.length) {
+    return { nivel: 'ok', titulo: '✅ Funnel sano', detalle: `La oferta está saliendo${r.sent_oferta ? ` (${r.sent_oferta} enviadas en la última corrida)` : ''} y los envíos no muestran fallos anómalos.` };
+  }
+  const critico = problemas.some((p) => p.n === 'critico');
+  return {
+    nivel: critico ? 'critico' : 'alerta',
+    titulo: critico ? '🔴 PROBLEMA en el funnel — requiere tu atención' : '🟡 Aviso en el funnel',
+    detalle: problemas.map((p) => `${p.n === 'critico' ? '🔴' : '🟡'} ${p.t}`).join('<br><br>'),
+  };
+}
+
 // Manda el reporte diario por email vía Brevo (a Jose).
-async function sendReport(stats) {
+async function sendReport(stats, runInfo) {
   const key = process.env.BREVO_API_KEY;
   const a = stats.enviados;
+  // Diagnóstico interpretado arriba de todo (verde/amarillo/rojo + por qué).
+  const salud = diagnosticarFunnel(stats, runInfo);
+  const colBg = salud.nivel === 'critico' ? '#3a0d18' : salud.nivel === 'alerta' ? '#3a2f0d' : '#0d2f22';
+  const colBd = salud.nivel === 'critico' ? '#e0396f' : salud.nivel === 'alerta' ? '#e0a83a' : '#22c58a';
+  const saludHtml = `<div style="background:${colBg};border-left:5px solid ${colBd};border-radius:10px;padding:16px 18px;margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:16px;font-weight:800;color:#ffffff;margin-bottom:6px;">${salud.titulo}</div>
+      <div style="font-size:14px;line-height:1.65;color:#e8e8f0;">${salud.detalle}</div>
+    </div>`;
   const av = stats.entregas_lecturas || {};
   const leidos = (av.disponible === false)
     ? '<p><i>Los datos de "abiertos/leídos" de Meta todavía no están habilitados (se activan a los pocos días de una cuenta nueva). En cuanto estén, aparecen acá.</i></p>'
@@ -451,7 +493,7 @@ async function sendReport(stats) {
   const r5open = o.disponible
     ? `<li style="margin-left:18px;list-style:circle;">De ese Regalo 5: <b>${o.aperturas_unicas ?? 0}</b> lo abrieron, <b>${o.clics_unicos ?? 0}</b> hicieron clic en la guía</li>`
     : '';
-  const html = `<h2>📊 Funnel WhatsApp — reporte diario</h2>
+  const html = `${saludHtml}<h2>📊 Funnel WhatsApp — reporte diario</h2>
     <ul>
       <li><b>Regalo 3</b> enviado a <b>${a.regalo3}</b> personas</li>
       <li><b>Regalo 4</b> enviado a <b>${a.regalo4}</b></li>
@@ -468,7 +510,7 @@ async function sendReport(stats) {
     body: JSON.stringify({
       sender: { name: 'Reporte Funnel', email: 'jose@sistemadeingresosdiariosia.com' },
       to: [{ email: 'joseanselmi27@gmail.com' }],
-      subject: '📊 Funnel WhatsApp — reporte diario',
+      subject: salud.nivel === 'critico' ? '🔴 Funnel WhatsApp — PROBLEMA (requiere tu atención)' : salud.nivel === 'alerta' ? '🟡 Funnel WhatsApp — aviso' : '✅ Funnel WhatsApp — reporte diario',
       htmlContent: html,
     }),
   });
@@ -619,8 +661,9 @@ export default async function handler(req, res) {
       return;
     }
 
-    // --- live --- (cap por corrida para no pasar el timeout de la función serverless)
-    const LIMIT = 80;
+    // --- live --- (cap por corrida para NO pasar el timeout de 60 s de la función; cada lead
+    // cuesta ~1 s entre Meta y Brevo → 40 entra cómodo dejando margen para el reporte).
+    const LIMIT = 40;
     const batch = plan.slice(0, LIMIT);
     const results = [];
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
@@ -667,7 +710,16 @@ export default async function handler(req, res) {
     // En la corrida automática del cron, mandar además el reporte diario por email.
     let report = null;
     if (mode === 'cron') {
-      try { report = await sendReport(await computeStats(await brevoGetContacts())); } catch (e) { report = { ok: false, error: String(e && e.message || e) }; }
+      // Datos de ESTA corrida para el diagnóstico interpretado del reporte.
+      const runInfo = {
+        due_oferta: plan.filter((p) => p.channel === 'wa' && p.send === 5).length,
+        sent_oferta: results.filter((x) => x.sent === 5).length,
+        attempted: batch.length,
+        fallidos: results.filter((x) => x.error !== undefined).length,
+        enviados_ok: results.filter((x) => x.sent !== undefined).length,
+        remaining: plan.length - batch.length,
+      };
+      try { report = await sendReport(await computeStats(await brevoGetContacts()), runInfo); } catch (e) { report = { ok: false, error: String(e && e.message || e) }; }
     }
     res.status(200).json({ mode, live: true, due_total: plan.length, attempted: batch.length, remaining: plan.length - batch.length, report: report ? report.ok : null, results });
   } catch (e) {
