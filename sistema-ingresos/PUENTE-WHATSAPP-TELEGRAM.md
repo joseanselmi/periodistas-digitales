@@ -137,17 +137,35 @@ cliente están ahí arriba, a propósito, para editarlos sin tocar código) y lo
 - Identifica el segmento con la misma ficha: 🟢 comprador · 🟡 carrito · 🟠 pago rechazado ·
   🔵 lead · 🆕 nuevo.
 - Clasifica el mensaje (tolerante a typos/acentos) en una intención: `no_llego`, `como`/`info`,
-  `pago`, `acceso`, `leadr`, `precio`, `humano`. Si no la entiende → manda un **menú de
+  `pago`, `acceso`, `leadr`, `precio`, `cierre`, `humano`. Si no la entiende → manda un **menú de
   botones** propio del segmento (WhatsApp permite botones gratis dentro de la ventana de 24 h).
 - Resuelve solo: `no_llego` de un lead → **reenvía el último regalo** (sabe cuál por el
-  `WA_STAGE` de Brevo); `como`/`precio` → info del curso (landing, **sin** revelar precio);
-  `pago` → link de pago; `acceso`/`leadr` → ayuda post-compra.
-- `humano` (o botón "Hablar con José", o un audio/imagen que no puede leer) → le manda al
-  cliente un "ya le aviso a José" y **escala** a Telegram con la ficha completa.
+  `WA_STAGE` de Brevo); `como`/`precio` → info del curso (landing, **sin** revelar precio —
+  `precio` ahora también engancha con "costo", "gratis", "es pago"); `pago` → link de pago;
+  `acceso`/`leadr` → ayuda post-compra.
+- `cierre` (agradecimientos / "lo reviso" / "estaré en contacto") → respuesta **cálida sin
+  botones ni CTA**. Antes caían en el menú y quedaba robótico ("elegí una opción 👇").
+- `humano` (o botón "Hablar con equipo", o un audio/imagen que no puede leer, o **"¿con quién
+  hablo? / ¿es un bot? / ampliación del aviso"**) → le manda al cliente un "ya le aviso al
+  equipo" y **escala** a Telegram con la ficha completa.
 
-**Handoff bot↔humano (tabla `wa_bot_estado`):** apenas Jose responde algo por Telegram,
-`tg-webhook.js` marca ese número como `humano` por 24 h → el bot **no le pisa** la
-conversación. Pasadas las 24 h vuelve a atender solo.
+**Anti-bucle (desde 2026-07-09).** Si el bot ya resolvió el MISMO intent hace poco (<30 min)
+y la persona vuelve a caer en lo mismo —el caso típico: tocar "📥 No llegó mi guía" una y otra
+vez y recibir siempre el mismo link, o "Hola" repetido— **deja de repetir el mismo texto y
+escala a una persona**. Umbral por intent (`no_llego`/`menu`/`pago`/`acceso` = 2ª vez;
+`info` = 3ª). El contador vive en `wa_bot_estado.repes` (se resetea al cambiar de intent o
+pasados 30 min).
+
+**Handoff bot↔humano (tabla `wa_bot_estado`):**
+- Cuando el bot **escala**, deja el número en modo `esperando` (con `escalado_en`) y el bot
+  queda en pausa hasta 48 h (por si nadie contesta, luego retoma).
+- Apenas **Jose responde** por Telegram, `tg-webhook.js` lo pasa a `humano` por 24 h → el bot
+  **no le pisa** la conversación (y limpia la escalación pendiente).
+- **Recordatorio de escalaciones sin responder (#2):** el cron diario de `wa-funnel.js`
+  (`?mode=recordatorios` para probarlo aislado) busca los `esperando` de +3 h aún sin respuesta
+  y **le pinga a Jose por Telegram** al tema del cliente, para que ninguna quede en el olvido
+  (pasó con 4 pedidos de "hablar con equipo" del 3–8 jul que nunca se contestaron). Marca
+  `recordatorio_en` para avisar una sola vez por escalación.
 
 **Intents/segmentos probados** con 12 casos (incluidos typos como "no me llego", "komo
 funciona", "kiero hablar con alguien") — todos rutean bien. Falta: encender el flag tras la
