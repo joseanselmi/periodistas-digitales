@@ -392,7 +392,7 @@ async function brevoSetSeg(email) {
   if (!r.ok) throw new Error(`Brevo setSeg ${r.status}: ${await r.text()}`);
 }
 
-async function sendTemplate(payload) {
+async function sendTemplate(payload, logsOut) {
   const token = process.env.WHATSAPP_TOKEN;
   const pn = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const r = await fetch(`${GRAPH}/${pn}/messages`, {
@@ -403,8 +403,13 @@ async function sendTemplate(payload) {
   const j = await r.json().catch(() => ({}));
   const wamid = j && j.messages && j.messages[0] && j.messages[0].id;
   const tmpl = payload && payload.template && payload.template.name;
-  await logMensaje({ automatizacion: 'funnel-regalos', to: payload && payload.to, tipo: tmpl, categoria_meta: 'marketing', ok: r.ok, wamid });
-  if (r.ok) await logConversacion({ telefono: payload && payload.to, direccion: 'out', origen: 'funnel', texto: REGALO_TEXTO[tmpl] || `📨 Plantilla ${tmpl}`, tipo: 'plantilla', wamid, intent: 'regalo' });
+  // Logs best-effort (costos + hilo del inbox) EN SEGUNDO PLANO: no se esperan acá, para no
+  // frenar el próximo envío (el cron tiene 60 s; cada await de log resta throughput). Las
+  // promesas se juntan en logsOut y se esperan todas juntas al final de la corrida. Si no se
+  // pasa logsOut (uso suelto), se esperan acá como antes.
+  const logs = [logMensaje({ automatizacion: 'funnel-regalos', to: payload && payload.to, tipo: tmpl, categoria_meta: 'marketing', ok: r.ok, wamid })];
+  if (r.ok) logs.push(logConversacion({ telefono: payload && payload.to, direccion: 'out', origen: 'funnel', texto: REGALO_TEXTO[tmpl] || `📨 Plantilla ${tmpl}`, tipo: 'plantilla', wamid, intent: 'regalo' }));
+  if (logsOut) logsOut.push(...logs); else await Promise.allSettled(logs);
   return { ok: r.ok, status: r.status, body: j, wamid };
 }
 
@@ -482,6 +487,22 @@ function nextDue(daysOld, stageSent, daysSinceLast) {
     }
   }
   return null;
+}
+
+// Prioridad de negocio para ordenar la cola de envíos. CLAVE: el cron tiene ~60 s y procesa
+// la cola EN ORDEN hasta que se acaba el tiempo (procesa ~40 leads y Vercel lo corta). Si la
+// OFERTA (la que vende) quedara al fondo, detrás del backlog de Regalos 3/4, la función se
+// muere antes de llegar a ella y NUNCA se envía. Por eso: oferta primero, seguimiento último.
+// Menor número = se manda antes.
+function prioridad(p) {
+  if (p.channel === 'wa') {
+    if (p.send === 5) return 1; // Oferta — la que vende
+    if (p.send === 4) return 2; // Regalo 4
+    if (p.send === 3) return 4; // Regalo 3
+  }
+  if (p.channel === 'email') return 3;       // Regalo 5 (email)
+  if (p.channel === 'seguimiento') return 5; // reactivación de fríos, al final
+  return 6;
 }
 
 export default async function handler(req, res) {
@@ -588,6 +609,10 @@ export default async function handler(req, res) {
       }
     }
 
+    // Ordenar por prioridad de negocio (oferta primero). Sin esto, con un backlog grande el
+    // cron gasta sus 60 s repartiendo Regalos 3/4 y se apaga antes de llegar a la oferta.
+    plan.sort((a, b) => prioridad(a) - prioridad(b));
+
     if (!live) {
       // dry: mostrar el plan sin ejecutar
       res.status(200).json({ mode, live: false, enabled, would_send: plan.length, plan: plan.slice(0, 100) });
@@ -598,6 +623,7 @@ export default async function handler(req, res) {
     const LIMIT = 80;
     const batch = plan.slice(0, LIMIT);
     const results = [];
+    const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
     for (const p of batch) {
       if (p.channel === 'email') {
         if (!mail5Enabled) { results.push({ email: p.email, skipped: 'MAIL5_ENABLED!=1 (regalo 5 apagado)' }); continue; }
@@ -614,7 +640,7 @@ export default async function handler(req, res) {
       if (p.channel === 'seguimiento') {
         if (!seguimientoEnabled) { results.push({ email: p.email, skipped: 'SEGUIMIENTO_ENABLED!=1 (seguimiento apagado)' }); continue; }
         if (!p.to || p.to.length < 8) { results.push({ email: p.email, skipped: 'sin telefono valido', phoneRaw: p.phoneRaw }); continue; }
-        const sent = await sendTemplate(buildSeguimientoPayload(p.to, p.nombre));
+        const sent = await sendTemplate(buildSeguimientoPayload(p.to, p.nombre), pendingLogs);
         if (sent.ok) {
           try { await brevoSetSeg(p.email); } catch (e) { results.push({ email: p.email, sent: 'seguimiento', warn: 'enviado pero fallo setSeg: ' + e.message }); continue; }
           results.push({ email: p.email, sent: 'seguimiento' });
@@ -626,7 +652,7 @@ export default async function handler(req, res) {
       }
       if (!p.to || p.to.length < 8) { results.push({ email: p.email, skipped: 'sin telefono valido', phoneRaw: p.phoneRaw }); continue; }
       const payload = buildTemplatePayload(p.send, p.to, p.nombre);
-      const sent = await sendTemplate(payload);
+      const sent = await sendTemplate(payload, pendingLogs);
       if (sent.ok) {
         try { await brevoSetStage(p.email, p.send); } catch (e) { /* log abajo */ results.push({ email: p.email, sent: p.send, warn: 'enviado pero fallo setStage: ' + e.message }); continue; }
         results.push({ email: p.email, sent: p.send, wamid: sent.body?.messages?.[0]?.id || null });
@@ -635,6 +661,9 @@ export default async function handler(req, res) {
       }
       console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: p.send, ok: sent.ok }));
     }
+    // Esperar los logs best-effort que quedaron en vuelo (costos + hilo del inbox), para no
+    // perderlos aunque no se hayan awaiteado en cada envío.
+    await Promise.allSettled(pendingLogs);
     // En la corrida automática del cron, mandar además el reporte diario por email.
     let report = null;
     if (mode === 'cron') {
