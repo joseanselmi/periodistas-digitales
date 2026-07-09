@@ -493,14 +493,49 @@ async function sendReport(stats, runInfo) {
   const r5open = o.disponible
     ? `<li style="margin-left:18px;list-style:circle;">De ese Regalo 5: <b>${o.aperturas_unicas ?? 0}</b> lo abrieron, <b>${o.clics_unicos ?? 0}</b> hicieron clic en la guía</li>`
     : '';
-  const html = `${saludHtml}<h2>📊 Funnel WhatsApp — reporte diario</h2>
+  // Tabla de continuidad de HOY (qué debía salir vs qué salió vs qué quedó en cola), con la
+  // fuente de cada "debía" bien explícita. Solo si la corrida trajo datos por etapa.
+  const et = (runInfo && runInfo.etapas) || [];
+  const filaEtapa = (e) => {
+    const env = e.enviado > 0 ? `<span style="color:#22c58a;font-weight:700;">${e.enviado}</span>` : '0';
+    const cola = e.apagado
+      ? '<span style="color:#8a8aa0;">apagado</span>'
+      : (e.cola > 0 ? `<span style="color:#e0a83a;font-weight:700;">${e.cola}</span>` : '0');
+    return `<tr>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;color:#e8e8f0;">${e.label}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;color:#e8e8f0;">${e.debido}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${env}</td>
+        <td style="padding:7px 10px;border-top:1px solid #23233a;text-align:center;">${cola}</td>
+      </tr>`;
+  };
+  const contHtml = et.length ? `<div style="background:#0f0f1a;border-radius:12px;padding:16px 18px;margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:15px;font-weight:800;color:#ffffff;margin-bottom:8px;">📆 Hoy: qué debía salir vs qué salió</div>
+      <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:14px;">
+        <tr>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;">Etapa</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Debía</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">Enviado</td>
+          <td style="padding:6px 10px;color:#8a8aa0;font-weight:700;text-align:center;">En cola</td>
+        </tr>
+        ${et.map(filaEtapa).join('')}
+      </table>
+      <div style="font-size:12px;color:#8a8aa0;line-height:1.65;margin-top:12px;">
+        <b>Cómo se obtiene el "Debía":</b> el <b>Regalo 3</b> son los leads nuevos que hoy cumplen 5 días
+        (la entrada del embudo — depende de cuántos entran por Facebook, no se puede saber de antemano).
+        El <b>Regalo 4</b>, el <b>5</b>, la <b>Oferta</b> y el <b>Seguimiento</b> están <b>determinados por los
+        envíos de días previos</b>: nadie llega a un paso sin haber recibido el anterior, así que ese número es
+        exacto. "En cola" = lo que quedó para la próxima corrida (o "apagado" si el paso está desactivado por flag).
+      </div>
+    </div>` : '';
+  const html = `${saludHtml}${contHtml}<h2>📊 Funnel WhatsApp — reporte diario</h2>
+    <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8a8aa0;margin:0 0 4px;"><b>Estado del embudo</b> — dónde está parado cada lead ahora (esto NO es lo que se envió hoy):</p>
     <ul>
-      <li><b>Regalo 3</b> enviado a <b>${a.regalo3}</b> personas</li>
-      <li><b>Regalo 4</b> enviado a <b>${a.regalo4}</b></li>
-      <li><b>Regalo 5</b> (email agentes IA) enviado a <b>${a.regalo5_email}</b></li>
+      <li>En <b>Regalo 3</b> (ya lo recibieron, esperan el 4): <b>${a.regalo3}</b></li>
+      <li>En <b>Regalo 4</b>: <b>${a.regalo4}</b></li>
+      <li>Recibieron el <b>Regalo 5</b> (email agentes IA): <b>${a.regalo5_email}</b></li>
       ${r5open}
-      <li><b>Oferta</b> enviada a <b>${a.oferta}</b></li>
-      <li><b>Seguimiento</b> (reactivación de fríos) enviado a <b>${a.seguimiento || 0}</b></li>
+      <li>Recibieron la <b>Oferta</b>: <b>${a.oferta}</b></li>
+      <li>Recibieron <b>Seguimiento</b> (reactivación de fríos): <b>${a.seguimiento || 0}</b></li>
       <li>Todavía sin su primer regalo: ${a.aun_sin_regalo} (esperan llegar al día 5)</li>
       <li>Leads con teléfono: ${a.con_telefono} de ${stats.total_contactos}</li>
     </ul>${leidos}`;
@@ -713,13 +748,28 @@ export default async function handler(req, res) {
     // Se puede reactivar con REPORTE_FUNNEL_INDIVIDUAL=1 (trae el diagnóstico con datos de la corrida).
     if (mode === 'cron' && process.env.REPORTE_FUNNEL_INDIVIDUAL === '1') {
       // Datos de ESTA corrida para el diagnóstico interpretado del reporte.
+      const planWA = (s) => plan.filter((p) => p.channel === 'wa' && p.send === s).length;
+      const sentWA = (s) => results.filter((x) => x.sent === s).length;
+      const etapaRow = (label, fuente, debido, enviado, apagado) => ({ label, fuente, debido, enviado, cola: Math.max(0, debido - enviado), apagado: !!apagado });
       const runInfo = {
-        due_oferta: plan.filter((p) => p.channel === 'wa' && p.send === 5).length,
-        sent_oferta: results.filter((x) => x.sent === 5).length,
+        due_oferta: planWA(5),
+        sent_oferta: sentWA(5),
         attempted: batch.length,
         fallidos: results.filter((x) => x.error !== undefined).length,
         enviados_ok: results.filter((x) => x.sent !== undefined).length,
         remaining: plan.length - batch.length,
+        // Continuidad de HOY por etapa: qué DEBÍA salir (el plan, antes del cap) vs qué SALIÓ.
+        // "debido" limpio según su fuente: R3 = leads nuevos que hoy cumplen día 5 (entrada del
+        // embudo → depende del ingreso por Facebook, no se sabe de antemano). R4/R5/Oferta/
+        // Seguimiento = determinado por envíos previos (no se llega a un paso sin el anterior),
+        // así que ese número es exacto y trazable.
+        etapas: [
+          etapaRow('🎁 Regalo 3 (día 5 · entrada)', 'nuevos', planWA(3), sentWA(3), false),
+          etapaRow('🎁 Regalo 4 (día 7)', 'previos', planWA(4), sentWA(4), false),
+          etapaRow('📧 Regalo 5 (email · día 8)', 'previos', plan.filter((p) => p.channel === 'email').length, results.filter((x) => x.sent === 'mail5').length, !mail5Enabled),
+          etapaRow('💰 Oferta (día 9)', 'previos', planWA(5), sentWA(5), false),
+          etapaRow('🔔 Seguimiento (reactivación)', 'previos', plan.filter((p) => p.channel === 'seguimiento').length, results.filter((x) => x.sent === 'seguimiento').length, !seguimientoEnabled),
+        ],
       };
       try { report = await sendReport(await computeStats(await brevoGetContacts()), runInfo); } catch (e) { report = { ok: false, error: String(e && e.message || e) }; }
     }
