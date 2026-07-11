@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El sistema que conecta todo: 5 pilares para que tu periódico digital te genere ingresos</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+.page-inner { width:100%; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-logo-row { display:flex; align-items:center; gap:16px; margin-bottom:40px; }
+.cover-mark { width:72px; height:72px; flex-shrink:0; }
+.cover-mark img { width:100%; height:100%; object-fit:contain; }
+.cover-brandname { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.6rem; color:var(--text); letter-spacing:-.01em; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.2rem,5.6vw,3.3rem); margin-bottom:20px; max-width:580px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:480px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:18px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.05rem; margin-bottom:22px; }
+h3 { font-size:1.3rem; margin:28px 0 12px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+
+.pilar-tag { display:inline-flex; align-items:center; gap:8px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:.85rem; letter-spacing:.04em; text-transform:uppercase; color:var(--indigo); margin-bottom:8px; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-size: .98rem;
+    color: var(--text);
+    font-style: italic;
+}
+.pregunta {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 20px 0 24px;
+}
+.pregunta-label { display:block; font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--cyan); margin-bottom:8px; }
+.pregunta p { color:var(--text); font-size:1.02rem; font-style:italic; margin-bottom:0; }
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 4px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:16px; }
+
+.pilares-resumen { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+.pilar-mini { display:flex; align-items:baseline; gap:14px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+.pilar-mini-num { font-family:'Space Grotesk',sans-serif; font-weight:800; color:var(--indigo); min-width:20px; }
+.pilar-mini-text strong { color:var(--text); }
+.pilar-mini-text { color:var(--muted); font-size:.92rem; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.callout, .callout-green, .quote, .pregunta, .cta-box, .pilar-mini {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-logo-row">
+        <div class="cover-mark"><img src="logo-periodistas-digitales.webp" alt="Periodistas Digitales"></div>
+        <div class="cover-brandname">Periodistas Digitales</div>
+    </div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Guía gratuita</div>
+        <h1>El sistema que conecta todo:<br><span class="accent">5 pilares</span> para que tu periódico digital te genere ingresos.</h1>
+        <p class="cover-sub">Ya sabes producir contenido con IA y ya tienes tu canal en Instagram y Facebook. Esta guía te muestra las 5 piezas que faltan para que eso se convierta en un ingreso que se repite cada semana, no en un golpe de suerte.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── TOC ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Antes de arrancar</div>
+    <h2>Qué vas a encontrar acá</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Por qué el contenido y el canal no alcanzan solos</div><div class="toc-desc">La pieza que falta para que se convierta en ingreso</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">Pilar 1 — Cliente ideal</div><div class="toc-desc">A quién le hablas, en concreto</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Pilar 2 — Oferta de alto impacto</div><div class="toc-desc">Qué le ofreces, más allá de las noticias gratis</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">Pilar 3 — Sistema de ventas</div><div class="toc-desc">Cómo se vende sin que tengas que estar ahí todo el día</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">Pilar 4 — Atracción y tráfico</div><div class="toc-desc">Por qué tu contenido ya es la mitad de este pilar</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">Pilar 5 — Optimización y escalamiento</div><div class="toc-desc">Por qué nadie arranca perfecto, y no pasa nada</div></div></div>
+        <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-title">Cómo se conectan los 5</div><div class="toc-desc">El mapa completo, antes de cerrar</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 01 POR QUÉ ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — La pieza que falta</div>
+    <h2>Por qué el contenido y el canal no alcanzan solos</h2>
+    <p>Con los regalos anteriores ya tienes dos piezas funcionando: sabes producir contenido más rápido con IA, y tienes un canal propio en Instagram y Facebook con un calendario de publicación. Eso ya te pone por delante de la mayoría — pero contenido más audiencia no es lo mismo que ingreso.</p>
+    <p>Tener lectores que te siguen todos los días es solo la mitad del camino. La otra mitad es un sistema que conecte esa atención con algo que se pueda repetir cada semana, no un golpe de suerte aislado.</p>
+    <div class="quote">No es que te falte trabajar más. Es que te faltan piezas específicas que, conectadas, hacen que lo que ya construiste empiece a generar ingresos de forma constante.</div>
+    <p>Esas piezas son 5. No vamos a explicarte cómo implementar cada una al detalle en esta guía — eso es justamente lo que enseña el sistema completo, paso a paso — pero sí vas a entender qué es cada una, por qué importa para tu periódico digital en particular, y con qué pregunta empezar a pensarla.</p>
+  </div>
+</section>
+
+<!-- ─── 02 PILAR 1 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <span class="pilar-tag">Pilar 1 de 5</span>
+    <h2>Cliente ideal</h2>
+    <p>El error más común no es de periodistas — es de cualquiera que arranca un negocio digital: crear contenido y, más adelante, una oferta, sin saber con precisión a quién le están hablando. Cuando el mensaje es "para todos", termina sin conectar de verdad con nadie.</p>
+    <p>Conocer a tu cliente ideal no es solo saber su edad o su ciudad — es entender sus <strong>dolores</strong> (lo que le frustra, lo que no encuentra en otro lado) y sus <strong>aspiraciones</strong> (lo que querría lograr). Esa es la diferencia entre un periódico digital que se siente genérico y uno que se siente hecho a medida para quien lo lee.</p>
+    <div class="pregunta">
+        <span class="pregunta-label">Para pensar</span>
+        <p>¿Qué problema concreto tiene la persona que sigue tu periódico, que ningún otro medio de tu zona o nicho le está resolviendo todavía?</p>
+    </div>
+    <p>Un atajo real: los comentarios y mensajes directos que ya recibes en Instagram y Facebook (los mismos del Regalo 3) son la fuente más honesta de esos dolores — no hace falta inventarlos ni adivinarlos.</p>
+  </div>
+</section>
+
+<!-- ─── 03 PILAR 2 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <span class="pilar-tag">Pilar 2 de 5</span>
+    <h2>Oferta de alto impacto</h2>
+    <p>Una oferta de alto impacto no es simplemente "algo que vendes" — es empaquetar una solución tan clara al problema de tu cliente ideal, que decir que no se siente raro. No depende de tener un precio bajo: depende de que la persona sienta que el valor que recibe supera por mucho lo que paga.</p>
+    <p>Para un periódico digital, esto casi nunca es "vender publicidad" como primer paso. Suele ser algo más cercano a tu audiencia: contenido exclusivo, un informe especial sobre un tema que les importa, acceso a una comunidad cerrada, alertas tempranas de noticias relevantes para ellos.</p>
+    <div class="pregunta">
+        <span class="pregunta-label">Para pensar</span>
+        <p>Si tu lector más fiel te pagara hoy mismo por algo extra, ¿qué sería?</p>
+    </div>
+    <p>No necesitas tener la respuesta perfecta todavía — necesitas empezar a anotar ideas cada vez que un lector te pide algo que hoy no le estás dando.</p>
+  </div>
+</section>
+
+<!-- ─── 04 PILAR 3 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <span class="pilar-tag">Pilar 3 de 5</span>
+    <h2>Sistema de ventas</h2>
+    <p>Vender no puede depender de que estés disponible para responder cada mensaje en el momento exacto en que alguien quiere comprar. Un sistema de ventas es el camino automático que recorre una persona desde que ve tu contenido hasta que decide — sin que tengas que estar empujando cada paso a mano.</p>
+    <p>El link en tu bio que armaste en el Regalo 3 ya es el primer eslabón de ese camino. Lo que todavía falta es lo que hay del otro lado de ese link: un lugar que explique con claridad la oferta del Pilar 2, y una forma de que la persona pueda sumarse o pagar sin que vos tengas que estar presente en ese instante.</p>
+    <div class="pregunta">
+        <span class="pregunta-label">Para pensar</span>
+        <p>Hoy, si alguien quiere "comprar" lo que ofreces, ¿a dónde llega exactamente, y qué tiene que hacer?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 05 PILAR 4 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <span class="pilar-tag">Pilar 4 de 5</span>
+    <h2>Atracción y tráfico</h2>
+    <p>Tráfico no es lo mismo que tener más seguidores — es la cantidad de personas que efectivamente entran al camino que armaste en el Pilar 3. Puedes tener una audiencia grande y, aun así, que muy pocos lleguen a ver tu oferta si nada los dirige hacia ahí.</p>
+    <p>Esto es exactamente para lo que sirve lo que ya construiste con los Regalos 1, 2 y 3: el calendario de contenido y los 4 formatos no son solo para informar — son lo que, todos los días, le recuerda a tu audiencia que existes y la acerca un paso más a ese camino de venta.</p>
+    <div class="callout-green">
+        <strong>Ya tienes esta pieza más avanzada de lo que crees:</strong> si sigues publicando con el calendario del Regalo 3, ya estás generando tráfico — solo falta que ese tráfico tenga, del otro lado, algo a lo que llegar (Pilares 2 y 3).
+    </div>
+  </div>
+</section>
+
+<!-- ─── 06 PILAR 5 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <span class="pilar-tag">Pilar 5 de 5</span>
+    <h2>Optimización y escalamiento</h2>
+    <p>Ningún periódico digital arranca perfecto, y eso no es una señal de que algo está mal. La optimización es simplemente mirar qué contenido trae más gente, qué mensaje genera más respuestas, y qué oferta convierte mejor — para repetir lo que funciona y ajustar lo que no.</p>
+    <p>El escalamiento viene después, no antes: una vez que algo empieza a funcionar de forma consistente, ahí tiene sentido invertir más tiempo o presupuesto en hacer más de lo mismo.</p>
+    <div class="quote">Optimizar → mejores resultados → escalar → resultados todavía mejores. En ese orden, no al revés.</div>
+  </div>
+</section>
+
+<!-- ─── 07 CIERRE ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">07 — Antes de cerrar</div>
+    <h2>Cómo se conectan los 5</h2>
+    <div class="pilares-resumen">
+        <div class="pilar-mini"><span class="pilar-mini-num">1</span><span class="pilar-mini-text"><strong>Cliente ideal</strong> define qué oferta tiene sentido hacer</span></div>
+        <div class="pilar-mini"><span class="pilar-mini-num">2</span><span class="pilar-mini-text"><strong>Oferta de alto impacto</strong> necesita un sistema de ventas para llegar a la gente</span></div>
+        <div class="pilar-mini"><span class="pilar-mini-num">3</span><span class="pilar-mini-text"><strong>Sistema de ventas</strong> necesita tráfico para que alguien lo recorra</span></div>
+        <div class="pilar-mini"><span class="pilar-mini-num">4</span><span class="pilar-mini-text"><strong>Atracción y tráfico</strong> ya lo estás generando con tu contenido y tu canal</span></div>
+        <div class="pilar-mini"><span class="pilar-mini-num">5</span><span class="pilar-mini-text"><strong>Optimización</strong> ajusta los 4 anteriores hasta que el ingreso se repita</span></div>
+    </div>
+    <p>Con los Regalos 1, 2 y 3 ya tienes dos de las cinco piezas funcionando: producción de contenido y atracción/tráfico. Te faltan tres — cliente ideal definido con precisión, una oferta concreta, y el sistema de ventas que conecte todo — para que esto deje de ser "tener un periódico digital" y empiece a ser "tener un ingreso que se repite cada semana".</p>
+    <div class="cta-box">
+        <h3>Eso es exactamente lo que enseña el sistema completo</h3>
+        <p>Paso a paso, sin dar vueltas: cómo definir tu cliente ideal, armar tu oferta, montar tu sistema de ventas, y optimizar todo con lo que ya vienes haciendo.</p>
+        <p>Antes de cerrar, un regalo más para ti: armamos una página completa donde te mostramos en profundidad cómo se implementa cada pilar — y cómo ya lo están haciendo otros periodistas que arrancaron exactamente como tú. Por haber llegado hasta esta guía, ahí vas a encontrar un regalo extra esperándote, para quien llegó hasta el final del camino.</p>
+        <p style="margin-bottom:0;"><a href="https://sistemadeingresosdiariosia.com/?src=PDF-Regalo4&amp;sck=pdf4" style="color:var(--cyan);font-weight:700;text-decoration:none;">Ver la página →</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>

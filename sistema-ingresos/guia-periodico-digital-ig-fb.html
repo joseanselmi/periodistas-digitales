@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía básica: cómo crear tu periódico digital en Instagram y Facebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+.page-inner { width:100%; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-logo-row { display:flex; align-items:center; gap:16px; margin-bottom:40px; }
+.cover-mark { width:72px; height:72px; flex-shrink:0; }
+.cover-mark img { width:100%; height:100%; object-fit:contain; }
+.cover-brandname { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.6rem; color:var(--text); letter-spacing:-.01em; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.4rem,6vw,3.6rem); margin-bottom:20px; max-width:560px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:480px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:18px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.15rem; margin-bottom:22px; }
+h3 { font-size:1.3rem; margin:28px 0 12px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+ol { color:var(--muted); margin:0 0 24px 20px; display:flex; flex-direction:column; gap:10px; }
+ol li strong { color:var(--text); }
+ol.steps { list-style:none; margin:0 0 24px; padding:0; counter-reset: step; display:flex; flex-direction:column; gap:16px; }
+ol.steps li { position:relative; padding-left:42px; color:var(--muted); counter-increment: step; }
+ol.steps li::before {
+    content: counter(step);
+    position:absolute; left:0; top:-2px;
+    width:28px; height:28px; border-radius:50%;
+    background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4);
+    color: var(--cyan); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    display:flex; align-items:center; justify-content:center;
+}
+ol.steps li strong { color:var(--text); }
+
+.code-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 14px;
+    padding: 30px 30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .92rem;
+    color: #c4b5fd;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+.code-box .var { color: var(--cyan); font-weight:600; }
+.code-box .tag { color: var(--amber); }
+.code-box .comment { color:#4b5563; font-size:.82rem; }
+
+.box-tag { display:inline-flex; align-items:center; gap:6px; font-size:.68rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px; }
+.box-tag.once { background:rgba(99,102,241,.15); color:#a5b4fc; border:1px solid rgba(99,102,241,.35); }
+.box-tag.each { background:rgba(34,211,238,.12); color:#67e8f9; border:1px solid rgba(34,211,238,.3); }
+
+.case-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 18px;
+}
+.case-num {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800;
+    font-size: 1.6rem;
+    color: var(--indigo);
+    flex-shrink: 0;
+    min-width: 36px;
+}
+.case-card h3 { margin:0 0 6px; font-size:1.15rem; }
+.case-card p { margin-bottom:0; font-size:.95rem; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-size: .98rem;
+    color: var(--text);
+    font-style: italic;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 4px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:16px; }
+
+.cal-table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:.85rem; }
+.cal-table th, .cal-table td { padding:12px 14px; border:1px solid var(--border); color:var(--muted); text-align:left; }
+.cal-table th { color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; background:rgba(99,102,241,.08); }
+.cal-table td:first-child { color:var(--text); font-weight:600; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.code-box, .case-card, .cta-box, .callout, .callout-green, .quote, .cal-table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-logo-row">
+        <div class="cover-mark"><img src="logo-periodistas-digitales.webp" alt="Periodistas Digitales"></div>
+        <div class="cover-brandname">Periodistas Digitales</div>
+    </div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Guía gratuita</div>
+        <h1>Guía básica: cómo crear<br><span class="accent">tu periódico digital</span><br>en Instagram y Facebook.</h1>
+        <p class="cover-sub">Sin programar, sin sitio web propio, sin presupuesto de diseño. Desde elegir tu nicho hasta tener el contenido de todo el mes planificado — paso a paso, explicado para alguien que nunca armó un medio en redes.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── TABLA DE CONTENIDOS ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Antes de arrancar</div>
+    <h2>Qué vas a encontrar acá</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Por qué armar tu periódico digital en redes</div><div class="toc-desc">Y por qué hoy ya no necesitas un sitio web para empezar</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">Elige tu nicho y el nombre de tu medio</div><div class="toc-desc">El error más común al arrancar, y cómo evitarlo</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Configura tu perfil en Instagram y Facebook</div><div class="toc-desc">Lo que se hace una sola vez, con plantilla de bio incluida</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">Los 4 formatos de contenido que más funcionan</div><div class="toc-desc">Para no quedarte nunca sin saber qué publicar</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">Arma tu calendario de contenido del mes</div><div class="toc-desc">El plan completo en menos de una hora</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">Cuánto publicar y a qué hora</div><div class="toc-desc">Frecuencia realista, no la de un medio con equipo de 50 personas</div></div></div>
+        <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-title">Antes de cerrar</div><div class="toc-desc">Lo que ya tienes armado, y qué sigue</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 01 POR QUÉ ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — Antes de arrancar</div>
+    <h2>Por qué armar tu periódico digital en redes</h2>
+    <p>Durante años, "tener un medio" significaba pagar un dominio, un hosting, un diseñador y meses de desarrollo antes de publicar la primera nota. Esa barrera ya no existe: con una cuenta de Instagram y una página de Facebook bien armadas, ya tienes un medio digital funcionando — sin programar una sola línea de código ni gastar en diseño.</p>
+    <p>No se trata de "algún día tener un sitio propio" — para la mayoría de los periodistas independientes que arrancan hoy, las redes YA SON el medio: ahí está la audiencia, ahí busca noticias locales, y ahí comparte lo que le interesa. Lo que casi siempre falta no es la herramienta. Es la estructura: saber qué publicar, cuándo, y con qué constancia.</p>
+    <div class="quote">Tu periódico digital no necesita un sitio web para existir. Necesita un nicho claro, una rutina de publicación, y alguien que la sostenga todas las semanas.</div>
+    <p>Esta guía te lleva por las tres piezas básicas: elegir bien el nicho y el nombre, configurar el perfil para que inspire confianza desde el primer segundo, y armar un calendario de contenido para que nunca te falte qué publicar.</p>
+  </div>
+</section>
+
+<!-- ─── 02 NICHO Y NOMBRE ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — El primer paso</div>
+    <h2>Elige tu nicho y el nombre de tu medio</h2>
+    <p>El error más común al arrancar es querer cubrir "todas las noticias de mi país" — eso ya lo hacen los medios grandes, con equipos de decenas de personas. Tu ventaja como periodista independiente es la especificidad: un nicho lo bastante concreto para que la gente sienta que es "su" medio, no uno más entre cientos.</p>
+    <ol class="steps">
+        <li><strong>Elige un nicho concreto</strong>: una ciudad, un barrio, un tema (educación, salud, economía local) o una comunidad específica — nunca "noticias en general".</li>
+        <li><strong>Define a tu lector ideal en una frase</strong>: "[quién] que quiere [qué] sobre [tema], en [zona]".</li>
+        <li><strong>Elige un nombre corto</strong>, fácil de pronunciar y de escribir, que se entienda apenas se lo lea junto al nicho.</li>
+        <li><strong>Revisa disponibilidad</strong>: que el mismo nombre de usuario esté libre en Instagram y en Facebook — usar el mismo en los dos te hace más fácil de encontrar y más profesional.</li>
+    </ol>
+    <div class="callout">
+        <strong>Si el nombre exacto que quieres ya está usado</strong>, agrega la zona o el formato: "[Nombre]Noticias", "[Nombre]Digital", "[Nombre] + [ciudad]" — siempre mejor eso que un nombre con números o guiones bajos sueltos que nadie recuerda bien.
+    </div>
+  </div>
+</section>
+
+<!-- ─── 03 CONFIGURAR PERFIL ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Se hace una sola vez</div>
+    <h2>Configura tu perfil en Instagram y Facebook</h2>
+    <p>Antes de publicar la primera nota, tu perfil tiene que decir en cinco segundos qué es tu medio, de qué habla y por qué seguirlo.</p>
+    <ol class="steps">
+        <li>Pasa tu cuenta de Instagram a perfil profesional: Configuración → Cuenta → Cambiar a cuenta profesional → elige "Creador de contenido" o "Medio de noticias".</li>
+        <li>Crea tu página de Facebook (no un perfil personal) con el mismo nombre que elegiste en el paso anterior.</li>
+        <li>Conecta ambas cuentas desde Meta Business Suite — así puedes publicar en las dos al mismo tiempo y ver las estadísticas juntas, en un solo lugar.</li>
+        <li>Sube la misma foto de perfil en los dos: un logo simple, legible incluso en miniatura, alcanza para arrancar.</li>
+    </ol>
+    <span class="box-tag once">Se completa una sola vez</span>
+    <div class="code-box"><span class="comment">// Plantilla de bio — completa entre corchetes</span>
+
+📍 <span class="var">[Tu zona o nicho]</span>
+📰 <span class="var">[Qué cubres, en una frase corta]</span>
+👇 <span class="var">[Llamado a la acción: "Mandanos tu tip" / "Suscribite gratis"]</span>
+<span class="var">[Link a WhatsApp, newsletter o link en bio]</span></div>
+    <p>Usa la misma bio (adaptada al espacio disponible de cada red) en Instagram y en Facebook. La persona que te encuentra en una red y te busca en la otra tiene que reconocerte al instante.</p>
+  </div>
+</section>
+
+<!-- ─── 04 FORMATOS (1-2) ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Para no quedarte sin qué publicar</div>
+    <h2>Los 4 formatos de contenido que más funcionan</h2>
+    <p>No necesitas inventar el formato — estos cuatro ya funcionan para medios digitales chicos en redes, y puedes rotarlos durante la semana.</p>
+    <div class="case-card">
+        <span class="case-num">01</span>
+        <div>
+            <h3>Carrusel informativo</h3>
+            <p>Una noticia explicada en 4 a 6 slides: título y dato clave en la primera, desarrollo en las siguientes, cierre con tu conclusión o la pregunta abierta. Es el formato que más se guarda y comparte, porque se lee sin sonido y sin apurarse.</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">02</span>
+        <div>
+            <h3>Reel corto de actualidad</h3>
+            <p>30 a 60 segundos, hablando directo a cámara o con imágenes de archivo y tu voz contando lo esencial. No necesitas edición compleja: lo que importa es contar algo que la audiencia no sabía cinco minutos antes.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 04 FORMATOS (3-4) ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="case-card">
+        <span class="case-num">03</span>
+        <div>
+            <h3>Historias del día</h3>
+            <p>Para cobertura en el momento: un evento, una conferencia, algo que está pasando ahora. Las historias se sienten "en vivo" y generan más respuestas directas por mensaje — que es justo donde después aparecen tips y fuentes nuevas.</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">04</span>
+        <div>
+            <h3>Post de opinión o análisis</h3>
+            <p>Una foto simple junto a un texto largo en la descripción, con tu mirada sobre un tema — no solo el hecho, sino qué significa. Este formato es el que más construye la idea de que hay un criterio editorial detrás del medio, no solo un repetidor de titulares.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 05 CALENDARIO ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">05 — El plan en menos de una hora por mes</div>
+    <h2>Arma tu calendario de contenido del mes</h2>
+    <p>Publicar "cuando hay tiempo" es la razón número uno por la que los medios chicos en redes se apagan a las pocas semanas. Un calendario simple resuelve esto de una vez.</p>
+    <ol class="steps">
+        <li><strong>Elige 3 o 4 pilares fijos de contenido</strong> — los mismos formatos de la sección anterior te sirven como pilares.</li>
+        <li><strong>Asígnale un día fijo de la semana a cada pilar</strong> (ej. lunes explicador, miércoles entrevista corta, viernes resumen semanal).</li>
+        <li><strong>Marca las fechas importantes del mes</strong>: efemérides, eventos locales, lo que ya sabes que va a pasar.</li>
+        <li><strong>Completa los días vacíos con contenido evergreen</strong> — el que no depende de una fecha puntual (consejos, contexto, historia del tema).</li>
+        <li><strong>Programa todo con antelación</strong> desde Meta Business Suite, así el mes queda armado antes de que empiece.</li>
+    </ol>
+    <table class="cal-table">
+        <tr><th>Semana</th><th>Lunes</th><th>Miércoles</th><th>Viernes</th></tr>
+        <tr><td>Semana 1</td><td>Explicador</td><td>Entrevista corta</td><td>Resumen semanal</td></tr>
+        <tr><td>Semana 2</td><td>Explicador</td><td>Opinión</td><td>Resumen semanal</td></tr>
+        <tr><td>Semana 3</td><td>Explicador</td><td>Entrevista corta</td><td>Resumen semanal</td></tr>
+        <tr><td>Semana 4</td><td>Explicador</td><td>Opinión</td><td>Resumen semanal</td></tr>
+    </table>
+    <p>Esto es un punto de partida, no una receta fija — ajusta los pilares y los días según lo que mejor funcione para tu nicho y tu rutina real.</p>
+  </div>
+</section>
+
+<!-- ─── 06 FRECUENCIA Y HORARIOS ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Constancia, no volumen</div>
+    <h2>Cuánto publicar y a qué hora</h2>
+    <p>No hace falta publicar todo el día para que funcione — hace falta ser constante con lo que sí publicas.</p>
+    <ul>
+        <li><strong>1 publicación fija en el feed por día</strong> alcanza para arrancar (carrusel, reel o post de opinión, alternando).</li>
+        <li><strong>3 a 5 historias por día</strong>, sobre todo si hay algo pasando en el momento — son las que generan más respuestas directas.</li>
+        <li><strong>Prueba temprano en la mañana, a la hora del almuerzo y a la noche</strong> durante las primeras semanas, y mira en las estadísticas cuál funciona mejor para tu audiencia particular — no hay un horario universal que sirva para todos los nichos.</li>
+    </ul>
+    <div class="callout">
+        <strong>La constancia importa más que el horario exacto:</strong> es mejor publicar todos los días a una hora aproximada similar, que publicar diez veces un día y desaparecer la semana siguiente.
+    </div>
+  </div>
+</section>
+
+<!-- ─── 07 CIERRE ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">07 — Antes de cerrar</div>
+    <div class="callout-green">
+        <strong>Con esto ya tienes las tres piezas básicas armadas:</strong> nicho y nombre definidos, perfil configurado, y el contenido de todo el mes planificado. Eso ya te pone por delante de la mayoría de los medios en redes que arrancan y abandonan a las dos semanas.
+    </div>
+    <p>Lo que sigue es la parte que más preguntas genera: ¿cómo se sostiene esto en el tiempo, sin que te tome todo el día? Hay periodistas que ya lo resolvieron usando IA para producir el contenido de varios pilares en simultáneo — algunos llevan hasta diez periódicos digitales funcionando a la vez, y viven solo de esto, como autónomos.</p>
+    <div class="cta-box">
+        <h3>Eso te lo contamos en el próximo mensaje</h3>
+        <p>Te vamos a mostrar cómo se conecta todo lo que ya tienes — el contenido con IA de los regalos anteriores, más este calendario — en un solo sistema.</p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>

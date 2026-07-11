@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La revolución de los agentes de IA: guía práctica para periodistas en 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+.page-inner { width:100%; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-logo-row { display:flex; align-items:center; gap:16px; margin-bottom:40px; }
+.cover-mark { width:72px; height:72px; flex-shrink:0; }
+.cover-mark img { width:100%; height:100%; object-fit:contain; }
+.cover-brandname { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.6rem; color:var(--text); letter-spacing:-.01em; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.4rem,6vw,3.6rem); margin-bottom:20px; max-width:580px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:500px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── CHAPTER OPENER ── */
+.chapter-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:.85rem; letter-spacing:.16em; text-transform:uppercase; color:var(--indigo); margin-bottom:16px; }
+.chapter-num + h2 { font-size:2.6rem; }
+.chapter-num ~ p { font-size:1.08rem; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:16px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.08rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.15rem; margin-bottom:22px; }
+h3 { font-size:1.3rem; margin:28px 0 12px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+ol { color:var(--muted); margin:0 0 24px 20px; display:flex; flex-direction:column; gap:10px; }
+ol li strong { color:var(--text); }
+ol.steps { list-style:none; margin:0 0 24px; padding:0; counter-reset: step; display:flex; flex-direction:column; gap:16px; }
+ol.steps li { position:relative; padding-left:42px; color:var(--muted); counter-increment: step; }
+ol.steps li::before {
+    content: counter(step);
+    position:absolute; left:0; top:-2px;
+    width:28px; height:28px; border-radius:50%;
+    background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4);
+    color: var(--cyan); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    display:flex; align-items:center; justify-content:center;
+}
+ol.steps li strong { color:var(--text); }
+
+.code-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 14px;
+    padding: 30px 30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .92rem;
+    color: #c4b5fd;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+.code-box .var { color: var(--cyan); font-weight:600; }
+.code-box .comment { color:#64748b; font-size:.82rem; }
+
+.box-tag { display:inline-flex; align-items:center; gap:6px; font-size:.68rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px; }
+.box-tag.once { background:rgba(99,102,241,.15); color:#a5b4fc; border:1px solid rgba(99,102,241,.35); }
+.box-tag.each { background:rgba(34,211,238,.12); color:#67e8f9; border:1px solid rgba(34,211,238,.3); }
+
+.case-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 18px;
+}
+.case-num {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800;
+    font-size: 1.6rem;
+    color: var(--indigo);
+    flex-shrink: 0;
+    min-width: 36px;
+}
+.case-card h3 { margin:0 0 6px; font-size:1.15rem; }
+.case-card p { margin-bottom:0; font-size:.95rem; }
+
+/* comparación dos columnas */
+.compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 24px; }
+.compare-col { border-radius:16px; padding:22px 24px; border:1px solid var(--border); }
+.compare-col.bad { background:rgba(148,163,184,.06); }
+.compare-col.good { background:rgba(34,211,238,.07); border-color:rgba(34,211,238,.25); }
+.compare-col .label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
+.compare-col.bad .label { color:var(--muted); }
+.compare-col.good .label { color:var(--cyan); }
+.compare-col h3 { margin:0 0 10px; font-size:1.05rem; }
+.compare-col p { font-size:.9rem; margin-bottom:0; }
+.compare-col ul { margin:0; gap:8px; }
+.compare-col ul li { font-size:.88rem; padding-left:18px; }
+.compare-col ul li::before { top:8px; width:5px; height:5px; }
+
+/* two-strength grid */
+.split { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 24px; }
+.split-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; }
+.split-card.indigo { border-color:rgba(99,102,241,.3); background:rgba(99,102,241,.06); }
+.split-card.cyan { border-color:rgba(34,211,238,.25); background:rgba(34,211,238,.06); }
+.split-card h3 { margin:0 0 12px; font-size:1.05rem; }
+.split-card ul { margin:0; gap:8px; }
+.split-card ul li { font-size:.88rem; padding-left:18px; }
+.split-card ul li::before { top:8px; width:5px; height:5px; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout strong { color:#fde68a; }
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 22px;
+    margin: 24px 0;
+    font-size: 1.15rem;
+    color: var(--text);
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:500;
+    line-height:1.4;
+}
+
+/* trampa / práctica recomendada (errores) */
+.error-block { display:flex; flex-direction:column; gap:14px; margin:8px 0 0; }
+.err-card { border-radius:14px; padding:20px 24px; border:1px solid var(--border); background:var(--surface); }
+.err-card .label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+.err-card.trap { border-color:rgba(248,113,113,.28); background:rgba(248,113,113,.06); }
+.err-card.trap .label { color:#fca5a5; }
+.err-card.fix { border-color:rgba(34,197,94,.25); background:rgba(34,197,94,.05); }
+.err-card.fix .label { color:#86efac; }
+.err-card p { margin-bottom:0; font-size:.93rem; }
+
+/* fases roadmap */
+.phase { display:flex; gap:18px; padding:18px 0; border-bottom:1px solid var(--border); }
+.phase:last-child { border-bottom:none; }
+.phase-tag { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:.72rem; letter-spacing:.1em; color:var(--cyan); min-width:62px; padding-top:3px; }
+.phase h3 { margin:0 0 6px; font-size:1.08rem; }
+.phase p { margin:0; font-size:.9rem; }
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 8px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:0; }
+
+.cal-table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:.85rem; }
+.cal-table th, .cal-table td { padding:11px 14px; border:1px solid var(--border); color:var(--muted); text-align:left; vertical-align:top; }
+.cal-table th { color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; background:rgba(99,102,241,.08); }
+.cal-table td:first-child { color:var(--text); font-weight:600; }
+
+.timeline { display:flex; flex-direction:column; gap:0; margin:8px 0 24px; }
+.tl-item { display:flex; gap:18px; padding:16px 0; border-bottom:1px solid var(--border); }
+.tl-item:last-child { border-bottom:none; }
+.tl-era { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:.8rem; color:var(--indigo); min-width:96px; padding-top:2px; }
+.tl-item h3 { margin:0 0 5px; font-size:1.02rem; }
+.tl-item p { margin:0; font-size:.88rem; }
+.tl-item.now { background:rgba(34,211,238,.06); border-radius:12px; padding-left:16px; padding-right:16px; border-bottom:none; }
+.tl-item.now .tl-era { color:var(--cyan); }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.code-box, .case-card, .cta-box, .callout, .callout-green, .quote, .cal-table, .compare, .split, .err-card, .timeline { page-break-inside: avoid; break-inside: avoid; }
+h2, h3 { page-break-after: avoid; break-after: avoid; }
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-logo-row">
+        <div class="cover-mark"><img src="logo-periodistas-digitales.webp" alt="Periodistas Digitales"></div>
+        <div class="cover-brandname">Periodistas Digitales</div>
+    </div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Guía gratuita</div>
+        <h1>La revolución de los <span class="accent">agentes de IA</span>: guía práctica para periodistas en 2026.</h1>
+        <p class="cover-sub">Qué son realmente, dónde aportan valor hoy, y cómo empezar a usarlos en tu redacción sin conocimientos técnicos — con ejemplos del trabajo periodístico real, no teoría de laboratorio.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── ÍNDICE ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Índice</div>
+    <h2>Qué vas a encontrar acá</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Qué son los agentes de IA y cómo funcionan</div><div class="toc-desc">La diferencia entre un chatbot y un agente, explicada con tu trabajo</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">El estado de los agentes de IA en 2026</div><div class="toc-desc">Dónde destacan hoy, dónde todavía no, y por qué importa</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Casos prácticos que generan valor en periodismo</div><div class="toc-desc">Producción, investigación, audiencia y operaciones de la redacción</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">Cómo empezar a usar agentes de IA en tu redacción</div><div class="toc-desc">Una hoja de ruta para arrancar sin reformar todo de golpe</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">Errores comunes y cómo evitarlos</div><div class="toc-desc">Los siete tropiezos más frecuentes al implementar agentes</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">El futuro del trabajo periodístico con IA</div><div class="toc-desc">Cómo cambian las competencias, los perfiles y tu valor como periodista</div></div></div>
+        <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-title">Conclusión y puntos clave</div><div class="toc-desc">El resumen que te llevas puesto para empezar mañana</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTRO ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Introducción</div>
+    <h2>De la ciencia ficción a tu redacción</h2>
+    <p>Agentes de IA. Un concepto que hasta hace poco parecía ciencia ficción y que en 2026 ya está cambiando cómo trabajan las redacciones, los medios independientes y los periodistas que producen solos. Para algunos representan una forma de sacarse de encima las tareas mecánicas. Para otros, plantean preguntas incómodas: <em>"¿Un agente de IA va a reemplazar mi trabajo? ¿Puedo delegarle todo? ¿Termino siendo prescindible?"</em></p>
+    <p>¿Cuál es la realidad? No, los agentes de IA no pueden hacer el 100% del trabajo periodístico — y esa es una buena noticia. Pueden pensar, planificar y ejecutar tareas por su cuenta: gestionan flujos de trabajo, usan herramientas externas y se adaptan sobre la marcha. Pero el verdadero poder no está en la sustitución, sino en la sociedad entre el periodista y la herramienta.</p>
+    <div class="quote">Un chatbot toma tu pregunta y te da una respuesta. Un agente toma tu objetivo y te entrega un resultado.</div>
+    <p>Esta guía recorre el panorama actual para mostrar qué pueden hacer realmente los agentes de IA en una redacción en 2026. Vas a aprender por dónde empezar, qué casos prácticos aportan valor real hoy, y cómo armar una forma de trabajo donde el criterio periodístico sigue siendo tuyo y la ejecución repetitiva pasa a los agentes.</p>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 1 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 1</div>
+    <h2>Qué son los agentes de IA y <span class="accent">cómo funcionan</span></h2>
+    <p>En los términos más simples, un agente de IA es un sistema de software capaz de realizar tareas de forma autónoma. Pero esa definición apenas capta lo que los hace tan distintos de las herramientas a las que ya estás acostumbrado.</p>
+    <p>Lo que distingue a un agente es la combinación de <strong>memoria, acceso a herramientas y capacidad de decidir por su cuenta</strong>. Va más allá de un chatbot: gestiona tareas de varios pasos sin que tengas que estar guiándolo a cada momento. Entender esa diferencia es la clave para entender su potencial.</p>
+    <div class="quote">Un agente de IA es como un asistente de redacción que nunca se cansa: hace tareas repetitivas con eficacia, pero necesita una consigna clara y supervisión de tu parte.</div>
+  </div>
+</section>
+
+<!-- 1.1 anatomía -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — Cómo está hecho por dentro</div>
+    <h2>Anatomía de un agente de IA eficaz</h2>
+    <p>Los agentes más útiles para una redacción comparten tres capacidades. Entenderlas te ayuda a saber qué pedirles y qué no.</p>
+    <h3>Memoria y conciencia del contexto</h3>
+    <p>Un buen agente mantiene el contexto a lo largo de una tarea: recuerda instrucciones e interacciones anteriores y construye sobre lo ya hecho. Un agente que te ayuda con la cobertura de un tema no solo responde una pregunta suelta — recuerda el hilo de la investigación, los datos que ya le pasaste y el enfoque editorial que definiste. Los más avanzados consultan además fuentes externas (tu archivo de notas, una base de datos, documentación) para traer información actualizada, en lugar de depender solo de la conversación.</p>
+    <h3>Razonamiento y planificación en varios pasos</h3>
+    <p>Destacan al descomponer tareas complejas y abordarlas paso a paso. No siguen una receta rígida "si pasa esto, haz aquello": evalúan la situación y adaptan el enfoque, lo que les permite manejar casos que romperían una automatización tradicional.</p>
+    <h3>Integración de herramientas</h3>
+    <p>Pueden conectarse a tu correo, tu gestor de contenidos, tus redes, una planilla o tu archivo para buscar información y ejecutar acciones. Esa capacidad de integración es lo que los vuelve realmente potentes: dejan de estar limitados a "lo que saben" y pasan a operar sobre tus propias herramientas, siempre dentro de los límites que tú definas.</p>
+    <div class="quote">Los agentes brillan cuando se conectan a las herramientas que ya usas: tu correo, tu gestor de contenidos, tu archivo de notas o tus redes.</div>
+  </div>
+</section>
+
+<!-- 1.2 chatbot vs agente -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — La distinción que cambia todo</div>
+    <h2>Más allá del chatbot: la evolución hacia verdaderos agentes</h2>
+    <p>La confusión entre chatbot y agente es comprensible: ambos usan modelos de lenguaje parecidos por debajo. Pero sus capacidades son muy distintas, y se nota apenas la tarea se vuelve compleja. Pedile a un chatbot que <em>"encuentre las notas de mi medio que mejor funcionaron el último trimestre y redacte una publicación para redes de cada una"</em> y lo más probable es que te devuelva instrucciones generales. Un agente, en cambio, recupera los datos de tus métricas, identifica las notas que más rindieron, redacta una publicación específica para cada una y, si está integrado con tus herramientas de publicación, hasta las programa.</p>
+    <div class="compare">
+        <div class="compare-col bad">
+            <div class="label">Chatbot</div>
+            <h3>Te da información</h3>
+            <p>Te responde con un instructivo de lo que <strong>tú</strong> tendrías que hacer:</p>
+            <ul>
+                <li>"Entra a tus estadísticas"</li>
+                <li>"Filtra el último trimestre"</li>
+                <li>"Ordena por vistas o interacciones"</li>
+                <li>"Por cada nota, arma un texto para redes"</li>
+                <li>"Acá tienes una plantilla de ejemplo…"</li>
+            </ul>
+        </div>
+        <div class="compare-col good">
+            <div class="label">Agente de IA</div>
+            <h3>Ejecuta el trabajo completo</h3>
+            <p>Toma el objetivo y entrega el resultado terminado:</p>
+            <ul>
+                <li>Se conecta a tus métricas</li>
+                <li>Analiza qué notas rindieron mejor</li>
+                <li>Redacta el borrador de cada publicación</li>
+                <li>Las deja listas (o programadas)</li>
+                <li>Te avisa para que las revises</li>
+            </ul>
+        </div>
+    </div>
+    <p>Un chatbot da respuestas directas. Un agente entiende el contexto y entrega una recomendación concreta sin pedirte más instrucciones. Le asignas la tarea y puedes "salir de la sala" confiando en que va a trabajar por su cuenta. Esa autonomía — avanzar solo hacia un objetivo — es lo que los hace valiosos para un medio: automatizan tareas complejas sin perder calidad ni exigir supervisión constante.</p>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 2 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 2</div>
+    <h2>El estado de los agentes de IA <span class="accent">en 2026</span></h2>
+    <p>En 2026 los agentes de IA están en un punto extraordinario: tienen el poder de transformar el trabajo de una redacción, pero todavía están desplegando todo su potencial. Para separar la realidad del bombo publicitario, conviene entender el panorama actual.</p>
+    <p>En el último año mejoraron mucho: pasaron de ser una prueba de concepto a estar listos para producción en muchos casos prácticos, aunque la supervisión humana sigue siendo esencial para la calidad y la línea editorial.</p>
+  </div>
+</section>
+
+<!-- 2.1 dónde destacan -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — Realidad, no promesa</div>
+    <h2>Dónde destacan hoy los agentes de IA</h2>
+    <p>Los agentes con más éxito en 2026 no intentan reemplazar funciones enteras. Manejan tareas específicas, con objetivos claramente definidos. Estos son los terrenos donde más rinden hoy:</p>
+    <ul>
+        <li><strong>Investigación y recopilación de datos</strong> que a una persona le llevaría horas armar a mano. Pueden extraer información de varias fuentes, organizar los hallazgos y presentarlos en un formato útil — sin la fatiga que produce la tarea repetitiva.</li>
+        <li><strong>Tareas de baja precisión</strong>, donde un 90% de acierto es aceptable. Son el punto de partida ideal para empezar, porque dan valor con riesgo mínimo.</li>
+        <li><strong>Procesos en segundo plano</strong> que no necesitan supervisión en tiempo real: un monitoreo de fuentes que corre durante la noche, la readaptación de un contenido mientras duermes, el seguimiento de un tema que se actualiza solo.</li>
+    </ul>
+    <div class="callout">
+        <strong>La clave está en elegir tareas con flexibilidad de tiempo</strong>, donde el agente pueda trabajar solo hacia un objetivo claro. Si una tarea tolera margen y no exige una respuesta inmediata perfecta, es buena candidata para arrancar.
+    </div>
+  </div>
+</section>
+
+<!-- 2.2 adopción -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — Quién va adelante</div>
+    <h2>Patrones de adopción: ¿quién implementa los agentes?</h2>
+    <p>La adopción sigue una curva conocida. Las herramientas de IA conversacional ya están bastante extendidas para tareas simples, pero las implementaciones más sofisticadas — las que gestionan procesos de varios pasos — todavía están en una etapa temprana. Y ahí está la oportunidad: quienes usan agentes avanzados hoy están ganando una ventaja real.</p>
+    <div class="quote">Los periodistas y medios que adopten los agentes de forma reflexiva van a tener una ventaja de productividad sustancial: creadores que publican más y mejor, equipos chicos que le compiten a medios mucho más grandes, personas que sostienen cargas de trabajo que antes pedían varias contrataciones.</div>
+    <p>No se trata de adoptar todo de golpe ni de reemplazar a nadie. Se trata de empezar a construir el músculo ahora, mientras la mayoría todavía mira de afuera.</p>
+  </div>
+</section>
+
+<!-- 2.3 modelo de asociación -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — Sociedad, no sustitución</div>
+    <h2>El modelo de asociación entre el periodista y la IA</h2>
+    <p>Los mejores agentes de IA amplían lo que puedes hacer, en lugar de intentar ocupar tu lugar. Eso crea un efecto multiplicador: te libera tiempo para concentrarlo en el trabajo de mayor valor. La razón es que humanos y agentes aportan fortalezas distintas y complementarias.</p>
+    <div class="split">
+        <div class="split-card cyan">
+            <h3>Los agentes destacan en la ejecución</h3>
+            <ul>
+                <li>Procesan grandes cantidades de información</li>
+                <li>Mantienen coherencia y formato</li>
+                <li>Trabajan sin pausa y sin perder foco</li>
+                <li>Repiten tareas sin cansarse</li>
+            </ul>
+        </div>
+        <div class="split-card indigo">
+            <h3>Las personas destacan en el criterio</h3>
+            <ul>
+                <li>Juicio editorial y ético</li>
+                <li>Creatividad y mirada propia</li>
+                <li>Relaciones y trato con las fuentes</li>
+                <li>Decisiones difíciles y verificación</li>
+            </ul>
+        </div>
+    </div>
+    <p><strong>La regla es simple: usa a las personas para el juicio y a los agentes para la ejecución.</strong> El periodista mantiene la estrategia, la voz del medio y las decisiones editoriales finales; el agente se encarga de la investigación preliminar, la redacción de borradores, el formateo y la optimización. Así el equipo concentra su energía creativa donde más importa, mientras los agentes amplifican su capacidad de producción.</p>
+  </div>
+</section>
+
+<!-- 2.4 árbol de decisión -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — ¿Esto se lo puedo delegar a un agente?</div>
+    <h2>Cómo decidir qué tarea automatizar</h2>
+    <p>No todas las tareas necesitan un agente. Antes de delegar una, pásala por estas cuatro preguntas. Cuantas más respondas que sí, mejor candidata es.</p>
+    <ol class="steps">
+        <li><strong>¿Es repetitiva y te consume mucho tiempo?</strong> Si la haces seguido y te come horas, el ahorro es alto.</li>
+        <li><strong>¿Trabaja con datos o entradas más o menos estructurados?</strong> Cuanto más definido el insumo, más fiable el resultado.</li>
+        <li><strong>¿Es aceptable un 90% de precisión?</strong> Si un error se corrige y se sigue, en vez de tener consecuencias graves, es buena candidata.</li>
+        <li><strong>¿Tienes métricas claras para saber si salió bien?</strong> Si puedes medir el resultado, puedes mejorarlo.</li>
+    </ol>
+    <div class="callout">
+        <strong>Si la tarea exige precisión casi perfecta o un juicio editorial delicado</strong> (una decisión de portada, verificar una acusación grave, una cuestión legal), todavía necesita estar dirigida por una persona. El agente puede ayudar, pero no decidir solo.
+    </div>
+  </div>
+</section>
+
+<!-- 2.5 limitaciones -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — Lo que todavía no pueden</div>
+    <h2>Limitaciones y retos actuales</h2>
+    <p>Entender lo que un agente aún no hace bien es tan importante como conocer sus fortalezas. Las limitaciones de hoy incluyen:</p>
+    <ul>
+        <li><strong>Velocidad y latencia.</strong> En tareas puntuales pueden ser más lentos que una persona. Lo compensan trabajando sin parar y en paralelo, pero no esperes una respuesta instantánea en todo.</li>
+        <li><strong>Complejidad de integración.</strong> Conectarlos a sistemas viejos o cerrados sigue siendo un desafío. Conviene empezar por herramientas modernas y accesibles.</li>
+        <li><strong>Requisitos de alta precisión.</strong> Las tareas que exigen exactitud casi perfecta todavía necesitan bastante supervisión humana.</li>
+        <li><strong>Confianza y control.</strong> El equilibrio entre autonomía y supervisión sigue en construcción: las decisiones de alto riesgo necesitan aprobación humana; las rutinarias pueden correr solas, marcando las excepciones para que las revise una persona.</li>
+    </ul>
+    <p>La recomendación práctica: entrégale al agente objetivos y límites claros, contexto suficiente y retroalimentación continua. Combina la supervisión automática con puntos de control humanos en los momentos críticos.</p>
+  </div>
+</section>
+
+<!-- 2.6 punto de inflexión -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 — Por qué 2026</div>
+    <h2>El punto de inflexión de 2026</h2>
+    <p>El gran avance de este año es la <strong>accesibilidad</strong>. Las plataformas para crear agentes se volvieron mucho más conversacionales: le dices lo que quieres y ellas hacen el resto. Las herramientas que ya usas incorporan cada vez más integraciones con agentes, así que configurarlos es más fácil que el trabajo técnico que antes hacía falta.</p>
+    <p>Esto marca el paso de la experimentación a la implementación real. Lo que en 2025 eran pruebas, en 2026 se está volviendo parte normal de cómo trabaja un medio. La brecha entre quienes adoptan temprano y quienes esperan al margen se está haciendo visible — y no va a hacer más que crecer.</p>
+    <div class="callout-green">
+        <strong>Quienes se enfocan ahora en esta capacidad no están adoptando simplemente una herramienta:</strong> están construyendo una habilidad de base que les va a dar ventaja durante los próximos años.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 3 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 3</div>
+    <h2>Casos prácticos que <span class="accent">generan valor</span></h2>
+    <p>Las aplicaciones potenciales abarcan casi todo el trabajo de un medio, pero las implementaciones que funcionan en 2026 comparten un denominador común: se enfocan en tareas concretas y de alto impacto, en vez de intentar automatizar la redacción entera. Veamos los usos más eficaces en producción de contenido, audiencia y operaciones.</p>
+    <p>El patrón se repite en todos: <strong>automatización focalizada de procesos bien definidos, que libera al periodista para aplicar su criterio donde más suma.</strong></p>
+  </div>
+</section>
+
+<!-- 3.1 producción de contenido -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Producción y optimización</div>
+    <h2>Producción de contenido</h2>
+    <p>Los agentes transformaron los flujos de contenido: son buenos para investigar, generar ideas, redactar borradores, reutilizar material, optimizar y distribuir. Aun así, conviene mantener siempre a una persona en el circuito para la revisión y la edición, y para asegurar que la voz y el tono coincidan con los de tu medio.</p>
+    <p>Un ejemplo concreto: a partir de la transcripción de una entrevista en video o un podcast, un agente puede detectar las ideas clave y los momentos más fuertes, y generar automáticamente publicaciones para redes, un hilo y un boletín. Lo que antes pedía un equipo de contenidos, ahora ocurre casi solo — y tú te concentras en la calidad de la nota.</p>
+    <h3>Implementaciones que funcionan</h3>
+    <ul>
+        <li>Transforman una nota de formato largo en varios formatos específicos para cada canal.</li>
+        <li>Generan borradores de notas optimizadas para buscadores a partir de apuntes.</li>
+        <li>Arman boletines y secuencias de correo segmentadas según los intereses de tu audiencia.</li>
+        <li>Analizan el rendimiento de tus contenidos y recomiendan qué ajustar.</li>
+    </ul>
+    <div class="quote">El límite deja de ser tu capacidad de producción en bruto y pasa a ser la calidad de tus ideas y tu criterio editorial. Lo que antes llevaba semanas, ahora puede salir en horas.</div>
+  </div>
+</section>
+
+<!-- 3.2 investigación y audiencia -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Investigación y audiencia</div>
+    <h2>Investigación y conocimiento de tu audiencia</h2>
+    <p>Los agentes son excelentes para vigilar lo que pasa y generar información útil. Ayudan a entender mejor a tu público y a no perderte un tema que está empezando a moverse.</p>
+    <h3>Monitoreo y detección de tendencias</h3>
+    <ul>
+        <li>Siguen las conversaciones en redes sobre los temas de tu nicho e identifican tendencias emergentes.</li>
+        <li>Analizan qué está cubriendo la competencia y detectan vacíos que tú puedes ocupar.</li>
+        <li>Recopilan los comentarios y mensajes de tu audiencia y los resumen en informes claros.</li>
+    </ul>
+    <h3>Análisis y optimización de la distribución</h3>
+    <p>A diferencia de las métricas tradicionales, que miran para atrás, un sistema con agentes puede sugerir ajustes casi en tiempo real: probar varios enfoques de un titular a la vez para ver cuál engancha, identificar el mejor horario de publicación según el comportamiento real de tu audiencia, o señalar un patrón inusual que merece tu atención.</p>
+    <div class="callout">
+        <strong>Una advertencia editorial:</strong> que el agente detecte qué "funciona" no significa que debas publicarlo. La decisión de qué es noticia y cómo contarla sigue siendo tuya — la IA te informa, no te dicta la línea.
+    </div>
+  </div>
+</section>
+
+<!-- 3.3 creadores / medios independientes -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Para el periodista independiente</div>
+    <h2>Aplicaciones para medios y periodistas independientes</h2>
+    <p>Si produces solo o con un equipo chico, los agentes resuelven tareas que comen mucho tiempo y no generan ingresos directamente, pero que igual hay que hacer. Tres de las que más tiempo ahorran:</p>
+    <div class="case-card">
+        <span class="case-num">01</span>
+        <div>
+            <h3>Crecimiento de tu comunidad de lectores</h3>
+            <p>Enriquecen los datos de tus suscriptores con información de fuentes públicas, y priorizan a quiénes conviene dedicarles atención (un lector fiel que comparte siempre, un posible auspiciante, una fuente recurrente).</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">02</span>
+        <div>
+            <h3>Comunicación personalizada a escala</h3>
+            <p>Generan mensajes de bienvenida, respuestas y seguimientos adaptados a cada persona y a su historial de interacción — sin caer en el correo genérico que nadie abre.</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">03</span>
+        <div>
+            <h3>Planificación y programación de contenido</h3>
+            <p>Investigan un tema a fondo antes de producir, arman calendarios editoriales según lo que está en tendencia y lo que tu audiencia necesita, y elaboran planes de distribución por cada canal.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3.4 operaciones de la redacción -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Puertas adentro</div>
+    <h2>Operaciones de la redacción</h2>
+    <p>Más allá de lo que ve el lector, los agentes también mejoran el funcionamiento interno de un medio, grande o chico.</p>
+    <h3>Gestión del conocimiento y el archivo</h3>
+    <ul>
+        <li>Mantienen ordenada y actualizada la documentación interna y el archivo de notas.</li>
+        <li>Responden preguntas del equipo recuperando la información pertinente al instante.</li>
+        <li>Detectan vacíos de cobertura que conviene documentar o investigar.</li>
+    </ul>
+    <h3>Automatización de tareas administrativas</h3>
+    <ul>
+        <li>Resumen reuniones de redacción y dejan registrados los pasos a seguir.</li>
+        <li>Hacen seguimiento de proyectos y plazos de las coberturas.</li>
+        <li>Clasifican y categorizan los comentarios y mensajes de la comunidad.</li>
+    </ul>
+    <p>Cada uno de estos casos demuestra el tema central del éxito en 2026: automatizar lo bien definido para liberar a las personas y que apliquen sus capacidades exclusivamente humanas donde más valor agregan.</p>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 4 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 4</div>
+    <h2>Cómo empezar a usar <span class="accent">agentes de IA</span> en tu redacción</h2>
+    <p>Implementar agentes de IA no requiere una reforma masiva ni conocimientos técnicos especializados. Quienes lo hacen bien adoptan un enfoque gradual: arrancan con un caso concreto que da valor inmediato y, sobre la marcha, van construyendo capacidad interna.</p>
+    <div class="quote">Empieza de a poco e itera con el tiempo. Desarrolla la versión más simple que funcione, pruébala a fondo, y recién después agrega complejidad.</div>
+    <p>Esa filosofía evita el error más común: querer diseñar el agente perfecto el primer día. En lugar de automatizar un flujo entero de una vez, identifica una sola tarea repetitiva que te consuma tiempo y tenga métricas claras. Hacela fiable en ese alcance limitado y después extiéndela a tareas vecinas.</p>
+  </div>
+</section>
+
+<!-- 4.1 hoja de ruta -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — La hoja de ruta</div>
+    <h2>Las cuatro fases de la implementación</h2>
+    <p>Una vez que encontraste un caso prometedor, sigue esta ruta. Es un bucle de mejora continua: al terminar la fase 4, vuelves a empezar con la siguiente tarea.</p>
+    <div class="phase">
+        <div class="phase-tag">Fase 1</div>
+        <div><h3>Evaluación</h3><p>Identifica tareas de baja precisión, mide su frecuencia y el tiempo que consumen, comprueba si los datos son accesibles y define qué vas a considerar un éxito.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">Fase 2</div>
+        <div><h3>Implementación</h3><p>Empieza con un solo caso, elige la tecnología adecuada, diseña un sistema de supervisión humana y prueba todo antes de ponerlo en marcha real.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">Fase 3</div>
+        <div><h3>Integración</h3><p>Define el acceso a los datos, conéctalo a tus flujos de trabajo existentes, diseña la experiencia para quien lo va a usar y asegura los protocolos de seguridad.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">Fase 4</div>
+        <div><h3>Medición</h3><p>Haz seguimiento de la eficiencia y de la calidad, mide el impacto real en tu trabajo, y refina. Después, repite el ciclo con la próxima tarea.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4.2 evaluación: por dónde empezar -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Fase 1 en detalle</div>
+    <h2>Evaluación: dónde empezar con bajo riesgo y alto impacto</h2>
+    <p>El primer paso es elegir bien la tarea. Usa el marco de "baja precisión vs. alta precisión" para identificar a tus primeros candidatos, y evalúa cada tarea con estos cuatro criterios:</p>
+    <ul>
+        <li><strong>Frecuencia.</strong> Las tareas que haces seguido rinden más al automatizarse.</li>
+        <li><strong>Intensidad de tiempo.</strong> Enfócate en lo que te consume tiempo desproporcionado respecto de su valor estratégico.</li>
+        <li><strong>Datos estructurados.</strong> Cuanto más claras las entradas y salidas, más fácil de automatizar bien.</li>
+        <li><strong>Métricas claras.</strong> Elige casos donde puedas medir una mejora concreta.</li>
+    </ul>
+    <div class="quote">Preguntate: ¿cuál es el costo de un error? Si equivocarse significa ajustar y seguir, en vez de una consecuencia grave, es un firme candidato para la automatización.</div>
+    <p>El mejor lugar para arrancar son tareas donde dedicas mucho tiempo a recopilar y ordenar información, pero la decisión o el trabajo creativo en sí es rápido: esa fase de recopilación suele ser de baja precisión, e ideal para un agente.</p>
+  </div>
+</section>
+
+<!-- 4.3 marco baja vs alta precisión -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — El marco para decidir</div>
+    <h2>Baja precisión vs. alta precisión</h2>
+    <p>Esta es la regla más simple para saber qué delegar primero y qué dejar en manos humanas por ahora.</p>
+    <div class="compare">
+        <div class="compare-col good">
+            <div class="label">Baja precisión — empieza acá</div>
+            <h3>Ideal para agentes</h3>
+            <ul>
+                <li>Un 90% de acierto es aceptable</li>
+                <li>Los errores tienen consecuencias mínimas</li>
+                <li>Tareas repetitivas y de alta frecuencia</li>
+                <li>Procesos en segundo plano</li>
+            </ul>
+            <p style="margin-top:12px"><strong>Ejemplos:</strong> redacción de borradores, investigación previa, recopilación y orden de datos.</p>
+        </div>
+        <div class="compare-col bad">
+            <div class="label">Alta precisión — supervisión humana</div>
+            <h3>Todavía dirigido por personas</h3>
+            <ul>
+                <li>Se requiere precisión cercana al 100%</li>
+                <li>Los errores tienen consecuencias serias</li>
+                <li>Hace falta juicio complejo</li>
+                <li>Implica decisiones de alto riesgo</li>
+            </ul>
+            <p style="margin-top:12px"><strong>Ejemplos:</strong> verificar una acusación grave, una cuestión legal, decisiones editoriales sensibles.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4.4 empieza simple -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Fase 2: implementación</div>
+    <h2>Empieza simple y avanza hacia el éxito</h2>
+    <p>La gente suele intentar crear el agente perfecto el primer día, y nunca funciona. Empieza con una tarea, hacela fiable, y recién después amplía. Enfócate primero en lo repetitivo y de gran volumen: ahí destacan. Les cuesta, en cambio, el trabajo creativo puntual que requiere contexto profundo.</p>
+    <div class="quote">Si puedes tomar una tarea de cuatro horas y reducirla a treinta minutos de trabajo creativo y concentrado, eso ya es una victoria.</div>
+    <p>A menudo no vas a poder automatizar un proceso de punta a punta: el trabajo creativo final y el buen juicio te siguen necesitando. Pero muchas tareas que están por debajo sí puede manejarlas un agente, y eso te devuelve tiempo. Una vez que identificaste casos prometedores, sigue estos cuatro pasos:</p>
+    <ol class="steps">
+        <li><strong>Empieza con algo simple</strong> y avanza de a poco hacia tareas más complejas.</li>
+        <li><strong>Elige la estrategia tecnológica adecuada</strong> a tu nivel y a la complejidad del caso.</li>
+        <li><strong>Diseña el agente pensando en la supervisión humana</strong> desde el inicio.</li>
+        <li><strong>Prueba a fondo antes</strong> de la implementación completa.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 4.5 enfoque tecnológico -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Elige tu herramienta</div>
+    <h2>Selecciona el enfoque tecnológico adecuado</h2>
+    <p>El mercado actual ofrece varios caminos para implementar agentes, según las capacidades técnicas de tu equipo y la complejidad de tu caso. No hay uno "mejor" en abstracto: hay uno mejor para tú hoy.</p>
+    <ul>
+        <li><strong>Plataformas sin código.</strong> Permiten crear agentes básicos sin conocimientos técnicos. El punto de partida natural para la mayoría de los periodistas.</li>
+        <li><strong>Herramientas de bajo código.</strong> Dan más flexibilidad reduciendo al mínimo el desarrollo. Útiles cuando el caso crece.</li>
+        <li><strong>Desarrollo a medida.</strong> Ofrece la máxima personalización para necesidades específicas, a cambio de más esfuerzo técnico.</li>
+    </ul>
+    <div class="callout">
+        <strong>Una combinación habitual:</strong> una herramienta para los flujos que requieren razonamiento y decisión, conectada con otra que se encargue de mover datos entre tus sistemas. Elige lo que se ajuste a tu realidad, no lo más sofisticado que exista.
+    </div>
+  </div>
+</section>
+
+<!-- 4.6 supervisión humana + pruebas -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — El criterio sigue siendo tuyo</div>
+    <h2>Diseña pensando en la supervisión humana</h2>
+    <p>Las buenas implementaciones mantienen una supervisión humana adecuada. Diseña flujos donde el agente haga el trabajo pesado, pero las personas conserven la autoridad para aprobar las decisiones críticas: <strong>el agente ejecuta, tú aportas criterio y dirección.</strong></p>
+    <p>Trata al agente como tratarías a un integrante nuevo del equipo: entrégale instrucciones claras y detalladas, y establece mecanismos de supervisión. El secreto no son técnicas sofisticadas, sino paciencia, claridad y expectativas realistas sobre lo que puede y no puede hacer.</p>
+    <h3>Prueba a fondo antes de soltar el agente</h3>
+    <p>Prueba con datos históricos y escenarios controlados antes de ponerlo en producción. Empieza en un entorno seguro donde un error no cause problemas, usalo realmente durante una semana para ver cómo se comporta, aprende de lo que falla, y recién entonces suma la siguiente función.</p>
+    <div class="callout-green">
+        <strong>Los procesos en segundo plano son un excelente punto de partida:</strong> aportan valor sin exigir respuesta inmediata. El agente puede trabajar de noche o fuera de horario, y entregar el trabajo listo cuando tú llegas.
+    </div>
+  </div>
+</section>
+
+<!-- 4.7 integración -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Fase 3: integración</div>
+    <h2>Conecta los agentes a las herramientas que ya usas</h2>
+    <p>La eficacia de un agente depende muchas veces de su capacidad de acceder a los datos y sistemas correctos. Una buena integración requiere atención en tres áreas:</p>
+    <h3>Acceso a los datos y seguridad</h3>
+    <ul>
+        <li>Crea conexiones específicas a tus sistemas internos.</li>
+        <li>Establece límites claros sobre el uso de los datos.</li>
+        <li>Implementa mecanismos de autenticación adecuados.</li>
+    </ul>
+    <h3>Integración con el flujo de trabajo</h3>
+    <ul>
+        <li>Define dónde va a entregar su trabajo el agente.</li>
+        <li>Decide cómo lo van a revisar y usar las personas del equipo.</li>
+        <li>Elige qué sistemas existentes conviene conectarle.</li>
+    </ul>
+    <h3>Diseño de la experiencia de uso</h3>
+    <p>Ofrécele a quien lo usa visibilidad y control. Empieza por la transparencia — que vean lo que el agente hace — y a medida que crece la confianza, aumenta gradualmente su autonomía en los flujos ya probados. Algunos van a querer aprobar cada paso; otros, solo recibir el resultado.</p>
+  </div>
+</section>
+
+<!-- 4.8 medición -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Fase 4: medición</div>
+    <h2>Mide el ROI y la eficacia</h2>
+    <p>Establecer métricas claras te ayuda a cuantificar el impacto y a detectar dónde mejorar. Empieza fijando una referencia previa a la implementación, y después sigue los cambios a medida que el agente se integra.</p>
+    <div class="split">
+        <div class="split-card cyan">
+            <h3>Métricas de eficiencia</h3>
+            <ul>
+                <li>Tiempo ahorrado en tareas antes manuales</li>
+                <li>Volumen de trabajo procesado vs. la referencia</li>
+                <li>Costo por tarea o actividad</li>
+            </ul>
+        </div>
+        <div class="split-card indigo">
+            <h3>Métricas de calidad</h3>
+            <ul>
+                <li>Precisión frente a una referencia humana</li>
+                <li>Tipos y tasa de errores</li>
+                <li>Coherencia de los resultados</li>
+            </ul>
+        </div>
+    </div>
+    <p>Suma también métricas de impacto: crecimiento de la audiencia influido por el trabajo del agente, satisfacción de tus lectores y mejora de la productividad del equipo. Evaluando las oportunidades, implementando con cuidado, integrando bien y midiendo, puedes sumar agentes a tu trabajo minimizando los riesgos. La clave: empezar de a poco, buscar victorias rápidas y crecer de forma incremental, en vez de transformar todo de una vez.</p>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 5 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 5</div>
+    <h2>Errores comunes y <span class="accent">cómo evitarlos</span></h2>
+    <p>Incluso con una buena planificación, quien implementa agentes de IA suele encontrarse con tropiezos. Conocer estos siete errores frecuentes — y cómo esquivarlos — mejora mucho tus chances de éxito.</p>
+    <ol>
+        <li>Automatizar de más sin supervisión adecuada</li>
+        <li>Expectativas poco realistas sobre lo que pueden hacer</li>
+        <li>Estrategias de implementación defectuosas</li>
+        <li>Resistencia del equipo y mala gestión del cambio</li>
+        <li>Problemas de calidad de los datos</li>
+        <li>Falta de métricas de éxito claras</li>
+        <li>Pasar por alto la ética y la responsabilidad editorial</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5.1 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 01</div>
+    <h2>Automatizar de más sin supervisión</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Por las ganas de ganar eficiencia, se automatizan flujos enteros sin mecanismos de control. Así un error se propaga sin que nadie lo note, hasta llegar al lector o a una fuente.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Define protocolos claros: qué acciones del agente requieren aprobación humana, cuáles necesitan un control periódico y cuáles pueden correr solas. Aplica un enfoque de autonomía gradual, donde el agente gana independencia a medida que demuestra ser fiable. Empieza automatizando tareas de fondo, donde haya revisión humana antes de que el resultado salga al público.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.2 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 02</div>
+    <h2>Expectativas poco realistas</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>El entusiasmo lleva a fijar metas que superan lo que la tecnología puede hoy. El resultado es decepción, recursos malgastados y, a veces, abandonar casos que sí eran valiosos.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Empieza por casos que aprovechan sus fortalezas actuales — procesar datos, reconocer patrones, ejecutar procesos claros — en vez de escenarios que piden comprensión profunda del contexto o inteligencia emocional. Evalúa las capacidades reales antes de asignar responsabilidades: los agentes brillan en tareas bien definidas, pero les cuesta el juicio muy matizado.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.3 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 03</div>
+    <h2>Estrategias de implementación defectuosas</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Los métodos de implementación más comunes que fallan: pruebas insuficientes, mala integración con los flujos existentes y poca atención a la experiencia de quien va a usar el agente.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Adopta una metodología iterativa, con pruebas y refinamientos frecuentes. Presta especial atención a cómo se integra el agente con el trabajo de las personas. Genera transparencia mostrando lo que hace, sin abrumar con información innecesaria — equilibra las ventajas de automatizar con el nivel de comodidad real del equipo.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.4 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 04</div>
+    <h2>Resistencia del equipo y gestión del cambio</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Hasta la mejor implementación fracasa si el equipo se resiste. Introducir agentes sin conversarlo bien suele despertar miedo por el puesto, desconfianza en la herramienta o fastidio por aprender algo nuevo.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Presenta los agentes como algo que potencia a las personas, no que las reemplaza. Celebra las victorias tempranas donde el agente claramente le facilitó el trabajo a alguien, comparte esos casos y suma al equipo al proceso desde el inicio para construir confianza e incorporar su mirada.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.5 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 05</div>
+    <h2>Problemas de calidad de los datos</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Un agente es tan bueno como los datos a los que accede. Construido sobre información incompleta, inexacta o mal integrada, va a dar resultados decepcionantes y a minar la confianza en la herramienta.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Empieza por casos donde los datos ya están bien organizados y accesibles. Aborda los problemas de calidad de forma gradual, en vez de intentar resolver todo de golpe. Haz una evaluación honesta de tus datos antes de desplegar un agente que dependa de ellos.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.6 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 06</div>
+    <h2>Falta de métricas de éxito claras</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Metas vagas como "mejorar la eficiencia", sin objetivos concretos y medibles, hacen imposible evaluar si valió la pena y afinar el rendimiento del agente.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Define métricas claras antes de implementar, y criterios de éxito específicos para cada caso. Incluye tanto métricas de eficiencia (tiempo ahorrado, volumen) como de calidad (precisión, tasa de error). Revisalas y ajustalas a medida que el agente madura.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5.7 -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Error 07</div>
+    <h2>Pasar por alto la ética y la responsabilidad editorial</h2>
+    <div class="error-block">
+        <div class="err-card trap">
+            <div class="label">La trampa</div>
+            <p>Los agentes operan en un contexto ético y normativo que en periodismo es especialmente delicado. Ignorar posibles sesgos, problemas de privacidad o la verificación puede derivar en daño reputacional o consecuencias legales — y en una pérdida de credibilidad difícil de recuperar.</p>
+        </div>
+        <div class="err-card fix">
+            <div class="label">Cómo evitarlo</div>
+            <p>Define principios claros sobre cómo y para qué vas a usar agentes en tu medio, qué nunca se publica sin verificación humana, y cómo se transparenta su uso. Incorpora la revisión ética y editorial a tu proceso, y asegúrate de cumplir las normas y políticas que apliquen. La tecnología evoluciona; tu responsabilidad sobre lo que publicas, no.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 6 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 6</div>
+    <h2>El futuro del trabajo <span class="accent">periodístico con IA</span></h2>
+    <p>A medida que los agentes se integran en el trabajo de los medios, no solo cambian cómo se hacen las tareas: cambian la propia naturaleza de los roles y las competencias. Entender estas dinámicas te ayuda a prepararte para el periodismo que viene.</p>
+    <p>El auge de los agentes está creando un cambio de fondo en cómo se evalúa el talento. La <strong>alfabetización en IA</strong> se está volviendo una competencia profesional legítima, que diferencia a unos periodistas de otros.</p>
+  </div>
+</section>
+
+<!-- 6.1 competencias -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Cómo cambia tu perfil</div>
+    <h2>Nuevas competencias y cómo te posicionas</h2>
+    <p>En entornos competitivos y medios con visión de futuro, saber trabajar con agentes se está convirtiendo en un diferenciador real. Empezamos a ver búsquedas que mencionan "experiencia con herramientas de automatización con IA" en roles de contenido, redacción y operaciones. El periodista está pasando de "hacedor" a "director de agentes".</p>
+    <h3>Nuevos requisitos de alfabetización técnica</h3>
+    <p>Entender qué pueden y qué no pueden hacer los agentes, y cómo darles instrucciones claras, se vuelve esencial. No hace falta saber programar en profundidad, pero sí aprender a diseñar buenas consignas, dirigir y colaborar con los agentes para obtener resultados fiables.</p>
+    <div class="quote">Deja de preguntarte "¿qué tarea puedo automatizar?" y empieza a preguntarte "¿qué sistema de agentes puedo armar para gestionar toda esta parte de mi trabajo?".</div>
+    <p>Quien pueda diseñar y afinar sus propios agentes para resolver desafíos específicos de su flujo va a tener una ventaja sustancial sobre quien solo use soluciones prefabricadas.</p>
+  </div>
+</section>
+
+<!-- 6.2 habilidades humanas -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Lo que te vuelve insustituible</div>
+    <h2>El énfasis en las habilidades exclusivamente humanas</h2>
+    <p>Mientras los agentes se ocupan de lo más rutinario y analítico, sube fuerte el valor de las capacidades claramente humanas — las que, en periodismo, son el corazón del oficio:</p>
+    <ul>
+        <li><strong>Creatividad y mirada propia</strong> para encontrar el ángulo que nadie vio.</li>
+        <li><strong>Empatía</strong> para entrevistar, ganar la confianza de una fuente y contar una historia desde adentro.</li>
+        <li><strong>Juicio ético</strong> para decidir qué se publica, cómo y cuándo.</li>
+        <li><strong>Pensamiento estratégico</strong> para definir la línea editorial y la identidad del medio.</li>
+    </ul>
+    <p>La meta no es enseñarle a la gente a aceptar que la reemplacen, sino ayudarla a evolucionar hacia ese rol de orquestador que dirige los sistemas de IA mientras conserva el criterio. Los periodistas más valiosos en 2026 no van a ser los que ejecutan más rápido, sino los que mejor orquestan agentes mientras aplican su juicio a las decisiones que importan.</p>
+  </div>
+</section>
+
+<!-- 6.3 formación -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Cómo te preparas</div>
+    <h2>Formate para trabajar con agentes de IA</h2>
+    <p>Integrar agentes con éxito requiere prepararte (y preparar a tu equipo) a conciencia. Los enfoques de formación que funcionan se centran en habilidades prácticas y mentalidades estratégicas:</p>
+    <ul>
+        <li><strong>Alfabetización en agentes.</strong> Entender capacidades, límites y casos de uso. Empieza a construirla ahora, sin esperar a que "todos lo descubran".</li>
+        <li><strong>Diseño de consignas.</strong> Aprender a dar instrucciones claras que produzcan el resultado buscado.</li>
+        <li><strong>Pensamiento sistémico.</strong> Pasar de "¿qué tarea automatizo?" a "¿qué sistema construyo?".</li>
+        <li><strong>Evaluación de resultados.</strong> Revisar y afinar con criterio el trabajo que genera el agente.</li>
+        <li><strong>Comodidad con lo imperfecto.</strong> Trabajar con agentes que ya son lo bastante buenos para multiplicar tu rendimiento, aunque no sean perfectos.</li>
+    </ul>
+    <div class="quote">Los que ganan son quienes aprenden a trabajar con agentes imperfectos, no quienes esperan a que aparezca el agente perfecto.</div>
+  </div>
+</section>
+
+<!-- 6.4 cartera personal de agentes -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Tu equipo invisible</div>
+    <h2>Construye tu cartera personal de agentes</h2>
+    <p>Así como hoy cultivas tu red de contactos, mañana vas a desarrollar tu propia colección de agentes adaptados a tu forma de trabajar. Empezamos a ver personas que dirigen lo que parecen operaciones de cinco a diez integrantes — producción de contenido, atención a la comunidad, distribución — sobre todo orquestando agentes.</p>
+    <p>Esa cartera personal se vuelve un activo profesional cada vez más valioso. Piensa cómo se combinan agentes complementarios según tu rol:</p>
+    <div class="case-card">
+        <span class="case-num">01</span>
+        <div>
+            <h3>Periodista de contenido</h3>
+            <p>Agentes de generación de notas, de investigación de audiencia, de análisis de rendimiento y de optimización de la distribución, trabajando en conjunto para amplificar tu capacidad creativa.</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">02</span>
+        <div>
+            <h3>Dueño de un medio independiente</h3>
+            <p>Agentes de investigación de temas, de comunicación con la audiencia, de seguimiento de ingresos y de análisis de la competencia, combinados para mejorar tus decisiones estratégicas.</p>
+        </div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">03</span>
+        <div>
+            <h3>Periodista-formador</h3>
+            <p>Agentes de desarrollo de material, de interacción con tu comunidad, de análisis de comentarios y de reutilización de contenido, colaborando para ampliar tu alcance.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6.5 evolución de la relación -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — De herramienta a socio</div>
+    <h2>La relación entre las personas y la IA, en evolución</h2>
+    <p>Quizás el cambio más profundo sea la relación misma entre quien trabaja con información y la IA. Estamos pasando de la IA como herramienta a la IA como socio colaborador. Así fue evolucionando:</p>
+    <div class="timeline">
+        <div class="tl-item"><div class="tl-era">1950–60s</div><div><h3>Herramientas</h3><p>Sistemas rígidos basados en reglas, con capacidades limitadas y sin autonomía.</p></div></div>
+        <div class="tl-item"><div class="tl-era">1980–90s</div><div><h3>Asistentes</h3><p>Sistemas expertos y primeros asistentes virtuales, con conocimiento acotado a un dominio.</p></div></div>
+        <div class="tl-item"><div class="tl-era">2010s</div><div><h3>Aumentadores</h3><p>Aprendizaje automático que amplía el trabajo humano por predicción y reconocimiento de patrones.</p></div></div>
+        <div class="tl-item"><div class="tl-era">2020–23</div><div><h3>Co-creadores</h3><p>Modelos de lenguaje y IA generativa que crean contenido y resuelven problemas junto a las personas.</p></div></div>
+        <div class="tl-item now"><div class="tl-era">2024–26 · hoy</div><div><h3>Socios</h3><p>Agentes con autonomía, memoria y acceso a herramientas, trabajando como verdaderos socios del flujo de trabajo.</p></div></div>
+    </div>
+    <div class="quote">El cuello de botella se corre de la capacidad de ejecución a la toma de decisiones y la dirección creativa. Ya no te limita cuántas horas puedes trabajar, sino qué tan bien diriges a los agentes que hacen el trabajo.</div>
+  </div>
+</section>
+
+<!-- 6.6 prepara tu medio -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Lo que conviene anticipar</div>
+    <h2>Prepara tu medio para lo que viene</h2>
+    <p>Quien se prepare para este futuro debería enfocarse en cuatro prioridades. Quienes las adopten ahora van a desarrollar ventajas difíciles de alcanzar para los que esperan.</p>
+    <div class="phase">
+        <div class="phase-tag">01</div>
+        <div><h3>Cambio cultural</h3><p>Pasar del miedo al entusiasmo basado en la oportunidad, mostrando ejemplos concretos de cómo los agentes mejoran el trabajo en vez de amenazarlo.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">02</div>
+        <div><h3>Infraestructura preparada</h3><p>Anticipa las integraciones nativas: las plataformas que ya usas van a sumar funciones "listas para agentes" que facilitan la orquestación.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">03</div>
+        <div><h3>Desarrollo de habilidades</h3><p>Invierte en formación que combine la alfabetización técnica con las aptitudes humanas que van a seguir siendo insustituibles.</p></div>
+    </div>
+    <div class="phase">
+        <div class="phase-tag">04</div>
+        <div><h3>Reglas claras</h3><p>Define cómo se despliegan los agentes, sus límites y los mecanismos de supervisión que garantizan calidad y cumplimiento ético.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 7 ═══════════ -->
+<section class="page">
+  <div class="page-inner">
+    <div class="chapter-num">Capítulo 7</div>
+    <h2><span class="accent">Conclusión</span></h2>
+    <p>El camino para sumar agentes de IA a tu trabajo no se trata de reemplazar personas, sino de rediseñar cómo se hace el trabajo. Como vimos a lo largo de esta guía, 2026 es un año clave: estos agentes ya gestionan flujos completos y abordan tareas complejas, pero siguen necesitando socios humanos que aporten criterio y dirección.</p>
+    <p>Los que más ganan hoy no son los que tienen la mejor tecnología, sino los que tienen una estrategia clara para la colaboración entre persona e IA. Saben que los agentes destacan en lo repetitivo y con muchos datos, mientras que el periodista aporta creatividad, juicio y el vínculo con las fuentes y la audiencia.</p>
+    <div class="quote">Los agentes prometen ser amplificadores, no sustitutos. Recompensan la acción por encima del perfeccionismo. Acepta la imperfección y empieza ahora.</div>
+  </div>
+</section>
+
+<!-- 7.1 puntos clave -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">07 — Lo que te llevas</div>
+    <h2>Resumen de puntos clave</h2>
+    <ul>
+        <li><strong>Empieza de a poco, con tareas de baja precisión.</strong> Enfoca los primeros esfuerzos donde un 90% de acierto alcance y los errores tengan consecuencias mínimas.</li>
+        <li><strong>Diseña para la colaboración persona-IA.</strong> Las mejores implementaciones garantizan supervisión humana y automatizan lo rutinario dentro de flujos complejos.</li>
+        <li><strong>Mide eficiencia y calidad.</strong> No solo el tiempo ahorrado, también la mejora en la calidad, la coherencia y el impacto en tu audiencia.</li>
+        <li><strong>Desarrolla capacidades.</strong> Construye tus habilidades (y las de tu equipo) para dirigir, evaluar y colaborar con agentes.</li>
+        <li><strong>Mantén expectativas realistas.</strong> Conoce las capacidades y los límites actuales para no decepcionarte ni subestimar el valor que ya aportan.</li>
+    </ul>
+    <div class="callout-green">
+        <strong>El principio es claro:</strong> las personas dirigen la estrategia, los agentes gestionan la ejecución. El futuro del trabajo no enfrenta a humanos contra IA — los hace colaborar, cada uno aportando lo suyo. Empieza hoy, con una estrategia práctica y metas claras.
+    </div>
+  </div>
+</section>
+
+<!-- 7.2 acerca de -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Acerca de esta guía</div>
+    <h2>Periodistas Digitales</h2>
+    <p>Esta guía es parte del trabajo de <strong>Periodistas Digitales</strong>: ayudamos a periodistas y comunicadores a usar la inteligencia artificial para producir mejor, llegar más lejos y construir medios sostenibles — sin perder el criterio que hace al oficio.</p>
+    <p>Creemos que la IA no reemplaza al periodista: lo potencia. Por eso traducimos lo que pasa en el mundo de la IA a herramientas, rutinas y ejemplos pensados para el trabajo periodístico real, no para una empresa de tecnología.</p>
+    <div class="cta-box">
+        <h3>Esto recién empieza</h3>
+        <p>En los próximos materiales vamos a mostrarte, paso a paso, cómo armar tus primeros agentes y rutinas de IA aplicadas a tu medio — con ejemplos concretos y plantillas listas para usar.</p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>
