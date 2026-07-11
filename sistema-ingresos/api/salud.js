@@ -140,6 +140,80 @@ async function saludPostCompra() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// FLUJO 5 — Salud del sitio (velocidad de carga + botones/links rotos). Corre desde
+// Vercel (que SÍ tiene salida a internet, a diferencia del sandbox de las rutinas de nube).
+// Objetivo: que la landing cargue rápido y que ningún botón (checkout incluido) esté roto.
+// ─────────────────────────────────────────────────────────────────────────────
+const SITIO_BASE = 'https://sistemadeingresosdiariosia.com';
+const SITIO_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+const SITIO_PAGES = [
+  ['/', 'Landing principal'], ['/landing.html', 'Landing'], ['/landing-leadgen-v1.html', 'Landing LeadGen $1'],
+  ['/gracias.html', 'Gracias'], ['/guia-5-pilares-ingresos-periodico-digital.html', 'Guía 5 pilares'],
+  ['/guia-agentes-ia-periodistas.html', 'Guía agentes IA'], ['/guia-claude-periodistas.html', 'Guía Claude'],
+  ['/guia-completa-50-prompts.html', 'Guía 50 prompts'], ['/guia-periodico-digital-ig-fb.html', 'Guía periódico IG/FB'],
+  ['/upsell-periodico/espera.html', 'Upsell'],
+];
+async function saludSitio() {
+  const met = {}; const puntos = []; let nivel = 'ok';
+  const abs = (href, page) => { try { return new URL(href, page).href; } catch { return null; } };
+  // peso aprox de un asset por HEAD (Content-Length; algunos vienen gzip → subestima, sirve de alarma de regresión)
+  const cabeza = async (url) => {
+    try { const r = await fetch(url, { method: 'HEAD', redirect: 'follow', headers: { 'user-agent': SITIO_UA }, signal: AbortSignal.timeout(10000) }); return { status: r.status, len: Number(r.headers.get('content-length') || 0) }; }
+    catch (e) { return { status: 0, len: 0, err: e.name }; }
+  };
+  // ping a un link: GET al checkout (Hotmart bloquea HEAD), HEAD al resto
+  const ping = async (url) => {
+    const esCheckout = /hotmart\.com/i.test(url);
+    try { const r = await fetch(url, { method: esCheckout ? 'GET' : 'HEAD', redirect: 'follow', headers: { 'user-agent': SITIO_UA }, signal: AbortSignal.timeout(12000) }); return { status: r.status }; }
+    catch (e) { return { status: 0, err: e.name }; }
+  };
+  try {
+    let landingMax = 0, landingMaxNombre = '', chequeados = 0, checkoutRoto = false;
+    const rotos = []; const linkCache = new Map();
+    for (const [path, nombre] of SITIO_PAGES) {
+      const pageUrl = SITIO_BASE + path;
+      const g = await fetch(pageUrl, { headers: { 'user-agent': SITIO_UA }, signal: AbortSignal.timeout(12000) }).catch(() => null);
+      if (!g || !g.ok) { rotos.push({ url: pageUrl, status: g ? g.status : 'sin respuesta', tipo: 'pagina' }); continue; }
+      const html = await g.text();
+      const assets = new Set(); const links = new Set();
+      for (const m of html.matchAll(/<(?:script|img|source)[^>]+src=["']([^"']+)["']/gi)) { const u = abs(m[1], pageUrl); if (u && /^https?:/.test(u)) assets.add(u); }
+      for (const m of html.matchAll(/<link[^>]+href=["']([^"']+)["'][^>]*>/gi)) { if (/rel=["'](stylesheet|preload|icon)/i.test(m[0])) { const u = abs(m[1], pageUrl); if (u && /^https?:/.test(u)) assets.add(u); } }
+      for (const m of html.matchAll(/<a[^>]+href=["']([^"']+)["']/gi)) { const raw = m[1].trim(); if (/^(mailto:|tel:|javascript:|#)/i.test(raw) || !raw) continue; const u = abs(raw, pageUrl); if (u && /^https?:/.test(u)) links.add(u); }
+      for (const m of html.matchAll(/<form[^>]+action=["']([^"']+)["']/gi)) { const u = abs(m[1], pageUrl); if (u && /^https?:/.test(u)) links.add(u); }
+      // peso solo en las landings (son el destino de los ads)
+      if (/landing/i.test(path) || path === '/') {
+        let peso = Number(g.headers.get('content-length') || html.length);
+        const heads = await Promise.all([...assets].slice(0, 40).map(cabeza));
+        for (const h of heads) peso += h.len;
+        if (peso > landingMax) { landingMax = peso; landingMaxNombre = nombre; }
+      }
+      for (const url of links) {
+        if (!linkCache.has(url)) linkCache.set(url, await ping(url));
+        const r = linkCache.get(url); chequeados++;
+        const externo = !url.startsWith(SITIO_BASE);
+        const okStatus = r.status >= 200 && r.status < 400;
+        const bloqueoExterno = externo && [401, 403, 405, 429].includes(r.status); // no está roto, solo bloqueó el chequeo
+        if (!okStatus && !bloqueoExterno) {
+          const esCheckout = /hotmart\.com/i.test(url);
+          rotos.push({ url, status: r.status || r.err || '0', tipo: esCheckout ? 'checkout' : externo ? 'externo' : 'interno', desde: path });
+          if (esCheckout) checkoutRoto = true;
+        }
+      }
+    }
+    const landingMB = landingMax / 1024 / 1024;
+    Object.assign(met, { landing_mas_pesada_mb: Number(landingMB.toFixed(2)), links_chequeados: chequeados, links_rotos: rotos.length });
+    if (checkoutRoto) { nivel = 'critico'; puntos.push('🚨 El botón de COMPRA (checkout de Hotmart) no responde. Nadie puede pagar — revisar YA.'); }
+    const rotosDuros = rotos.filter((r) => r.tipo === 'interno' || r.tipo === 'pagina');
+    if (rotosDuros.length) { nivel = peor(nivel, 'critico'); puntos.push(`${rotosDuros.length} link/página rotos en el sitio: ${rotosDuros.slice(0, 3).map((r) => `${r.url.replace(SITIO_BASE, '')} (${r.status})`).join(', ')}.`); }
+    const rotosExt = rotos.filter((r) => r.tipo === 'externo');
+    if (rotosExt.length) { nivel = peor(nivel, 'alerta'); puntos.push(`${rotosExt.length} link externo no respondió (puede ser temporal).`); }
+    if (landingMB > 4) { nivel = peor(nivel, 'alerta'); puntos.push(`La landing más pesada (${landingMaxNombre}) pesa ~${landingMB.toFixed(1)} MB en celular — conviene comprimir imágenes, el tráfico de ads rebota.`); }
+    if (nivel === 'ok') puntos.push(`Botones OK (${chequeados} chequeados, el checkout responde) · landing más pesada ~${landingMB.toFixed(1)} MB. El sitio carga bien.`);
+  } catch (e) { nivel = 'alerta'; puntos.push(`No se pudo revisar el sitio (${e.message || e}).`); }
+  return { flujo: '🩺 Salud del sitio (velocidad + botones)', que_mira: 'Que la landing cargue rápido y ningún botón (checkout) esté roto.', nivel, puntos, met };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Composición del email — un banner general + una tarjeta clara por flujo.
 // ─────────────────────────────────────────────────────────────────────────────
 const COLOR = {
@@ -198,7 +272,7 @@ async function enviar(subject, html) {
 // a los demás.
 async function enviarPanelSalud(mode) {
   const flujos = [];
-  for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra]) {
+  for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio]) {
     try { flujos.push(await fn()); }
     catch (e) { flujos.push({ flujo: fn.name, que_mira: '', nivel: 'alerta', puntos: [`Error al diagnosticar: ${e.message || e}`], met: {} }); }
   }
@@ -223,3 +297,4 @@ module.exports = async (req, res) => {
   }
 };
 module.exports.enviarPanelSalud = enviarPanelSalud;
+module.exports.saludSitio = saludSitio;
