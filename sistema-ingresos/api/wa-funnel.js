@@ -611,9 +611,11 @@ function prioridad(p) {
   if (p.channel === 'wa') {
     if (p.send === 5) return 1; // Oferta — la que vende
     if (p.send === 4) return 2; // Regalo 4
-    if (p.send === 3) return 4; // Regalo 3
+    if (p.send === 3) return 3; // Regalo 3 (ENTRADA) — antes que el email: si un lead nuevo no
+    //                             entra al embudo, no hay a quién venderle. El email (Regalo 5)
+    //                             es un bonus para quien YA está adentro → puede esperar el turno.
   }
-  if (p.channel === 'email') return 3;       // Regalo 5 (email)
+  if (p.channel === 'email') return 4;       // Regalo 5 (email) — con el tiempo restante de la corrida
   if (p.channel === 'seguimiento') return 5; // reactivación de fríos, al final
   return 6;
 }
@@ -621,6 +623,9 @@ function prioridad(p) {
 export default async function handler(req, res) {
   const { searchParams } = new URL(req.url, 'http://localhost');
   const mode = searchParams.get('mode') || 'cron';
+  // Nº de eslabón del auto-encadenado (ver más abajo). 0 = corrida inicial (el cron); 1,2… = las
+  // corridas que la función dispara sobre sí misma para vaciar la cola el mismo día.
+  const chain = parseInt(searchParams.get('chain') || '0', 10) || 0;
 
   // --- Auth ---
   const secret = process.env.CRON_SECRET || '';
@@ -732,13 +737,31 @@ export default async function handler(req, res) {
       return;
     }
 
-    // --- live --- (cap por corrida para NO pasar el timeout de 60 s de la función; cada lead
-    // cuesta ~1 s entre Meta y Brevo → 40 entra cómodo dejando margen para el reporte).
-    const LIMIT = 40;
-    const batch = plan.slice(0, LIMIT);
+    // --- live --- Presupuesto de TIEMPO en vez de un tope fijo. Antes cortábamos en 40 leads
+    // por corrida: con un backlog grande eso dejaba a los leads nuevos afuera (nunca entraban al
+    // embudo) y la cola sólo crecía. Ahora procesamos en orden de prioridad hasta agotar ~45 s
+    // (la función corta a los 60 s → queda margen para el reporte y los logs). Así una sola
+    // corrida despacha TODO lo que entre en el tiempo, sin timeout. HARD_MAX es un tope de
+    // seguridad anti-runaway por si los envíos fueran muy rápidos.
+    const BUDGET_MS = 45000;
+    const HARD_MAX = 220;
+    const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
+    const t0 = Date.now();
     const results = [];
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
-    for (const p of batch) {
+    let attempted = 0;
+
+    // CLAVE del arreglo: el email (Regalo 5) NO comparte presupuesto con WhatsApp. Ese era el bug
+    // que ahogaba la entrada del embudo (cientos de emails "debidos" copaban el tope y los leads
+    // nuevos nunca recibían el Regalo 3). Ahora los emails van PRIMERO con su propio tope (son
+    // instantáneos: ~60 entran en pocos segundos) y después WhatsApp usa el resto del tiempo, en
+    // orden de prioridad (oferta → Regalo 4 → Regalo 3). Así ambos canales avanzan cada corrida.
+    const emailQueue = plan.filter((p) => p.channel === 'email').slice(0, EMAIL_CAP);
+    const waQueue = plan.filter((p) => p.channel !== 'email'); // wa + seguimiento (ya ordenados por prioridad)
+    const queue = [...emailQueue, ...waQueue];
+    for (const p of queue) {
+      if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
+      attempted++;
       if (p.channel === 'email') {
         if (!mail5Enabled) { results.push({ email: p.email, skipped: 'MAIL5_ENABLED!=1 (regalo 5 apagado)' }); continue; }
         const sent = await sendMail5(p.email, p.nombre);
@@ -790,10 +813,10 @@ export default async function handler(req, res) {
       const runInfo = {
         due_oferta: planWA(5),
         sent_oferta: sentWA(5),
-        attempted: batch.length,
+        attempted,
         fallidos: results.filter((x) => x.error !== undefined).length,
         enviados_ok: results.filter((x) => x.sent !== undefined).length,
-        remaining: plan.length - batch.length,
+        remaining: plan.length - attempted,
         // Continuidad de HOY por etapa: qué DEBÍA salir (el plan, antes del cap) vs qué SALIÓ.
         // "debido" limpio según su fuente: R3 = leads nuevos que hoy cumplen día 5 (entrada del
         // embudo → depende del ingreso por Facebook, no se sabe de antemano). R4/R5/Oferta/
@@ -814,7 +837,27 @@ export default async function handler(req, res) {
       // Guardar el cierre de HOY → mañana es el "ayer" del reporte (continuidad día a día).
       await guardarSnapshotDiario(hoyISO, runInfo.etapas, { attempted: runInfo.attempted, enviados_ok: runInfo.enviados_ok, fallidos: runInfo.fallidos, remaining: runInfo.remaining });
     }
-    res.status(200).json({ mode, live: true, due_total: plan.length, attempted: batch.length, remaining: plan.length - batch.length, report: report ? report.ok : null, results });
+
+    // --- AUTO-ENCADENADO (gratis, plan Hobby) ---
+    // Vercel Hobby dispara el cron 1×/día, pero el volumen real (~23 leads/día → ~67 WhatsApp/día)
+    // necesita ~3 corridas. Solución: al terminar, si quedó cola, la función se re-dispara a sí
+    // misma (una NUEVA invocación independiente en Vercel — la hija sigue corriendo aunque cortemos
+    // la espera). Se repite hasta MAX_CHAINS veces o hasta vaciar la cola (se frena solo). Tope de
+    // seguridad: 3 corridas ≈ ~100-110 WhatsApp/día → no arriesga el número en Meta. En régimen
+    // normal, cuando la cola se vacía antes, se detiene solo (no gasta corridas de más).
+    const MAX_CHAINS = 2; // corridas iniciales (chain 0) + 2 encadenadas = 3 en total
+    const remaining = plan.length - attempted;
+    if (live && remaining > 0 && chain < MAX_CHAINS) {
+      const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
+      const selfUrl = `https://${host}/api/wa-funnel?mode=live&chain=${chain + 1}&key=${encodeURIComponent(secret)}`;
+      try {
+        // Disparamos la próxima corrida y NO esperamos a que termine: abortamos la espera a los 3 s
+        // (la hija ya arrancó sola en Vercel). Best-effort: si falla, no rompe la corrida actual.
+        await fetch(selfUrl, { signal: AbortSignal.timeout(3000) });
+      } catch (_) { /* esperado: abort tras disparar, o red → best-effort */ }
+    }
+
+    res.status(200).json({ mode, chain, live: true, due_total: plan.length, attempted, remaining, encadenada: live && remaining > 0 && chain < MAX_CHAINS, report: report ? report.ok : null, results });
   } catch (e) {
     console.error('wa-funnel error', e);
     res.status(500).json({ error: String(e && e.message || e) });
