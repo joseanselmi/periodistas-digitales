@@ -83,6 +83,25 @@
     .btn-lg { padding: 13px 26px; font-size: clamp(.82rem, 3.2vw, 1.1rem); white-space: nowrap; }
     .btn-full { width: 100%; justify-content: center; }
 
+    /* ── STICKY CTA (aparece al llegar a los Regalos y acompaña hasta el final) ── */
+    .sticky-cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; transform: translateY(130%); transition: transform .45s var(--ease); pointer-events: none; }
+    .sticky-cta.show { transform: translateY(0); pointer-events: auto; }
+    .sticky-inner { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 12px 24px calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(8,8,18,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid rgba(255,255,255,.1); box-shadow: 0 -10px 34px rgba(0,0,0,.4); }
+    .sticky-info { display: flex; flex-direction: column; gap: 3px; }
+    .sticky-priceline { display: flex; align-items: baseline; gap: 9px; }
+    .sticky-original { font-size: 1rem; color: var(--muted); text-decoration: line-through; }
+    .sticky-price { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--green); line-height: 1; display: flex; align-items: baseline; gap: 4px; }
+    .sticky-cur { font-size: .72rem; color: var(--muted-hi); font-weight: 600; letter-spacing: .04em; }
+    .sticky-note { font-size: .78rem; color: var(--muted-hi); }
+    .sticky-cta .btn { white-space: nowrap; box-shadow: 0 6px 22px rgba(34,197,94,.5); }
+    @media (max-width: 560px) {
+        .sticky-inner { flex-direction: column; align-items: stretch; gap: 9px; padding: 11px 16px calc(11px + env(safe-area-inset-bottom, 0px)); }
+        .sticky-info { flex-direction: row; align-items: baseline; justify-content: center; gap: 10px; }
+        .sticky-note { display: none; }
+        .sticky-price { font-size: 1.35rem; }
+        .sticky-cta .btn { width: 100%; justify-content: center; padding: 13px 20px; }
+    }
+
     /* ── HERO ── */
     .hero {
         position: relative; min-height: 88vh;
@@ -128,9 +147,13 @@
     .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.25; color: #fff; margin-bottom: 20px; text-shadow: 0 2px 24px rgba(0,0,0,.5); }
     .hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--indigo), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero-sub { font-size: 1.1rem; color: rgba(241,245,249,.85); max-width: 480px; margin-bottom: 36px; line-height: 1.75; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
-    .hero-scroll { position: absolute; bottom: 24px; right: 24px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .hero-scroll span { font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
-    .hero-scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--muted), transparent); animation: scroll-line 2s ease-in-out infinite; }
+    .hero-scroll { position: absolute; bottom: 18px; left: 0; right: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+    .hero-scroll span { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-hi); font-weight: 600; }
+    .hero-scroll-arrows { display: flex; flex-direction: column; align-items: center; }
+    .hero-scroll-arrows svg { width: 24px; height: 24px; stroke: var(--green); margin-top: -11px; animation: scroll-bounce 1.6s ease-in-out infinite; }
+    .hero-scroll-arrows svg:nth-child(2) { animation-delay: .18s; opacity: .6; }
+    .hero-scroll-arrows svg:nth-child(3) { animation-delay: .36s; opacity: .3; }
+    @keyframes scroll-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
     @keyframes scroll-line { 0%{opacity:1;transform:scaleY(1) translateY(0)} 100%{opacity:0;transform:scaleY(.5) translateY(20px)} }
 
     /* location badge — urgencia social — top center */
@@ -522,14 +545,18 @@
 
         <a href="#bonos" class="btn btn-green btn-lg">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            Quiero crear mi periódico digital
+            Quiero reservar mi cupo
         </a>
 
     </div>
 
     <div class="hero-scroll">
-        <span>scroll</span>
-        <div class="hero-scroll-line"></div>
+        <span>Deslizá</span>
+        <div class="hero-scroll-arrows">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
     </div>
 </section>
 
@@ -795,7 +822,7 @@
     <div class="container">
         <p class="section-eyebrow reveal">Comprando hoy obtenés bonos exclusivos</p>
         <h2 class="section-title reveal">3 bonos que valen más <em style="font-style:italic;background:linear-gradient(135deg,var(--indigo),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">que el curso mismo</em></h2>
-        <p class="section-sub reveal">Valor total de bonos: <strong style="color:var(--text)">$92 USD</strong> — incluidos sin costo extra cuando comprás hoy.</p>
+        <p class="section-sub reveal">Aprendé a crear tus periódicos digitales ya y obtené estos 3 bonos — sin costo extra.</p>
 
         <div class="bonuses-grid">
             <div class="bonus-card reveal">
@@ -1155,6 +1182,24 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-scale').forEach(el => observer.observe(el));
 
+/* ── STICKY CTA: aparece cuando el usuario llega a los Regalos y queda fijo ── */
+function initStickyCta() {
+    const sticky = document.getElementById('stickyCta');
+    const bonos = document.getElementById('bonos');
+    if (!sticky || !bonos) return;
+    const io = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) {
+            sticky.classList.add('show');
+            sticky.setAttribute('aria-hidden', 'false');
+            io.disconnect(); // una vez visible, se queda hasta el final
+        }
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+    io.observe(bonos);
+}
+// El div del sticky está más abajo en el HTML que este script → esperar al DOM.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initStickyCta);
+else initStickyCta();
+
 /* ── LOCATION BADGE + URGENCIA ── */
 const locationBadge = document.getElementById('locationBadge');
 const locationText  = document.getElementById('locationText');
@@ -1200,6 +1245,22 @@ const vsObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.15 });
 document.querySelectorAll('.value-stack').forEach(el => vsObserver.observe(el));
 </script>
+<!-- STICKY CTA: oculto hasta que el usuario llega a los Regalos; ahí aparece y lo acompaña hasta el final -->
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+    <div class="sticky-inner">
+        <div class="sticky-info">
+            <div class="sticky-priceline">
+                <span class="sticky-original">$227</span>
+                <span class="sticky-price">$27<span class="sticky-cur">USD</span></span>
+            </div>
+            <span class="sticky-note">Acceso completo + 3 bonos · Garantía 7 días</span>
+        </div>
+        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green">
+            Quiero crear mi periódico digital ya
+        </a>
+    </div>
+</div>
+
 <!-- Tracking de eventos → tabla `events` (base de marketing). Ver track.js -->
 <script>window.PD_TRACK={funnel:'meta-ads-directo',step:'landing'};</script>
 <script src="/track.js" defer></script>
