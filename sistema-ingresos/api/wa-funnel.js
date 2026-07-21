@@ -37,9 +37,15 @@
 //   - Se deja MAIL5_ENABLED apagado hasta probar el email E2E (mode=mail5test&to=...).
 //   - Correr una vez mode=setup para crear el atributo MAIL5_AT en Brevo.
 //
+// OFERTA POR EMAIL (plan B mientras WhatsApp no entrega) — flags:
+//   - Se envía sólo si WA_FUNNEL_ENABLED=1 Y ADEMÁS MAILOFERTA_ENABLED=1 (default OFF).
+//   - Va a quien ya está en WA_STAGE>=5: la oferta se les "disparó" por WhatsApp pero Meta la
+//     marcó fallida, así que nunca la vieron. Se marca con OFERTA_MAIL_AT (uno por lead).
+//   - Probar primero con mode=ofertatest&to=... (no toca Brevo), y correr mode=setup una vez.
+//
 // Variables de entorno (proyecto Vercel sistema-ingresos-landing):
 //   BREVO_API_KEY, WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET,
-//   WA_FUNNEL_ENABLED, MAIL5_ENABLED
+//   WA_FUNNEL_ENABLED, MAIL5_ENABLED, MAILOFERTA_ENABLED
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
 const BREVO = 'https://api.brevo.com/v3';
@@ -196,6 +202,64 @@ LO QUE VAS A ENCONTRAR
 Descargar la guía de agentes de IA (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&src=Email-Regalo5&sck=email5
 
 Leela con calma: es la base para que la IA deje de ser una herramienta suelta y pase a trabajar para tu medio.`,
+};
+
+// OFERTA POR EMAIL — plan B mientras WhatsApp no entrega (Business Verification en revisión
+// desde el 13/07: Meta marca FALLIDO el 100% de los envíos). La oferta se "disparó" a 289 leads
+// que nunca la vieron. Este email la hace llegar por el canal que SÍ funciona (Brevo: 22,6% de
+// apertura, 0,45% de bounce al 21/07). Copy espejo de la plantilla `oferta_sistema_ingresos` v2
+// aprobada por Jose el 2026-07-09 (ver PLANTILLAS-WHATSAPP.md): posiciona el curso y hace tee-up
+// de la landing. NO revela el precio — eso lo hace la página (regla de la campaña).
+// Se dispara por su propio atributo (OFERTA_MAIL_AT), no toca WA_STAGE: si mañana WhatsApp
+// revive, el funnel sigue su curso sin duplicar nada.
+const MAILOFERTA = {
+  afterStage: 5,     // sólo a quien ya llegó a la etapa de oferta (la haya recibido o no)
+  from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
+  subject: 'Llegaste al final de las 4 guías (esto es lo que sigue)',
+  html: `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07070f;"><tr>
+    <td align="center" style="padding:40px 20px;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="padding-bottom:32px;"><span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Periodistas del Futuro <span style="color:#22d3ee;">IA</span></span></td></tr>
+        <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
+          <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">Ya tenés las piezas. Falta armarlas.</p>
+          <p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Llegaste hasta el final de las 4 guías. Eso ya te pone adelante: sabés qué es un periódico digital propio, cómo la IA te multiplica el trabajo y cuáles son los 5 pilares que sostienen un ingreso que se repite.</p>
+          <p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Lo que falta es lo más importante: <strong style="color:#ffffff;">armarlas en un sistema</strong> que trabaje para vos todos los días.</p>
+          <div style="border-top:1px solid #1e1e2e;margin:24px 0 28px 0;"></div>
+          <p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Para eso está el <strong style="color:#ffffff;">curso Sistema de Ingresos Diarios</strong>: te lleva paso a paso, con el método completo, desde donde estás hoy hasta generar tus propios ingresos con tu periódico digital y la IA — con tu criterio editorial al frente y sin depender de un medio.</p>
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:28px;">
+            <tr><td style="padding:8px 0;vertical-align:top;width:28px;"><span style="color:#22d3ee;font-size:18px;">→</span></td><td style="padding:8px 0;font-size:15px;color:#c0c0d8;line-height:1.5;"><strong style="color:#ffffff;">El método completo</strong> — el mismo recorrido, ordenado y en video</td></tr>
+            <tr><td style="padding:8px 0;vertical-align:top;width:28px;"><span style="color:#22d3ee;font-size:18px;">→</span></td><td style="padding:8px 0;font-size:15px;color:#c0c0d8;line-height:1.5;"><strong style="color:#ffffff;">Paso a paso, desde cero</strong> — qué hacer el lunes, no sólo qué entender</td></tr>
+            <tr><td style="padding:8px 0;vertical-align:top;width:28px;"><span style="color:#22d3ee;font-size:18px;">→</span></td><td style="padding:8px 0;font-size:15px;color:#c0c0d8;line-height:1.5;"><strong style="color:#ffffff;">Tu oficio, tu firma</strong> — la experiencia que ya tenés, puesta a producir</td></tr>
+          </table>
+          <p style="margin:0 0 24px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">En esta página te mostramos cómo funciona y cómo podés empezar hoy 👇</p>
+          <table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+            <a href="https://sistemadeingresosdiariosia.com/?src=Email-Oferta&amp;sck=email-oferta" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Ver cómo funciona el curso →</a>
+          </td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
+      </table>
+    </td>
+  </tr></table>
+</body></html>`,
+  text: `PERIODISTAS DEL FUTURO IA
+
+Ya tenés las piezas. Falta armarlas.
+
+Llegaste hasta el final de las 4 guías. Eso ya te pone adelante: sabés qué es un periódico digital propio, cómo la IA te multiplica el trabajo y cuáles son los 5 pilares que sostienen un ingreso que se repite.
+
+Lo que falta es lo más importante: armarlas en un sistema que trabaje para vos todos los días.
+
+Para eso está el curso Sistema de Ingresos Diarios: te lleva paso a paso, con el método completo, desde donde estás hoy hasta generar tus propios ingresos con tu periódico digital y la IA — con tu criterio editorial al frente y sin depender de un medio.
+
+→ El método completo — el mismo recorrido, ordenado y en video
+→ Paso a paso, desde cero — qué hacer el lunes, no sólo qué entender
+→ Tu oficio, tu firma — la experiencia que ya tenés, puesta a producir
+
+En esta página te mostramos cómo funciona y cómo podés empezar hoy:
+https://sistemadeingresosdiariosia.com/?src=Email-Oferta&sck=email-oferta`,
 };
 
 const DAY = 86400000;
@@ -368,6 +432,48 @@ async function mail5OpenStats() {
     const j = await r.json();
     return { disponible: true, entregados: j.delivered ?? null, aperturas_unicas: j.uniqueOpens ?? null, clics_unicos: j.uniqueClicks ?? null };
   } catch (e) { return { disponible: false, motivo: String(e && e.message || e) }; }
+}
+
+// Crea el atributo OFERTA_MAIL_AT (texto ISO) que marca a quién ya se le mandó la oferta por email.
+async function brevoCreateMailOfertaAttribute() {
+  const key = process.env.BREVO_API_KEY;
+  const r = await fetch(`${BREVO}/contacts/attributes/normal/OFERTA_MAIL_AT`, {
+    method: 'POST',
+    headers: { 'api-key': key, 'content-type': 'application/json' },
+    body: JSON.stringify({ type: 'text' }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.text() };
+}
+
+// Envía la OFERTA por email (plan B de WhatsApp). Tag propio → sus aperturas/clics se miden
+// separadas del Regalo 5 y se pueden comparar contra la oferta por WhatsApp cuando reviva.
+const MAILOFERTA_TAG = 'oferta-email';
+async function sendMailOferta(email, nombre) {
+  const key = process.env.BREVO_API_KEY;
+  const r = await fetch(`${BREVO}/smtp/email`, {
+    method: 'POST',
+    headers: { 'api-key': key, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      sender: MAILOFERTA.from,
+      to: [{ email, name: nombre || 'Periodista' }],
+      subject: MAILOFERTA.subject,
+      htmlContent: MAILOFERTA.html,
+      textContent: MAILOFERTA.text,
+      tags: [MAILOFERTA_TAG],
+    }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.text() };
+}
+
+// Marca en Brevo que a este lead ya se le mandó la oferta por email (para no repetir).
+async function brevoSetMailOferta(email) {
+  const key = process.env.BREVO_API_KEY;
+  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
+    method: 'PUT',
+    headers: { 'api-key': key, 'content-type': 'application/json' },
+    body: JSON.stringify({ attributes: { OFERTA_MAIL_AT: todayISO() } }),
+  });
+  if (!r.ok) throw new Error(`Brevo setMailOferta ${r.status}: ${await r.text()}`);
 }
 
 // Marca en Brevo que a este lead ya se le mandó el Regalo 5 (para no repetir).
@@ -650,13 +756,21 @@ export default async function handler(req, res) {
       const wa = await brevoCreateAttribute();
       const m5 = await brevoCreateMail5Attribute();
       const seg = await brevoCreateSegAttribute();
-      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg });
+      const mof = await brevoCreateMailOfertaAttribute();
+      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof });
       return;
     }
 
     if (mode === 'mail5test') {
       const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
       const sent = await sendMail5(to, searchParams.get('nombre') || 'Jose');
+      res.status(200).json({ mode, to, sent });
+      return;
+    }
+
+    if (mode === 'ofertatest') {
+      const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
+      const sent = await sendMailOferta(to, searchParams.get('nombre') || 'Jose');
       res.status(200).json({ mode, to, sent });
       return;
     }
@@ -686,6 +800,7 @@ export default async function handler(req, res) {
     const enabled = process.env.WA_FUNNEL_ENABLED === '1';
     const live = (mode === 'live' || mode === 'cron') && enabled;
     const mail5Enabled = process.env.MAIL5_ENABLED === '1';
+    const mailOfertaEnabled = process.env.MAILOFERTA_ENABLED === '1';
 
     // Los que ya compraron no reciben más regalos ni la oferta.
     const compradores = await ventasEmailsSet();
@@ -706,6 +821,13 @@ export default async function handler(req, res) {
       // Regalo 5 (email): a quien ya pasó por el Regalo 4 y todavía no lo recibió.
       if (!attrs.MAIL5_AT && stageSent >= MAIL5.afterStage && daysOld >= MAIL5.minDays) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mail5' });
+      }
+
+      // Oferta por EMAIL (plan B de WhatsApp): a quien ya llegó a la etapa de oferta y todavía
+      // no la recibió por mail. No mira la entrega de WhatsApp a propósito — el 100% falló, y si
+      // mañana WhatsApp revive el atributo propio evita que le llegue dos veces.
+      if (!attrs.OFERTA_MAIL_AT && stageSent >= MAILOFERTA.afterStage) {
+        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mailoferta' });
       }
 
       // Pasos de WhatsApp (Regalos 3/4 y la oferta): a lo sumo uno por corrida.
@@ -746,6 +868,7 @@ export default async function handler(req, res) {
     const BUDGET_MS = 45000;
     const HARD_MAX = 220;
     const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
+    const OFERTA_CAP = 100; // Oferta por email: cola propia, en rampa (~3 días para las ~289)
     const t0 = Date.now();
     const results = [];
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
@@ -756,13 +879,30 @@ export default async function handler(req, res) {
     // nuevos nunca recibían el Regalo 3). Ahora los emails van PRIMERO con su propio tope (son
     // instantáneos: ~60 entran en pocos segundos) y después WhatsApp usa el resto del tiempo, en
     // orden de prioridad (oferta → Regalo 4 → Regalo 3). Así ambos canales avanzan cada corrida.
-    const emailQueue = plan.filter((p) => p.channel === 'email').slice(0, EMAIL_CAP);
+    // La OFERTA por email lleva cola y tope propios: si compartiera los 60 de EMAIL_CAP con el
+    // Regalo 5, un backlog de regalos la dejaría afuera justo al mensaje que vende. Con 100/día
+    // las ~289 pendientes salen en 3 corridas — y de paso el envío entra en rampa, que es lo sano
+    // para la reputación del remitente en vez de un blast de 289 de una.
+    const emailQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mail5').slice(0, EMAIL_CAP);
+    const ofertaQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mailoferta').slice(0, OFERTA_CAP);
     const waQueue = plan.filter((p) => p.channel !== 'email'); // wa + seguimiento (ya ordenados por prioridad)
-    const queue = [...emailQueue, ...waQueue];
+    const queue = [...ofertaQueue, ...emailQueue, ...waQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
       attempted++;
       if (p.channel === 'email') {
+        if (p.send === 'mailoferta') {
+          if (!mailOfertaEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA_ENABLED!=1 (oferta por email apagada)' }); continue; }
+          const sent = await sendMailOferta(p.email, p.nombre);
+          if (sent.ok) {
+            try { await brevoSetMailOferta(p.email); } catch (e) { results.push({ email: p.email, sent: 'mailoferta', warn: 'enviado pero falló setMailOferta: ' + e.message }); continue; }
+            results.push({ email: p.email, sent: 'mailoferta' });
+          } else {
+            results.push({ email: p.email, send: 'mailoferta', error: sent.status });
+          }
+          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'mailoferta', ok: sent.ok }));
+          continue;
+        }
         if (!mail5Enabled) { results.push({ email: p.email, skipped: 'MAIL5_ENABLED!=1 (regalo 5 apagado)' }); continue; }
         const sent = await sendMail5(p.email, p.nombre);
         if (sent.ok) {
