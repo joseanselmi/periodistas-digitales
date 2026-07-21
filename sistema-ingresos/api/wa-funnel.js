@@ -714,6 +714,10 @@ function nextDue(daysOld, stageSent, daysSinceLast) {
 // muere antes de llegar a ella y NUNCA se envía. Por eso: oferta primero, seguimiento último.
 // Menor número = se manda antes.
 function prioridad(p) {
+  // La oferta por EMAIL va primero de todo mientras WhatsApp no entregue: es el único mensaje
+  // de venta que hoy llega a destino. (La cola de ejecución ya la manda primero; esto alinea
+  // también el orden que se ve en mode=dry, para que el ensayo refleje lo que va a pasar.)
+  if (p.send === 'mailoferta') return 0;
   if (p.channel === 'wa') {
     if (p.send === 5) return 1; // Oferta — la que vende
     if (p.send === 4) return 2; // Regalo 4
@@ -855,7 +859,14 @@ export default async function handler(req, res) {
 
     if (!live) {
       // dry: mostrar el plan sin ejecutar
-      res.status(200).json({ mode, live: false, enabled, would_send: plan.length, plan: plan.slice(0, 100) });
+      // Desglose del plan COMPLETO: `plan` sale recortado a 100 para no devolver un JSON enorme,
+      // y sin esto el ensayo parecía ser todo Regalos 4 cuando en realidad la cola es mixta.
+      const desglose = {};
+      for (const p of plan) {
+        const k = p.channel === 'wa' ? `wa_stage_${p.send}` : String(p.send || p.channel);
+        desglose[k] = (desglose[k] || 0) + 1;
+      }
+      res.status(200).json({ mode, live: false, enabled, would_send: plan.length, desglose, plan: plan.slice(0, 100) });
       return;
     }
 
