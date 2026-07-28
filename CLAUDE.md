@@ -16,6 +16,35 @@ Este repo contiene dos proyectos principales:
 > compartido. Si una tarea es de la plataforma Leadr, se trabaja en `../Leadr`,
 > no acá.
 
+## ⚡ Antes de contestar cualquier pregunta de estado — `node estado.mjs`
+
+Jose pregunta cosas como "¿cómo va el envío de mails?", "¿cómo venimos con X?".
+El estado real NO está en el repo: vive en Trello (qué falta), Supabase (ventas,
+entrega de WhatsApp), Brevo (envíos y aperturas) y el endpoint del embudo (qué
+cola hay). Reconstruirlo a mano cada sesión es lento y termina en preguntas cuya
+respuesta ya estaba decidida en una tarjeta. Para eso está:
+
+```bash
+node estado.mjs            # trae todo en vivo y reescribe ESTADO.md (~40 s)
+node estado.mjs --rapido   # sin la cola del embudo (el paso lento)
+```
+
+Reglas:
+
+1. **Antes de responder sobre el estado de algo, correr `estado.mjs` y leer
+   [ESTADO.md](ESTADO.md).** Si el encabezado de ESTADO.md ya dice hoy, alcanza
+   con leerlo. Nunca contestar de memoria ni con un export viejo.
+2. **Antes de preguntarle algo a Jose, buscarlo en la sección de Trello de
+   ESTADO.md** — está el checklist abierto de cada tarjeta, que es donde viven
+   las decisiones ya tomadas. Preguntar algo que ya estaba decidido le hace
+   perder el día.
+3. Si una sección aparece como "no disponible" por falta de
+   `SUPABASE_SERVICE_ROLE_KEY` (Vercel no deja bajarla), consultar esos datos con
+   el **MCP de Supabase**, proyecto `periodistas-marketing`
+   (`wxyimqkjlwfncvzozpjy`) — no dar el hueco por cero.
+4. ESTADO.md se **regenera**, no se edita a mano. Lo que hay que recordar entre
+   sesiones va a la tarjeta de Trello o al `.md` del proyecto.
+
 ## Integración con Trello
 
 Hay un **servidor MCP de Trello** configurado en `.mcp.json` (raíz del repo,
