@@ -47,6 +47,37 @@ function horas(iso) {
 const PEOR = { ok: 0, alerta: 1, critico: 2 };
 function peor(a, b) { return PEOR[b] > PEOR[a] ? b : a; }
 
+// Foto de stats de email de Brevo → Supabase (tabla brevo_stats). El Panel de Comando corre en un
+// sandbox de nube que NO alcanza Brevo (403); Vercel sí. Así que la guardamos acá 1×/día y la
+// rutina la lee de Supabase. Reemplaza el Data Store de Make 169011, que quedaba CONGELADO cuando
+// su scenario se pausaba por el tope de escenarios activos del plan free de Make (solo 2 slots).
+async function snapshotBrevo() {
+  const key = process.env.BREVO_API_KEY;
+  if (!key || !SB_URL || !SB_KEY) return { ok: false, motivo: 'faltan credenciales' };
+  try {
+    const [aggR, listR] = await Promise.all([
+      fetch(`${BREVO}/smtp/statistics/aggregatedReport?days=7`, { headers: { 'api-key': key, accept: 'application/json' } }),
+      fetch(`${BREVO}/contacts/lists/${LIST_ID}`, { headers: { 'api-key': key, accept: 'application/json' } }),
+    ]);
+    if (!aggR.ok) throw new Error(`aggregatedReport ${aggR.status}`);
+    const a = await aggR.json();
+    let subscribers = null;
+    if (listR.ok) { const l = await listR.json(); subscribers = l.totalSubscribers ?? l.uniqueSubscribers ?? null; }
+    const row = {
+      key: 'latest',
+      delivered: a.delivered ?? null, unique_opens: a.uniqueOpens ?? null, opens: a.opens ?? null,
+      clicks: a.clicks ?? null, unique_clicks: a.uniqueClicks ?? null, hard_bounces: a.hardBounces ?? null,
+      requests: a.requests ?? null, subscribers, rango: a.range ?? null, updated_at: new Date().toISOString(),
+    };
+    const up = await fetch(`${SB_URL}/rest/v1/brevo_stats`, {
+      method: 'POST',
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'content-type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify([row]),
+    });
+    return { ok: up.ok, status: up.status };
+  } catch (e) { return { ok: false, motivo: e.message || String(e) }; }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // FLUJO 1 — Funnel de regalos (WhatsApp). Objetivo real: que la gente LLEGUE a la oferta.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,8 +99,33 @@ async function saludFunnel() {
       nivel = 'critico';
       puntos.push(`0 personas recibieron la OFERTA (el mensaje que vende) pese a ${r4 + r3} en etapas previas. El embudo no está completando hasta la venta — revisar el funnel.`);
     } else {
-      puntos.push(`La oferta llegó a ${oferta} personas. En camino: ${r4} en Regalo 4, ${r3} en Regalo 3.`);
+      puntos.push(`Se disparó la oferta a ${oferta} personas. En camino: ${r4} en Regalo 4, ${r3} en Regalo 3.`);
     }
+
+    // ENTREGA REAL (Meta): el WA_STAGE de Brevo solo dice que se DISPARÓ (la API de Meta aceptó el
+    // envío), NO que se ENTREGÓ. Cruzamos con conversaciones_wa (estado_entrega) de los envíos del
+    // funnel de los últimos 3 días: si la mayoría quedó 'fallido', el funnel "envía" pero no llega a
+    // nadie (típico: número sin verificar en Meta que tocó su tope de mensajería). Este agujero nos
+    // costó del 13/07 al 18/07: el panel reportaba ✅ mientras Meta rechazaba el 100% de las entregas.
+    try {
+      const desde = new Date(Date.now() - 3 * 86400000).toISOString();
+      const ent = await sb(`conversaciones_wa?direccion=eq.out&origen=eq.funnel&creado_en=gte.${desde}&select=estado_entrega&limit=5000`);
+      if (Array.isArray(ent) && ent.length >= 10) {
+        let fall = 0, lleg = 0;
+        for (const e of ent) { if (e.estado_entrega === 'fallido') fall++; else if (e.estado_entrega === 'entregado' || e.estado_entrega === 'leido') lleg++; }
+        const total = ent.length; const pctFall = Math.round((100 * fall) / total);
+        met.entrega_3d = { enviados: total, entregados_o_leidos: lleg, fallidos: fall, pct_fallo: pctFall };
+        if (pctFall >= 50) {
+          nivel = 'critico';
+          puntos.push(`🚨 ENTREGA ROTA: Meta marcó FALLIDO el ${pctFall}% de los ${total} WhatsApp del funnel de los últimos 3 días (${fall}/${total}). Se dispara pero NO llega a nadie. Revisá el número en Meta: verificación de negocio, nombre para mostrar y límite de mensajería.`);
+        } else if (pctFall >= 20) {
+          nivel = peor(nivel, 'alerta');
+          puntos.push(`Atención: falló la entrega del ${pctFall}% de los WhatsApp del funnel en los últimos 3 días (${fall}/${total}). Vigilá el estado del número en Meta.`);
+        } else {
+          puntos.push(`Entrega WhatsApp (últimos 3 días): ${lleg}/${total} llegaron, ${fall} fallaron (${pctFall}%).`);
+        }
+      }
+    } catch (e) { puntos.push(`No se pudo verificar la entrega real de WhatsApp (${e.message || e}).`); }
   } catch (e) { nivel = 'alerta'; puntos.push(`No se pudo leer el estado del funnel (${e.message || e}).`); }
   return { flujo: '🎁 Funnel de regalos (WhatsApp)', que_mira: 'Que los leads avancen hasta la oferta.', nivel, puntos, met };
 }
@@ -99,18 +155,25 @@ async function saludAsistente() {
   const met = {}; const puntos = []; let nivel = 'ok';
   const esperando = await sb('wa_bot_estado?modo=eq.esperando&select=telefono,escalado_en');
   if (esperando == null) { return { flujo: '💬 Asistente de WhatsApp', que_mira: 'Que ningún cliente quede sin respuesta.', nivel: 'alerta', puntos: ['No se pudo leer el estado del asistente.'], met }; }
-  const viejas = esperando.filter((r) => r.escalado_en && horas(r.escalado_en) > 6);
   met.escalaciones_esperando = esperando.length;
-  met.sin_responder_6h = viejas.length;
-  if (viejas.length > 0) {
-    nivel = 'critico';
-    const masVieja = viejas.map((r) => r.escalado_en).sort()[0];
-    puntos.push(`${viejas.length} persona(s) pidió hablar con vos y sigue(n) sin respuesta (la más vieja, ${hace(masVieja)}). Están esperando en WhatsApp.`);
-  } else if (esperando.length > 0) {
-    nivel = 'alerta';
-    puntos.push(`${esperando.length} escalación(es) reciente(s) esperando respuesta (menos de 6 h). Revisá tu Telegram.`);
-  } else {
+  const masVieja = esperando.map((r) => r.escalado_en).filter(Boolean).sort()[0];
+  const hVieja = masVieja ? horas(masVieja) : 0;
+  met.mas_vieja_h = Math.round(hVieja);
+  if (esperando.length === 0) {
     puntos.push('Ninguna conversación quedó esperando respuesta. El bot está atendiendo solo.');
+  } else if (esperando.length >= 5) {
+    // muchos a la vez esperando = algo real que atender YA
+    nivel = 'critico';
+    puntos.push(`${esperando.length} personas pidieron hablar con vos y siguen sin respuesta (la más vieja, ${hace(masVieja)}). Revisá WhatsApp/Telegram.`);
+  } else {
+    // Un handoff a humano es una tarea TUYA pendiente, no "el sistema roto": queda en amarillo (no
+    // rojo) para no gritar 🔴 todos los días por la misma conversación que quedó sin cerrar.
+    nivel = 'alerta';
+    if (hVieja >= 48) {
+      puntos.push(`${esperando.length} conversación(es) figura(n) esperando respuesta, la más vieja ${hace(masVieja)}. Si ya le respondiste desde Telegram, está OK: el bot no siempre detecta tu respuesta y la deja marcada como pendiente. Si no, entrá y cerrala.`);
+    } else {
+      puntos.push(`${esperando.length} persona(s) pidió hablar con vos y espera(n) respuesta (la más vieja, ${hace(masVieja)}). Revisá tu Telegram.`);
+    }
   }
   return { flujo: '💬 Asistente de WhatsApp', que_mira: 'Que ningún cliente quede sin respuesta.', nivel, puntos, met };
 }
@@ -120,21 +183,27 @@ async function saludAsistente() {
 // ─────────────────────────────────────────────────────────────────────────────
 async function saludPostCompra() {
   const met = {}; const puntos = []; let nivel = 'ok';
-  const ventas = await sb('ventas?select=email,ocurrido_en');
+  const ventas = await sb('ventas?select=email,producto,ocurrido_en');
   const customers = await sb('customers?select=email');
   if (ventas == null || customers == null) { return { flujo: '🟢 Post-compra (Hotmart)', que_mira: 'Que cada venta quede registrada (venta + cliente + bono).', nivel: 'alerta', puntos: ['No se pudo leer ventas/clientes.'], met }; }
-  const emailsVenta = new Set(ventas.map((v) => String(v.email || '').toLowerCase().trim()).filter(Boolean));
-  const distintos = emailsVenta.size; // compradores únicos (las ventas pueden repetir email)
-  const ultima = ventas.map((v) => v.ocurrido_en).filter(Boolean).sort().slice(-1)[0];
-  Object.assign(met, { ventas: ventas.length, compradores_distintos: distintos, clientes: customers.length, ultima_venta: ultima || null });
-  if (ventas.length > 0 && customers.length === 0) {
+  // `customers` solo da de alta a compradores del CURSO (webhook propio /api/hotmart). Comparar contra
+  // TODAS las ventas mezcla universos distintos — Sala VIP, guías, order bumps de otros productos — y
+  // marca falsos "falta 1 alta" por gente que nunca compró el curso (p.ej. Juan Manuel, que solo compró
+  // la Sala VIP). Por eso acá contamos SOLO las ventas del curso.
+  const esCurso = (p) => /ingresos diarios/i.test(String(p || ''));
+  const ventasCurso = ventas.filter((v) => esCurso(v.producto));
+  const emailsVenta = new Set(ventasCurso.map((v) => String(v.email || '').toLowerCase().trim()).filter(Boolean));
+  const distintos = emailsVenta.size; // compradores del CURSO únicos (las ventas pueden repetir email)
+  const ultima = ventasCurso.map((v) => v.ocurrido_en).filter(Boolean).sort().slice(-1)[0];
+  Object.assign(met, { ventas: ventasCurso.length, compradores_distintos: distintos, clientes: customers.length, ultima_venta: ultima || null });
+  if (ventasCurso.length > 0 && customers.length === 0) {
     nivel = 'critico';
-    puntos.push(`Entraron ${ventas.length} ventas pero hay 0 clientes guardados. El webhook no está dando de alta a los compradores — revisar.`);
+    puntos.push(`Entraron ${ventasCurso.length} ventas del curso pero hay 0 clientes guardados. El webhook no está dando de alta a los compradores — revisar.`);
   } else if (distintos > customers.length) {
     nivel = 'alerta';
-    puntos.push(`${ventas.length} ventas de ${distintos} compradores distintos, pero solo ${customers.length} quedaron guardados como cliente. Faltarían ${distintos - customers.length} altas — revisar el webhook. Última venta: ${hace(ultima)}.`);
+    puntos.push(`${ventasCurso.length} ventas del curso de ${distintos} compradores distintos, pero solo ${customers.length} quedaron guardados como cliente. Faltarían ${distintos - customers.length} altas — revisar el webhook. Última venta: ${hace(ultima)}.`);
   } else {
-    puntos.push(`${ventas.length} ventas · ${customers.length} clientes guardados · última venta: ${hace(ultima)}. Se está registrando todo bien.`);
+    puntos.push(`${ventasCurso.length} ventas del curso · ${customers.length} clientes guardados · última venta: ${hace(ultima)}. Se está registrando todo bien.`);
   }
   return { flujo: '🟢 Post-compra (Hotmart)', que_mira: 'Que cada venta quede registrada (venta + cliente + bono).', nivel, puntos, met };
 }
@@ -271,6 +340,8 @@ async function enviar(subject, html) {
 // — Vercel Hobby limita a 2). Cada flujo se diagnostica por separado: si uno falla, no tumba
 // a los demás.
 async function enviarPanelSalud(mode) {
+  // Refresca la foto de Brevo en Supabase para el Panel de Comando (best-effort: si falla, el panel igual sale).
+  try { await snapshotBrevo(); } catch (e) { console.error('snapshotBrevo (no frena el panel):', (e && e.message) || e); }
   const flujos = [];
   for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio]) {
     try { flujos.push(await fn()); }
@@ -278,8 +349,27 @@ async function enviarPanelSalud(mode) {
   }
   const { general, subject, html } = armarHtml(flujos);
   if (mode === 'json') return { general, enviado: false, flujos: flujos.map((f) => ({ flujo: f.flujo, nivel: f.nivel, puntos: f.puntos, met: f.met })) };
-  const sent = await enviar(subject, html);
-  return { general, enviado: sent.ok, resumen: flujos.map((f) => `${f.nivel}:${f.flujo}`) };
+
+  // AGENDA DEL TABLERO (Trello): ejecuta lo auto-ejecutable y cuela lo pendiente en ESTE mismo
+  // email (un solo correo, ver trello-diario.js). Best-effort: si Trello falla, el panel igual sale.
+  let htmlFinal = html;
+  let agenda = null;
+  try {
+    const { agendaTrello } = require('./trello-diario');
+    agenda = await agendaTrello('run');
+    if (agenda && agenda.htmlBlock) {
+      htmlFinal = html.replace(
+        '<div style="font-size:11px;color:#40405a;text-align:center;margin-top:16px;',
+        `${agenda.htmlBlock}<div style="font-size:11px;color:#40405a;text-align:center;margin-top:16px;`
+      );
+    }
+  } catch (e) { console.error('agenda trello (no frena el panel):', e && e.message || e); }
+
+  const sent = await enviar(subject, htmlFinal);
+  return {
+    general, enviado: sent.ok, resumen: flujos.map((f) => `${f.nivel}:${f.flujo}`),
+    trello: agenda ? { ejecutadas: agenda.ejecutadas, vencidas: agenda.vencidas.length, hoy: agenda.hoy.length, proximas: agenda.proximas.length, error: agenda.error } : null,
+  };
 }
 
 module.exports = async (req, res) => {
@@ -298,3 +388,4 @@ module.exports = async (req, res) => {
 };
 module.exports.enviarPanelSalud = enviarPanelSalud;
 module.exports.saludSitio = saludSitio;
+module.exports.snapshotBrevo = snapshotBrevo;
