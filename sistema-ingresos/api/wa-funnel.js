@@ -10,10 +10,18 @@
 // FLUJO POR LEAD (día 0 = entró a la lista Brevo #5, lo hace el escenario Make 9474482 webhook instantáneo; antes 9433023):
 //   día 0  Regalo 1 (email)      → ya andando (Make)
 //   día 2  Regalo 2 (email)      → ya andando (automatización Brevo)
-//   día 5  Regalo 3 (WhatsApp)   → ESTA función  (plantilla regalo3_periodico_digital)
-//   día 7  Regalo 4 (WhatsApp)   → ESTA función  (plantilla regalo4_sistema_completo)
+//   día 5  Regalo 3 (WA o EMAIL) → ESTA función  (plantilla regalo3_periodico_digital / mismo copy por mail)
+//   día 7  Regalo 4 (WA o EMAIL) → ESTA función  (plantilla regalo4_sistema_completo / mismo copy por mail)
 //   día 8  Regalo 5 (EMAIL)      → ESTA función  (Brevo, guía "agentes de IA" — último regalo antes de la oferta)
 //   día 9  Oferta   (WhatsApp)   → ESTA función  (plantilla oferta_sistema_ingresos)
+//          + Oferta por EMAIL    → ESTA función  (plan B, ver más abajo)
+//
+// CANAL DE LOS REGALOS 3 Y 4: lo decide Meta, no una variable. Antes de armar el plan se
+// consulta `health_status.can_send_message` del número; si está LIMITED/BLOCKED (negocio sin
+// verificar, ver tarjeta #89) esos pasos salen por EMAIL con el mismo copy, y los envíos de
+// WhatsApp ni se encolan — cada intento fallido consumía el presupuesto de tiempo de la
+// corrida y dejaba al Regalo 3, último en la prioridad, sin salir nunca. Cuando Meta habilita
+// el número, el embudo vuelve a WhatsApp solo. Override manual: WA_SEND_FORCE=1.
 //
 // ESTADO POR LEAD: se guarda en el atributo Brevo WA_STAGE (0/3/4/5) para no repetir
 // los pasos de WhatsApp. El Regalo 5 (email) se marca aparte con el atributo MAIL5_AT
@@ -26,6 +34,8 @@
 //   dry      — calcula a quién le tocaría hoy y qué plantilla, SIN mandar ni tocar Brevo.
 //   setup    — crea los atributos WA_STAGE y MAIL5_AT en Brevo (correr una sola vez).
 //   mail5test— manda el email del Regalo 5 a ?to=<email> (default Jose) para previsualizarlo. No toca Brevo.
+//   regalotest— manda el Regalo 3 o 4 por email: ?nivel=3|4&to=<email>. No toca Brevo.
+//   wasalud  — qué dice Meta del número (can_send_message). No manda nada.
 //   live     — manda de verdad y actualiza WA_STAGE. Requiere ADEMÁS WA_FUNNEL_ENABLED=1.
 //   (el cron llama sin mode → equivale a live, pero si WA_FUNNEL_ENABLED != 1 se degrada a dry)
 //
@@ -43,9 +53,16 @@
 //     marcó fallida, así que nunca la vieron. Se marca con OFERTA_MAIL_AT (uno por lead).
 //   - Probar primero con mode=ofertatest&to=... (no toca Brevo), y correr mode=setup una vez.
 //
+// REGALOS 3 y 4 POR EMAIL — flags:
+//   - Se envían sólo si WA_FUNNEL_ENABLED=1 Y ADEMÁS MAILREGALOS_ENABLED=1 (default OFF),
+//     y sólo cuando Meta dice que el número NO puede enviar.
+//   - Avanzan WA_STAGE (son el mismo paso, no un extra) y dejan MAIL3_AT / MAIL4_AT como
+//     registro de por qué canal salieron.
+//   - Probar primero con mode=regalotest&nivel=3&to=... y correr mode=setup una vez.
+//
 // Variables de entorno (proyecto Vercel sistema-ingresos-landing):
 //   BREVO_API_KEY, WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET,
-//   WA_FUNNEL_ENABLED, MAIL5_ENABLED, MAILOFERTA_ENABLED
+//   WA_FUNNEL_ENABLED, MAIL5_ENABLED, MAILOFERTA_ENABLED, MAILREGALOS_ENABLED, WA_SEND_FORCE
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
 const BREVO = 'https://api.brevo.com/v3';
@@ -262,6 +279,110 @@ En esta página te mostramos cómo funciona y cómo podés empezar hoy:
 https://sistemadeingresosdiariosia.com/?src=Email-Oferta&sck=email-oferta`,
 };
 
+// REGALOS 3 y 4 POR EMAIL — la ENTRADA del embudo, que hasta acá sólo salía por WhatsApp.
+// Mientras el número está LIMITED, esos dos pasos no llegaban a nadie y los leads quedaban
+// parados en la etapa 0: sin Regalo 3 no hay Regalo 4, sin Regalo 4 no hay Regalo 5 ni oferta.
+// El 28/07 había 285 leads esperando el Regalo 3 desde hacía diez días.
+//
+// Copy espejo de las plantillas `regalo3_periodico_digital` y `regalo4_sistema_completo`
+// (aprobadas, ver PLANTILLAS-WHATSAPP.md), adaptado a email. Las guías van como LINK con
+// tracking (`/api/d`), no adjuntas: así se cuenta quién la abrió de verdad (tarjeta #50).
+//
+// Estos SÍ avanzan WA_STAGE (a diferencia del Regalo 5 y la oferta, que llevan marcador
+// aparte): son el mismo paso del embudo por otro canal, no un extra. Avanzarlo es lo que
+// destraba la cadena — y de paso evita que el lead reciba el mismo regalo dos veces si
+// WhatsApp revive. El marcador propio (MAIL3_AT / MAIL4_AT) queda sólo para medir.
+const REGALOS_EMAIL = {
+  3: {
+    stage: 3,
+    marcador: 'MAIL3_AT',
+    tag: 'regalo3-periodico',
+    from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
+    subject: 'Tu Regalo 3: cómo armar tu periódico digital desde cero',
+    titulo: 'Tu propio periódico digital',
+    entradas: [
+      'Hay periodistas ganando dinero con su propio periódico digital en Instagram y Facebook. No con un medio detrás: con su nombre, su criterio y su oficio.',
+      'Este es el Regalo 3: una guía simple para armar el tuyo desde cero, incluido cómo planificar el contenido de todo el mes.',
+    ],
+    bullets: [
+      ['Cómo se arma desde cero', 'la estructura, el nombre y el primer mes de contenido'],
+      ['Instagram y Facebook', 'qué publicar en cada uno y con qué frecuencia'],
+      ['El calendario del mes', 'para no arrancar de cero cada mañana'],
+    ],
+    cta: 'Descargar la guía del periódico digital (PDF) →',
+    archivo: 'guia-periodico-digital-ig-fb.pdf',
+    src: 'Email-Regalo3',
+    sck: 'email3',
+    cierre: 'Y hay quienes ya llevan hasta 10 periódicos en simultáneo con ayuda de la IA, viviendo de esto como autónomos. Eso te lo contamos en el próximo mensaje.',
+  },
+  4: {
+    stage: 4,
+    marcador: 'MAIL4_AT',
+    tag: 'regalo4-pilares',
+    from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
+    subject: 'Tu Regalo 4: las 5 piezas que sostienen el ingreso',
+    titulo: 'Cómo se sostienen 10 periódicos a la vez',
+    entradas: [
+      'Los periodistas que llevan varios periódicos digitales en simultáneo no escriben cada posteo a mano: usan un sistema donde la IA hace la producción (como viste en los Regalos 1 y 2) y ellos se quedan con lo que decide todo — el lector ideal, la oferta, las ventas y el tráfico.',
+      'Este es el Regalo 4: la guía de las 5 piezas que conectan lo que ya armaste con un ingreso que se repite cada semana.',
+    ],
+    bullets: [
+      ['Tu lector ideal', 'para quién escribís y qué necesita de vos'],
+      ['La oferta', 'qué le vendés a esa audiencia que ya te lee'],
+      ['Ventas y tráfico', 'cómo llega gente nueva y cómo se convierte en ingreso'],
+    ],
+    cta: 'Descargar la guía de los 5 pilares (PDF) →',
+    archivo: 'guia-5-pilares-ingresos-periodico-digital.pdf',
+    src: 'Email-Regalo4',
+    sck: 'email4',
+    cierre: 'Leelas en orden: cada pieza se apoya en la anterior.',
+  },
+};
+
+// Un solo molde para los dos regalos — mismo diseño que el Regalo 5 y la oferta, que ya
+// vienen entregando bien en Brevo. Cambiar el molde acá los cambia a los dos a la vez.
+function armarEmailRegalo(cfg) {
+  const link = `https://sistemadeingresosdiariosia.com/api/d?file=${cfg.archivo}&src=${cfg.src}&sck=${cfg.sck}`;
+  const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07070f;"><tr>
+    <td align="center" style="padding:40px 20px;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="padding-bottom:32px;"><span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Periodistas del Futuro <span style="color:#22d3ee;">IA</span></span></td></tr>
+        <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
+          <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">${cfg.titulo}</p>
+          ${cfg.entradas.map((p) => `<p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">${p}</p>`).join('\n          ')}
+          <div style="border-top:1px solid #1e1e2e;margin:24px 0 28px 0;"></div>
+          <p style="margin:0 0 16px 0;font-size:14px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;">Lo que vas a encontrar</p>
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:28px;">
+            ${cfg.bullets.map(([t, d]) => `<tr><td style="padding:8px 0;vertical-align:top;width:28px;"><span style="color:#22d3ee;font-size:18px;">→</span></td><td style="padding:8px 0;font-size:15px;color:#c0c0d8;line-height:1.5;"><strong style="color:#ffffff;">${t}</strong> — ${d}</td></tr>`).join('\n            ')}
+          </table>
+          <table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+            <a href="${link.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${cfg.cta}</a>
+          </td></tr></table>
+          <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">${cfg.cierre}</p>
+        </td></tr>
+        <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
+      </table>
+    </td>
+  </tr></table>
+</body></html>`;
+  const text = `PERIODISTAS DEL FUTURO IA
+
+${cfg.titulo}
+
+${cfg.entradas.join('\n\n')}
+
+LO QUE VAS A ENCONTRAR
+${cfg.bullets.map(([t, d]) => `→ ${t} — ${d}`).join('\n')}
+
+${cfg.cta.replace(' →', '')}: ${link}
+
+${cfg.cierre}`;
+  return { html, text };
+}
+
 const DAY = 86400000;
 
 // Normaliza a E.164 sin "+". Corrige el bug del "9" faltante en móviles argentinos:
@@ -474,6 +595,67 @@ async function brevoSetMailOferta(email) {
     body: JSON.stringify({ attributes: { OFERTA_MAIL_AT: todayISO() } }),
   });
   if (!r.ok) throw new Error(`Brevo setMailOferta ${r.status}: ${await r.text()}`);
+}
+
+// Regalos 3 y 4 por email. El tag propio deja medir cada uno por separado en Brevo,
+// igual que ya se hace con el Regalo 5 y la oferta.
+async function enviarRegaloEmail(nivel, email, nombre) {
+  const cfg = REGALOS_EMAIL[nivel];
+  const { html, text } = armarEmailRegalo(cfg);
+  const r = await fetch(`${BREVO}/smtp/email`, {
+    method: 'POST',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      sender: cfg.from,
+      to: [{ email, name: nombre || 'Periodista' }],
+      subject: cfg.subject,
+      htmlContent: html,
+      textContent: text,
+      tags: [cfg.tag],
+    }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.json().catch(() => null) };
+}
+
+// Marcador genérico (MAIL3_AT / MAIL4_AT): deja registro de por qué canal salió el paso.
+async function brevoSetMarcador(email, atributo) {
+  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
+    method: 'PUT',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({ attributes: { [atributo]: todayISO() } }),
+  });
+  if (!r.ok) throw new Error(`Brevo setMarcador ${atributo} ${r.status}: ${await r.text()}`);
+}
+
+async function brevoCrearAtributoTexto(nombre) {
+  const r = await fetch(`${BREVO}/contacts/attributes/normal/${nombre}`, {
+    method: 'POST',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({ type: 'text' }),
+  });
+  return { ok: r.ok, status: r.status, detalle: r.ok ? 'creado' : await r.text() };
+}
+
+// ¿El número puede mandar hoy? Meta capa a los negocios sin verificar (health_status
+// can_send_message = LIMITED) y desde el 13/07 marca FALLIDA la entrega del 100% de los
+// envíos. Cada intento igual consume los ~45 s de la corrida, y el Regalo 3 —último en la
+// prioridad— nunca llegaba a salir. Preguntándole a Meta antes, el embudo se salta WhatsApp
+// solo mientras esté capado y vuelve solo cuando Meta lo habilita: sin tocar ninguna variable.
+// Si la consulta falla, se asume que SÍ puede enviar (un problema de red no debe apagar un canal).
+async function whatsappPuedeEnviar() {
+  if (process.env.WA_SEND_FORCE === '1') return { puede: true, motivo: 'forzado por WA_SEND_FORCE' };
+  const token = process.env.WHATSAPP_TOKEN;
+  const pn = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  if (!token || !pn) return { puede: false, motivo: 'faltan WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID' };
+  try {
+    const r = await fetch(`${GRAPH}/${pn}?fields=health_status&access_token=${token}`);
+    const j = await r.json();
+    const estado = j && j.health_status && j.health_status.can_send_message;
+    if (!estado) return { puede: true, motivo: 'Meta no devolvió health_status → se sigue enviando' };
+    return { puede: estado === 'AVAILABLE', estado, motivo: `Meta dice can_send_message=${estado}` };
+  } catch (e) {
+    return { puede: true, motivo: `no se pudo consultar a Meta (${e && e.message}) → se sigue enviando` };
+  }
 }
 
 // Marca en Brevo que a este lead ya se le mandó el Regalo 5 (para no repetir).
@@ -718,6 +900,9 @@ function prioridad(p) {
   // de venta que hoy llega a destino. (La cola de ejecución ya la manda primero; esto alinea
   // también el orden que se ve en mode=dry, para que el ensayo refleje lo que va a pasar.)
   if (p.send === 'mailoferta') return 0;
+  // Regalos 3/4 por email: la ENTRADA. Sólo existen cuando WhatsApp está capado (nunca
+  // conviven con los pasos de WhatsApp), así que no compiten con ellos por el lugar.
+  if (p.send === 'regalo3' || p.send === 'regalo4') return 1;
   if (p.channel === 'wa') {
     if (p.send === 5) return 1; // Oferta — la que vende
     if (p.send === 4) return 2; // Regalo 4
@@ -761,7 +946,25 @@ export default async function handler(req, res) {
       const m5 = await brevoCreateMail5Attribute();
       const seg = await brevoCreateSegAttribute();
       const mof = await brevoCreateMailOfertaAttribute();
-      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof });
+      const m3 = await brevoCrearAtributoTexto('MAIL3_AT');
+      const m4 = await brevoCrearAtributoTexto('MAIL4_AT');
+      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof, MAIL3_AT_attribute: m3, MAIL4_AT_attribute: m4 });
+      return;
+    }
+
+    // Previsualizar los Regalos 3 y 4 por email sin tocar a nadie: ?mode=regalotest&nivel=3&to=...
+    if (mode === 'regalotest') {
+      const nivel = Number(searchParams.get('nivel') || '3');
+      if (!REGALOS_EMAIL[nivel]) { res.status(400).json({ error: 'nivel debe ser 3 o 4' }); return; }
+      const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
+      const sent = await enviarRegaloEmail(nivel, to, searchParams.get('nombre') || 'Jose');
+      res.status(200).json({ mode, nivel, to, sent });
+      return;
+    }
+
+    // Qué dice Meta del número, sin más: ?mode=wasalud
+    if (mode === 'wasalud') {
+      res.status(200).json({ mode, whatsapp: await whatsappPuedeEnviar() });
       return;
     }
 
@@ -806,6 +1009,13 @@ export default async function handler(req, res) {
     const mail5Enabled = process.env.MAIL5_ENABLED === '1';
     const mailOfertaEnabled = process.env.MAILOFERTA_ENABLED === '1';
 
+    const regalosEmailEnabled = process.env.MAILREGALOS_ENABLED === '1';
+
+    // Se le pregunta a Meta UNA vez por corrida si el número puede enviar. De esto depende
+    // si los Regalos 3 y 4 salen por WhatsApp o por email, así que se resuelve antes del plan.
+    const waEstado = await whatsappPuedeEnviar();
+    const waActivo = waEstado.puede;
+
     // Los que ya compraron no reciben más regalos ni la oferta.
     const compradores = await ventasEmailsSet();
     const seguimientoEnabled = process.env.SEGUIMIENTO_ENABLED === '1';
@@ -834,17 +1044,22 @@ export default async function handler(req, res) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mailoferta' });
       }
 
-      // Pasos de WhatsApp (Regalos 3/4 y la oferta): a lo sumo uno por corrida.
+      // Paso siguiente del embudo (Regalos 3/4 y la oferta): a lo sumo uno por corrida.
+      // Si el número está capado, los Regalos 3 y 4 salen por EMAIL: es el mismo paso por
+      // otro canal, no un mensaje extra. La oferta no entra acá — ya tiene su cola por email.
       const due = nextDue(daysOld, stageSent, daysSinceLast);
-      if (due) {
+      if (due && waActivo) {
         const phoneRaw = pickPhone(attrs);
         const to = normalizePhone(phoneRaw);
         plan.push({ channel: 'wa', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: due.stage, tmpl: due.tmpl, phoneRaw, to });
+      } else if (due && REGALOS_EMAIL[due.stage] && !attrs[REGALOS_EMAIL[due.stage].marcador]) {
+        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: `regalo${due.stage}` });
       }
 
       // Seguimiento (reactivación): recibió la oferta (stage 5), pasaron N días desde el último
       // envío, no compró (ya filtrado arriba) ni respondió por WhatsApp, y no se le mandó aún.
-      if (!attrs.SEG_AT && stageSent >= 5 && daysSinceLast >= SEGUIMIENTO.minDiasDesdeOferta) {
+      // (también es WhatsApp: si el número está capado, no tiene sentido encolarlo)
+      if (waActivo && !attrs.SEG_AT && stageSent >= 5 && daysSinceLast >= SEGUIMIENTO.minDiasDesdeOferta) {
         const phoneRaw = pickPhone(attrs);
         const to = normalizePhone(phoneRaw);
         if (to && !respondieron.has(to)) {
@@ -866,7 +1081,7 @@ export default async function handler(req, res) {
         const k = p.channel === 'wa' ? `wa_stage_${p.send}` : String(p.send || p.channel);
         desglose[k] = (desglose[k] || 0) + 1;
       }
-      res.status(200).json({ mode, live: false, enabled, would_send: plan.length, desglose, plan: plan.slice(0, 100) });
+      res.status(200).json({ mode, live: false, enabled, whatsapp: waEstado, regalos_email: regalosEmailEnabled ? 'encendidos' : 'APAGADOS (MAILREGALOS_ENABLED!=1)', would_send: plan.length, desglose, plan: plan.slice(0, 100) });
       return;
     }
 
@@ -880,6 +1095,7 @@ export default async function handler(req, res) {
     const HARD_MAX = 220;
     const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
     const OFERTA_CAP = 100; // Oferta por email: cola propia, en rampa (~3 días para las ~289)
+    const REGALOS_CAP = 120; // Regalos 3 y 4 por email: la entrada del embudo, también en rampa
     const t0 = Date.now();
     const results = [];
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
@@ -896,12 +1112,37 @@ export default async function handler(req, res) {
     // para la reputación del remitente en vez de un blast de 289 de una.
     const emailQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mail5').slice(0, EMAIL_CAP);
     const ofertaQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mailoferta').slice(0, OFERTA_CAP);
+    // Regalos 3/4 por email: van ANTES del Regalo 5 porque son la entrada del embudo — un lead
+    // parado en la etapa 0 no tiene cómo llegar a nada de lo que viene después. Tope propio y
+    // generoso (el backlog eran ~370 el 28/07) pero en rampa, para no quemar la reputación.
+    const regalosQueue = plan.filter((p) => p.channel === 'email' && String(p.send).startsWith('regalo')).slice(0, REGALOS_CAP);
     const waQueue = plan.filter((p) => p.channel !== 'email'); // wa + seguimiento (ya ordenados por prioridad)
-    const queue = [...ofertaQueue, ...emailQueue, ...waQueue];
+    const queue = [...ofertaQueue, ...regalosQueue, ...emailQueue, ...waQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
       attempted++;
       if (p.channel === 'email') {
+        // Regalos 3 y 4 por email: además de marcarlos, AVANZAN la etapa del embudo. Sin eso
+        // el lead se quedaría en la misma etapa para siempre y nunca llegaría a la oferta.
+        if (String(p.send).startsWith('regalo')) {
+          if (!regalosEmailEnabled) { results.push({ email: p.email, skipped: 'MAILREGALOS_ENABLED!=1 (regalos 3/4 por email apagados)' }); continue; }
+          const nivel = Number(String(p.send).replace('regalo', ''));
+          const cfg = REGALOS_EMAIL[nivel];
+          const sent = await enviarRegaloEmail(nivel, p.email, p.nombre);
+          if (sent.ok) {
+            try {
+              await brevoSetStage(p.email, cfg.stage);       // avanza el embudo
+              await brevoSetMarcador(p.email, cfg.marcador); // deja registro de que salió por email
+              results.push({ email: p.email, sent: p.send, stage: cfg.stage });
+            } catch (e) {
+              results.push({ email: p.email, sent: p.send, warn: 'enviado pero falló marcarlo en Brevo: ' + e.message });
+            }
+          } else {
+            results.push({ email: p.email, send: p.send, error: sent.status });
+          }
+          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: p.send, ok: sent.ok }));
+          continue;
+        }
         if (p.send === 'mailoferta') {
           if (!mailOfertaEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA_ENABLED!=1 (oferta por email apagada)' }); continue; }
           const sent = await sendMailOferta(p.email, p.nombre);
