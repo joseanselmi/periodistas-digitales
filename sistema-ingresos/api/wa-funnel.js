@@ -10,18 +10,20 @@
 // FLUJO POR LEAD (día 0 = entró a la lista Brevo #5, lo hace el escenario Make 9474482 webhook instantáneo; antes 9433023):
 //   día 0  Regalo 1 (email)      → ya andando (Make)
 //   día 2  Regalo 2 (email)      → ya andando (automatización Brevo)
-//   día 5  Regalo 3 (WA o EMAIL) → ESTA función  (plantilla regalo3_periodico_digital / mismo copy por mail)
-//   día 7  Regalo 4 (WA o EMAIL) → ESTA función  (plantilla regalo4_sistema_completo / mismo copy por mail)
-//   día 8  Regalo 5 (EMAIL)      → ESTA función  (Brevo, guía "agentes de IA" — último regalo antes de la oferta)
-//   día 9  Oferta   (WhatsApp)   → ESTA función  (plantilla oferta_sistema_ingresos)
-//          + Oferta por EMAIL    → ESTA función  (plan B, ver más abajo)
+//   día 5  Regalo 3 (EMAIL)      → ESTA función  (guía del periódico digital)
+//   día 7  Regalo 4 (EMAIL)      → ESTA función  (guía de los 5 pilares)
+//   día 8  Regalo 5 (EMAIL)      → ESTA función  (guía "agentes de IA" — último regalo antes de la oferta)
+//   día 9  Oferta   (EMAIL)      → ESTA función  (lleva a la landing; es la que vende)
 //
-// CANAL DE LOS REGALOS 3 Y 4: lo decide Meta, no una variable. Antes de armar el plan se
-// consulta `health_status.can_send_message` del número; si está LIMITED/BLOCKED (negocio sin
-// verificar, ver tarjeta #89) esos pasos salen por EMAIL con el mismo copy, y los envíos de
-// WhatsApp ni se encolan — cada intento fallido consumía el presupuesto de tiempo de la
-// corrida y dejaba al Regalo 3, último en la prioridad, sin salir nunca. Cuando Meta habilita
-// el número, el embudo vuelve a WhatsApp solo. Override manual: WA_SEND_FORCE=1.
+// EL EMBUDO VA POR EMAIL (decisión de Jose, 29/07). No es un desvío mientras Meta tenga el
+// número capado (ver tarjeta #89): es el canal elegido. Las plantillas de WhatsApp siguen en
+// el código y andan, pero NO se usan salvo que alguien ponga WA_SEND_FORCE=1 en Vercel — y ahí
+// se le pregunta primero a Meta si el número puede enviar, para no repetir lo del 13-28/07
+// (los envíos rebotaban, igual consumían el tiempo de la corrida, y el Regalo 3 —último en la
+// prioridad— pasó diez días sin salir con 285 leads esperándolo).
+//
+// CADA PASO POR EMAIL AVANZA WA_STAGE. Es el mismo recorrido por otro canal, no mensajes
+// extra: por eso la cadena llega hasta la oferta y nadie recibe dos veces lo mismo.
 //
 // ESTADO POR LEAD: se guarda en el atributo Brevo WA_STAGE (0/3/4/5) para no repetir
 // los pasos de WhatsApp. El Regalo 5 (email) se marca aparte con el atributo MAIL5_AT
@@ -636,14 +638,19 @@ async function brevoCrearAtributoTexto(nombre) {
   return { ok: r.ok, status: r.status, detalle: r.ok ? 'creado' : await r.text() };
 }
 
-// ¿El número puede mandar hoy? Meta capa a los negocios sin verificar (health_status
-// can_send_message = LIMITED) y desde el 13/07 marca FALLIDA la entrega del 100% de los
-// envíos. Cada intento igual consume los ~45 s de la corrida, y el Regalo 3 —último en la
-// prioridad— nunca llegaba a salir. Preguntándole a Meta antes, el embudo se salta WhatsApp
-// solo mientras esté capado y vuelve solo cuando Meta lo habilita: sin tocar ninguna variable.
-// Si la consulta falla, se asume que SÍ puede enviar (un problema de red no debe apagar un canal).
+// ¿Sale algo por WhatsApp? NO — decisión de Jose del 29/07: el embudo va por EMAIL, y punto.
+// No es un desvío temporal mientras Meta tenga el número capado: es el canal elegido. Por eso
+// la respuesta por defecto es "no" sin siquiera preguntarle a Meta, y no se vuelve solo a
+// WhatsApp aunque lo habiliten.
+//
+// Para volver a WhatsApp hay que quererlo: WA_SEND_FORCE=1 en Vercel. Recién ahí se le
+// pregunta a Meta si el número puede enviar (health_status.can_send_message), porque encender
+// el canal contra un número capado es lo que nos costó dos semanas de embudo tapado: cada
+// intento fallido consumía los ~45 s de la corrida y el Regalo 3 nunca llegaba a salir.
 async function whatsappPuedeEnviar() {
-  if (process.env.WA_SEND_FORCE === '1') return { puede: true, motivo: 'forzado por WA_SEND_FORCE' };
+  if (process.env.WA_SEND_FORCE !== '1') {
+    return { puede: false, motivo: 'el embudo va por email (decisión 29/07). WA_SEND_FORCE=1 para volver a WhatsApp' };
+  }
   const token = process.env.WHATSAPP_TOKEN;
   const pn = process.env.WHATSAPP_PHONE_NUMBER_ID;
   if (!token || !pn) return { puede: false, motivo: 'faltan WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID' };
@@ -1054,6 +1061,12 @@ export default async function handler(req, res) {
         plan.push({ channel: 'wa', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: due.stage, tmpl: due.tmpl, phoneRaw, to });
       } else if (due && REGALOS_EMAIL[due.stage] && !attrs[REGALOS_EMAIL[due.stage].marcador]) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: `regalo${due.stage}` });
+      } else if (due && due.stage === 5 && !attrs.OFERTA_MAIL_AT) {
+        // La OFERTA como paso natural del embudo. Sin esto, con WhatsApp apagado nadie llegaría
+        // nunca a la etapa 5 (la avanzaba el envío de WhatsApp) y el embudo terminaría en el
+        // Regalo 5: entregaría las cuatro guías y no vendería nada. `avanzarA` hace que el envío
+        // por mail mueva la etapa, igual que hacen los Regalos 3 y 4.
+        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'mailoferta', avanzarA: 5 });
       }
 
       // Seguimiento (reactivación): recibió la oferta (stage 5), pasaron N días desde el último
@@ -1152,8 +1165,13 @@ export default async function handler(req, res) {
           if (!mailOfertaEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA_ENABLED!=1 (oferta por email apagada)' }); continue; }
           const sent = await sendMailOferta(p.email, p.nombre);
           if (sent.ok) {
-            try { await brevoSetMailOferta(p.email); } catch (e) { results.push({ email: p.email, sent: 'mailoferta', warn: 'enviado pero falló setMailOferta: ' + e.message }); continue; }
-            results.push({ email: p.email, sent: 'mailoferta' });
+            try {
+              // Si la oferta salió como paso del embudo (no como recuperación de los que ya
+              // estaban en etapa 5), mover también la etapa: el lead terminó el recorrido.
+              if (p.avanzarA) await brevoSetStage(p.email, p.avanzarA);
+              await brevoSetMailOferta(p.email);
+            } catch (e) { results.push({ email: p.email, sent: 'mailoferta', warn: 'enviado pero falló marcarlo en Brevo: ' + e.message }); continue; }
+            results.push({ email: p.email, sent: 'mailoferta', stage: p.avanzarA || null });
           } else {
             results.push({ email: p.email, send: 'mailoferta', error: sent.status });
           }
