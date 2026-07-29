@@ -1096,6 +1096,10 @@ export default async function handler(req, res) {
     const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
     const OFERTA_CAP = 100; // Oferta por email: cola propia, en rampa (~3 días para las ~289)
     const REGALOS_CAP = 120; // Regalos 3 y 4 por email: la entrada del embudo, también en rampa
+    // Tope manual para la PRIMERA corrida de algo nuevo (?max=2): deja verificar el camino
+    // completo —envío, avance de etapa y marcador— con dos personas reales en vez de
+    // descubrir un problema recién cuando ya salieron cientos. Sin el parámetro no limita nada.
+    const MAX_MANUAL = parseInt(searchParams.get('max') || '0', 10) || 0;
     const t0 = Date.now();
     const results = [];
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
@@ -1120,6 +1124,7 @@ export default async function handler(req, res) {
     const queue = [...ofertaQueue, ...regalosQueue, ...emailQueue, ...waQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
+      if (MAX_MANUAL && attempted >= MAX_MANUAL) break;
       attempted++;
       if (p.channel === 'email') {
         // Regalos 3 y 4 por email: además de marcarlos, AVANZAN la etapa del embudo. Sin eso
@@ -1241,7 +1246,9 @@ export default async function handler(req, res) {
     const remaining = plan.length - attempted;
     if (live && remaining > 0 && chain < MAX_CHAINS) {
       const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
-      const selfUrl = `https://${host}/api/wa-funnel?mode=live&chain=${chain + 1}&key=${encodeURIComponent(secret)}`;
+      // El `max` se arrastra a la hija. Sin esto, una corrida de prueba con tope disparaba una
+      // hija SIN tope y salía la cola entera: pasó el 28/07 al estrenar los Regalos 3/4 por email.
+      const selfUrl = `https://${host}/api/wa-funnel?mode=live&chain=${chain + 1}${MAX_MANUAL ? `&max=${MAX_MANUAL}` : ''}&key=${encodeURIComponent(secret)}`;
       try {
         // Disparamos la próxima corrida y NO esperamos a que termine: abortamos la espera a los 3 s
         // (la hija ya arrancó sola en Vercel). Best-effort: si falla, no rompe la corrida actual.
