@@ -599,6 +599,106 @@ async function brevoSetMailOferta(email) {
   if (!r.ok) throw new Error(`Brevo setMailOferta ${r.status}: ${await r.text()}`);
 }
 
+// REENVÍO DE LA OFERTA — segunda oportunidad para quien no la abrió.
+// La oferta abre al 11% contra el 22% de los regalos: casi 9 de cada 10 leads que terminan el
+// recorrido nunca ven el mensaje que vende. No es un problema del contenido —es del asunto—,
+// así que el reenvío cambia la puerta de entrada (otro asunto, texto más corto) y mantiene el
+// mismo destino. Va sólo a quien NO abrió, a las 48 h, una sola vez (marcador OFERTA_MAIL2_AT).
+//
+// ⚙️ El asunto es lo único que decide si esto sirve: es la variable que estamos moviendo.
+const OFERTA_REENVIO = {
+  minHoras: 48,
+  marcador: 'OFERTA_MAIL2_AT',
+  tag: 'oferta-reenvio',      // el de ESTE envío
+  tagOrigen: 'oferta-email',  // el del envío original: de ahí salen las aperturas que hay que respetar
+  from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
+  subject: 'El sistema que ordena las cuatro guías',
+  titulo: 'Las cuatro guías, en un solo sistema',
+  parrafos: [
+    'Te mandamos cuatro guías: el periódico digital, los prompts, los 5 pilares y los agentes de IA. Cada una resuelve una parte.',
+    'Lo que las vuelve un ingreso es el orden en que se usan — qué va primero, qué se apoya en qué, y qué hacés el lunes a la mañana.',
+    'Eso es el curso Sistema de Ingresos Diarios: el recorrido completo, en video, desde donde estás hoy hasta tu periódico digital funcionando con tu firma y tu criterio.',
+  ],
+  cta: 'Ver cómo funciona el curso →',
+  url: 'https://sistemadeingresosdiariosia.com/?src=Email-Oferta2&sck=email-oferta2',
+  cierre: 'Está todo explicado en la página, con calma.',
+};
+
+function armarEmailReenvio() {
+  const c = OFERTA_REENVIO;
+  const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07070f;"><tr>
+    <td align="center" style="padding:40px 20px;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="padding-bottom:32px;"><span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Periodistas del Futuro <span style="color:#22d3ee;">IA</span></span></td></tr>
+        <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
+          <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">${c.titulo}</p>
+          ${c.parrafos.map((p) => `<p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">${p}</p>`).join('\n          ')}
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:28px;"><tr><td align="center">
+            <a href="${c.url.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${c.cta}</a>
+          </td></tr></table>
+          <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">${c.cierre}</p>
+        </td></tr>
+        <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
+      </table>
+    </td>
+  </tr></table>
+</body></html>`;
+  const text = `PERIODISTAS DEL FUTURO IA
+
+${c.titulo}
+
+${c.parrafos.join('\n\n')}
+
+${c.cta.replace(' →', '')}: ${c.url}
+
+${c.cierre}`;
+  return { html, text };
+}
+
+async function enviarReenvioOferta(email, nombre) {
+  const { html, text } = armarEmailReenvio();
+  const r = await fetch(`${BREVO}/smtp/email`, {
+    method: 'POST',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      sender: OFERTA_REENVIO.from,
+      to: [{ email, name: nombre || 'Periodista' }],
+      subject: OFERTA_REENVIO.subject,
+      htmlContent: html,
+      textContent: text,
+      tags: [OFERTA_REENVIO.tag],
+    }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.json().catch(() => null) };
+}
+
+// Quiénes ABRIERON la oferta (o le hicieron clic) — para NO reenviarles. Se lee de los eventos
+// de Brevo del tag `oferta-email`. Best-effort: si la consulta falla devuelve null y el reenvío
+// se saltea esa corrida. Preferimos no mandar nada antes que mandarle de nuevo a quien ya abrió.
+async function abrieronOfertaSet() {
+  const key = process.env.BREVO_API_KEY;
+  const desde = new Date(Date.now() - 45 * DAY).toISOString().slice(0, 10);
+  const hasta = new Date().toISOString().slice(0, 10);
+  const abrieron = new Set();
+  for (const evento of ['opened', 'clicks']) {
+    let offset = 0;
+    for (;;) {
+      const u = `${BREVO}/smtp/statistics/events?limit=2500&offset=${offset}&startDate=${desde}&endDate=${hasta}&event=${evento}&tags=${OFERTA_REENVIO.tagOrigen}`;
+      const r = await fetch(u, { headers: { 'api-key': key } });
+      if (!r.ok) throw new Error(`Brevo events ${r.status}: ${(await r.text()).slice(0, 120)}`);
+      const j = await r.json();
+      const lote = j.events || [];
+      for (const e of lote) abrieron.add(String(e.email || '').toLowerCase().trim());
+      if (lote.length < 2500) break;
+      offset += 2500;
+    }
+  }
+  return abrieron;
+}
+
 // Regalos 3 y 4 por email. El tag propio deja medir cada uno por separado en Brevo,
 // igual que ya se hace con el Regalo 5 y la oferta.
 async function enviarRegaloEmail(nivel, email, nombre) {
@@ -903,23 +1003,17 @@ function nextDue(daysOld, stageSent, daysSinceLast) {
 // muere antes de llegar a ella y NUNCA se envía. Por eso: oferta primero, seguimiento último.
 // Menor número = se manda antes.
 function prioridad(p) {
-  // La oferta por EMAIL va primero de todo mientras WhatsApp no entregue: es el único mensaje
-  // de venta que hoy llega a destino. (La cola de ejecución ya la manda primero; esto alinea
-  // también el orden que se ve en mode=dry, para que el ensayo refleje lo que va a pasar.)
-  if (p.send === 'mailoferta') return 0;
-  // Regalos 3/4 por email: la ENTRADA. Sólo existen cuando WhatsApp está capado (nunca
-  // conviven con los pasos de WhatsApp), así que no compiten con ellos por el lugar.
-  if (p.send === 'regalo3' || p.send === 'regalo4') return 1;
-  if (p.channel === 'wa') {
-    if (p.send === 5) return 1; // Oferta — la que vende
-    if (p.send === 4) return 2; // Regalo 4
-    if (p.send === 3) return 3; // Regalo 3 (ENTRADA) — antes que el email: si un lead nuevo no
-    //                             entra al embudo, no hay a quién venderle. El email (Regalo 5)
-    //                             es un bonus para quien YA está adentro → puede esperar el turno.
+  if (p.send === 'mailoferta') return 0;      // la que VENDE
+  if (p.send === 'ofertareenvio') return 1;   // la segunda oportunidad de la que vende
+  if (p.send === 'regalo3' || p.send === 'regalo4') return 2; // la ENTRADA: sin esto no hay a quién venderle
+  if (p.channel === 'wa') {                   // sólo existen con WA_SEND_FORCE=1
+    if (p.send === 5) return 3;
+    if (p.send === 4) return 4;
+    if (p.send === 3) return 5;
   }
-  if (p.channel === 'email') return 4;       // Regalo 5 (email) — con el tiempo restante de la corrida
-  if (p.channel === 'seguimiento') return 5; // reactivación de fríos, al final
-  return 6;
+  if (p.channel === 'email') return 6;        // Regalo 5: bonus para quien ya está adentro, puede esperar
+  if (p.channel === 'seguimiento') return 7;  // reactivación de fríos, al final
+  return 8;
 }
 
 export default async function handler(req, res) {
@@ -955,7 +1049,32 @@ export default async function handler(req, res) {
       const mof = await brevoCreateMailOfertaAttribute();
       const m3 = await brevoCrearAtributoTexto('MAIL3_AT');
       const m4 = await brevoCrearAtributoTexto('MAIL4_AT');
-      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof, MAIL3_AT_attribute: m3, MAIL4_AT_attribute: m4 });
+      const m2 = await brevoCrearAtributoTexto(OFERTA_REENVIO.marcador);
+      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof, MAIL3_AT_attribute: m3, MAIL4_AT_attribute: m4, OFERTA_MAIL2_AT_attribute: m2 });
+      return;
+    }
+
+    // Previsualizar el reenvío de la oferta: ?mode=reenviotest&to=...
+    if (mode === 'reenviotest') {
+      const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
+      const sent = await enviarReenvioOferta(to, searchParams.get('nombre') || 'Jose');
+      res.status(200).json({ mode, to, asunto: OFERTA_REENVIO.subject, sent });
+      return;
+    }
+
+    // A cuántos les tocaría el reenvío y cuántos abrieron la oferta: ?mode=noabrieron
+    if (mode === 'noabrieron') {
+      const abrieron = await abrieronOfertaSet();
+      const todos = await brevoGetContacts();
+      const conOferta = todos.filter((c) => (c.attributes || {}).OFERTA_MAIL_AT);
+      const sinAbrir = conOferta.filter((c) => !abrieron.has(String(c.email || '').toLowerCase().trim()));
+      res.status(200).json({
+        mode,
+        recibieron_la_oferta: conOferta.length,
+        abrieron: conOferta.length - sinAbrir.length,
+        no_abrieron: sinAbrir.length,
+        ya_reenviado: conOferta.filter((c) => (c.attributes || {})[OFERTA_REENVIO.marcador]).length,
+      });
       return;
     }
 
@@ -1017,6 +1136,15 @@ export default async function handler(req, res) {
     const mailOfertaEnabled = process.env.MAILOFERTA_ENABLED === '1';
 
     const regalosEmailEnabled = process.env.MAILREGALOS_ENABLED === '1';
+    const reenvioEnabled = process.env.MAILOFERTA2_ENABLED === '1';
+
+    // Quiénes ya abrieron la oferta: no se les reenvía. Si Brevo no contesta, `null` → esta
+    // corrida no encola ningún reenvío (mejor perder un día que insistirle a quien ya la vio).
+    let abrieronOferta = null;
+    if (reenvioEnabled) {
+      try { abrieronOferta = await abrieronOfertaSet(); }
+      catch (e) { console.error('[wa-funnel] aperturas de la oferta:', e && e.message || e); }
+    }
 
     // Se le pregunta a Meta UNA vez por corrida si el número puede enviar. De esto depende
     // si los Regalos 3 y 4 salen por WhatsApp o por email, así que se resuelve antes del plan.
@@ -1049,6 +1177,15 @@ export default async function handler(req, res) {
       // mañana WhatsApp revive el atributo propio evita que le llegue dos veces.
       if (!attrs.OFERTA_MAIL_AT && stageSent >= MAILOFERTA.afterStage) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mailoferta' });
+      }
+
+      // Reenvío de la oferta: pasaron 48 h desde que se la mandamos, no la abrió, y todavía no
+      // se le reenvió. (Los compradores ya quedaron afuera arriba.)
+      if (abrieronOferta && attrs.OFERTA_MAIL_AT && !attrs[OFERTA_REENVIO.marcador]) {
+        const horas = (now - new Date(attrs.OFERTA_MAIL_AT).getTime()) / 3600000;
+        if (horas >= OFERTA_REENVIO.minHoras && !abrieronOferta.has(emailLc)) {
+          plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'ofertareenvio' });
+        }
       }
 
       // Paso siguiente del embudo (Regalos 3/4 y la oferta): a lo sumo uno por corrida.
@@ -1109,6 +1246,7 @@ export default async function handler(req, res) {
     const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
     const OFERTA_CAP = 100; // Oferta por email: cola propia, en rampa (~3 días para las ~289)
     const REGALOS_CAP = 120; // Regalos 3 y 4 por email: la entrada del embudo, también en rampa
+    const REENVIO_CAP = 80;  // Reenvío de la oferta a los que no la abrieron
     // Tope manual para la PRIMERA corrida de algo nuevo (?max=2): deja verificar el camino
     // completo —envío, avance de etapa y marcador— con dos personas reales en vez de
     // descubrir un problema recién cuando ya salieron cientos. Sin el parámetro no limita nada.
@@ -1133,13 +1271,27 @@ export default async function handler(req, res) {
     // parado en la etapa 0 no tiene cómo llegar a nada de lo que viene después. Tope propio y
     // generoso (el backlog eran ~370 el 28/07) pero en rampa, para no quemar la reputación.
     const regalosQueue = plan.filter((p) => p.channel === 'email' && String(p.send).startsWith('regalo')).slice(0, REGALOS_CAP);
+    const reenvioQueue = plan.filter((p) => p.send === 'ofertareenvio').slice(0, REENVIO_CAP);
     const waQueue = plan.filter((p) => p.channel !== 'email'); // wa + seguimiento (ya ordenados por prioridad)
-    const queue = [...ofertaQueue, ...regalosQueue, ...emailQueue, ...waQueue];
+    const queue = [...ofertaQueue, ...reenvioQueue, ...regalosQueue, ...emailQueue, ...waQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
       if (MAX_MANUAL && attempted >= MAX_MANUAL) break;
       attempted++;
       if (p.channel === 'email') {
+        // Reenvío de la oferta: no toca la etapa (el lead ya terminó el recorrido), sólo su marcador.
+        if (p.send === 'ofertareenvio') {
+          if (!reenvioEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA2_ENABLED!=1 (reenvío apagado)' }); continue; }
+          const sent = await enviarReenvioOferta(p.email, p.nombre);
+          if (sent.ok) {
+            try { await brevoSetMarcador(p.email, OFERTA_REENVIO.marcador); } catch (e) { results.push({ email: p.email, sent: 'ofertareenvio', warn: 'enviado pero falló marcarlo: ' + e.message }); continue; }
+            results.push({ email: p.email, sent: 'ofertareenvio' });
+          } else {
+            results.push({ email: p.email, send: 'ofertareenvio', error: sent.status });
+          }
+          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'ofertareenvio', ok: sent.ok }));
+          continue;
+        }
         // Regalos 3 y 4 por email: además de marcarlos, AVANZAN la etapa del embudo. Sin eso
         // el lead se quedaría en la misma etapa para siempre y nunca llegaría a la oferta.
         if (String(p.send).startsWith('regalo')) {
