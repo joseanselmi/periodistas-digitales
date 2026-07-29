@@ -612,7 +612,11 @@ const OFERTA_REENVIO = {
   tag: 'oferta-reenvio',      // el de ESTE envío
   tagOrigen: 'oferta-email',  // el del envío original: de ahí salen las aperturas que hay que respetar
   from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
-  subject: 'El sistema que ordena las cuatro guías',
+  // Elegido por Jose el 29/07. El asunto original ("Llegaste al final de las 4 guías…") rendía
+  // 11%: describía dónde estaba parado el lector. Este cambia el TIPO de asunto —promete un
+  // resultado—, no sólo las palabras. Si el reenvío también fuera descriptivo estaríamos
+  // probando la misma tecla y midiendo lo mismo otra vez.
+  subject: 'De las cuatro guías a tu primer ingreso',
   titulo: 'Las cuatro guías, en un solo sistema',
   parrafos: [
     'Te mandamos cuatro guías: el periódico digital, los prompts, los 5 pilares y los agentes de IA. Cada una resuelve una parte.',
