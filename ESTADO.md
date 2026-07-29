@@ -1,6 +1,6 @@
 # ESTADO — foto en vivo del negocio
 
-_Generado el 2026-07-28 23:43 UTC por `node estado.mjs`. Si esta fecha no es de hoy, **volvé a correrlo antes de sacar conclusiones**._
+_Generado el 2026-07-29 18:12 UTC por `node estado.mjs`. Si esta fecha no es de hoy, **volvé a correrlo antes de sacar conclusiones**._
 
 Este archivo se REGENERA, no se edita a mano. Las decisiones y el detalle técnico
 viven en las tarjetas de Trello y en los `.md` de cada proyecto; acá están sólo los
@@ -8,8 +8,7 @@ hechos frescos que hacen falta para saber en qué estamos y qué sigue.
 
 ## 🚦 Semáforo
 
-- 🔴 **Entrada del embudo tapada** — 285 leads esperan el Regalo 3 (el primer paso). Mientras estén ahí no llegan ni al Regalo 5 ni a la oferta.
-- 🟢 **Embudo** encendido — 635 envíos en cola: {"mailoferta":26,"wa_stage_5":2,"wa_stage_4":85,"wa_stage_3":285,"seguimiento":237}
+- 🟢 **Embudo** encendido — 496 envíos en cola: {"ofertareenvio":299,"regalo3":112,"regalo4":85}
 
 ## 💰 Ventas (neto de Jose)
 
@@ -17,18 +16,23 @@ hechos frescos que hacen falta para saber en qué estamos y qué sigue.
 
 ## 📥 Embudo de las guías gratis
 
-**872 leads** en la lista. Dónde está parado cada uno (atributo `WA_STAGE`):
+**889 leads** en la lista. Dónde está parado cada uno (atributo `WA_STAGE`):
 
-- etapa 0: **385** leads _(nunca recibieron el primer regalo)_
-- etapa 3: **87** leads
-- etapa 4: **2** leads
-- etapa 5: **398** leads
+- etapa 0: **216** leads _(nunca recibieron el primer regalo)_
+- etapa 3: **273** leads
+- etapa 5: **400** leads
 
-Recibieron por email: Regalo 5 → **400** · oferta → **372** · seguimiento → **0**. Sin teléfono: 17.
+
+Cuántos recibieron cada paso **por email** (el embudo va 100% por mail desde el 29/07):
+
+- Regalo 3 → **120** · Regalo 4 → **0** · Regalo 5 → **400**
+- Oferta → **400** · reenvío de la oferta → **9**
+
+_(el Regalo 3 y el 4 empezaron a salir por mail el 28/07; a quien los recibió antes por WhatsApp sólo lo registra su `WA_STAGE`, no el marcador)_
 
 ### Cola de hoy (ensayo del cron, no manda nada)
 
-- **635** envíos pendientes: `{"mailoferta":26,"wa_stage_5":2,"wa_stage_4":85,"wa_stage_3":285,"seguimiento":237}`
+- **496** envíos pendientes: `{"ofertareenvio":299,"regalo3":112,"regalo4":85}`
 - Embudo encendido (`WA_FUNNEL_ENABLED`)
 
 ### Entrega de WhatsApp (últimos 7 días)
@@ -37,13 +41,16 @@ Recibieron por email: Regalo 5 → **400** · oferta → **372** · seguimiento 
 
 ## 📧 Email (Brevo, últimos 30 días)
 
-Lista "Leadgen - Guía Claude": **871 contactos**.
+Lista "Leadgen - Guía Claude": **889 contactos**.
 
-| pieza | enviados | entregados | aperturas únicas | clics únicos |
+| paso del embudo | enviados | entregados | aperturas únicas | clics únicos |
 |---|---|---|---|---|
-| **todo el correo** | 2387 | 2297 | 457 (20%) | 172 (7%) |
-| oferta-email | 373 | 359 | 40 (11%) | 9 (3%) |
-| regalo5-agentes-ia | 402 | 389 | 86 (22%) | 26 (7%) |
+| Regalo 3 · periódico digital (día 5) | 188 | 182 | 10 (5%) | 4 (2%) |
+| Regalo 4 · los 5 pilares (día 7) | 1 | 1 | 0 (0%) | 0 (0%) |
+| Regalo 5 · agentes de IA (día 8) | 402 | 389 | 89 (23%) | 27 (7%) |
+| OFERTA (día 9) — la que vende | 401 | 386 | 42 (11%) | 9 (2%) |
+| Reenvío de la oferta (+48 h, a los que no abrieron) | 11 | 11 | 0 (0%) | 0 (0%) |
+| _todo el correo (incluye Regalos 1 y 2)_ | 2594 | 2496 | 473 (19%) | 176 (7%) |
 
 ### Qué hicieron los que abrieron (eventos en la landing)
 
@@ -55,7 +62,14 @@ Lista "Leadgen - Guía Claude": **871 contactos**.
 
 ## 🧭 Trello — qué falta, tarjeta por tarjeta
 
-### En progreso (7)
+### En progreso (8)
+
+**[#73 Trazabilidad por versiones — landing v3 (identificación) + checkout v3 (PayPal ON) midiendo](https://trello.com/c/sFqLzsAH)** — 16/21 · Bruno (Data Analyst), Luna (CRO/Landing) · últ. 2026-07-29
+- ⬜ ~05/08: chequeo intermedio v3 (scroll Clarity vs 31,78% + ventas/día). No tocar la landing hasta el veredicto
+- ⬜ ~05/08: chequear checkout v3 — ¿vuelve el volumen que LLEGA (0,33/día en v2 vs 1,44 en v1) y los carritos abandonados?
+- ⬜ ~12/08: veredicto landing v3 (scroll y ventas/día; clics SOLO como control) y veredicto checkout v3 vs v1 (completion 26,9%)
+- ⬜ Confirmar en la config de pagos de Hotmart si BILLET/efectivo quedó prendido (apareció 1 pago BILLET MXN en v2)
+- ⬜ Antes de dar por buena una versión: mirar el hero en un teléfono real. El QA no revisa layout, da ✅ igual
 
 **[#30 Operar y optimizar campaña ad1-fomo (primera campaña viva)](https://trello.com/c/MpM48Zc5)** — 1/6 · Mateo (Media Buyer) · últ. 2026-07-19
 - ⬜ Corregir el CTA cortado en la imagen del creativo (Canva): "HAZ CLIC SI ERES PERIODISTA" completo, sin salirse del borde — pendiente menor
@@ -142,6 +156,10 @@ Lista "Leadgen - Guía Claude": **871 contactos**.
 
 ### En revision (14)
 
+**[#98 Estado del negocio en vivo dentro del repo (node estado.mjs → ESTADO.md)](https://trello.com/c/vFkbcxvb)** — 5/7 · Nicolas (Backend) · últ. 2026-07-28
+- ⬜ (JOSE) Pegar SUPABASE_SERVICE_ROLE_KEY en ads-agent/.env.local (Supabase → periodistas-marketing → Project Settings → API → service_role). Sin eso, ventas y entrega de WhatsApp quedan fuera del informe
+- ⬜ Correr el informe completo (ya con Supabase) y confirmar que las 6 secciones traen datos
+
 **[#97 🧠 Quizzes del curso — 6 tests (M1-M5 + final)](https://trello.com/c/mFCN4meM)** — 2/5 · Director (Academico) · últ. 2026-07-28
 - ⬜ [Jose] Cargar en Hotmart quizzes M1, M2, M3, M5 (tipo Ejercicio)
 - ⬜ [cuando salga M4] Cargar quiz M4
@@ -159,12 +177,6 @@ Lista "Leadgen - Guía Claude": **871 contactos**.
 
 **[#70 Contenido Leadr · Semana 20-26 jul → Seguridad Digital](https://trello.com/c/Ov5SPFfx)** — 3/4 · Director (Academico) · últ. 2026-07-16
 - ⬜ NOVEDAD: post comunidad "Módulo Seguridad Digital completo" + 1 tip accionable
-
-**[#73 Trazabilidad por versiones — checkout y landing (v1/v2) + medir PayPal OFF](https://trello.com/c/sFqLzsAH)** — 6/10 · Bruno (Data Analyst), Luna (CRO/Landing) · últ. 2026-07-16
-- ⬜ ~24/07: chequear que no se rompió (ventas siguen normales)
-- ⬜ ~31/07: medir v2 checkout y comparar completion vs v1 (26,9%)
-- ⬜ Escribir veredicto v2 (ganó/perdió). Si es peor, reactivar PayPal y registrar
-- ⬜ Definir medición periódica de landing_versiones (events + Clarity)
 
 **[#77 Agenda diaria del tablero Trello (recordatorio + auto-cierre en el email diario)](https://trello.com/c/wphImuWx)** — 7/9 · Nicolas (Backend) · últ. 2026-07-16
 - ⬜ Commitear los cambios a git al repo (pendiente confirmacion de Jose)
@@ -200,12 +212,9 @@ Lista "Leadgen - Guía Claude": **871 contactos**.
 
 ### Por hacer (17)
 
-**[#94 Funnel por EMAIL + registro por cliente (mientras WhatsApp no entrega)](https://trello.com/c/DyKdwyrB)** — 1/6 · Nicolas (Backend) · últ. 2026-07-27
-- ⬜ Entregar por email las guías Regalo 3 (periódico digital) y Regalo 4 (5 pilares) a cohortes pre-oferta (nunca llegaron por WhatsApp) — valor antes de vender
+**[#94 Funnel por EMAIL + registro por cliente (mientras WhatsApp no entrega)](https://trello.com/c/DyKdwyrB)** — 5/7 · Nicolas (Backend) · últ. 2026-07-29
 - ⬜ Registro por cliente en Supabase (tabla funnel_email): fecha de cada paso enviado por email (r3/r4/r5/oferta/seguimiento), consultable — sacar el estado de los atributos escondidos de Brevo
 - ⬜ Conservar el historial de WhatsApp (conversaciones_wa/mensajes) como registro del cliente potencial — NO borrar
-- ⬜ Reenvío a NO-abridores de la oferta (+48h, otro asunto) para subir aperturas
-- ⬜ Todo automático (cron) + detrás de flag + probado en dry antes de encender
 
 **[#89 🔴 WhatsApp NO entrega (0% desde 13/07) — verificar negocio en Meta + fix reporte de entrega](https://trello.com/c/HhfWhrB9)** — 1/6 · Nicolas (Backend) · últ. 2026-07-27
 - ⬜ (JOSE) Completar Business Verification en Meta Business Settings → Centro de seguridad (error 141010, business id 1313970406294022). Es el bloqueo principal.
@@ -331,6 +340,7 @@ Lista "Leadgen - Guía Claude": **871 contactos**.
 - [#86](https://trello.com/c/3yBAOq9M) Cargar OPENAI_API_KEY + crédito (~$5) en OpenAI 
 - [#89](https://trello.com/c/HhfWhrB9) Completar Business Verification en Meta Business Settings → Centro de seguridad (error 141010, business id 1313970406294022). Es el bloqueo principal.
 - [#89](https://trello.com/c/HhfWhrB9) Reenviar/cambiar el nombre para mostrar del número (name_status=DECLINED) en WhatsApp Manager y esperar aprobación.
+- [#98](https://trello.com/c/vFkbcxvb) Pegar SUPABASE_SERVICE_ROLE_KEY en ads-agent/.env.local (Supabase → periodistas-marketing → Project Settings → API → service_role). Sin eso, ventas y entrega de WhatsApp quedan fuera del informe
 
 ## 📋 Tarjetas sin checklist
 

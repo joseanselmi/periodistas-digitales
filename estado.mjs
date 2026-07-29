@@ -29,7 +29,15 @@ const RAPIDO = process.argv.includes('--rapido');
 
 const BOARD_ID = '6a35bf86f4bbebc72953200f'; // Roadmap Periodistas Digitales
 const LISTA_LEADS = 5;                        // Brevo "Leadgen - Guía Claude"
-const TAGS_EMAIL = ['oferta-email', 'regalo5-agentes-ia'];
+// Las piezas del embudo, EN ORDEN. El embudo va 100% por email desde el 29/07 (ver el
+// encabezado de sistema-ingresos/api/wa-funnel.js): cada tag es un paso del recorrido.
+const TAGS_EMAIL = [
+  ['regalo3-periodico', 'Regalo 3 · periódico digital (día 5)'],
+  ['regalo4-pilares', 'Regalo 4 · los 5 pilares (día 7)'],
+  ['regalo5-agentes-ia', 'Regalo 5 · agentes de IA (día 8)'],
+  ['oferta-email', 'OFERTA (día 9) — la que vende'],
+  ['oferta-reenvio', 'Reenvío de la oferta (+48 h, a los que no abrieron)'],
+];
 const FUNNEL_URL = 'https://sistemadeingresosdiariosia.com/api/wa-funnel';
 
 // ── credenciales ────────────────────────────────────────────────────────────
@@ -139,14 +147,14 @@ async function emailBrevo() {
   const lista = await brevo(`contacts/lists/${LISTA_LEADS}`);
   const global = await brevo(`smtp/statistics/aggregatedReport?startDate=${hace(30)}&endDate=${HOY_UTC}`);
   const porTag = {};
-  for (const tag of TAGS_EMAIL) porTag[tag] = await brevo(`smtp/statistics/aggregatedReport?tag=${tag}&startDate=${hace(30)}&endDate=${HOY_UTC}`);
+  for (const [tag] of TAGS_EMAIL) porTag[tag] = await brevo(`smtp/statistics/aggregatedReport?tag=${tag}&startDate=${hace(30)}&endDate=${HOY_UTC}`);
   return { lista, global, porTag };
 }
 
 // Estado por lead: vive en atributos de Brevo (WA_STAGE / MAIL5_AT / OFERTA_MAIL_AT).
 // Se recorre la lista entera para saber cuántos están parados en cada escalón.
 async function etapasDeLosLeads() {
-  const etapas = { total: 0, stage: {}, regalo5: 0, oferta_email: 0, seguimiento: 0, sin_telefono: 0, emails: new Set() };
+  const etapas = { total: 0, stage: {}, regalo3: 0, regalo4: 0, regalo5: 0, oferta_email: 0, reenvio: 0, seguimiento: 0, sin_telefono: 0, emails: new Set() };
   let offset = 0;
   for (;;) {
     const p = await brevo(`contacts/lists/${LISTA_LEADS}/contacts?limit=500&offset=${offset}`);
@@ -157,8 +165,11 @@ async function etapasDeLosLeads() {
       etapas.emails.add(String(c.email || '').toLowerCase());
       const s = String(Number(a.WA_STAGE || 0));
       etapas.stage[s] = (etapas.stage[s] || 0) + 1;
+      if (a.MAIL3_AT) etapas.regalo3++;
+      if (a.MAIL4_AT) etapas.regalo4++;
       if (a.MAIL5_AT) etapas.regalo5++;
       if (a.OFERTA_MAIL_AT) etapas.oferta_email++;
+      if (a.OFERTA_MAIL2_AT) etapas.reenvio++;
       if (a.SEG_AT) etapas.seguimiento++;
       if (!a.SMS && !a.WHATSAPP) etapas.sin_telefono++;
     }
@@ -248,7 +259,13 @@ function armarMarkdown(d) {
     '',
     ...Object.keys(e.stage).sort().map((s) => `- etapa ${s}: **${e.stage[s]}** leads` + (s === '0' ? ' _(nunca recibieron el primer regalo)_' : '')),
     '',
-    `Recibieron por email: Regalo 5 → **${e.regalo5}** · oferta → **${e.oferta_email}** · seguimiento → **${e.seguimiento}**. Sin teléfono: ${e.sin_telefono}.`,
+    '',
+    'Cuántos recibieron cada paso **por email** (el embudo va 100% por mail desde el 29/07):',
+    '',
+    `- Regalo 3 → **${e.regalo3}** · Regalo 4 → **${e.regalo4}** · Regalo 5 → **${e.regalo5}**`,
+    `- Oferta → **${e.oferta_email}** · reenvío de la oferta → **${e.reenvio}**`,
+    '',
+    `_(el Regalo 3 y el 4 empezaron a salir por mail el 28/07; a quien los recibió antes por WhatsApp sólo lo registra su \`WA_STAGE\`, no el marcador)_`,
   ].join('\n')));
   L.push('');
   L.push('### Cola de hoy (ensayo del cron, no manda nada)');
@@ -267,10 +284,10 @@ function armarMarkdown(d) {
     return [
       `Lista "${e.lista.name}": **${e.lista.totalSubscribers} contactos**.`,
       '',
-      '| pieza | enviados | entregados | aperturas únicas | clics únicos |',
+      '| paso del embudo | enviados | entregados | aperturas únicas | clics únicos |',
       '|---|---|---|---|---|',
-      fila('**todo el correo**', e.global),
-      ...TAGS_EMAIL.map((t) => fila(t, e.porTag[t])),
+      ...TAGS_EMAIL.map(([t, nombre]) => fila(nombre, e.porTag[t])),
+      fila('_todo el correo (incluye Regalos 1 y 2)_', e.global),
     ].join('\n');
   }));
   L.push('');
