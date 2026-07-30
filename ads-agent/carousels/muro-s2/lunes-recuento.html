@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El recuento — Lunes 24/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+/* ── PORTADA: la que tiene que frenar el scroll ──
+   Fondo más cargado y tipografía que ocupa el cuadro. El resto de las placas
+   quedan sobrias a propósito: si gritan todas, no grita ninguna. */
+.slide.cover { background:#05050c; padding:64px 74px 56px; }
+.slide.cover::before { top:-420px; left:-300px; width:1250px; height:1250px; background:radial-gradient(circle, rgba(99,102,241,.42) 0%, rgba(99,102,241,.10) 45%, transparent 70%); }
+.slide.cover .glow2 { content:''; position:absolute; bottom:-380px; right:-280px; width:1000px; height:1000px; background:radial-gradient(circle, rgba(34,211,238,.24) 0%, transparent 68%); pointer-events:none; }
+.slide.cover h1 { font-size:104px; line-height:.99; letter-spacing:-.05em; margin-bottom:34px; }
+.slide.cover p.lead { font-size:37px; color:#94a3b8; }
+.slide.cover .label { font-size:14px; }
+/* Frase marcada: bloque sólido con texto oscuro. Es lo único con fondo claro en
+   todo el kit, así que es lo primero que se ve en un feed lleno de placas grises. */
+.hl {
+  display:inline-block;
+  background:linear-gradient(135deg,#6366f1,#22d3ee);
+  color:#05050c; -webkit-text-fill-color:#05050c;
+  padding:0 20px 12px; margin:6px 0 -6px;
+  border-radius:16px;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone;
+}
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.prompt-box { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:32px 36px; margin-top:8px; }
+.prompt-box .ptitle { font-size:14px; color:#22d3ee; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+.prompt-box p { font-size:23px; color:#cbd5e1; line-height:1.55; margin-bottom:0; }
+.numlist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.numlist .item { display:flex; gap:18px; align-items:flex-start; }
+.numlist .n { font-size:30px; font-weight:900; color:#22d3ee; min-width:56px; }
+.numlist .t { font-size:27px; color:#cbd5e1; line-height:1.5; padding-top:2px; }
+.numlist .t strong { color:#f1f5f9; }
+/* ── comparación antes/después (propio de esta serie) ── */
+.vs { display:flex; flex-direction:column; gap:22px; margin-top:8px; }
+.vs .row { border-radius:18px; padding:26px 30px; border:1px solid; }
+.vs .row.bad  { background:rgba(239,68,68,.07);  border-color:rgba(239,68,68,.28); }
+.vs .row.good { background:rgba(34,197,94,.07);  border-color:rgba(34,197,94,.28); }
+.vs .tag { font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
+.vs .row.bad .tag  { color:#f87171; }
+.vs .row.good .tag { color:#4ade80; }
+.vs .txt { font-size:27px; color:#e2e8f0; line-height:1.45; }
+</style>
+</head>
+<body>
+<div class="slide active cover">
+  <div class="glow2"></div>
+  <div class="top">
+    <span class="label indigo">El diagnóstico</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>En diez minutos<br>vas a saber si<br>tienes lectores<br><span class="hl">o conocidos</span></h1><p class="lead">Sin herramientas ni paneles. Tu perfil, una hoja y dos letras.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Desliza →</div>
+  </div>
+</div>
+
+<div class="slide">
+  
+  <div class="top">
+    <span class="label green">Paso 01</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Abre tus<br>últimas diez<br>publicaciones</h2><div class="divider"></div><p>Las de noticias. Las de la familia no cuentan para esto.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Sigue deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  
+  <div class="top">
+    <span class="label green">Paso 02</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Anota quién<br>comentó</h2><div class="divider"></div><p>Nombre por nombre. Sin saltearte ninguno.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Sigue deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  
+  <div class="top">
+    <span class="label green">Paso 03</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Marca cada<br>nombre con<br>una letra</h2><div class="divider"></div><div class="numlist"><div class="item"><div class="n">C</div><div class="t">De <strong>círculo</strong>: familia, amigos, gente que conoces fuera de internet.</div></div><div class="item"><div class="n">L</div><div class="t">De <strong>lector</strong>: alguien que llegó por el tema y no conoces personalmente.</div></div></div></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Sigue deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  
+  <div class="top">
+    <span class="label amber">Lo que vas a ver</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Casi siempre<br>la enorme<br>mayoría son C</h2><div class="divider"></div><p>No porque publiques mal. Publicas bien, y hace años.</p><p><strong>Es porque estás publicando donde la audiencia disponible es la de tu vida.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Sigue deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  
+  <div class="top">
+    <span class="label indigo">Qué hacer</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Ese número<br>es tu punto<br>de partida</h2><div class="divider"></div><p>Aplica las cosas de esta semana durante dos semanas y vuelve a contar. Van a aparecer <strong>L</strong>. Pocos al principio, pero van a aparecer.</p><p>Si no se movió nada, vuelve al botón "compartir": en nueve de cada diez casos el problema sigue siendo ese.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+<script>
+(function(){const s=document.querySelectorAll('.slide');let c=0;function go(d){s[c].classList.remove('active');c=Math.max(0,Math.min(s.length-1,c+d));s[c].classList.add('active')}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)})})()
+</script>
+</body>
+</html>

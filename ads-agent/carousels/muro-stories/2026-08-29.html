@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Story 29/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.story {
+  width:1080px; height:1920px; background:#07070f;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:150px 90px 130px; position:relative; overflow:hidden;
+}
+/* halo indigo arriba y un segundo foco cyan abajo: da profundidad en vertical */
+.story::before { content:''; position:absolute; top:-360px; left:-260px; width:1100px; height:1100px; background:radial-gradient(circle, rgba(99,102,241,.26) 0%, transparent 66%); pointer-events:none; }
+.story::after  { content:''; position:absolute; bottom:-420px; right:-320px; width:1000px; height:1000px; background:radial-gradient(circle, rgba(34,211,238,.13) 0%, transparent 68%); pointer-events:none; }
+.bar { position:absolute; left:0; top:150px; bottom:130px; width:6px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 4px 4px 0; }
+.top { position:relative; z-index:2; }
+.eyebrow { font-size:22px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#6366f1; }
+.mid { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; justify-content:center; }
+h1 { font-size:112px; font-weight:900; color:#f1f5f9; line-height:1.02; letter-spacing:-.045em; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.rule { width:96px; height:6px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:3px; margin:52px 0 44px; }
+.sub { font-size:40px; color:#cbd5e1; line-height:1.5; max-width:840px; }
+.sub strong { color:#f1f5f9; }
+.bottom { position:relative; z-index:2; display:flex; flex-direction:column; gap:34px; }
+.cta {
+  align-self:flex-start;
+  font-size:31px; font-weight:800; color:#07070f;
+  background:linear-gradient(135deg,#6366f1,#22d3ee);
+  padding:26px 46px; border-radius:100px; letter-spacing:-.01em;
+}
+.brand { font-size:24px; color:rgba(255,255,255,.3); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="story">
+  <div class="bar"></div>
+  <div class="top"><div class="eyebrow">Lo que de verdad frena</div></div>
+  <div class="mid">
+    <h1>No te frena<br>el trabajo.<br>Te frena<br><span class="accent">perder lo<br>que ya tienes</span></h1>
+    <div class="rule"></div>
+    <div class="sub">Y esa elección está mal planteada. No es <strong>o esto o aquello</strong>.</div>
+  </div>
+  <div class="bottom">
+    <div class="cta">Por qué →</div>
+    <div class="brand">@periodistasdelfuturo</div>
+  </div>
+</div>
+</body></html>
