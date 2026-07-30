@@ -1,7 +1,8 @@
 // Ingesta de leads a la base de marketing (Supabase periodistas-marketing, tabla `leads`).
 //
-// Lo llama el escenario de Make "Facebook Lead Ads _ Step 1" (id 9433023) con un POST
-// por cada lead nuevo de Facebook Lead Ads. En vez de meter la service_role key dentro
+// Lo llama el escenario de Make "Funnel Leads - Instantaneo (webhook)" (id 9474482; antes
+// era el 9433023 polling, desactivado el 2026-07-03) con un POST por cada lead nuevo de
+// Facebook Lead Ads. En vez de meter la service_role key dentro
 // de Make (que puede leer/escribir TODA la base, incluida PII de ventas/customers),
 // Make pega a ESTE endpoint con un secreto compartido y la escritura queda acá, con la
 // key que ya vive en Vercel — mismo criterio que el resto de api/ (hotmart, recuperacion).

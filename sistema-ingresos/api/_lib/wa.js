@@ -96,7 +96,7 @@ async function logMensaje({ automatizacion, to, tipo, categoria_meta = 'marketin
 // le mandamos nosotros (regalo / recuperación), que antes solo iba a `mensajes` (costos).
 // Es la única fuente de logueo del hilo: la usan los envíos (regalos, recuperación) y el
 // puente (asistente.logChat delega acá). Best-effort: nunca throwea ni frena un envío.
-async function logConversacion({ telefono, direccion, origen, texto, tipo, wamid, intent }) {
+async function logConversacion({ telefono, direccion, origen, texto, tipo, wamid, intent, media_id }) {
   try {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return;
     await fetch(`${SUPABASE_URL}/rest/v1/conversaciones_wa`, {
@@ -115,6 +115,7 @@ async function logConversacion({ telefono, direccion, origen, texto, tipo, wamid
         tipo: tipo || null,
         wamid: wamid || null,
         intent: intent || null,
+        media_id: media_id || null, // adjuntos entrantes: para re-descargar el archivo de Meta
         // Los salientes arrancan en "enviado"; el webhook los sube a entregado/leido.
         estado_entrega: direccion === 'out' ? 'enviado' : null,
       }),
@@ -154,10 +155,15 @@ const RECUP_TEXTO = {
   recup_rechazo_2: '🟠 Pago rechazado — recordatorio',
 };
 
-// Link del botón por tipo (con ?src= para atribuir la venta recuperada en `ventas`).
+// Link del botón de recuperación por tipo. Va DIRECTO al checkout de Hotmart (no a la
+// landing): quien ya abandonó/rechazó conoce la oferta, lo que necesita es volver a pagar.
+// El ?src= alimenta el campo "Origen" de Hotmart → atribuye la venta recuperada en `ventas`.
+// ⚠️ Las plantillas de WhatsApp aprobadas por Meta tienen su URL de botón FIJA en la
+// plantilla; para que esas también vayan al checkout hay que re-enviarlas a aprobación.
+const CHECKOUT = 'https://pay.hotmart.com/P106404871J?checkoutMode=10';
 const LINKS = {
-  carrito_abandonado: `${BASE}/?src=recup-abandono`,
-  pago_rechazado: `${BASE}/?src=recup-rechazo`,
+  carrito_abandonado: `${CHECKOUT}&src=recup-abandono`,
+  pago_rechazado: `${CHECKOUT}&src=recup-rechazo`,
 };
 
 // Plantilla aprobada por tipo y paso. El paso 1 lo manda el webhook al instante;
@@ -260,4 +266,28 @@ async function sendButtons({ to, body, buttons, header, footer }) {
   return { ok: r.ok, status: r.status, body: j, wamid };
 }
 
-module.exports = { GRAPH, BASE, LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate, sendText, sendButtons, logMensaje, logConversacion, marcarEntrega };
+// ── Descarga de adjuntos entrantes (imagen/audio/video/documento) ────────────
+// WhatsApp NO manda el archivo en el webhook, solo un `media id`. Bajarlo es en 2 pasos:
+//   1) GET /{media-id}  → devuelve una URL temporal (válida ~5 min) + mime_type + tamaño.
+//   2) GET esa URL (con el MISMO token en el header) → el binario.
+// El medio queda disponible en Meta ~30 días, pero SOLO si guardamos el media id (por eso
+// hay que capturarlo en el webhook al instante). Devuelve { buffer, mime, size } o null.
+async function getMedia(mediaId) {
+  try {
+    const token = process.env.WHATSAPP_TOKEN;
+    if (!token || !mediaId) return null;
+    const meta = await fetch(`${GRAPH}/${mediaId}`, { headers: { authorization: `Bearer ${token}` } });
+    if (!meta.ok) { console.error('[wa getMedia] meta', meta.status); return null; }
+    const info = await meta.json().catch(() => ({}));
+    if (!info || !info.url) return null;
+    const bin = await fetch(info.url, { headers: { authorization: `Bearer ${token}` } });
+    if (!bin.ok) { console.error('[wa getMedia] bin', bin.status); return null; }
+    const buffer = Buffer.from(await bin.arrayBuffer());
+    return { buffer, mime: info.mime_type || 'application/octet-stream', size: Number(info.file_size) || buffer.length };
+  } catch (e) {
+    console.error('[wa getMedia] error:', e && e.message || e);
+    return null;
+  }
+}
+
+module.exports = { GRAPH, BASE, LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate, sendText, sendButtons, logMensaje, logConversacion, marcarEntrega, getMedia };

@@ -23,7 +23,7 @@
 //      SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY, WHATSAPP_TOKEN,
 //      WHATSAPP_PHONE_NUMBER_ID.
 
-const { normalizePhone, sendText, sendButtons, marcarEntrega } = require('./_lib/wa');
+const { normalizePhone, sendText, sendButtons, marcarEntrega, getMedia } = require('./_lib/wa');
 const asistente = require('./_lib/asistente');
 const tg = require('./_lib/tg');
 
@@ -43,6 +43,31 @@ async function avisar(from, nombre, text) {
     const dest = await tg.destinoPara(normalizePhone(from), nombre);
     await tg.enviar({ ...dest, text });
   } catch (e) { console.error('[wa-inbox] avisar:', e && e.message || e); }
+}
+
+// Tipos de mensaje que traen un archivo adjunto (tienen un `media id` que hay que bajar).
+const MEDIA_TYPES = ['image', 'audio', 'video', 'document', 'sticker'];
+const MAX_MEDIA_BYTES = 45 * 1024 * 1024; // Telegram: docs hasta 50 MB; dejamos margen.
+
+// Baja el adjunto de WhatsApp y se lo reenvía a Jose a Telegram como archivo real (imagen,
+// nota de voz, video o documento) — al MISMO tema/chat donde ya cayó la ficha. Antes esto
+// se perdía: el hilo solo mostraba "[imagen]" y el archivo no se guardaba. Best-effort.
+async function reenviarMedia(from, nombre, tipo, mediaMeta) {
+  const dl = await getMedia(mediaMeta.id);
+  if (!dl || !dl.buffer) {
+    await avisar(from, nombre, `⚠️ ${nombre} te mandó un ${tipo}, pero no pude descargarlo de WhatsApp.`);
+    return;
+  }
+  if (dl.size > MAX_MEDIA_BYTES) {
+    await avisar(from, nombre, `⚠️ ${nombre} te mandó un ${tipo} de ${(dl.size / 1048576).toFixed(1)} MB — muy grande para reenviarlo a Telegram.`);
+    return;
+  }
+  const dest = await tg.destinoPara(normalizePhone(from), nombre);
+  await tg.enviarMedia({
+    ...dest, tipo,
+    media: { buffer: dl.buffer, mime: dl.mime, filename: mediaMeta.filename },
+    caption: mediaMeta.caption || undefined,
+  });
 }
 
 // fetch con timeout (para que una consulta lenta nunca demore el reenvío a Telegram).
@@ -313,7 +338,9 @@ module.exports = async (req, res) => {
           });
 
           // Guarda el mensaje entrante en el historial (para el buzón y, a futuro, Leadr).
-          try { await asistente.logChat({ telefono: telKey, direccion: 'in', origen: 'cliente', texto, tipo: m.type, wamid: m.id, intent: accion.intent }); } catch {}
+          // Si es un adjunto, guarda también el `media id` para poder re-descargar el archivo.
+          const mediaId = (MEDIA_TYPES.includes(m.type) && m[m.type] && m[m.type].id) || null;
+          try { await asistente.logChat({ telefono: telKey, direccion: 'in', origen: 'cliente', texto, tipo: m.type, wamid: m.id, intent: accion.intent, media_id: mediaId }); } catch {}
 
           // ¿Jose ya está en esta conversación? → el bot no responde, solo avisa.
           let paused = false;
@@ -364,6 +391,14 @@ module.exports = async (req, res) => {
               ? '\n\n⏸️ El bot está en pausa en este chat porque vos ya estás respondiendo.'
               : `\n\n🤖 BORRADOR — le respondería:\n${previewAccion(accion)}`;
             await avisar(from, nombre, `${encabezado}${bloqueFicha}\n\n💬 ${texto}${nota}\n\n↩️ Respondé acá mismo para contestarle.`);
+          }
+
+          // Si el mensaje trae un ADJUNTO, además de la ficha le reenviamos el archivo real
+          // a Telegram (foto/nota de voz/video/documento). Independiente de lo que haya
+          // decidido el asistente. Best-effort: si falla, nunca corta el flujo.
+          if (MEDIA_TYPES.includes(m.type) && m[m.type] && m[m.type].id) {
+            try { await reenviarMedia(from, nombre, m.type, m[m.type]); }
+            catch (e) { console.error('[wa-inbox] reenviar media:', e && e.message || e); }
           }
         }
       }

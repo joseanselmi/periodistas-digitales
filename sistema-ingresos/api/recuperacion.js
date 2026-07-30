@@ -40,6 +40,7 @@ const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
 const { runMetaDailySync } = require('./_lib/meta-daily-sync');
 const { runSyncEstados } = require('./_lib/sync-estados');
+const { runVersionesSync } = require('./_lib/versiones-sync');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;
@@ -325,6 +326,14 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'sync_estados', count: est.count, errores: est.errores }));
       } catch (e) {
         console.error('sync-estados (no frena la recuperación):', e.message);
+      }
+      // Métricas de la versión activa del checkout (Hotmart) + landing (events) → checkout_versiones
+      // / landing_versiones. Best-effort, misma corrida. Así las tablas de versiones se actualizan solas.
+      try {
+        const ver = await runVersionesSync();
+        console.log(JSON.stringify({ type: 'versiones_sync', ...ver }));
+      } catch (e) {
+        console.error('versiones-sync (no frena la recuperación):', e.message);
       }
     }
 

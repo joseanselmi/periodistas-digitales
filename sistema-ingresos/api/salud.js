@@ -342,6 +342,9 @@ async function enviar(subject, html) {
 async function enviarPanelSalud(mode) {
   // Refresca la foto de Brevo en Supabase para el Panel de Comando (best-effort: si falla, el panel igual sale).
   try { await snapshotBrevo(); } catch (e) { console.error('snapshotBrevo (no frena el panel):', (e && e.message) || e); }
+  // Baja los eventos de email por persona (quién abrió qué) para la ficha del cliente.
+  // Se cuelga de acá porque Vercel Hobby solo deja 2 crons. Best-effort igual que arriba.
+  try { await syncComunicaciones(7); } catch (e) { console.error('syncComunicaciones (no frena el panel):', (e && e.message) || e); }
   const flujos = [];
   for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio]) {
     try { flujos.push(await fn()); }
@@ -372,12 +375,43 @@ async function enviarPanelSalud(mode) {
   };
 }
 
+// Trae de Brevo quién recibió/abrió cada mail y lo guarda en comunicaciones_email.
+// Es lo que le faltaba a la ficha por cliente: del WhatsApp ya guardábamos entrega
+// y lectura, del email no guardábamos nada por persona.
+async function syncComunicaciones(dias, limite) {
+  const { sincronizarEventosBrevo } = require('./_lib/brevo-events-sync');
+  return sincronizarEventosBrevo({
+    apiKey: process.env.BREVO_API_KEY,
+    supabaseUrl: SB_URL,
+    serviceKey: SB_KEY,
+    dias,
+    limite,
+  });
+}
+
 module.exports = async (req, res) => {
   const { searchParams } = new URL(req.url, 'http://localhost');
   const mode = searchParams.get('mode') || 'cron';
   const secret = process.env.CRON_SECRET || '';
   const authOk = !secret || req.headers.authorization === `Bearer ${secret}` || searchParams.get('key') === secret;
   if (!authOk) { res.status(401).json({ error: 'unauthorized' }); return; }
+
+  // ?mode=comunicaciones&dias=30 → solo baja los eventos de email, sin mandar el
+  // panel. Para el backfill inicial (Brevo guarda ~30 días de historia).
+  if (mode === 'comunicaciones') {
+    try {
+      const dias = parseInt(searchParams.get('dias') || '7', 10);
+      // El backfill tiene que poder traer toda la historia; la corrida diaria se
+      // queda con el tope bajo para no comerse el tiempo del panel.
+      const limite = parseInt(searchParams.get('max') || '20000', 10);
+      const out = await syncComunicaciones(dias, limite);
+      res.status(200).json({ mode, dias, ...out });
+    } catch (e) {
+      res.status(500).json({ error: String((e && e.message) || e) });
+    }
+    return;
+  }
+
   try {
     const out = await enviarPanelSalud(mode);
     res.status(200).json({ mode, ...out });
