@@ -88,6 +88,15 @@ function parseSck(sck) {
   return out
 }
 
+// El sck viaja como "b2~fbp:...~fbc:...". Para saber por dónde entró la persona
+// solo sirve el primer tramo: "b2" (nuestro checkout) o "HOTMART_PRODUCT_PAGE"
+// (nos encontró sola en el marketplace de Hotmart). El resto son los ids de
+// Facebook, que no son un origen.
+function sckBase(sck) {
+  if (!sck) return ''
+  return String(sck).split('~')[0].trim()
+}
+
 function buildUserData(buyer, address, fb) {
   const fullName = String(buyer.name || '').trim()
   const firstName = fullName.split(/\s+/)[0]
@@ -267,8 +276,12 @@ async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, bod
     return false
   }
 
+  // Hotmart NO manda `tracking` en este webhook: la atribucion viene en
+  // purchase.origin ({ src, sck }). Sin este fallback, src y sck quedaban
+  // vacios en TODAS las compras (verificado 30/07: ultimo_src NULL en las 12).
+  const origin = purchase.origin || data.origin || {}
   const tracking = purchase.tracking || data.tracking || {}
-  const sck = pick(tracking.source_sck, tracking.sck, body.sck)
+  const sck = pick(tracking.source_sck, tracking.sck, origin.sck, body.sck)
   const fb = parseSck(sck)
 
   const product = data.product || {}
@@ -293,7 +306,7 @@ async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, bod
         ? pick(purchase.status, purchase.payment && (purchase.payment.refusal_reason || purchase.payment.type))
         : undefined,
     transaction_id: transaction,
-    src: pick(tracking.source, tracking.src),
+    src: pick(tracking.source, tracking.src, origin.src),
     fbp: fb.fbp || undefined,
     fbc: fb.fbc || undefined,
     utm_source: pick(tracking.utm_source),
@@ -359,7 +372,7 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
     moneda: currency,
     evento_hotmart: event,
     transaction_id: transaction,
-    src: pick(tracking.source, tracking.src),
+    src: pick(tracking.source, tracking.src, origin.src),
     fbp: fb.fbp || undefined,
     fbc: fb.fbc || undefined,
     utm_source: pick(tracking.utm_source),
@@ -410,6 +423,8 @@ async function saveCustomer({ email, buyerRaw, address, data, purchase, tracking
   }
 
   const product = data.product || {}
+  // La atribución de Hotmart viene acá, no en `tracking` (ver nota arriba).
+  const origin = purchase.origin || data.origin || {}
 
   const record = {
     email,
@@ -421,7 +436,7 @@ async function saveCustomer({ email, buyerRaw, address, data, purchase, tracking
     codigo_postal: pick(address.zip_code, address.zipcode, address.zip),
     ultima_compra_en: ocurrido,
     ultimo_producto: pick(product.name, CONTENT_NAME),
-    ultimo_src: pick(tracking.source, tracking.src),
+    ultimo_src: pick(tracking.source, tracking.src, origin.src),
     origen: 'webhook_hotmart',
   }
   // Solo marcamos el bono en true (nunca pisar true→false si una 2ª compra no lo re-otorga).
@@ -445,6 +460,36 @@ async function saveCustomer({ email, buyerRaw, address, data, purchase, tracking
       console.error('[curso webhook] Supabase upsert customer HTTP', res.status, await res.text())
       return false
     }
+
+    // El ORIGEN de la primera compra se escribe una sola vez y no se pisa
+    // nunca: es de dónde vino esta persona. Va en un PATCH aparte porque el
+    // upsert de arriba sobreescribe todo lo que le mandes, y en la 2ª compra
+    // borraría el origen real. El filtro primer_src=is.null lo hace idempotente.
+    const primerSrc = pick(origin.src, tracking.source, tracking.src)
+    const primerSck = sckBase(pick(origin.sck, tracking.sck, body.sck))
+    if (primerSrc || primerSck) {
+      const patch = {}
+      if (primerSrc) patch.primer_src = primerSrc
+      if (primerSck) patch.primer_sck = primerSck
+      try {
+        await fetch(
+          `${SUPABASE_URL}/rest/v1/customers?email=eq.${encodeURIComponent(email)}&primer_src=is.null`,
+          {
+            method: 'PATCH',
+            headers: {
+              apikey: SUPABASE_SERVICE_KEY,
+              Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+              'Content-Type': 'application/json',
+              Prefer: 'return=minimal',
+            },
+            body: JSON.stringify(patch),
+          }
+        )
+      } catch (e) {
+        console.error('[curso webhook] no se pudo guardar el origen de la 1ª compra:', e)
+      }
+    }
+
     return true
   } catch (e) {
     console.error('[curso webhook] error dando de alta el customer:', e)
@@ -518,8 +563,12 @@ module.exports = async (req, res) => {
     country: pick(address.country_iso, address.country),
   }
 
+  // Hotmart NO manda `tracking` en este webhook: la atribucion viene en
+  // purchase.origin ({ src, sck }). Sin este fallback, src y sck quedaban
+  // vacios en TODAS las compras (verificado 30/07: ultimo_src NULL en las 12).
+  const origin = purchase.origin || data.origin || {}
   const tracking = purchase.tracking || data.tracking || {}
-  const sck = pick(tracking.source_sck, tracking.sck, body.sck)
+  const sck = pick(tracking.source_sck, tracking.sck, origin.sck, body.sck)
   const fb = parseSck(sck)
 
   const value = pick(purchase.price && purchase.price.value, purchase.full_price && purchase.full_price.value, 27)
