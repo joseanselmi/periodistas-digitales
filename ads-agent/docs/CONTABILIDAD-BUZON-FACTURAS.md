@@ -215,5 +215,23 @@ agregarlos solo si una factura reenviada cae en spam. Ver: `vercel dns ls leadr.
       carga solo). Detalle por proveedor en Trello #48.
 - [ ] Validar con la 1ª factura real que entra sola (la rutina la carga + avisa).
 
+## ⚠️ Un fijo en `$0` no quiere decir gratis (01/08/2026)
+
+La rutina busca **solo** `to:gastos@leadr.cloud`. Un proveedor que todavía factura al
+Gmail personal **no la ve pasar**, y su fila se queda en el `$0` con que se sembró la
+tabla. Desde afuera se lee igual que "es gratis": el P&L no avisa nada, simplemente
+reporta de menos.
+
+Pasó con **Make.com**: plan Core pagado el 18/07/2026 (**$10.59 USD**, recibo Stripe
+#2912-2386, ciclo **18-jul → 18-ago**, no mes calendario), pero la fila decía $0 porque
+el recibo llegó a `joseanselmi27@gmail.com`, no a `gastos@`. Se cargó a mano el 01/08;
+los fijos de julio pasaron de $21.00 a **$31.59**.
+
+**Regla:** cada tanto, contrastar los fijos en `$0` contra la realidad — un `$0` es
+"nadie lo cargó" hasta que se confirme que el proveedor no cobra. Los únicos gratis
+confirmados son Vercel (Hobby), Supabase (Free) y **ChatGPT** (plan free, proveedor de
+imágenes desde el 03/07 — ver `CHATGPT-IMAGENES.md`). La forma de que deje de pasar es
+el ítem de arriba: poner `gastos@` en los proveedores que cobran.
+
 Relacionado: `NOTIFICACIONES-CARTERO.md`, `ARQUITECTURA-DATOS.md` (sección
 "contabilidad"), memoria `project_contabilidad_pnl`.
