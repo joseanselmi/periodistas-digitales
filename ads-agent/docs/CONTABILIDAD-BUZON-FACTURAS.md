@@ -120,6 +120,11 @@ creados **sin usar** el data store Make `facturas_inbox` (169871) y su estructur
 > Es **autocontenido a propósito**: la sesión de nube no tiene el contexto de estas
 > conversaciones y puede ni clonar el repo. Cualquier cambio de lógica se edita acá
 > y en la rutina.
+>
+> ⚠️ **La versión que manda es la de la rutina**, no esta copia: rutina
+> `trig_019crWyCPfrzbGpQgUqgs41J` (ver en https://claude.ai/code/routines). Este
+> bloque refleja la lógica, no es byte a byte — si hay diferencia, gana la rutina.
+> Última sincronización de la lógica: 01/08/2026.
 
 ```
 Sos una rutina automática mensual de contabilidad del negocio "Periodistas
@@ -130,10 +135,14 @@ mandarle a Jose un resumen en lenguaje simple. NO toques ningún otro email. Tod
 que necesitás está acá abajo; no dependas de archivos del repo.
 
 PASO 1 — Leer las facturas (Gmail MCP, solo lectura):
-- Buscá en Gmail con la query EXACTA: to:gastos@leadr.cloud newer_than:40d
-- Esos son los ÚNICOS mails que podés leer. Si la búsqueda da 0 resultados, está
-  bien: saltá al PASO 4 y reportá "0 facturas encontradas" (y aclarás que quizás el
-  reenvío de Hostinger todavía no está activo).
+- Buscá en Gmail con la query EXACTA:
+    (to:gastos@leadr.cloud OR from:invoice+statements@make.com) newer_than:40d
+- Esos son los ÚNICOS mails que podés leer: el buzón gastos@ MÁS una lista blanca
+  chica de remitentes de factura que NO se pueden redirigir al buzón (hoy solo Make).
+- IGNORÁ EN SILENCIO lo que claramente no es una factura aunque haya llegado al
+  buzón: confirmaciones de reenvío, verificaciones de dirección, mails de prueba,
+  newsletters, avisos de error de escenarios. Ni cargar ni reportar.
+- Si da 0 facturas limpiamente, terminá en silencio (no le llenes la casilla).
 - Por cada hilo, abrilo y leé el último mensaje: es (o debería ser) una factura/
   recibo de un proveedor.
 
@@ -145,16 +154,24 @@ PASO 2 — Extraer, por cada factura:
     · Make.com (make.com/integromat) · higgsfield (higgsfield.ai) ·
     Anthropic API (Claude) (anthropic.com, a veces vía Stripe) · fal.ai (fal.ai) ·
     Dominios (Hostinger / registrador de leadr.cloud o sistemadeingresosdiariosia.com)
+  OJO CON MAKE: sus recibos llegan de invoice+statements@make.com y el asunto dice
+  "Your receipt from Celonis Inc." (Celonis es la empresa dueña de Make). Eso ES
+  Make.com — no lo marques como "no reconocida".
   Si una factura no matchea ninguno, NO inventes un nombre: dejala como "no
   reconocida" y reportala en el PASO 4.
 - monto → el total cobrado (número).
 - moneda → código (USD, EUR, ARS…). Si hay "$" sin aclarar, asumí USD.
 - mes → el día 1 del mes calendario que cubre la factura (YYYY-MM-01). Usá el período
-  facturado; si no está, usá el mes de la fecha de emisión.
+  facturado; si no está, usá el mes de la fecha de emisión. Si el período NO cae
+  dentro de un mes calendario (Make cobra del 18 al 18), usá el mes de EMISIÓN.
 - notas → corto: nº de factura / período / remitente.
 
-PASO 3 — Upsert en Supabase (Supabase MCP, project_id wxyimqkjlwfncvzozpjy):
-Por cada factura, ejecutá execute_sql (idempotente por ON CONFLICT):
+PASO 3 — Agrupar y upsert en Supabase (Supabase MCP, project_id wxyimqkjlwfncvzozpjy):
+PRIMERO AGRUPÁ por servicio + mes. Si hay MÁS DE UNA factura del mismo servicio para
+el mismo mes (pasa con Brevo: un prorrateo y después el plan), SUMALAS y cargá UN
+solo total. Si las cargás de a una, la segunda PISA a la primera por el ON CONFLICT.
+Solo se suman si están en la misma moneda; si no, cargá la mayor y reportalo.
+Después, por cada servicio+mes ya agrupado, ejecutá execute_sql:
   insert into gastos (servicio, categoria, tipo, fuente, monto, moneda, mes, recurrente, notas)
   values ('<servicio>', '<categoria>', 'fijo', 'auto:factura', <monto>, '<moneda>', '<YYYY-MM-01>', true, '<notas>')
   on conflict (servicio, mes) do update
@@ -207,8 +224,11 @@ agregarlos solo si una factura reenviada cae en spam. Ver: `vercel dns ls leadr.
       Requirió agregar el **MX** en Vercel (ver "DNS de correo" arriba). Mail de prueba a
       `gastos@` llegó reenviado al Gmail y la búsqueda `to:gastos@leadr.cloud` lo encuentra.
 - [ ] **Jose:** poner `gastos@leadr.cloud` como email de facturación en los
-      proveedores que SÍ cobran: **Make.com + dominio leadr.cloud (Hostinger) +
-      dominio sistemadeingresosdiariosia.com**. (Brevo y Anthropic ✅ ya hechos.)
+      proveedores que SÍ cobran: **dominio leadr.cloud (Hostinger) + dominio
+      sistemadeingresosdiariosia.com**. (Brevo y Anthropic ✅ ya hechos.
+      **Make ya no hace falta:** su panel no deja cambiarlo, así que el 01/08 se
+      sumó `invoice+statements@make.com` a la lista blanca del PASO 1 y la rutina
+      lee ese recibo directo del Gmail.)
       **No aplica:** Vercel (Hobby) y Supabase (Free) = gratis, no facturan;
       **higgsfield = se da de baja** (imágenes pasan a ChatGPT, Trello #51);
       **fal.ai = no se usa** ($0). Meta Ads = solo verificar (no redirigir, ya se
