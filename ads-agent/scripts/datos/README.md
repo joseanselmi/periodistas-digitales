@@ -22,6 +22,9 @@ Hotmart, Brevo, el inbox. No deciden ni publican nada — solo traen.
 - `meta-spend-sync.mjs`
 - `parse-compradores.mjs`
 - `sync-comunicaciones.mjs`
+- `sync-embudo-contenido.mjs` — guarda en `funnel_steps` **qué dice** cada mail
+  del embudo, para que la página de Campañas de Leadr lo muestre. Correrlo cada
+  vez que se edita el copy de un regalo o de la oferta.
 
 Los `*-sync.mjs` escriben en la base `periodistas-marketing` — el detalle de qué
 tabla toca cada uno está en [`../../docs/ARQUITECTURA-DATOS.md`](../../docs/ARQUITECTURA-DATOS.md).
