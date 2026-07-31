@@ -31,9 +31,13 @@ const COLUMNA_POR_EVENTO = {
   spam:        'spam_en',
 };
 
-async function traerEventos({ apiKey, dias, limite = 1000 }) {
+// El tope existe para no colgarse si Brevo devuelve de más, pero cortar sin
+// avisar es peor que cortar: la tabla queda con un agujero que nadie ve. El
+// 31/07 el tope de 1000 cortaba 2.243 eventos de 7 días por la mitad.
+async function traerEventos({ apiKey, dias, limite = 20000 }) {
   const eventos = [];
   const porPagina = 100;
+  let cortado = false;
 
   for (let offset = 0; offset < limite; offset += porPagina) {
     const url = `${BREVO_URL}?limit=${porPagina}&offset=${offset}&days=${dias}`;
@@ -43,14 +47,36 @@ async function traerEventos({ apiKey, dias, limite = 1000 }) {
     const lote = (await res.json()).events || [];
     eventos.push(...lote);
     if (lote.length < porPagina) break;   // última página
+    if (eventos.length >= limite) { cortado = true; break; }
   }
+  if (cortado) console.warn(`⚠️ sync Brevo: se llegó al tope de ${limite} eventos en ${dias} días — hay más que no se bajaron`);
   return eventos;
+}
+
+// Brevo manda sin etiqueta el Regalo 1 (lo arma Make) y el Regalo 2 (es una
+// automatización). Sin tag, esos mails no son de ninguna campaña y quedan
+// afuera del embudo — justo los dos pasos de más volumen.
+//
+// En vez de etiquetarlos a mano cada vez (que fue lo que se hizo, y que la
+// propia sincronización volvió a borrar), se deducen por el asunto: cada paso
+// del embudo ya tiene guardado el asunto exacto con el que sale.
+async function tagsPorAsunto({ supabaseUrl, serviceKey }) {
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/funnel_steps?select=brevo_tag,contenido_asunto&brevo_tag=not.is.null&contenido_asunto=not.is.null`,
+      { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
+    );
+    if (!res.ok) return new Map();
+    return new Map((await res.json()).map((s) => [s.contenido_asunto, s.brevo_tag]));
+  } catch {
+    return new Map(); // sin el mapa el sync igual corre: solo no deduce tags
+  }
 }
 
 // Junta los eventos sueltos en una fila por (mensaje_id) quedándose con el
 // timestamp MÁS VIEJO de cada tipo: si alguien abre el mail cuatro veces, lo
 // que importa es cuándo lo abrió la primera vez.
-function agrupar(eventos) {
+function agrupar(eventos, porAsunto = new Map()) {
   const filas = new Map();
 
   for (const ev of eventos) {
@@ -63,7 +89,7 @@ function agrupar(eventos) {
       mensaje_id: ev.messageId,
       email: ev.email.toLowerCase().trim(),
       asunto: ev.subject || null,
-      campana: ev.tag || null,
+      campana: ev.tag || porAsunto.get(ev.subject) || null,
       enviado_en: null,
       entregado_en: null,
       abierto_en: null,
@@ -81,9 +107,10 @@ function agrupar(eventos) {
 }
 
 /** Trae los eventos y los agrupa, sin escribir. Lo usa el backfill a mano. */
-async function filasDeEventosBrevo({ apiKey, dias = 7, limite = 50000 }) {
+async function filasDeEventosBrevo({ apiKey, dias = 7, limite = 50000, supabaseUrl, serviceKey }) {
   const eventos = await traerEventos({ apiKey, dias, limite });
-  return { eventos: eventos.length, filas: agrupar(eventos) };
+  const porAsunto = supabaseUrl && serviceKey ? await tagsPorAsunto({ supabaseUrl, serviceKey }) : new Map();
+  return { eventos: eventos.length, filas: agrupar(eventos, porAsunto) };
 }
 
 /**
@@ -94,26 +121,30 @@ async function filasDeEventosBrevo({ apiKey, dias = 7, limite = 50000 }) {
  * @param {number} [opts.dias]        ventana a traer (Brevo guarda ~30 días)
  * @returns {Promise<{eventos:number, filas:number}>}
  */
-async function sincronizarEventosBrevo({ apiKey, supabaseUrl, serviceKey, dias = 7, limite = 1000 }) {
+async function sincronizarEventosBrevo({ apiKey, supabaseUrl, serviceKey, dias = 7, limite = 20000 }) {
   const eventos = await traerEventos({ apiKey, dias, limite });
-  const filas = agrupar(eventos);
+  const porAsunto = await tagsPorAsunto({ supabaseUrl, serviceKey });
+  const filas = agrupar(eventos, porAsunto);
   if (filas.length === 0) return { eventos: eventos.length, filas: 0 };
 
-  // De a 200 para no pasarse del tamaño de request.
+  // ⚠️ Se escribe por la función merge_comunicaciones y NO por el upsert de
+  // PostgREST. `Prefer: resolution=merge-duplicates` REEMPLAZA la fila: como
+  // cada corrida solo ve los eventos de su ventana, un mail al que esta vez solo
+  // se le vio el "abierto" volvía con enviado_en, entregado_en y campana en
+  // null. La corrida borraba lo que había aprendido la anterior, y por eso la
+  // tabla nunca cerraba con Brevo (31/07/2026). La función solo completa lo que
+  // falta y se queda con la fecha más vieja de cada tipo.
   for (let i = 0; i < filas.length; i += 200) {
-    const lote = filas.slice(i, i + 200).map(f => ({ ...f, actualizado_en: new Date().toISOString() }));
+    const lote = filas.slice(i, i + 200);
 
-    // merge-duplicates: si el mail ya estaba, se actualiza con lo nuevo (p.ej.
-    // se abrió después de la última corrida).
-    const res = await fetch(`${supabaseUrl}/rest/v1/comunicaciones_email?on_conflict=mensaje_id`, {
+    const res = await fetch(`${supabaseUrl}/rest/v1/rpc/merge_comunicaciones`, {
       method: 'POST',
       headers: {
         apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
         'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates,return=minimal',
       },
-      body: JSON.stringify(lote),
+      body: JSON.stringify({ filas: lote }),
     });
     if (!res.ok) throw new Error(`Supabase HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
   }
