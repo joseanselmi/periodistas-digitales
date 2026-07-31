@@ -1318,6 +1318,9 @@ export default async function handler(req, res) {
       res.status(200).json({
         mode, live: false, enabled, whatsapp: waEstado,
         piezas_habilitadas: [...piezasHabilitadas],
+        // Si esto dice "NO DISPONIBLE", el cruce contra el registro de envíos no está actuando y
+        // volvemos a depender sólo del marcador — que es como salieron 67 mails repetidos.
+        registro_envios: registroEnvios ? `${registroEnvios.size} envíos conocidos` : 'NO DISPONIBLE (sólo marcadores)',
         contactos: contacts.length,
         le_falta_a: faltantes,
         total_faltante: Object.values(faltantes).reduce((a, b) => a + b, 0),
