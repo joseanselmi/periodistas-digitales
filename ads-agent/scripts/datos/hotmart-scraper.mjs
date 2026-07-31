@@ -14,8 +14,11 @@ const MEMORY_FILE = 'C:\\Users\\Jose Anselmi\\.claude\\projects\\c--Users-Jose-A
 const CHROME_PROFILE = path.join(RAIZ, 'hotmart-chrome-profile'); // sesión persistente
 const OUT_DIR = path.join(RAIZ, 'hotmart-transcripts');
 
-const HOTMART_EMAIL = 'joseasnelmi27@gmail.com';
-const HOTMART_PASSWORD = 'Jose2509';
+// Credenciales por entorno, NUNCA en el código: este repo es público (lo dice
+// sistema-ingresos/api/_lib/sync-estados.js, que baja archivos por raw sin token).
+// Van en ads-agent/.env.local, que está gitignoreado.
+const HOTMART_EMAIL = process.env.HOTMART_EMAIL;
+const HOTMART_PASSWORD = process.env.HOTMART_PASSWORD;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 

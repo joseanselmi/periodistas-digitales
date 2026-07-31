@@ -34,9 +34,25 @@
 /null
 /UsersJose*
 
-# claude code config (no va al repo)
-/.claude
-/.agents
+# Claude Code — los PIPELINES sí se versionan (2026-07-31).
+#
+# Antes esto ignoraba todo `.claude/` y `.agents/` como "config". Pero adentro
+# se acumularon ~2.000 líneas que NO son config: los 20 comandos (/briefing,
+# /mateo, /sofia...) con las reglas de cada agente, sus árboles de decisión y su
+# tono. Es la parte más difícil de reconstruir del repo, y era la única sin
+# versionar — al revés de lo que conviene: los scripts son mecánicos, esto no.
+#
+# Se versiona lo que define CÓMO se trabaja. Se ignora lo que es de esta máquina.
+/.claude/*
+!/.claude/commands/
+!/.claude/agents/
+!/.claude/skills/
+!/.claude/settings.json
+# symlinks a .agents/skills/ — el contenido real ya se versiona allá
+/.claude/skills/higgsfield-*
+
+/.agents/*
+!/.agents/skills/
 
 # subcarpeta duplicada
 /Periodistas Digitales

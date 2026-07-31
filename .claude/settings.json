@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ads-agent/scripts/exportar/hook-lint-pdf.mjs",
+            "timeout": 90,
+            "statusMessage": "Verificando guía PDF (lint automático pdf-guide-linter)..."
+          }
+        ]
+      }
+    ]
+  }
+}

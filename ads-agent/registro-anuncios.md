@@ -5,7 +5,7 @@ Lo lee y escribe Mateo (skill `/mateo`, modo "crear anuncio"). Cada vez que se c
 un anuncio se agrega un renglón; cuando corre, se cargan resultados y la decisión.
 
 - Detalle técnico de tracking: `sistema-ingresos/docs/TRACKING.md`
-- Estrategia, benchmarks y árbol de decisiones: `ads-agent/cerebro/mateo.md` + `ads-agent/docs/SISTEMA-ADS.md`
+- Estrategia, benchmarks y árbol de decisiones: `ads-agent/docs/SISTEMA-ADS.md`
 - Playbook de configuración (replicable a otros productos): Trello #23
 
 ---

@@ -84,8 +84,8 @@ etc.) — **usalas directamente, no asumas que falta integración.**
   (board id `6a35bf86f4bbebc72953200f`, workspace `periodistasdigitales`,
   https://trello.com/b/Bgt6wooU/roadmap-periodistas-digitales)
 - Columnas: Backlog → Por hacer → En progreso → Bloqueada → En revisión → Hecho
-- Cada agente (Ricardo, Dante, Valentina, Mateo, Sofía, Luna, Max, Director,
-  Bruno, Nicolás, Valeria, Miguel, Clara) tiene su propia **label** en el
+- Cada agente (Ricardo, Dante, Valentina, Sofía, Luna, Director,
+  Bruno, Miguel, Clara) tiene su propia **label** en el
   tablero — así se le "asigna" una tarjeta (Trello free no permite agregar
   13 miembros reales sin invitarlos por email).
 

@@ -24,9 +24,13 @@ const RAW    = (name) => `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${
 // Respaldo si la contents API de GitHub falla (rate limit / 403): no dejamos el panel a
 // oscuras. Mantener en sync si se agrega/quita un agente (aunque el listado dinámico ya
 // los toma solos cuando la API responde).
+// 2026-08-01: se retiraron mateo, nicolas, valeria y max. Los tres últimos se
+// unificaron en la skill `revisar-codigo-leadr` (revisan código de otro repo, no
+// necesitan estado propio). Mateo se dio de baja por decisión de Jose: auditaba
+// sus campañas él mismo y las 27 recomendaciones nunca se leyeron.
 const AGENTES_FALLBACK = [
-  'bruno', 'clara', 'dante', 'director', 'luna', 'mateo', 'max',
-  'miguel', 'nicolas', 'ricardo', 'sofia', 'valentina', 'valeria',
+  'bruno', 'clara', 'dante', 'director', 'luna',
+  'miguel', 'ricardo', 'sofia', 'valentina',
 ];
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');

@@ -69,6 +69,8 @@ function chequearRutasEnTexto() {
 
     for (const m of texto.matchAll(/(?<![\w./-])(ads-agent|sistema-ingresos)\/[\w./-]+/g)) {
       if (!EXT_LOCAL.test(m[0])) continue;
+      // Plantillas tipo `modulo_X/clase_Y.md`: son ejemplos, no rutas reales.
+      if (/_X\b|_Y\b/.test(m[0])) continue;
       revisadas++;
       if (!existsSync(join(ROOT, m[0]))) rotas.push({ rel, ref: m[0], tipo: 'ruta desde la raíz' });
     }
@@ -227,12 +229,95 @@ function chequearContratoVercel() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 5. Los pipelines de .claude/
+// ─────────────────────────────────────────────────────────────────────────────
+// Un pipeline que cita un archivo que ya no existe es la peor falla del sistema:
+// no rompe nada, el modelo simplemente no encuentra ese contexto e IMPROVISA.
+// El resultado parece válido y no lo es.
+const PIPELINES_LEGACY = new Set(['crear_clase.md', 'crear_bono.md', 'desarrollar_clase.md']);
+
+function chequearPipelines() {
+  const rotas = [];
+  let revisadas = 0;
+  const dirs = ['.claude/commands', '.claude/agents'];
+  // rutas desde la raíz del repo citadas en el texto del pipeline
+  const RE = /(?<![\w./-])((?:ads-agent|sistema-ingresos|herramientas|\.claude|\.agents)\/[\w./_-]+)/g;
+
+  for (const d of dirs) {
+    let entradas;
+    try { entradas = readdirSync(join(ROOT, d)); } catch { continue; }
+    for (const f of entradas) {
+      if (!f.endsWith('.md')) continue;
+      // El trío legacy depende de un workspace que ya no existe, a sabiendas:
+      // está documentado en .claude/README.md. Marcarlo cada vez sería ruido.
+      if (PIPELINES_LEGACY.has(f)) continue;
+      const rel = `${d}/${f}`;
+      const txt = readFileSync(join(ROOT, rel), 'utf8');
+      for (const m of txt.matchAll(RE)) {
+        const ref = m[1].replace(/[.,)`]+$/, '');
+        if (!/\.\w{2,5}$/.test(ref)) continue;      // solo archivos concretos
+        if (/_X|_Y|<|\[/.test(ref)) continue;        // plantillas tipo modulo_X/clase_Y
+        revisadas++;
+        if (!existsSync(join(ROOT, ref))) rotas.push({ rel, ref, tipo: 'el pipeline cita algo que no existe' });
+      }
+    }
+  }
+  return { revisadas, rotas };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. Coherencia del equipo de agentes
+// ─────────────────────────────────────────────────────────────────────────────
+// El estado de cada agente vive en ads-agent/state/*.json, pero el Panel de
+// Comando corre en la nube y NO puede clonar el repo: los baja de GitHub por
+// ruta fija (sistema-ingresos/api/_lib/sync-estados.js). Esa función tiene
+// además una lista fija de respaldo para cuando la API de GitHub falla — y si
+// se agrega un agente y nadie la actualiza, ese agente desaparece del panel
+// justo el día que GitHub responde 403. Nadie se entera.
+function chequearAgentes() {
+  const dirState = join(ROOT, 'ads-agent', 'state');
+  const sync = join(SI, 'api', '_lib', 'sync-estados.js');
+  if (!existsSync(dirState) || !existsSync(sync)) return { revisadas: 0, rotas: [] };
+
+  const rotas = [];
+  const enDisco = readdirSync(dirState)
+    .filter((f) => f.endsWith('-state.json'))
+    .map((f) => f.replace('-state.json', ''))
+    .sort();
+
+  const src = readFileSync(sync, 'utf8');
+
+  // La ruta que la función usa contra GitHub tiene que seguir existiendo acá.
+  const dir = src.match(/const\s+DIR\s*=\s*'([^']+)'/)?.[1];
+  if (dir && !existsSync(join(ROOT, dir))) {
+    rotas.push({ rel: 'sistema-ingresos/api/_lib/sync-estados.js', ref: dir, tipo: 'la función lo baja de GitHub y ya no existe en el repo' });
+  }
+
+  const fallback = (src.match(/AGENTES_FALLBACK\s*=\s*\[([\s\S]*?)\]/)?.[1] || '')
+    .match(/'([^']+)'/g)?.map((s) => s.replace(/'/g, '')).sort() || [];
+
+  for (const a of enDisco) {
+    if (!fallback.includes(a)) {
+      rotas.push({ rel: 'sistema-ingresos/api/_lib/sync-estados.js', ref: a, tipo: 'agente con state pero fuera de AGENTES_FALLBACK' });
+    }
+  }
+  for (const a of fallback) {
+    if (!enDisco.includes(a)) {
+      rotas.push({ rel: 'sistema-ingresos/api/_lib/sync-estados.js', ref: a, tipo: 'está en AGENTES_FALLBACK pero ya no tiene state' });
+    }
+  }
+  return { revisadas: enDisco.length + 1, rotas };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const pasos = [
   ['Rutas escritas en docs y código', chequearRutasEnTexto],
   ['Anclajes e imports de ads-agent/scripts', chequearAnclajes],
   ['URLs públicas contra vercel.json', chequearUrlsPublicas],
   ['Contrato con Vercel (api/ y crons)', chequearContratoVercel],
+  ['Pipelines de .claude/ (contexto vivo)', chequearPipelines],
+  ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
 ];
 
 let totalRotas = 0;

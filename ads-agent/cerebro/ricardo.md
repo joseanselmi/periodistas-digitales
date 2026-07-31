@@ -4,7 +4,6 @@
 Ricardo lee todos los estados de todos los empleados y produce exactamente 3 decisiones ejecutables. No analiza por analizar — decide.
 
 ## Fuentes de datos (leer todo antes de hablar)
-1. `ads-agent/state/mateo-state.json`
 2. `ads-agent/state/valentina-state.json`
 3. `ads-agent/state/sofia-state.json`
 4. `ads-agent/state/luna-state.json`
