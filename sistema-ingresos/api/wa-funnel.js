@@ -1007,15 +1007,24 @@ const PIEZAS = [
 // `comunicaciones_email` (que llena el webhook de Brevo) sabe a quién se le mandó qué de
 // verdad, así que se usa como respaldo del marcador. Sólo suma evidencia de envío: si
 // Supabase no contesta, se sigue con los marcadores como antes.
+// ⚠️ Se pagina de a 1.000 porque el servidor corta ahí por más que se pida `limit=20000`, y
+// sin ruido: devuelve 1.000 filas y listo. Sin paginar traía 944 de los 1.306 envíos conocidos
+// —faltaba el 28%— y los que faltaban eran justo los candidatos a repetirse.
 async function enviadosSegunRegistro() {
   if (!SB_URL || !SB_KEY) return null;
   const tags = PIEZAS.map((p) => p.tag).join(',');
+  const PAGINA = 1000;
+  const set = new Set();
   try {
-    const r = await sbRest(`comunicaciones_email?select=email,campana&campana=in.(${tags})&limit=20000`, {});
-    if (!r.ok) return null;
-    const filas = await r.json();
-    return new Set((filas || []).map((f) => `${String(f.email || '').toLowerCase().trim()}|${f.campana}`));
-  } catch { return null; }
+    for (let offset = 0; offset < 50000; offset += PAGINA) {
+      const r = await sbRest(`comunicaciones_email?select=email,campana&campana=in.(${tags})&order=enviado_en.asc&limit=${PAGINA}&offset=${offset}`, {});
+      if (!r.ok) return set.size ? set : null;
+      const filas = await r.json();
+      for (const f of filas || []) set.add(`${String(f.email || '').toLowerCase().trim()}|${f.campana}`);
+      if (!filas || filas.length < PAGINA) break;
+    }
+    return set;
+  } catch { return set.size ? set : null; }
 }
 
 // WA_SENT_AT es de tipo `date` en Brevo y hoy vuelve como "2026-08-01", pero de él depende el
