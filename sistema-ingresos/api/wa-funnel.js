@@ -22,13 +22,19 @@
 // (los envíos rebotaban, igual consumían el tiempo de la corrida, y el Regalo 3 —último en la
 // prioridad— pasó diez días sin salir con 285 leads esperándolo).
 //
-// CADA PASO POR EMAIL AVANZA WA_STAGE. Es el mismo recorrido por otro canal, no mensajes
-// extra: por eso la cadena llega hasta la oferta y nadie recibe dos veces lo mismo.
+// QUIÉN RECIBIÓ QUÉ: mandan los MARCADORES DE EMAIL (MAIL3_AT, MAIL4_AT, MAIL5_AT,
+// OFERTA_MAIL_AT), no WA_STAGE. Cambió el 01/08 y es el corazón de esta función.
+// WA_STAGE lo avanzaba el ENVÍO por WhatsApp, no la entrega: desde que Meta capó el número
+// (13/07) 400 leads figuraban "en la etapa 5, embudo terminado" sin haber recibido nunca los
+// Regalos 3 y 4 — y como el cálculo del próximo paso sólo miraba hacia adelante, no había
+// forma de completárselos. El Regalo 4 no le llegó a NADIE en todo julio.
+// Ahora cada corrida busca la primera pieza que le FALTA a cada lead (ver PIEZAS más abajo),
+// la manda y la marca. Lo que no tiene marcador, no llegó: se completa aunque el lead figure
+// en la etapa 5. WA_STAGE se sigue actualizando —sólo hacia adelante— para que WhatsApp no
+// repita nada si el número revive, pero ya no decide nada.
 //
-// ESTADO POR LEAD: se guarda en el atributo Brevo WA_STAGE (0/3/4/5) para no repetir
-// los pasos de WhatsApp. El Regalo 5 (email) se marca aparte con el atributo MAIL5_AT
-// para NO tocar la numeración lineal de WA_STAGE — así no arriesga a los leads en curso
-// ni corre la fecha de la oferta. Se manda como máximo UN mensaje por lead por corrida.
+// UNO POR PERSONA POR DÍA: el tope lo pone WA_SENT_AT (el "último toque"). Alguien al que le
+// faltan las cuatro piezas las recibe en cuatro días, en orden, no todas juntas.
 //
 // MODOS (query ?mode=):
 //   inspect  — devuelve una muestra de contactos con sus atributos crudos (para ver
@@ -56,11 +62,17 @@
 //   - Probar primero con mode=ofertatest&to=... (no toca Brevo), y correr mode=setup una vez.
 //
 // REGALOS 3 y 4 POR EMAIL — flags:
-//   - Se envían sólo si WA_FUNNEL_ENABLED=1 Y ADEMÁS MAILREGALOS_ENABLED=1 (default OFF),
-//     y sólo cuando Meta dice que el número NO puede enviar.
+//   - Se envían sólo si WA_FUNNEL_ENABLED=1 Y ADEMÁS MAILREGALOS_ENABLED=1 (default OFF).
+//   - El email es el canal PRIMARIO: si a un lead le toca una pieza por mail, no se le manda
+//     además el WhatsApp del mismo paso. Una pieza apagada por flag se saltea (no bloquea a
+//     las de atrás: sin eso, el Regalo 4 apagado dejaría a todos sin la oferta).
 //   - Avanzan WA_STAGE (son el mismo paso, no un extra) y dejan MAIL3_AT / MAIL4_AT como
 //     registro de por qué canal salieron.
 //   - Probar primero con mode=regalotest&nivel=3&to=... y correr mode=setup una vez.
+//
+// VOLUMEN: PIEZAS_CAP_DIA (default 500) es el tope de mails del embudo POR DÍA, contado sobre
+// los contactos ya tocados hoy — no por corrida. La función se re-dispara a sí misma hasta 12
+// veces (Vercel Hobby sólo permite un cron diario) y se frena sola cuando agota el cupo.
 //
 // Variables de entorno (proyecto Vercel sistema-ingresos-landing):
 //   BREVO_API_KEY, WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET,
@@ -588,17 +600,6 @@ async function sendMailOferta(email, nombre) {
   return { ok: r.ok, status: r.status, body: await r.text() };
 }
 
-// Marca en Brevo que a este lead ya se le mandó la oferta por email (para no repetir).
-async function brevoSetMailOferta(email) {
-  const key = process.env.BREVO_API_KEY;
-  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
-    method: 'PUT',
-    headers: { 'api-key': key, 'content-type': 'application/json' },
-    body: JSON.stringify({ attributes: { OFERTA_MAIL_AT: todayISO() } }),
-  });
-  if (!r.ok) throw new Error(`Brevo setMailOferta ${r.status}: ${await r.text()}`);
-}
-
 // REENVÍO DE LA OFERTA — segunda oportunidad para quien no la abrió.
 // La oferta abre al 11% contra el 22% de los regalos: casi 9 de cada 10 leads que terminan el
 // recorrido nunca ven el mensaje que vende. No es un problema del contenido —es del asunto—,
@@ -723,16 +724,6 @@ async function enviarRegaloEmail(nivel, email, nombre) {
   return { ok: r.ok, status: r.status, body: await r.json().catch(() => null) };
 }
 
-// Marcador genérico (MAIL3_AT / MAIL4_AT): deja registro de por qué canal salió el paso.
-async function brevoSetMarcador(email, atributo) {
-  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
-    method: 'PUT',
-    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
-    body: JSON.stringify({ attributes: { [atributo]: todayISO() } }),
-  });
-  if (!r.ok) throw new Error(`Brevo setMarcador ${atributo} ${r.status}: ${await r.text()}`);
-}
-
 async function brevoCrearAtributoTexto(nombre) {
   const r = await fetch(`${BREVO}/contacts/attributes/normal/${nombre}`, {
     method: 'POST',
@@ -767,17 +758,6 @@ async function whatsappPuedeEnviar() {
   } catch (e) {
     return { puede: true, motivo: `no se pudo consultar a Meta (${e && e.message}) → se sigue enviando` };
   }
-}
-
-// Marca en Brevo que a este lead ya se le mandó el Regalo 5 (para no repetir).
-async function brevoSetMail5(email) {
-  const key = process.env.BREVO_API_KEY;
-  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
-    method: 'PUT',
-    headers: { 'api-key': key, 'content-type': 'application/json' },
-    body: JSON.stringify({ attributes: { MAIL5_AT: todayISO() } }),
-  });
-  if (!r.ok) throw new Error(`Brevo setMail5 ${r.status}: ${await r.text()}`);
 }
 
 // Marca en Brevo que a este lead ya se le mandó el seguimiento (para no repetir).
@@ -1001,6 +981,67 @@ function nextDue(daysOld, stageSent, daysSinceLast) {
   return null;
 }
 
+// ── LO QUE LE FALTA A CADA LEAD, por EMAIL ───────────────────────────────────
+// Hasta el 01/08 el próximo paso lo decidía WA_STAGE. Eso dejaba dos agujeros que
+// juntos sumaban ~2.700 mails que nunca salieron:
+//   1. WA_STAGE lo avanza el ENVÍO por WhatsApp, no la entrega. Desde que el número
+//      dejó de entregar (13/07) hay 400 leads parados "en la etapa 5" que nunca
+//      recibieron los Regalos 3 y 4.
+//   2. `nextDue` sólo mira hacia adelante: al que quedó en la etapa 5 no había forma
+//      de completarle lo que le faltaba. El Regalo 4 no le llegó a NADIE, nunca.
+// Ahora la verdad la dan los marcadores de EMAIL: lo que no tiene marcador, no llegó.
+// Se completa en orden, UNA pieza por persona por día (WA_SENT_AT hace de "último
+// toque") y respetando el día del embudo que le corresponde — un lead de ayer no
+// recibe hoy el Regalo 3.
+const PIEZAS = [
+  { send: 'regalo3',    marcador: 'MAIL3_AT',       minDays: 5, stage: 3,    flag: 'regalos' },
+  { send: 'regalo4',    marcador: 'MAIL4_AT',       minDays: 7, stage: 4,    flag: 'regalos' },
+  { send: 'mail5',      marcador: 'MAIL5_AT',       minDays: 8, stage: null, flag: 'mail5'   },
+  { send: 'mailoferta', marcador: 'OFERTA_MAIL_AT', minDays: 9, stage: 5,    flag: 'oferta'  },
+];
+
+// WA_SENT_AT es de tipo `date` en Brevo y hoy vuelve como "2026-08-01", pero de él depende el
+// tope de un mail por persona por día: si el formato cambiara, la comparación fallaría en
+// silencio y —con 13 corridas encadenadas— alguien recibiría las cuatro piezas en diez minutos.
+// Por eso se compara sólo la parte de la fecha, sirva la que sirva.
+const mismoDia = (valor, hoy) => String(valor || '').slice(0, 10) === hoy;
+
+// La primera pieza que le falta y que ya le tocaba. `habilitadas` saltea las apagadas
+// por flag: si no, una pieza apagada bloquearía para siempre a todas las de atrás.
+function piezaFaltante(attrs, daysOld, hoy, habilitadas) {
+  if (mismoDia(attrs.WA_SENT_AT, hoy)) return null; // ya recibió algo nuestro hoy
+  for (const p of PIEZAS) {
+    if (!habilitadas.has(p.flag)) continue;
+    if (!attrs[p.marcador] && daysOld >= p.minDays) return p;
+  }
+  return null;
+}
+
+// Marca el envío en UNA sola llamada: el marcador de la pieza, el "último toque"
+// (WA_SENT_AT, que es el tope de uno por día) y, si la pieza tiene etapa, WA_STAGE
+// —para que WhatsApp no la repita si el número revive—. Antes eran dos PUT por envío:
+// la mitad del tiempo de cada corrida se iba en marcar.
+// La etapa sólo AVANZA: completarle el Regalo 3 a alguien que ya recibió la oferta no
+// puede devolverlo a la etapa 3.
+async function brevoMarcarPieza(email, pieza, stageActual = 0) {
+  const attributes = { [pieza.marcador]: todayISO(), WA_SENT_AT: todayISO() };
+  if (pieza.stage && pieza.stage > Number(stageActual || 0)) attributes.WA_STAGE = pieza.stage;
+  const r = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, {
+    method: 'PUT',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({ attributes }),
+  });
+  if (!r.ok) throw new Error(`Brevo marcar ${pieza.marcador} ${r.status}: ${await r.text()}`);
+}
+
+// Despacha la pieza que corresponda. Cada una ya tiene su tag propio en Brevo.
+async function enviarPieza(pieza, email, nombre) {
+  if (pieza.send === 'regalo3') return enviarRegaloEmail(3, email, nombre);
+  if (pieza.send === 'regalo4') return enviarRegaloEmail(4, email, nombre);
+  if (pieza.send === 'mail5') return sendMail5(email, nombre);
+  return sendMailOferta(email, nombre);
+}
+
 // Prioridad de negocio para ordenar la cola de envíos. CLAVE: el cron tiene ~60 s y procesa
 // la cola EN ORDEN hasta que se acaba el tiempo (procesa ~40 leads y Vercel lo corta). Si la
 // OFERTA (la que vende) quedara al fondo, detrás del backlog de Regalos 3/4, la función se
@@ -1161,6 +1202,14 @@ export default async function handler(req, res) {
     // Para el seguimiento: quién ya nos escribió (no se le manda si ya respondió).
     const respondieron = await respondieronSet();
 
+    const hoy = todayISO();
+    // Qué piezas están habilitadas por flag. Una apagada se saltea (no bloquea a las de atrás).
+    const piezasHabilitadas = new Set([
+      ...(regalosEmailEnabled ? ['regalos'] : []),
+      ...(mail5Enabled ? ['mail5'] : []),
+      ...(mailOfertaEnabled ? ['oferta'] : []),
+    ]);
+
     const plan = [];
     for (const c of contacts) {
       const emailLc = String(c.email || '').toLowerCase().trim();
@@ -1171,43 +1220,29 @@ export default async function handler(req, res) {
       const lastAt = attrs.WA_SENT_AT ? new Date(attrs.WA_SENT_AT).getTime() : 0;
       const daysSinceLast = lastAt ? Math.floor((now - lastAt) / DAY) : 999;
 
-      // Regalo 5 (email): a quien ya pasó por el Regalo 4 y todavía no lo recibió.
-      if (!attrs.MAIL5_AT && stageSent >= MAIL5.afterStage && daysOld >= MAIL5.minDays) {
-        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mail5' });
-      }
-
-      // Oferta por EMAIL (plan B de WhatsApp): a quien ya llegó a la etapa de oferta y todavía
-      // no la recibió por mail. No mira la entrega de WhatsApp a propósito — el 100% falló, y si
-      // mañana WhatsApp revive el atributo propio evita que le llegue dos veces.
-      if (!attrs.OFERTA_MAIL_AT && stageSent >= MAILOFERTA.afterStage) {
-        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'mailoferta' });
+      // Lo que le falta por EMAIL: Regalo 3 → 4 → 5 → oferta, uno por día y en orden.
+      const pieza = piezaFaltante(attrs, daysOld, hoy, piezasHabilitadas);
+      if (pieza) {
+        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: pieza.send, pieza });
       }
 
       // Reenvío de la oferta: pasaron 48 h desde que se la mandamos, no la abrió, y todavía no
-      // se le reenvió. (Los compradores ya quedaron afuera arriba.)
-      if (abrieronOferta && attrs.OFERTA_MAIL_AT && !attrs[OFERTA_REENVIO.marcador]) {
+      // se le reenvió. (Los compradores ya quedaron afuera arriba.) No es una pieza del embudo
+      // sino un empujón, así que cede el turno: si hoy le toca una pieza, el reenvío espera.
+      if (abrieronOferta && attrs.OFERTA_MAIL_AT && !attrs[OFERTA_REENVIO.marcador] && !pieza && !mismoDia(attrs.WA_SENT_AT, hoy)) {
         const horas = (now - new Date(attrs.OFERTA_MAIL_AT).getTime()) / 3600000;
         if (horas >= OFERTA_REENVIO.minHoras && !abrieronOferta.has(emailLc)) {
-          plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, send: 'ofertareenvio' });
+          plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'ofertareenvio' });
         }
       }
 
-      // Paso siguiente del embudo (Regalos 3/4 y la oferta): a lo sumo uno por corrida.
-      // Si el número está capado, los Regalos 3 y 4 salen por EMAIL: es el mismo paso por
-      // otro canal, no un mensaje extra. La oferta no entra acá — ya tiene su cola por email.
+      // WhatsApp: el mismo paso por el otro canal, sólo si el número puede entregar (hoy no).
+      // Va DETRÁS del email: si a esta persona ya le sale una pieza por mail, no se le duplica.
       const due = nextDue(daysOld, stageSent, daysSinceLast);
-      if (due && waActivo) {
+      if (due && waActivo && !pieza) {
         const phoneRaw = pickPhone(attrs);
         const to = normalizePhone(phoneRaw);
         plan.push({ channel: 'wa', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: due.stage, tmpl: due.tmpl, phoneRaw, to });
-      } else if (due && REGALOS_EMAIL[due.stage] && !attrs[REGALOS_EMAIL[due.stage].marcador]) {
-        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: `regalo${due.stage}` });
-      } else if (due && due.stage === 5 && !attrs.OFERTA_MAIL_AT) {
-        // La OFERTA como paso natural del embudo. Sin esto, con WhatsApp apagado nadie llegaría
-        // nunca a la etapa 5 (la avanzaba el envío de WhatsApp) y el embudo terminaría en el
-        // Regalo 5: entregaría las cuatro guías y no vendería nada. `avanzarA` hace que el envío
-        // por mail mueva la etapa, igual que hacen los Regalos 3 y 4.
-        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'mailoferta', avanzarA: 5 });
       }
 
       // Seguimiento (reactivación): recibió la oferta (stage 5), pasaron N días desde el último
@@ -1235,7 +1270,26 @@ export default async function handler(req, res) {
         const k = p.channel === 'wa' ? `wa_stage_${p.send}` : String(p.send || p.channel);
         desglose[k] = (desglose[k] || 0) + 1;
       }
-      res.status(200).json({ mode, live: false, enabled, whatsapp: waEstado, regalos_email: regalosEmailEnabled ? 'encendidos' : 'APAGADOS (MAILREGALOS_ENABLED!=1)', would_send: plan.length, desglose, plan: plan.slice(0, 100) });
+      // Cuánto falta para que TODOS tengan TODO, pieza por pieza. Es la pregunta que el panel
+      // de Campañas no podía contestar: no alcanza con "cuántos mails salieron hoy".
+      const faltantes = {};
+      for (const pz of PIEZAS) {
+        faltantes[pz.send] = contacts.filter((c) => {
+          const a = c.attributes || {};
+          if (a[pz.marcador]) return false;
+          if (compradores.has(String(c.email || '').toLowerCase().trim())) return false;
+          return Math.floor((now - new Date(c.createdAt).getTime()) / DAY) >= pz.minDays;
+        }).length;
+      }
+      res.status(200).json({
+        mode, live: false, enabled, whatsapp: waEstado,
+        piezas_habilitadas: [...piezasHabilitadas],
+        contactos: contacts.length,
+        le_falta_a: faltantes,
+        total_faltante: Object.values(faltantes).reduce((a, b) => a + b, 0),
+        ya_tocados_hoy: contacts.filter((c) => mismoDia((c.attributes || {}).WA_SENT_AT, hoy)).length,
+        would_send: plan.length, desglose, plan: plan.slice(0, 100),
+      });
       return;
     }
 
@@ -1245,12 +1299,15 @@ export default async function handler(req, res) {
     // (la función corta a los 60 s → queda margen para el reporte y los logs). Así una sola
     // corrida despacha TODO lo que entre en el tiempo, sin timeout. HARD_MAX es un tope de
     // seguridad anti-runaway por si los envíos fueran muy rápidos.
-    const BUDGET_MS = 45000;
+    // 30 s, no 45: con 45 la corrida llena (arranque + envíos) llegaba al tope de 60 s de Vercel
+    // y MORÍA ANTES de disparar la corrida siguiente. El encadenado sólo funcionaba cuando no
+    // hacía falta. Con 30 s sobra margen y la cadena avanza siempre.
+    const BUDGET_MS = 30000;
     const HARD_MAX = 220;
-    const EMAIL_CAP = 60; // Regalo 5 (email): instantáneo y sin límite de rate → tope propio y generoso
-    const OFERTA_CAP = 100; // Oferta por email: cola propia, en rampa (~3 días para las ~289)
-    const REGALOS_CAP = 120; // Regalos 3 y 4 por email: la entrada del embudo, también en rampa
-    const REENVIO_CAP = 80;  // Reenvío de la oferta a los que no la abrieron
+    // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
+    // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
+    const CAP_PIEZAS_DIA = parseInt(process.env.PIEZAS_CAP_DIA || '500', 10);
+    const REENVIO_CAP = 80;  // Reenvío de la oferta a los que no la abrieron (también por día)
     // Tope manual para la PRIMERA corrida de algo nuevo (?max=2): deja verificar el camino
     // completo —envío, avance de etapa y marcador— con dos personas reales en vez de
     // descubrir un problema recién cuando ya salieron cientos. Sin el parámetro no limita nada.
@@ -1260,24 +1317,26 @@ export default async function handler(req, res) {
     const pendingLogs = []; // logs best-effort en segundo plano; se esperan todos al final
     let attempted = 0;
 
-    // CLAVE del arreglo: el email (Regalo 5) NO comparte presupuesto con WhatsApp. Ese era el bug
-    // que ahogaba la entrada del embudo (cientos de emails "debidos" copaban el tope y los leads
-    // nuevos nunca recibían el Regalo 3). Ahora los emails van PRIMERO con su propio tope (son
-    // instantáneos: ~60 entran en pocos segundos) y después WhatsApp usa el resto del tiempo, en
-    // orden de prioridad (oferta → Regalo 4 → Regalo 3). Así ambos canales avanzan cada corrida.
-    // La OFERTA por email lleva cola y tope propios: si compartiera los 60 de EMAIL_CAP con el
-    // Regalo 5, un backlog de regalos la dejaría afuera justo al mensaje que vende. Con 100/día
-    // las ~289 pendientes salen en 3 corridas — y de paso el envío entra en rampa, que es lo sano
-    // para la reputación del remitente en vez de un blast de 289 de una.
-    const emailQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mail5').slice(0, EMAIL_CAP);
-    const ofertaQueue = plan.filter((p) => p.channel === 'email' && p.send === 'mailoferta').slice(0, OFERTA_CAP);
-    // Regalos 3/4 por email: van ANTES del Regalo 5 porque son la entrada del embudo — un lead
-    // parado en la etapa 0 no tiene cómo llegar a nada de lo que viene después. Tope propio y
-    // generoso (el backlog eran ~370 el 28/07) pero en rampa, para no quemar la reputación.
-    const regalosQueue = plan.filter((p) => p.channel === 'email' && String(p.send).startsWith('regalo')).slice(0, REGALOS_CAP);
-    const reenvioQueue = plan.filter((p) => p.send === 'ofertareenvio').slice(0, REENVIO_CAP);
+    // UNA sola cola de piezas, no una por tipo de mail. Cuando cada paso tenía su tope propio y
+    // se concatenaban en orden fijo, el último de la fila no llegaba a salir nunca: el reenvío de
+    // la oferta se comía 38 de los 45 segundos y el Regalo 4, que iba detrás, no salió ni una vez
+    // en un mes. Ahora hay una cola sola, ordenada por cercanía a la compra.
+    // Los topes son del DÍA, no de la corrida: se cuenta a cuánta gente ya se le mandó algo hoy
+    // (WA_SENT_AT). Sin esto, 13 corridas encadenadas repartirían 13 veces el mismo tope.
+    const yaTocadosHoy = contacts.filter((c) => mismoDia((c.attributes || {}).WA_SENT_AT, hoy)).length;
+    const yaReenviadosHoy = contacts.filter((c) => mismoDia((c.attributes || {})[OFERTA_REENVIO.marcador], hoy)).length;
+
+    // Primero el que está MÁS CERCA de la compra: oferta → Regalo 5 → 4 → 3. Antes la cola salía
+    // en el orden en que Brevo devuelve la lista (del más nuevo al más viejo) y por eso el
+    // Regalo 4 quedaba siempre último: entraban 11 Regalos 3 y se acababa el tiempo justo antes.
+    const ordenPieza = (p) => PIEZAS.findIndex((x) => x.send === p.pieza.send);
+    const piezasQueue = plan
+      .filter((p) => p.pieza)
+      .sort((a, b) => ordenPieza(b) - ordenPieza(a))
+      .slice(0, Math.max(0, CAP_PIEZAS_DIA - yaTocadosHoy));
+    const reenvioQueue = plan.filter((p) => p.send === 'ofertareenvio').slice(0, Math.max(0, REENVIO_CAP - yaReenviadosHoy));
     const waQueue = plan.filter((p) => p.channel !== 'email'); // wa + seguimiento (ya ordenados por prioridad)
-    const queue = [...ofertaQueue, ...reenvioQueue, ...regalosQueue, ...emailQueue, ...waQueue];
+    const queue = [...piezasQueue, ...reenvioQueue, ...waQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
       if (MAX_MANUAL && attempted >= MAX_MANUAL) break;
@@ -1288,7 +1347,8 @@ export default async function handler(req, res) {
           if (!reenvioEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA2_ENABLED!=1 (reenvío apagado)' }); continue; }
           const sent = await enviarReenvioOferta(p.email, p.nombre);
           if (sent.ok) {
-            try { await brevoSetMarcador(p.email, OFERTA_REENVIO.marcador); } catch (e) { results.push({ email: p.email, sent: 'ofertareenvio', warn: 'enviado pero falló marcarlo: ' + e.message }); continue; }
+            try { await brevoMarcarPieza(p.email, { marcador: OFERTA_REENVIO.marcador, stage: null }, p.stageSent); }
+            catch (e) { results.push({ email: p.email, sent: 'ofertareenvio', warn: 'enviado pero falló marcarlo: ' + e.message }); continue; }
             results.push({ email: p.email, sent: 'ofertareenvio' });
           } else {
             results.push({ email: p.email, send: 'ofertareenvio', error: sent.status });
@@ -1296,53 +1356,20 @@ export default async function handler(req, res) {
           console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'ofertareenvio', ok: sent.ok }));
           continue;
         }
-        // Regalos 3 y 4 por email: además de marcarlos, AVANZAN la etapa del embudo. Sin eso
-        // el lead se quedaría en la misma etapa para siempre y nunca llegaría a la oferta.
-        if (String(p.send).startsWith('regalo')) {
-          if (!regalosEmailEnabled) { results.push({ email: p.email, skipped: 'MAILREGALOS_ENABLED!=1 (regalos 3/4 por email apagados)' }); continue; }
-          const nivel = Number(String(p.send).replace('regalo', ''));
-          const cfg = REGALOS_EMAIL[nivel];
-          const sent = await enviarRegaloEmail(nivel, p.email, p.nombre);
-          if (sent.ok) {
-            try {
-              await brevoSetStage(p.email, cfg.stage);       // avanza el embudo
-              await brevoSetMarcador(p.email, cfg.marcador); // deja registro de que salió por email
-              results.push({ email: p.email, sent: p.send, stage: cfg.stage });
-            } catch (e) {
-              results.push({ email: p.email, sent: p.send, warn: 'enviado pero falló marcarlo en Brevo: ' + e.message });
-            }
-          } else {
-            results.push({ email: p.email, send: p.send, error: sent.status });
-          }
-          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: p.send, ok: sent.ok }));
-          continue;
-        }
-        if (p.send === 'mailoferta') {
-          if (!mailOfertaEnabled) { results.push({ email: p.email, skipped: 'MAILOFERTA_ENABLED!=1 (oferta por email apagada)' }); continue; }
-          const sent = await sendMailOferta(p.email, p.nombre);
-          if (sent.ok) {
-            try {
-              // Si la oferta salió como paso del embudo (no como recuperación de los que ya
-              // estaban en etapa 5), mover también la etapa: el lead terminó el recorrido.
-              if (p.avanzarA) await brevoSetStage(p.email, p.avanzarA);
-              await brevoSetMailOferta(p.email);
-            } catch (e) { results.push({ email: p.email, sent: 'mailoferta', warn: 'enviado pero falló marcarlo en Brevo: ' + e.message }); continue; }
-            results.push({ email: p.email, sent: 'mailoferta', stage: p.avanzarA || null });
-          } else {
-            results.push({ email: p.email, send: 'mailoferta', error: sent.status });
-          }
-          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'mailoferta', ok: sent.ok }));
-          continue;
-        }
-        if (!mail5Enabled) { results.push({ email: p.email, skipped: 'MAIL5_ENABLED!=1 (regalo 5 apagado)' }); continue; }
-        const sent = await sendMail5(p.email, p.nombre);
+        // La pieza que le faltaba. Se manda y se marca en una sola llamada: el marcador propio
+        // (para no repetirla nunca), el toque del día y, si corresponde, la etapa del embudo.
+        const sent = await enviarPieza(p.pieza, p.email, p.nombre);
         if (sent.ok) {
-          try { await brevoSetMail5(p.email); } catch (e) { results.push({ email: p.email, sent: 'mail5', warn: 'enviado pero falló setMail5: ' + e.message }); continue; }
-          results.push({ email: p.email, sent: 'mail5' });
+          try {
+            await brevoMarcarPieza(p.email, p.pieza, p.stageSent);
+            results.push({ email: p.email, sent: p.send, stage: p.pieza.stage || null });
+          } catch (e) {
+            results.push({ email: p.email, sent: p.send, warn: 'enviado pero falló marcarlo en Brevo: ' + e.message });
+          }
         } else {
-          results.push({ email: p.email, send: 'mail5', error: sent.status });
+          results.push({ email: p.email, send: p.send, error: sent.status });
         }
-        console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'mail5', ok: sent.ok }));
+        console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: p.send, ok: sent.ok }));
         continue;
       }
       if (p.channel === 'seguimiento') {
@@ -1378,12 +1405,14 @@ export default async function handler(req, res) {
     // Se puede reactivar con REPORTE_FUNNEL_INDIVIDUAL=1 (trae el diagnóstico con datos de la corrida).
     if (mode === 'cron' && process.env.REPORTE_FUNNEL_INDIVIDUAL === '1') {
       // Datos de ESTA corrida para el diagnóstico interpretado del reporte.
-      const planWA = (s) => plan.filter((p) => p.channel === 'wa' && p.send === s).length;
+      // Por PIEZA, no por canal: desde el 01/08 el embudo se mide por lo que le falta a cada
+      // lead (los marcadores de email), no por la etapa que dejó un WhatsApp que no entregó.
+      const planWA = (s) => plan.filter((p) => p.send === s).length;
       const sentWA = (s) => results.filter((x) => x.sent === s).length;
       const etapaRow = (label, fuente, debido, enviado, apagado) => ({ label, fuente, debido, enviado, cola: Math.max(0, debido - enviado), apagado: !!apagado });
       const runInfo = {
-        due_oferta: planWA(5),
-        sent_oferta: sentWA(5),
+        due_oferta: planWA('mailoferta'),
+        sent_oferta: sentWA('mailoferta'),
         attempted,
         fallidos: results.filter((x) => x.error !== undefined).length,
         enviados_ok: results.filter((x) => x.sent !== undefined).length,
@@ -1394,10 +1423,10 @@ export default async function handler(req, res) {
         // Seguimiento = determinado por envíos previos (no se llega a un paso sin el anterior),
         // así que ese número es exacto y trazable.
         etapas: [
-          etapaRow('🎁 Regalo 3 (día 5 · entrada)', 'nuevos', planWA(3), sentWA(3), false),
-          etapaRow('🎁 Regalo 4 (día 7)', 'previos', planWA(4), sentWA(4), false),
-          etapaRow('📧 Regalo 5 (email · día 8)', 'previos', plan.filter((p) => p.channel === 'email').length, results.filter((x) => x.sent === 'mail5').length, !mail5Enabled),
-          etapaRow('💰 Oferta (día 9)', 'previos', planWA(5), sentWA(5), false),
+          etapaRow('🎁 Regalo 3 (día 5 · entrada)', 'nuevos', planWA('regalo3'), sentWA('regalo3'), !regalosEmailEnabled),
+          etapaRow('🎁 Regalo 4 (día 7)', 'previos', planWA('regalo4'), sentWA('regalo4'), !regalosEmailEnabled),
+          etapaRow('📧 Regalo 5 (email · día 8)', 'previos', planWA('mail5'), sentWA('mail5'), !mail5Enabled),
+          etapaRow('💰 Oferta (día 9)', 'previos', planWA('mailoferta'), sentWA('mailoferta'), !mailOfertaEnabled),
           etapaRow('🔔 Seguimiento (reactivación)', 'previos', plan.filter((p) => p.channel === 'seguimiento').length, results.filter((x) => x.sent === 'seguimiento').length, !seguimientoEnabled),
         ],
       };
@@ -1416,7 +1445,10 @@ export default async function handler(req, res) {
     // la espera). Se repite hasta MAX_CHAINS veces o hasta vaciar la cola (se frena solo). Tope de
     // seguridad: 3 corridas ≈ ~100-110 WhatsApp/día → no arriesga el número en Meta. En régimen
     // normal, cuando la cola se vacía antes, se detiene solo (no gasta corridas de más).
-    const MAX_CHAINS = 2; // corridas iniciales (chain 0) + 2 encadenadas = 3 en total
+    // 12 (13 corridas de ~40 s ≈ 9 minutos en total). Antes eran 3 corridas ≈ 200 mails/día,
+    // contra una cola de ~2.700: la cola crecía más rápido de lo que se vaciaba. El tope real
+    // de volumen ya no lo pone esto sino CAP_PIEZAS_DIA — la cadena se frena sola al agotarlo.
+    const MAX_CHAINS = 12;
     const remaining = plan.length - attempted;
     if (live && remaining > 0 && chain < MAX_CHAINS) {
       const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
