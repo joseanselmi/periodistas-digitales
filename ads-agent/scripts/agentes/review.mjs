@@ -1,6 +1,6 @@
 /**
  * review.mjs — Agente de revisión de anuncios
- * Uso: node scripts/agentes/review.mjs campaigns/2026-05-08/config.json
+ * Uso: node scripts/agentes/review.mjs campanas/historico/2026-05-08/config.json
  */
 
 import { readFileSync, writeFileSync } from 'fs'
@@ -56,8 +56,8 @@ const regenerar = results.filter(r => r.veredicto === 'REGENERAR_IMAGEN').length
 console.log(`\n📋 ${listos} listos para publicar | ${mejorarCopy} requieren copy | ${regenerar} requieren imagen nueva`)
 
 if (regenerar > 0) {
-  console.log('\n🎨 Para regenerar imágenes: node generate.mjs campaigns/.../config.json --regen')
+  console.log('\n🎨 Para regenerar imágenes: node generate.mjs campanas/historico/FECHA/config.json --regen')
 }
 if (listos + mejorarCopy === results.length && listos > 0) {
-  console.log('\n🚀 Para publicar: node scripts/publicar/publish.mjs campaigns/.../config.json')
+  console.log('\n🚀 Para publicar: node scripts/publicar/publish.mjs campanas/historico/FECHA/config.json')
 }

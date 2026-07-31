@@ -31,8 +31,8 @@ Generar **en el chat 📣 Ads del proyecto de ChatGPT** — ver [`CHATGPT-IMAGEN
 Revisar con `node lib/image-reviewer.mjs`.
 
 ### Paso 4 — Config JSON
-Copiar `campaigns/TEMPLATE/config.json`, completar con datos del brief, copy y creativo.
-Naming convention: `campaigns/YYYY-MM-DD[-v2]/config.json`
+Copiar `campanas/historico/TEMPLATE/config.json`, completar con datos del brief, copy y creativo.
+Naming convention: `campanas/historico/YYYY-MM-DD[-v2]/config.json`
 
 ### Paso 5 — Revisión
 Correr: `node scripts/agentes/audit-cmo.mjs` sobre el config antes de publicar.
@@ -40,7 +40,7 @@ Check: ¿El copy matchea el nivel de consciencia del segmento? ¿El CPA máximo 
 
 ### Paso 6 — Publicar
 ```bash
-node scripts/publicar/publish.mjs campaigns/YYYY-MM-DD/config.json
+node scripts/publicar/publish.mjs campanas/historico/YYYY-MM-DD/config.json
 ```
 El script publica todos los ad sets como PAUSED. Activar manualmente en Meta.
 Registrar en `results/tracking.md` con fecha de inicio y presupuesto.
@@ -77,7 +77,7 @@ Ejemplo: "PRUEBA-SOC IMG-C 24/05"
 ## CARPETA DE CAMPAÑA — ESTRUCTURA
 
 ```
-campaigns/
+campanas/historico/
 └── YYYY-MM-DD/
     ├── brief.md          ← Brief completado (copiar template)
     ├── config.json       ← Config para scripts/publicar/publish.mjs
@@ -123,7 +123,7 @@ campaigns/
 
 | Acción | Comando |
 |--------|---------|
-| Publicar campaña | `node scripts/publicar/publish.mjs campaigns/YYYY-MM-DD/config.json` |
+| Publicar campaña | `node scripts/publicar/publish.mjs campanas/historico/YYYY-MM-DD/config.json` |
 | Auditar campaña | `node scripts/agentes/audit-cmo.mjs` |
 | Revisar imagen | `node lib/image-reviewer.mjs` |
 | Ver métricas | `META_ACCESS_TOKEN=x node scripts/datos/fetch-meta.mjs` |
@@ -157,9 +157,9 @@ campaigns/
 
 ## PRÓXIMA ACCIÓN
 
-La campaña v2 (`campaigns/2026-05-08-v2/config.json`) está lista.
+La campaña v2 (`campanas/historico/2026-05-08-v2/config.json`) está lista.
 Antes de lanzarla, completar:
 1. ☐ Imágenes generadas y aprobadas para los 3 ad sets
-2. ☐ Brief completado en `campaigns/2026-05-08-v2/brief.md`
+2. ☐ Brief completado en `campanas/historico/2026-05-08-v2/brief.md`
 3. ☐ Testimonios en la landing (sin testimonios, el CPA va a subir)
-4. ☐ `node scripts/publicar/publish.mjs campaigns/2026-05-08-v2/config.json`
+4. ☐ `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json`

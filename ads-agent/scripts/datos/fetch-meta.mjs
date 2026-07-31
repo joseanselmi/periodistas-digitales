@@ -184,8 +184,8 @@ const output = {
 
 // Guardar resultado
 const today = new Date().toISOString().slice(0, 10)
-mkdirSync('campaigns', { recursive: true })
-const outPath = join('campaigns', `meta-export-${today}.json`)
+mkdirSync(join('datos', 'meta-exports'), { recursive: true })
+const outPath = join('datos', 'meta-exports', `meta-export-${today}.json`)
 writeFileSync(outPath, JSON.stringify(output, null, 2))
 
 console.log('\n✅ Listo!')

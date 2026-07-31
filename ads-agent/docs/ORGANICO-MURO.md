@@ -92,7 +92,12 @@ día.
 
 Por eso `scripts/programar/schedule-muro.mjs` es idempotente: lee la cola primero y saltea las fechas
 ya programadas, así se puede re-correr sin duplicar. Al 30/07 el **29, 30 y 31/08**
-quedaron fuera por esto; entran re-corriéndolo a partir del 3/08.
+quedaron fuera por esto.
+
+**Estado al 01/08** (verificado por API): 28 en cola, `01→28/08` sin huecos, con la
+serie del muro completa del 16 al 28. Ya hay un lugar libre y se libera uno más por
+día, así que el 29/30/31 entran re-corriendo el script. Si nadie lo corre, la serie
+cierra el viernes 28 con el posteo de venta.
 
 Verificar lugares libres:
 
@@ -125,7 +130,9 @@ node --env-file=.env.local scripts/publicar/post-story.mjs 2026-08-17   # una fe
 `state/stories-publicadas.json` y no repite una fecha ya publicada, así que un cron
 que corra dos veces no duplica.
 
-**🔴 Pendiente:** decidir quién dispara la story cada mañana (cron de Vercel como el
-Panel de Comando, Make, o a mano). Sin eso las stories no salen. Y si queda el
-bloque marcado de las portadas, hay que aplicárselo también a las stories, que
-todavía tienen el diseño anterior.
+**Quién lo lleva (01/08):** el frente de stories **salió del alcance de la tarjeta
+[#107](https://trello.com/c/DOhEmqkI)** — lo trabaja otro chat/flujo. Lo que le queda
+por resolver: (1) quién dispara `post-story.mjs` cada mañana (cron de Vercel como el
+Panel de Comando, Make, o a mano) — sin eso las stories no salen; (2) aplicarle a los
+16 creativos el bloque marcado de las portadas nuevas, que hoy tienen el diseño
+anterior.

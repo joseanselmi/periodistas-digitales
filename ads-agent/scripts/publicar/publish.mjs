@@ -1,6 +1,6 @@
 /**
  * publish.mjs — Publica ads reales en Meta via Marketing API
- * Uso: node scripts/publicar/publish.mjs campaigns/2026-05-08-v2/config.json
+ * Uso: node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json
  * Variables: META_ACCESS_TOKEN, META_AD_ACCOUNT_ID
  *
  * Flujo:
@@ -24,7 +24,7 @@ if (!TOKEN || !ACCOUNT) {
 
 const configPath = process.argv[2]
 if (!configPath) {
-  console.error('Uso: node scripts/publicar/publish.mjs campaigns/FECHA/config.json')
+  console.error('Uso: node scripts/publicar/publish.mjs campanas/historico/FECHA/config.json')
   process.exit(1)
 }
 

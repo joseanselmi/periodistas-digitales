@@ -45,7 +45,7 @@ import 'dotenv/config';
 const execFileAsync = promisify(execFile);
 // Este script vive en scripts/agentes/; radar/ esta en la raiz de ads-agent.
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const RADAR_DIR = path.join(DIR, 'radar');
+const RADAR_DIR = path.join(DIR, 'datos', 'radar');
 const FUENTES = path.join(RADAR_DIR, 'fuentes.json');
 const MODELO = 'claude-sonnet-5';
 

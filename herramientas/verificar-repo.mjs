@@ -134,6 +134,22 @@ function chequearAnclajes() {
         rotas.push({ rel, ref: `join(${ancla}, '${primero}')`, tipo: 'anclaje de ruta' });
       }
     }
+
+    // Carpetas nombradas como literal suelto, relativas al cwd (= ads-agent):
+    //   join('datos', 'meta-exports', ...)  ·  mkdirSync('datos/reports')
+    // Este caso se me escapó al reorganizar el 2026-08-01: fetch-meta seguía
+    // escribiendo en 'campaigns' y, como usa mkdirSync, la RECREABA en silencio.
+    // No fallaba: simplemente dejaba el export en una carpeta fantasma.
+    const CWD = join(ROOT, 'ads-agent');
+    for (const m of src.matchAll(/(?:join|mkdirSync|readFileSync|writeFileSync|existsSync)\(\s*'([\w-]+)\/?[\w./-]*'/g)) {
+      const primerSegmento = m[1];
+      // solo nos importan los que parecen carpetas del proyecto
+      if (!/^(datos|campanas|carousels|organic|emails|state|lib|docs|ads-curso|playbooks|dashboards|creatives|hotmart-transcripts|scripts|results)$/.test(primerSegmento)) continue;
+      revisadas++;
+      if (!existsSync(join(CWD, primerSegmento))) {
+        rotas.push({ rel, ref: `'${primerSegmento}/…'`, tipo: 'carpeta relativa al cwd que ya no existe' });
+      }
+    }
   }
   return { revisadas, rotas };
 }

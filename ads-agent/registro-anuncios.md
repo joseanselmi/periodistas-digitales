@@ -55,7 +55,7 @@ exploramos ángulos nuevos hasta tener una base de compras.
 2. Prueba social + value stack completo (lookalike compradores).
 3. Exploratorios: testimonio narrativo · antes/después visual · mecanismo en pasos.
 
-> Ángulos ya pensados con hipótesis: `campaigns/2026-06-21/config.json` (10 ads).
+> Ángulos ya pensados con hipótesis: `campanas/historico/2026-06-21/config.json` (10 ads).
 
 ## 🚗 La "matrícula" del anuncio — identificar todo de un vistazo
 

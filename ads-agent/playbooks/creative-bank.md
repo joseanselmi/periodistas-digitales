@@ -96,7 +96,7 @@ Dark cinematic wide shot. Map of Latin America glowing with connected points bet
 3. Revisar contra las 7 reglas de imagen antes de aprobar
 4. Si la imagen tiene texto en ella → rechazar, regenerar
 5. Si la persona tiene rasgos europeos o anglosajones → rechazar, regenerar
-6. Guardar en `campaigns/YYYY-MM-DD/creatives/` con nombre descriptivo
+6. Guardar en `campanas/historico/YYYY-MM-DD/creatives/` con nombre descriptivo
 
 ### Comando de revisión automática
 ```bash

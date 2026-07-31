@@ -1,5 +1,5 @@
 # BRIEF DE CAMPAÑA
-**Copiar este archivo a `campaigns/YYYY-MM-DD/brief.md` y completar todos los campos.**
+**Copiar este archivo a `campanas/historico/YYYY-MM-DD/brief.md` y completar todos los campos.**
 
 ---
 

@@ -994,11 +994,29 @@ function nextDue(daysOld, stageSent, daysSinceLast) {
 // toque") y respetando el día del embudo que le corresponde — un lead de ayer no
 // recibe hoy el Regalo 3.
 const PIEZAS = [
-  { send: 'regalo3',    marcador: 'MAIL3_AT',       minDays: 5, stage: 3,    flag: 'regalos' },
-  { send: 'regalo4',    marcador: 'MAIL4_AT',       minDays: 7, stage: 4,    flag: 'regalos' },
-  { send: 'mail5',      marcador: 'MAIL5_AT',       minDays: 8, stage: null, flag: 'mail5'   },
-  { send: 'mailoferta', marcador: 'OFERTA_MAIL_AT', minDays: 9, stage: 5,    flag: 'oferta'  },
+  { send: 'regalo3',    marcador: 'MAIL3_AT',       tag: REGALOS_EMAIL[3].tag, minDays: 5, stage: 3,    flag: 'regalos' },
+  { send: 'regalo4',    marcador: 'MAIL4_AT',       tag: REGALOS_EMAIL[4].tag, minDays: 7, stage: 4,    flag: 'regalos' },
+  { send: 'mail5',      marcador: 'MAIL5_AT',       tag: MAIL5_TAG,            minDays: 8, stage: null, flag: 'mail5'   },
+  { send: 'mailoferta', marcador: 'OFERTA_MAIL_AT', tag: MAILOFERTA_TAG,       minDays: 9, stage: 5,    flag: 'oferta'  },
 ];
+
+// SEGUNDA PRUEBA DE QUE ALGO YA SALIÓ: el registro de envíos por persona.
+// El marcador de Brevo se escribe DESPUÉS del envío, en otra llamada. Si esa llamada falla
+// —pasó el 29/07 con el código viejo, que además usaba dos PUT— el mail salió pero el lead
+// queda como pendiente y se le vuelve a mandar. Costó 67 Regalos 3 repetidos el 31/07.
+// `comunicaciones_email` (que llena el webhook de Brevo) sabe a quién se le mandó qué de
+// verdad, así que se usa como respaldo del marcador. Sólo suma evidencia de envío: si
+// Supabase no contesta, se sigue con los marcadores como antes.
+async function enviadosSegunRegistro() {
+  if (!SB_URL || !SB_KEY) return null;
+  const tags = PIEZAS.map((p) => p.tag).join(',');
+  try {
+    const r = await sbRest(`comunicaciones_email?select=email,campana&campana=in.(${tags})&limit=20000`, {});
+    if (!r.ok) return null;
+    const filas = await r.json();
+    return new Set((filas || []).map((f) => `${String(f.email || '').toLowerCase().trim()}|${f.campana}`));
+  } catch { return null; }
+}
 
 // WA_SENT_AT es de tipo `date` en Brevo y hoy vuelve como "2026-08-01", pero de él depende el
 // tope de un mail por persona por día: si el formato cambiara, la comparación fallaría en
@@ -1008,11 +1026,14 @@ const mismoDia = (valor, hoy) => String(valor || '').slice(0, 10) === hoy;
 
 // La primera pieza que le falta y que ya le tocaba. `habilitadas` saltea las apagadas
 // por flag: si no, una pieza apagada bloquearía para siempre a todas las de atrás.
-function piezaFaltante(attrs, daysOld, hoy, habilitadas) {
+function piezaFaltante(attrs, daysOld, hoy, habilitadas, emailLc, registro) {
   if (mismoDia(attrs.WA_SENT_AT, hoy)) return null; // ya recibió algo nuestro hoy
   for (const p of PIEZAS) {
     if (!habilitadas.has(p.flag)) continue;
-    if (!attrs[p.marcador] && daysOld >= p.minDays) return p;
+    if (daysOld < p.minDays) continue;
+    if (attrs[p.marcador]) continue;                          // el marcador dice que salió
+    if (registro && registro.has(`${emailLc}|${p.tag}`)) continue; // el registro también vale
+    return p;
   }
   return null;
 }
@@ -1203,6 +1224,8 @@ export default async function handler(req, res) {
     const respondieron = await respondieronSet();
 
     const hoy = todayISO();
+    // Respaldo del marcador: a quién se le mandó qué de verdad, según el registro por persona.
+    const registroEnvios = await enviadosSegunRegistro();
     // Qué piezas están habilitadas por flag. Una apagada se saltea (no bloquea a las de atrás).
     const piezasHabilitadas = new Set([
       ...(regalosEmailEnabled ? ['regalos'] : []),
@@ -1227,7 +1250,7 @@ export default async function handler(req, res) {
       const daysSinceLast = lastAt ? Math.floor((now - lastAt) / DAY) : 999;
 
       // Lo que le falta por EMAIL: Regalo 3 → 4 → 5 → oferta, uno por día y en orden.
-      const pieza = piezaFaltante(attrs, daysOld, hoy, piezasHabilitadas);
+      const pieza = piezaFaltante(attrs, daysOld, hoy, piezasHabilitadas, emailLc, registroEnvios);
       if (pieza) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: pieza.send, pieza });
       }
@@ -1282,11 +1305,13 @@ export default async function handler(req, res) {
       for (const pz of PIEZAS) {
         faltantes[pz.send] = contacts.filter((c) => {
           const a = c.attributes || {};
+          const e = String(c.email || '').toLowerCase().trim();
           if (a[pz.marcador]) return false;
+          if (registroEnvios && registroEnvios.has(`${e}|${pz.tag}`)) return false;
           // Mismos descartes que el plan real: si no, este número nunca llega a cero y no hay
           // forma de saber si el embudo terminó de completarse o si se frenó.
           if (c.emailBlacklisted) return false;
-          if (compradores.has(String(c.email || '').toLowerCase().trim())) return false;
+          if (compradores.has(e)) return false;
           return Math.floor((now - new Date(c.createdAt).getTime()) / DAY) >= pz.minDays;
         }).length;
       }

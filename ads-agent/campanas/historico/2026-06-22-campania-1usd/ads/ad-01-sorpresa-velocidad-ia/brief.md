@@ -55,5 +55,5 @@ sorpresa/tiempo superpuesto.
 1. Decidir el destino/link final (landing propia, formulario nativo de Meta
    Lead Ads, etc.) — tarea separada, no resolverla acá.
 2. Con el link decidido, completar `config.json` de la campaña (mismo
-   formato que `campaigns/2026-06-21/config.json`) y correr
-   `node scripts/publicar/publish.mjs campaigns/2026-06-22-campania-1usd/config.json`.
+   formato que `campanas/historico/2026-06-21/config.json`) y correr
+   `node scripts/publicar/publish.mjs campanas/historico/2026-06-22-campania-1usd/config.json`.

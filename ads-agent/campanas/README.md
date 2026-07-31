@@ -2,7 +2,7 @@
 
 Convención acordada con Jose el 30/07/2026. Antes había tres criterios mezclados
 —`meta-leadgen-guia-claude` nombrada por el imán, `meta-ads-directo` por el objetivo y
-las carpetas de `campaigns/` por fecha— y con eso, a la sexta campaña no se encuentra
+las carpetas de `campanas/` por fecha— y con eso, a la sexta campaña no se encuentra
 nada.
 
 ## El nombre

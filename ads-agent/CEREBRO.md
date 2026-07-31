@@ -49,7 +49,7 @@ ELEVENLABS_API_KEY=...
 |--------|---------|-------------|
 | `scripts/datos/fetch-meta.mjs` | Baja campañas + métricas Meta | `META_ACCESS_TOKEN=x META_AD_ACCOUNT_ID=act_x node scripts/datos/fetch-meta.mjs` |
 | `scripts/agentes/monitor.mjs` | Métricas diarias + alertas | Mismas vars |
-| `scripts/publicar/publish.mjs` | Publica ads en Meta (PAUSED) | `node scripts/publicar/publish.mjs campaigns/X/config.json` |
+| `scripts/publicar/publish.mjs` | Publica ads en Meta (PAUSED) | `node scripts/publicar/publish.mjs campanas/historico/X/config.json` |
 | `scripts/agentes/audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node scripts/agentes/audit-cmo.mjs` |
 | `scripts/agentes/email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node scripts/agentes/email-agent.mjs` |
 | `scripts/agentes/organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x FAL_API_KEY=x node scripts/agentes/organic-agent.mjs --days=7 --images` |
@@ -101,7 +101,7 @@ ELEVENLABS_API_KEY=...
 Título: "+3.700 alumnos satisfechos" | CTA: LEARN_MORE
 
 ### Campaña v2 (lista, no publicada)
-Config: `campaigns/2026-05-08-v2/config.json`
+Config: `campanas/historico/2026-05-08-v2/config.json`
 - AD 1: FOMO frío 35-60 (intereses)
 - AD 2: Prueba social María (lookalike compradores)
 - AD 3: Retargeting visitantes LP
@@ -154,7 +154,7 @@ carousels/semana-DD-MM/para-subir/
 |---|-----|------------|
 | 1 | Emails sin envío | Cargar en Hotmart → Email marketing |
 | 2 | Testimonios landing vacíos | Jose sube capturas → `sistema-ingresos/img/` |
-| 3 | Campaña Meta v2 sin publicar | `node scripts/publicar/publish.mjs campaigns/2026-05-08-v2/config.json` |
+| 3 | Campaña Meta v2 sin publicar | `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json` |
 | 4 | Monitor sin schedule | Windows Task Scheduler o Make.com |
 | 5 | Segmento 40-65 sin escalar | Testear $25/día — mejor CPA histórico $6.33 |
 | 6 | image-reviewer en scripts/publicar/publish.mjs | Integrar antes del próximo lanzamiento de ads |

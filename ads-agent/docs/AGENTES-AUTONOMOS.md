@@ -33,7 +33,7 @@ que corre en cron y hace, en una sesión limpia:
 
 1. **Lee datos reales por MCP** (Supabase / Make). La nube **NO clona el repo** y
    **NO tiene salida a internet** (curl da 403) → todo va por conectores MCP.
-   Nada de leer `state/*.json` ni `campaigns/` del repo.
+   Nada de leer `state/*.json` ni `campanas/` del repo.
 2. **Hace el análisis del día** con el criterio del agente (su árbol de decisión,
    sus benchmarks) — embebido en el prompt, no en archivos del repo.
 3. **Escribe su recomendación** en la tabla `agentes_bitacora` (una fila por

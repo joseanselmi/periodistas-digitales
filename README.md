@@ -48,5 +48,5 @@ Empezá por el README del proyecto que te interese
 [ads-agent](ads-agent/README.md)) y desde ahí bajás a cada subcarpeta.
 
 Se exceptúan a propósito las carpetas de **assets fechados** (`carousels/semana-*`,
-`creatives/2026-*`, `campaigns/*/images`), cuyo README padre ya las explica, y los
+`creatives/2026-*`, `campanas/historico/*/images`), cuyo README padre ya las explica, y los
 repos de terceros clonados dentro de `_material/`, que no se documentan por dentro.

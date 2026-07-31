@@ -145,10 +145,10 @@ if (alerts.length) {
 
 // ─── Guardar reporte ──────────────────────────────────────────────────────────
 
-mkdirSync('campaigns/reports', { recursive: true })
+mkdirSync('datos/reports', { recursive: true })
 const today    = new Date().toISOString().slice(0, 10)
 const report   = { date: today, now, prev, alerts, topAds: topBySpend }
-const outPath  = `campaigns/reports/monitor-${today}.json`
+const outPath  = `datos/reports/monitor-${today}.json`
 writeFileSync(outPath, JSON.stringify(report, null, 2))
 
 console.log(`\n📁 Reporte guardado: ${outPath}`)

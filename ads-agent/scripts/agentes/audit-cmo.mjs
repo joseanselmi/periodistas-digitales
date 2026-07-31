@@ -41,7 +41,7 @@ async function fetchLanding(url) {
 
 function loadMetaExport() {
   // Buscar el export más reciente
-  const files = ['campaigns/meta-export-2026-05-08.json']
+  const files = ['datos/meta-exports/meta-export-2026-05-08.json']
   for (const f of files) {
     if (existsSync(f)) {
       const d = JSON.parse(readFileSync(f, 'utf-8'))
@@ -74,7 +74,7 @@ function loadMetaExport() {
 }
 
 function loadAdCampaignConfig() {
-  const path = 'campaigns/2026-05-08/config.json'
+  const path = 'campanas/historico/2026-05-08/config.json'
   if (existsSync(path)) {
     return JSON.parse(readFileSync(path, 'utf-8'))
   }
@@ -211,7 +211,7 @@ await stream.finalMessage()
 
 // Guardar reporte
 const timestamp = new Date().toISOString().slice(0, 10)
-const outputPath = `campaigns/cmo-audit-${timestamp}.md`
+const outputPath = `datos/auditorias/cmo-audit-${timestamp}.md`
 writeFileSync(outputPath, `# Auditoría CMO — ${timestamp}\n\n${fullResponse}`)
 
 console.log('\n\n' + '═'.repeat(70))

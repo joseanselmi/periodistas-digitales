@@ -25,7 +25,7 @@ Convierte un documento HTML en un PDF de varias páginas, con el mismo lenguaje 
 ## Flujo completo
 
 1. **Escribir el HTML** siguiendo la plantilla de estructura de abajo (sección "Estructura obligatoria del HTML").
-2. **Guardarlo** en la carpeta del proyecto correspondiente (ej. `sistema-ingresos/<nombre>.html` si va a vivir en el sitio público, o dentro de la carpeta de la campaña en `ads-agent/campaigns/<fecha>/`). Si la guía vive fuera de `sistema-ingresos/`, copiar también ahí el logo (ver sección "Logo y marca en la portada") — el HTML lo referencia con una ruta relativa simple (`logo-periodistas-digitales.png`), no funciona como `../sistema-ingresos/...`.
+2. **Guardarlo** en la carpeta del proyecto correspondiente (ej. `sistema-ingresos/<nombre>.html` si va a vivir en el sitio público, o dentro de la carpeta de la campaña en `ads-agent/campanas/historico/<fecha>/`). Si la guía vive fuera de `sistema-ingresos/`, copiar también ahí el logo (ver sección "Logo y marca en la portada") — el HTML lo referencia con una ruta relativa simple (`logo-periodistas-digitales.png`), no funciona como `../sistema-ingresos/...`.
 3. **Exportar**: `node ads-agent/scripts/exportar/export-pdf.mjs <ruta.html>` — genera el PDF y una carpeta `qa-<nombre>/` con una captura PNG de cada página.
 4. **Revisar las capturas de QA** una por una antes de mostrarle nada al usuario o de mandar el PDF a algún lado. Buscar específicamente:
    - Cajas (`code-box`, `case-card`, `callout`, `cta-box`) que se corten a la mitad entre dos páginas.

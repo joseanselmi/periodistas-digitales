@@ -1,5 +1,5 @@
 # BRIEF — Campaña [VERSIÓN]
-**Copiar esta carpeta completa a `campaigns/YYYY-MM-DD/` para cada campaña nueva.**
+**Copiar esta carpeta completa a `campanas/historico/YYYY-MM-DD/` para cada campaña nueva.**
 
 ---
 

@@ -10,5 +10,5 @@ ni repetir un ángulo ya quemado.
 - `creative-bank.md` — ideas de creativo y las que ya se probaron.
 - `test-matrix.md` — qué se está testeando y contra qué control.
 
-No confundir con [`../campaigns/`](../campaigns/README.md), que es el registro de
+No confundir con [`../campanas/`](../campanas/README.md), que es el registro de
 campañas **concretas** ya corridas.

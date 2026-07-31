@@ -80,4 +80,4 @@
 3. **Semana 3:** sobre el copy ganador, testear una imagen distinta (mismo método que v2).
 4. **Semana 4:** comparar el mejor "iteración" vs. el mejor "exploratorio" — si gana un exploratorio, abre la próxima tanda de ángulos.
 
-**Pendiente antes de publicar:** generar las 10 imágenes con los prompts de `config.json` (ver `lib/fal.mjs` / `lib/image-reviewer.mjs`) y correr `node scripts/publicar/publish.mjs campaigns/2026-06-21/config.json` en modo PAUSED para revisión manual antes de activar.
+**Pendiente antes de publicar:** generar las 10 imágenes con los prompts de `config.json` (ver `lib/fal.mjs` / `lib/image-reviewer.mjs`) y correr `node scripts/publicar/publish.mjs campanas/historico/2026-06-21/config.json` en modo PAUSED para revisión manual antes de activar.

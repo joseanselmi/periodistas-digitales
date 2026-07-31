@@ -1,6 +1,6 @@
 /**
  * generate-campaign-images.mjs — Genera las imágenes de un config.json de campaña con Fal (Flux Pro)
- * Uso: node scripts/generar/generate-campaign-images.mjs campaigns/2026-06-21/config.json
+ * Uso: node scripts/generar/generate-campaign-images.mjs campanas/historico/2026-06-21/config.json
  * Variables: FAL_API_KEY
  */
 
