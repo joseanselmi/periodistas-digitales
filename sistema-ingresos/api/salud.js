@@ -92,15 +92,45 @@ async function saludFunnel() {
       const j = await r.json(); const b = j.contacts || []; all.push(...b);
       if (b.length < 500) break; off += 500;
     }
-    let oferta = 0, r4 = 0, r3 = 0, sinreg = 0;
-    for (const c of all) { const s = Number((c.attributes || {}).WA_STAGE || 0); if (s >= 5) oferta++; else if (s === 4) r4++; else if (s === 3) r3++; else sinreg++; }
-    Object.assign(met, { oferta, regalo4: r4, regalo3: r3, sin_regalo: sinreg, total: all.length });
-    if (oferta === 0 && (r4 + r3) > 20) {
-      nivel = 'critico';
-      puntos.push(`0 personas recibieron la OFERTA (el mensaje que vende) pese a ${r4 + r3} en etapas previas. El embudo no está completando hasta la venta — revisar el funnel.`);
-    } else {
-      puntos.push(`Se disparó la oferta a ${oferta} personas. En camino: ${r4} en Regalo 4, ${r3} en Regalo 3.`);
+    // Se mide lo que FALTA, no la etapa. Hasta el 01/08 este panel contaba WA_STAGE y por eso
+    // daba ✅ mientras el Regalo 4 no le llegaba a nadie: esa etapa la avanzaba el envío por
+    // WhatsApp, que no entregaba. Lo único que prueba que un mail salió es su marcador.
+    // ⚠️ Espejo de PIEZAS en api/wa-funnel.js: si allá se agrega o cambia un paso, cambiar acá.
+    const PIEZAS = [['Regalo 3', 'MAIL3_AT', 5], ['Regalo 4', 'MAIL4_AT', 7], ['Regalo 5', 'MAIL5_AT', 8], ['Oferta', 'OFERTA_MAIL_AT', 9]];
+    const dia = (v) => String(v || '').slice(0, 10);
+    const hoyISO = new Date().toISOString().slice(0, 10);
+    const ayerISO = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    let falta = 0, mailsHoy = 0, mailsAyer = 0, bloqueados = 0;
+    const porPieza = {};
+    for (const c of all) {
+      if (c.emailBlacklisted) { bloqueados++; continue; } // Brevo no les entrega: fuera a propósito
+      const a = c.attributes || {};
+      if (dia(a.WA_SENT_AT) === hoyISO) mailsHoy++;
+      if (dia(a.WA_SENT_AT) === ayerISO) mailsAyer++;
+      const antiguedad = Math.floor((Date.now() - new Date(c.createdAt).getTime()) / 86400000);
+      for (const [nombre, marcador, minDays] of PIEZAS) {
+        if (!a[marcador] && antiguedad >= minDays) { porPieza[nombre] = (porPieza[nombre] || 0) + 1; falta++; }
+      }
     }
+    Object.assign(met, { total: all.length, bloqueados, falta_total: falta, falta_por_pieza: porPieza, mails_hoy: mailsHoy, mails_ayer: mailsAyer });
+
+    if (falta === 0) {
+      puntos.push(`Al día: los ${all.length - bloqueados} leads activos tienen las 4 piezas del embudo.`);
+    } else if (mailsHoy === 0 && mailsAyer === 0) {
+      nivel = 'critico';
+      puntos.push(`🚨 EMBUDO FRENADO: faltan ${falta} mails por salir y hace dos días que no sale ninguno. Revisar el cron de /api/wa-funnel y los flags MAILREGALOS_ENABLED / MAIL5_ENABLED / MAILOFERTA_ENABLED en Vercel.`);
+    } else {
+      const ritmo = Math.max(mailsHoy, mailsAyer);
+      const detalle = Object.entries(porPieza).map(([k, v]) => `${k}: ${v}`).join(' · ');
+      puntos.push(`Faltan ${falta} mails por salir (${detalle}). Ritmo: ${mailsHoy} hoy, ${mailsAyer} ayer → se completa en ~${Math.ceil(falta / ritmo)} día(s).`);
+      // El tope diario es 500. Un ritmo muy por debajo significa que la cadena de corridas se
+      // está cortando antes de tiempo: no está "yendo lento", está fallando.
+      if (ritmo < 100) {
+        nivel = peor(nivel, 'alerta');
+        puntos.push(`El ritmo (${ritmo}/día) está muy por debajo del tope de 500: el auto-encadenado de /api/wa-funnel se está cortando antes de vaciar la cola.`);
+      }
+    }
+    if (bloqueados > 0) puntos.push(`${bloqueados} contactos bloqueados en Brevo (rebote duro o baja): quedan fuera del embudo a propósito.`);
 
     // ENTREGA REAL (Meta): el WA_STAGE de Brevo solo dice que se DISPARÓ (la API de Meta aceptó el
     // envío), NO que se ENTREGÓ. Cruzamos con conversaciones_wa (estado_entrega) de los envíos del
@@ -127,7 +157,7 @@ async function saludFunnel() {
       }
     } catch (e) { puntos.push(`No se pudo verificar la entrega real de WhatsApp (${e.message || e}).`); }
   } catch (e) { nivel = 'alerta'; puntos.push(`No se pudo leer el estado del funnel (${e.message || e}).`); }
-  return { flujo: '🎁 Funnel de regalos (WhatsApp)', que_mira: 'Que los leads avancen hasta la oferta.', nivel, puntos, met };
+  return { flujo: '🎁 Embudo de regalos (email)', que_mira: 'Que a cada lead le lleguen las 4 piezas, hasta la oferta.', nivel, puntos, met };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

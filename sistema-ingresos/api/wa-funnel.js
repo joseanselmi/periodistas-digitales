@@ -1214,6 +1214,12 @@ export default async function handler(req, res) {
     for (const c of contacts) {
       const emailLc = String(c.email || '').toLowerCase().trim();
       if (emailLc && compradores.has(emailLc)) continue; // ya compró → fuera del funnel
+      // Bloqueado en Brevo (rebote duro, queja de spam o baja): Brevo NO le entrega, así que el
+      // envío falla, el marcador no se escribe y el lead vuelve a la cola mañana. Y pasado. Para
+      // siempre. Con ~5% de rebote sobre 2.000 mails eso son ~100 direcciones muertas que se
+      // comen el presupuesto de cada corrida hasta frenar el embudo entero — y además dejarían
+      // `total_faltante` clavado sin llegar nunca a cero. Se saltean acá, de una.
+      if (c.emailBlacklisted) continue;
       const attrs = c.attributes || {};
       const stageSent = Number(attrs.WA_STAGE || 0);
       const daysOld = Math.floor((now - new Date(c.createdAt).getTime()) / DAY);
@@ -1277,6 +1283,9 @@ export default async function handler(req, res) {
         faltantes[pz.send] = contacts.filter((c) => {
           const a = c.attributes || {};
           if (a[pz.marcador]) return false;
+          // Mismos descartes que el plan real: si no, este número nunca llega a cero y no hay
+          // forma de saber si el embudo terminó de completarse o si se frenó.
+          if (c.emailBlacklisted) return false;
           if (compradores.has(String(c.email || '').toLowerCase().trim())) return false;
           return Math.floor((now - new Date(c.createdAt).getTime()) / DAY) >= pz.minDays;
         }).length;
