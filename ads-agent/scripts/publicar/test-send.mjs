@@ -1,16 +1,21 @@
-import { readFileSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
-// Cargar env
-const envPath = resolve(process.cwd(), '../leadr/app/.env.local')
-readFileSync(envPath, 'utf-8').split('\n').forEach(line => {
-  const [key, ...val] = line.split('=')
-  if (key && val.length && !process.env[key.trim()]) {
-    process.env[key.trim()] = val.join('=').trim()
+// Las claves viven en el .env.local de Leadr (el único proyecto que las tiene
+// todas). Se probaron varias rutas porque Leadr se mudó a la carpeta hermana.
+for (const ruta of ['../Leadr/app/.env.local', '../../Leadr/app/.env.local', '.env.local', '../.env.local']) {
+  const p = resolve(process.cwd(), ruta)
+  if (!existsSync(p)) continue
+  for (const linea of readFileSync(p, 'utf-8').split('\n')) {
+    const m = linea.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/)
+    if (m) process.env[m[1]] ??= m[2].trim().replace(/^["']|["']$/g, '')
   }
-})
+}
 
-const API_KEY = 'CLAVE-RETIRADA-DEL-HISTORIAL'
+// NUNCA hardcodear la clave acá: este archivo está en un repo. La versión con la
+// clave escrita a mano hizo que GitHub bloqueara el push entero (31/07/2026).
+const API_KEY = process.env.BREVO_API_KEY
+if (!API_KEY) { console.error('❌ Falta BREVO_API_KEY (mirá ../Leadr/app/.env.local)'); process.exit(1) }
 const TO_EMAIL = process.argv[2]
 const CAMPAIGN = process.argv[3] ?? 'leadr-l3'
 

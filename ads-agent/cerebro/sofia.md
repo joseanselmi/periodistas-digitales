@@ -136,7 +136,7 @@ Marca en emails: siempre "Periodistas Digitales", no "José" ni solo "Leadr"
 ## Remitente
 - Email: jose@sistemadeingresosdiariosia.com
 - Nombre: José — Periodistas del Futuro IA
-- API Key: xkeysib-03e1...
+- API Key: en `../Leadr/app/.env.local` (BREVO_API_KEY) — no se escribe en el repo
 
 ## Inbox — Lectura de replies
 
