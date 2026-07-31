@@ -7,7 +7,7 @@ cualquier sesión futura.
 
 Automatización que **recupera por WhatsApp** a los clientes potenciales que se guardan
 solos en Supabase (tabla `clientes_potenciales` de `periodistas-marketing`, la llena el
-webhook de Hotmart — ver [ARQUITECTURA-DATOS.md](../ads-agent/ARQUITECTURA-DATOS.md) y
+webhook de Hotmart — ver [ARQUITECTURA-DATOS.md](../../ads-agent/docs/ARQUITECTURA-DATOS.md) y
 tarjeta #25). Dos flujos según la columna `tipo`:
 
 - `carrito_abandonado` → 2 WhatsApp para que vuelvan y compren.
@@ -45,8 +45,12 @@ idioma `es`, una variable `{{1}}` = nombre + botón URL con `?src=`):
 | `recup_rechazo_1` | rechazo, al instante | Reintentar mi pago |
 | `recup_rechazo_2` | rechazo, día siguiente | Completar mi pago |
 
-Los botones vuelven a la landing con `?src=recup-abandono` / `?src=recup-rechazo` → la
-venta recuperada queda **atribuida** en la tabla `ventas`.
+Los botones/enlaces van **directo al checkout de Hotmart** (`pay.hotmart.com/P106404871J`)
+con `?src=recup-abandono` / `?src=recup-rechazo` → quien ya abandonó/rechazó vuelve derecho
+a pagar (no a la landing), y el `?src=` deja la venta recuperada **atribuida** en `ventas`.
+El **email** de fallback ya apunta al checkout. ⚠️ Las **plantillas de WhatsApp** aprobadas
+tienen su URL de botón fija; si todavía apuntan a la landing hay que re-enviarlas a
+aprobación de Meta para alinearlas al checkout (tarea pendiente aparte).
 
 ## Estado por persona (tabla `clientes_potenciales`)
 
@@ -63,9 +67,13 @@ duplica el mensaje.
 
 ## Cómo responde Jose desde el celu
 
-Las respuestas del cliente llegan al **número de WhatsApp Business** (no al WhatsApp
-personal de Jose). Se leen y contestan desde la app **Meta Business Suite** (bandeja de
-WhatsApp) en el teléfono.
+Las respuestas del cliente llegan al bot de Telegram **@Periodistasdigitalesbot** (puente
+WhatsApp↔Telegram, LIVE 2026-07-03). Jose las lee ahí y contesta **deslizando el mensaje →
+"Responder"**; la respuesta sale por WhatsApp. Gratis dentro de la ventana de 24 h. Detalle
+completo en [PUENTE-WHATSAPP-TELEGRAM.md](PUENTE-WHATSAPP-TELEGRAM.md).
+
+> ❌ **NO** se usa la bandeja de Meta Business Suite: el número está en la Cloud API y esa
+> bandeja exige el número en la *app* WhatsApp Business (incompatible). Por eso el puente.
 
 ## Modos (para probar sin romper nada)
 
@@ -105,8 +113,72 @@ Todas ya existen menos el interruptor:
 Operativa: cada carrito/rechazo nuevo recibe el WhatsApp al instante; el recordatorio y el
 backlog pendiente (Juan) los manda el cron de las 12:00 ART.
 
+## ⚠️ Hueco de captura: rechazos de tarjeta (tarjeta #36) — solución vía API
+
+**Diagnóstico (2026-07-03, verificado contra la doc de Hotmart):** el webhook **nunca** va
+a traer un rechazo de tarjeta. No es que falte habilitar un evento — es que **no existe**.
+Los estados del webhook de Hotmart son `approved, canceled, billet_printed, refunded,
+dispute, completed, blocked, chargeback, delayed, expired`: **ninguno es "tarjeta
+rechazada/declined"**. Cuando una tarjeta se rechaza en el momento, la persona sigue en el
+checkout (puede reintentar), así que Hotmart no crea un "purchase" que notificar. El informe
+**Motivos de rechazo de la tarjeta** (`app.hotmart.com/reports/cancellation/reason`) es
+**solo un panel** exportable a CSV/XLS — sin webhook ni API documentada de ese informe.
+Evidencia: al 2026-07-02 `clientes_potenciales` no tenía **ningún** `pago_rechazado` real
+pese a haber rechazos en el panel (el único cargado, Nelson, fue a mano).
+
+**Solución (la vía que SÍ funciona):** la **Sales History API** de Hotmart (la misma que ya
+usa `ads-agent/scripts/datos/hotmart-sync.mjs` para las ventas) **sí devuelve** las transacciones
+rechazadas, con estados `NO_FUNDS` (sin fondos), `BLOCKED` (banco/antifraude), `CANCELLED`,
+`EXPIRED`, `OVERDUE`. El sync ahora, además de las ventas, **captura esos rechazos** (de los
+últimos N días, default 3) y los inserta en `clientes_potenciales` como `pago_rechazado` →
+el cron diario de este motor los agarra y les manda `recup_rechazo_1` solo. El 1er mensaje
+no es instantáneo como en el webhook (es batch, hasta ~1 día de demora), pero entra solo.
+
+**Estado (2026-07-03):** ✅ código escrito (`scripts/datos/hotmart-sync.mjs`, funciones `fetchRechazos` /
+`mapToPotencial` / `syncRechazos`) y sintaxis validada. 🔴 **BLOQUEADO** en lo mismo que el
+backfill de ventas: la credencial de la API de Hotmart da **403** (`unauthorized_client`,
+sin scope de Ventas/Reportes). En cuanto Jose habilite ese permiso, se destraban las dos
+cosas. Detalle en [ads-agent/docs/ARQUITECTURA-DATOS.md](../../ads-agent/docs/ARQUITECTURA-DATOS.md).
+Para que "entren solos" a diario falta además dejar el sync de cron (ver esa doc).
+
+**Matiz importante (del CSV real de Nelson, 03/07):** los rechazos de tarjeta figuran en
+Hotmart con **Estatus = "Cancelado"** (son transacciones reales: HP0978768683, etc.). Como el
+02/07 activamos el evento **"Compra cancelada"** (`PURCHASE_CANCELED` → `pago_rechazado` en
+`classifyPotencial`) y los de Nelson son del **30/06** (previos a activarlo), no entraron. →
+Queda una **duda abierta, posiblemente favorable**: puede que los rechazos **nuevos** (del
+02/07 en adelante) **ya entren solos por el webhook** como "Compra cancelada". **Prueba
+pendiente:** cuando haya un rechazo real nuevo, ver si aparece solo en `clientes_potenciales`.
+Si aparece, el hueco ya está cerrado por el webhook para el caso "Cancelado" y no hace falta
+ni CSV ni API. Si no aparece, se usa el puente CSV (abajo) o la API.
+
+### Puente manual por CSV (disponible ya, sin la API)
+
+Mientras la API sigue bloqueada, los rechazos se cargan desde el **CSV** que Hotmart deja
+exportar del panel (Mis análisis → Ventas perdidas → **Motivos de rechazo de la tarjeta** →
+Exportar CSV). Importador: **`ads-agent/scripts/datos/hotmart-rechazos-csv.mjs`** (probado 2026-07-03).
+
+- Jose exporta el CSV y pasa la ruta. Claude corre `node scripts/datos/hotmart-rechazos-csv.mjs <archivo>`
+  → muestra el mapeo de columnas detectado + resumen (cuántas filas, a cuántas se les
+  mandará WhatsApp, rango de fechas). Se revisa con Jose ANTES de insertar.
+- Con el OK, Claude corre `--json` e inserta en `clientes_potenciales` vía el MCP de Supabase
+  (`jsonb_to_recordset` + `ON CONFLICT (dedup_key) DO NOTHING` → nunca duplica; no necesita
+  la service_role key). `evento_hotmart='CSV_MOTIVOS_RECHAZO'`, `dedup_key=hotmart:<tx>`
+  (mismo esquema que la API → si después llega por API no se duplica).
+- Una vez insertados, el **cron de recuperación** les manda `recup_rechazo_1` en su próxima
+  corrida. ⚠️ Ojo: mete a TODOS los del CSV con teléfono, sin filtro de antigüedad → exportar
+  solo rechazos recientes, o pedir un recorte por fecha. Anti-acoso ya saltea a quien compró.
+
 ## Historial
 
+- **2026-07-02 — primeros envíos reales (forzados a mano):** el motor estaba LIVE pero no
+  había mandado ningún mensaje real todavía. Se contactó a los 2 clientes potenciales
+  cargados disparando `GET /api/recuperacion?mode=live`:
+  - **Juan Aguilera** (carrito abandonado, entró 12:53 UTC, antes de encender el sistema →
+    se había saltado el cron): recibió `recup_abandono_1`.
+  - **Nelson Vásquez** (3 rechazos de tarjeta el 30/06 — pre-sistema; se **cargó a mano** a
+    `clientes_potenciales` como `pago_rechazado`, dedup_key `manual:pago_rechazado:...`):
+    recibió `recup_rechazo_1`.
+  Ambos quedaron `contactado`/paso 1; el paso 2 lo manda el cron. Ver hueco de captura arriba.
 - Se armó primero una versión por **email** (Brevo). Jose pidió cambiarlo a **WhatsApp**
   (más cercano) y que el 1er mensaje sea **instantáneo**. El motor, el estado, el
   anti-acoso, la atribución, el interruptor y el reporte se reusaron tal cual; solo cambió

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hashtags imán: sets por país y nicho para periodistas</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+.page-inner { width:100%; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:24px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(34,211,238,.2) 0%, transparent 70%); pointer-events:none; }
+.cover-logo-row { display:flex; align-items:center; gap:16px; margin-bottom:40px; }
+.cover-mark { width:72px; height:72px; flex-shrink:0; }
+.cover-mark img { width:100%; height:100%; object-fit:contain; }
+.cover-brandname { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.6rem; color:var(--text); letter-spacing:-.01em; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.3rem,6vw,3.5rem); margin-bottom:20px; max-width:600px; }
+.cover-sub { color:var(--muted); font-size:1.12rem; max-width:520px; margin-bottom:24px; }
+.cover-countries { font-size:.82rem; font-weight:600; letter-spacing:.04em; color:var(--indigo); }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:15px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.05rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.1rem; margin-bottom:20px; }
+h3 { font-size:1.25rem; margin:26px 0 10px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+ol.steps { list-style:none; margin:0 0 24px; padding:0; counter-reset: step; display:flex; flex-direction:column; gap:16px; }
+ol.steps li { position:relative; padding-left:44px; color:var(--muted); counter-increment: step; }
+ol.steps li::before {
+    content: counter(step,decimal-leading-zero);
+    position:absolute; left:0; top:-2px;
+    width:30px; height:30px; border-radius:50%;
+    background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4);
+    color: var(--cyan); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.8rem;
+    display:flex; align-items:center; justify-content:center;
+}
+ol.steps li strong { color:var(--text); }
+
+/* ── SET CARD ── */
+.country-eyebrow { font-size:.74rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--indigo); margin-bottom:10px; }
+.set-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 22px; margin-bottom:14px; }
+.set-head { display:flex; align-items:center; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
+.set-badge { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:.72rem; letter-spacing:.04em; color:var(--cyan); background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.3); border-radius:8px; padding:4px 10px; white-space:nowrap; }
+.set-card h3 { margin:0; font-size:1.05rem; }
+.set-for { font-size:.85rem; color:var(--muted); margin-bottom:12px; }
+.hashtag-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .8rem;
+    line-height: 1.75;
+    color: #a5b4fc;
+    word-spacing: 3px;
+}
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout strong { color:#fde68a; }
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 22px;
+    margin: 24px 0;
+    font-size: 1.12rem;
+    color: var(--text);
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:500;
+    line-height:1.4;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 8px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:0; }
+
+.cal-table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:.85rem; }
+.cal-table th, .cal-table td { padding:12px 14px; border:1px solid var(--border); color:var(--muted); text-align:left; }
+.cal-table th { color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; background:rgba(99,102,241,.08); }
+.cal-table td:first-child { color:var(--text); font-weight:600; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.set-card, .hashtag-box, .callout, .callout-green, .quote, .cta-box, .cal-table { page-break-inside: avoid; break-inside: avoid; }
+h2, h3 { page-break-after: avoid; break-after: avoid; }
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-logo-row">
+        <div class="cover-mark"><img src="logo-periodistas-digitales.png" alt="Periodistas Digitales"></div>
+        <div class="cover-brandname">Periodistas Digitales</div>
+    </div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Sets por país y nicho</div>
+        <h1>Hashtags imán: el truco para <span class="accent">ser viral</span> sin pagar publicidad.</h1>
+        <p class="cover-sub">La guía definitiva para periodistas digitales que quieren ampliar su alcance en Instagram y Facebook. 24 sets listos para copiar, pegar y publicar con estrategia.</p>
+        <div class="cover-countries">ESPAÑA · MÉXICO · ARGENTINA · COLOMBIA · SETS UNIVERSALES</div>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── ÍNDICE ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Índice</div>
+    <h2>Qué vas a encontrar acá</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Por qué importan los hashtags correctos</div><div class="toc-desc">El problema más común y la solución estratégica</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">Sets por país: España, México, Argentina y Colombia</div><div class="toc-desc">14 sets especializados por nicho, listos para usar</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Sets universales para cualquier país</div><div class="toc-desc">10 sets que funcionan sin importar desde dónde publiques</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">¿Tu país no aparece? Cómo adaptar cualquier set</div><div class="toc-desc">Un método de tres pasos para armar el tuyo</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">Rotación semanal: el secreto para no perder alcance</div><div class="toc-desc">Por qué rotar y cómo hacerlo sin esfuerzo</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">Tu plan de acción</div><div class="toc-desc">Cinco pasos para empezar en tu próxima publicación</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── POR QUÉ ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — Antes de copiar nada</div>
+    <h2>¿Por qué importan los hashtags correctos?</h2>
+    <h3>El problema más común</h3>
+    <p>La mayoría de los medios digitales nuevos cometen uno de estos tres errores: no usan hashtags, usan siempre los mismos, o eligen hashtags masivos tan saturados que su publicación desaparece en segundos. Un hashtag como <strong>#Noticias</strong> tiene millones de publicaciones: tu post compite con medios internacionales, agencias, bots y cuentas virales. El resultado es visibilidad casi nula.</p>
+    <h3>La solución estratégica</h3>
+    <p>Los hashtags de nicho y país funcionan mejor porque llegan exactamente al lector que busca ese tipo de contenido. Alguien que sigue <strong>#PoliticaEspaña</strong> ya está interesado en política española — y es mucho más probable que interactúe con tu publicación. Esta guía organiza los hashtags en sets listos para usar, agrupados por país y nicho. No necesitas investigar desde cero: copia, pega y adapta.</p>
+    <div class="callout">
+        <strong>Regla de oro:</strong> mezcla siempre hashtags de nicho con alguno general. Nunca uses más de 2 hashtags masivos en el mismo post.
+    </div>
+  </div>
+</section>
+
+<!-- ─── ESPAÑA 1 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">España · Sets 1 a 4</div>
+    <h2>Sets para España</h2>
+    <p>Cuatro sets especializados para los principales nichos del periodismo español. Copia el set completo que corresponda a tu publicación del día.</p>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 1</span><h3>Política local y nacional</h3></div>
+        <div class="set-for">Para partidos, elecciones, ayuntamientos, gobierno regional o nacional.</div>
+        <div class="hashtag-box">#PoliticaEspaña #EspañaPolitica #GobiernoEspaña #Congreso #Senado #EleccionesEspaña #PoliticaLocal #Ayuntamiento #Municipios #Autonomias #NoticiasEspaña #ActualidadEspaña #EspañaHoy #Noticias #PeriodismoDigital</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 2</span><h3>Economía y empresa</h3></div>
+        <div class="set-for">Para mercado laboral, pymes, emprendimiento, finanzas personales o bolsa.</div>
+        <div class="hashtag-box">#EconomiaEspaña #EmpresasEspaña #Emprendimiento #PYMEs #MercadoLaboral #FinanzasEspaña #BolsaEspaña #EconomiaNacional #TrabajoEspaña #Startups #NoticiasEconomia #ActualidadEconomica #EmprendedoresEspaña #Negocios</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ESPAÑA 2 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">España · Sets 1 a 4</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 3</span><h3>Cultura y sociedad</h3></div>
+        <div class="set-for">Para cine, teatro, literatura, música, patrimonio, festivales o tendencias sociales.</div>
+        <div class="hashtag-box">#CulturaEspaña #ArteEspaña #CineEspañol #TeatroEspaña #MusicaEspaña #PatrimonioEspaña #Festivales #LiteraturaEspaña #SociedadEspaña #CulturaDigital #NoticiasCultura #CulturaHispana #Actualidad #PeriodismoCultural</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 4</span><h3>Deportes</h3></div>
+        <div class="set-for">Para fútbol, tenis, baloncesto, atletismo o cualquier deporte de alcance nacional o regional.</div>
+        <div class="hashtag-box">#DeportesEspaña #FutbolEspaña #LaLiga #SeleccionEspaña #BasketEspaña #TenisEspaña #AtletismoEspaña #PadelEspaña #DeportesHoy #NoticiasDeportes #FutbolLocal #CompeticionesEspaña #DeporteNacional</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MÉXICO 1 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">México · Sets 5 a 8</div>
+    <h2>Sets para México</h2>
+    <p>Cuatro sets adaptados a la realidad informativa mexicana, desde las instituciones federales hasta la cultura popular y el nearshoring.</p>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 5</span><h3>Política y gobierno</h3></div>
+        <div class="set-for">Para presidencia, congreso, partidos, elecciones, gobernadores o presidentes municipales.</div>
+        <div class="hashtag-box">#PoliticaMexico #GobiernoMexico #Congreso #Diputados #SenadoMexico #EleccionesMexico #PresidenciaMexico #GobernadorMexico #MunicipiosMexico #NoticiasMexico #ActualidadMexicana #MexicoHoy #Noticias</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 6</span><h3>Salud y educación</h3></div>
+        <div class="set-for">Para hospitales, IMSS, SEP, escuelas, universidades o becas.</div>
+        <div class="hashtag-box">#SaludMexico #IMSSMexico #SaludPublica #MedicinaPreventiva #VacunasMexico #EducacionMexico #SEP #EscuelasMexico #UniversidadesMexico #UNAM #BecasMexico #EducacionPublica #NoticiasEducacion #SaludDigital</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MÉXICO 2 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">México · Sets 5 a 8</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 7</span><h3>Economía y negocios</h3></div>
+        <div class="set-for">Para peso mexicano, inversión, exportaciones, pymes, nearshoring o economía regional.</div>
+        <div class="hashtag-box">#EconomiaMexico #NegociosMexico #EmpresasMexicanas #Exportaciones #PesoMexicano #InversionMexico #Nearshoring #EmprendimientoMexico #PYMEsMexico #Finanzas #EconomiaRegional #NoticiasEconomia #MercadoMexicano</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 8</span><h3>Sociedad y cultura</h3></div>
+        <div class="set-for">Para comunidades, tradiciones, migración, gastronomía o temas sociales.</div>
+        <div class="hashtag-box">#CulturaMexicana #SociedadMexicana #TradicionesMexico #GastronomiaMexicana #CineMexicano #MusicaMexicana #MigracionMexico #IndigenaMexico #NoticiasLocales #ComunidadesMexico #Actualidad #MexicoCultural #PeriodismoSocial</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARGENTINA ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Argentina · Sets 9 a 11</div>
+    <h2>Sets para Argentina</h2>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 9</span><h3>Política y economía</h3></div>
+        <div class="set-for">Casa Rosada, inflación, dólar, deuda, partidos, provincias.</div>
+        <div class="hashtag-box">#PoliticaArgentina #GobiernoArgentino #CasaRosada #DiputadosArgentina #SenadoArgentina #InflacionArgentina #EconomiaArgentina #DolarArgentina #NoticiasArgentina #ArgentinaHoy #Actualidad #ProvinciaArgentina</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 10</span><h3>Cultura y entretenimiento</h3></div>
+        <div class="set-for">Tango, cine, literatura, gastronomía, teatro o cultura popular.</div>
+        <div class="hashtag-box">#CulturaArgentina #TangoArgentino #CineArgentino #LiteraturaArgentina #ArteArgentino #GastronomiaArgentina #BuenosAires #PatagoniaArgentina #NoticiasCultura #ArgentinaCultural #FestivalesArgentina #TeatroArgentino</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 11</span><h3>Deportes</h3></div>
+        <div class="set-for">Fútbol, Selección, AFA, tenis, rugby, polo o competiciones nacionales.</div>
+        <div class="hashtag-box">#DeportesArgentina #FutbolArgentino #AFA #SeleccionArgentina #RiverPlate #BocaJuniors #TenisArgentino #PoloArgentino #RugbyArgentino #BasquetArgentino #DeportesHoy #NoticiasDeportivas #CampeonatosArgentina</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COLOMBIA ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Colombia · Sets 12 a 14</div>
+    <h2>Sets para Colombia</h2>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 12</span><h3>Política y gobierno</h3></div>
+        <div class="set-for">Presidencia, congreso, alcaldías, partidos, elecciones o gestión pública.</div>
+        <div class="hashtag-box">#PoliticaColombia #GobiernoColombiano #CongresoColombiano #AlcaldiaBogota #EleccionesColombia #SenadoColombia #GobernadorColombia #ColombiaHoy #ActualidadColombia #GestionPublica #Noticias</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 13</span><h3>Economía y desarrollo</h3></div>
+        <div class="set-for">Café, petróleo, inversión extranjera, exportaciones, empresas o emprendimiento.</div>
+        <div class="hashtag-box">#EconomiaColombia #CafeColombia #PetroleoColombiano #ExportacionesColombia #EmpresasColombianas #EmprendimientoColombia #InversionColombia #TurismoColombia #NegociosColombia #NoticiasEconomia #PIBColombia</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 14</span><h3>Sociedad, salud y educación</h3></div>
+        <div class="set-for">Comunidades, paz, educación, salud pública o temas sociales colombianos.</div>
+        <div class="hashtag-box">#SociedadColombia #SaludColombia #EducacionColombia #PazColombia #ComunidadesColombia #MinEducacion #SaludPublicaColombia #VictimasColombia #ReconciliacionColombia #PeriodismoSocial #Actualidad</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNIVERSALES INTRO + 15,16 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">03 — Válidos para cualquier país</div>
+    <h2>Sets universales</h2>
+    <p>Estos sets funcionan sin importar desde qué país publiques. Úsalos solos o combínalos con un set de tu país para ampliar el alcance internacional. Son especialmente útiles para medios que cubren temas que trascienden fronteras.</p>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 15</span><h3>Periodismo digital general</h3></div>
+        <div class="set-for">Para publicaciones generales o cuando quieres alcance internacional.</div>
+        <div class="hashtag-box">#PeriodismoDigital #Periodistas #Noticias #Actualidad #MedioDigital #NoticiasOnline #InformacionVerificada #PeriodismoEtico #MediosIndependientes #PeriodismoLatino #ComunidadPeriodistas #EjercerElPeriodismo</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 16</span><h3>Política y gobierno</h3></div>
+        <div class="set-for">Para democracia, elecciones, corrupción o gestión pública en cualquier país.</div>
+        <div class="hashtag-box">#PoliticaInternacional #DemocraciaLatina #GobiernoTransparente #Elecciones #CorrupcionPolitica #DerechoCiudadano #PoderPublico #RendirCuentas #PoliticaHoy #GestionPublica #LibertadDeExpresion #EstadoDeDerecho</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNIVERSALES 17,18 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Sets universales · 15 a 24</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 17</span><h3>Economía y negocios</h3></div>
+        <div class="set-for">Para mercados globales, emprendimiento, finanzas personales o inflación.</div>
+        <div class="hashtag-box">#EconomiaLatina #EconomiaGlobal #Emprendimiento #Finanzas #MercadosEmergentes #CrecimientoEconomico #Inflacion #DesarrolloEconomico #Negocios #Pymes #EconomiaDigital #Inversion #EmpresaLatina #FinanzasPersonales</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 18</span><h3>Salud pública</h3></div>
+        <div class="set-for">Para salud, medicina, sistemas sanitarios, epidemias, salud mental o bienestar.</div>
+        <div class="hashtag-box">#SaludPublica #SaludLatina #MedicinaPreventiva #SaludMental #Bienestar #SistemaDeSalud #SaludDigital #EnfermedadesCronicas #Epidemiologia #AccesoSalud #MedicoDigital #SaludComunitaria #PeriodismoSalud</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNIVERSALES 19,20 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Sets universales · 15 a 24</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 19</span><h3>Educación</h3></div>
+        <div class="set-for">Para escuelas, universidades, políticas educativas, tecnología en el aula o acceso a la educación.</div>
+        <div class="hashtag-box">#EducacionLatina #EducacionDigital #CalidadEducativa #EscuelasPublicas #UniversidadesLatinas #AccesoEducacion #TecnologiaEducativa #DocentesLatinos #AprendizajeDigital #EducacionIncluyente #ReformaEducativa #PeriodismoEducativo</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 20</span><h3>Cultura y entretenimiento</h3></div>
+        <div class="set-for">Para cine, música, arte, literatura, festivales o tendencias culturales en cualquier país hispanohablante.</div>
+        <div class="hashtag-box">#CulturaLatina #CineLatino #MusicaLatina #ArteLatino #LiteraturaLatina #FestivalesLatinos #CulturaHispana #ArteDigital #PatrimonioLatino #CulturaPopular #CreativosLatinos #PeriodismoCultural #CulturaHoy</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNIVERSALES 21,22 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Sets universales · 15 a 24</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 21</span><h3>Deportes internacionales</h3></div>
+        <div class="set-for">Para Copa América, Mundiales, Juegos Olímpicos u otros eventos deportivos globales.</div>
+        <div class="hashtag-box">#DeportesLatinos #FutbolLatino #CopaAmerica #MundialFutbol #JuegosOlimpicos #DeportesInternacionales #AtletismoLatino #TenisLatino #DeportesHoy #CampeonatosInternacionales #SeleccionNacional #DeporteYSociedad</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 22</span><h3>Tecnología e innovación</h3></div>
+        <div class="set-for">Para inteligencia artificial, redes sociales, ciberseguridad, innovación o transformación digital.</div>
+        <div class="hashtag-box">#TecnologiaLatina #InteligenciaArtificial #InnovacionDigital #Ciberseguridad #TransformacionDigital #TechLatino #StartupLatino #EmprendimientoTech #RedesSociales #TecnologiaEducativa #FuturoDigital #PeriodismoTecnologico #BigData #EconomiaDigital</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNIVERSALES 23,24 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="country-eyebrow">Sets universales · 15 a 24</div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 23</span><h3>Medioambiente</h3></div>
+        <div class="set-for">Para cambio climático, energías renovables, desastres naturales, biodiversidad o políticas ambientales.</div>
+        <div class="hashtag-box">#MedioAmbienteLatino #CambioClimatico #SostenibilidadLatina #EnergiaRenovable #BiodiversidadLatina #DesastreNatural #EcologiaLatina #AmazoniaLatina #CrisisClimatica #AguaLatina #PoliticaAmbiental #PeriodismoAmbiental #COP #AccionClimatica</div>
+    </div>
+    <div class="set-card">
+        <div class="set-head"><span class="set-badge">SET 24</span><h3>Sociedad y derechos humanos</h3></div>
+        <div class="set-for">Para igualdad, migraciones, pobreza, derechos de la mujer, comunidades vulnerables o cohesión social.</div>
+        <div class="hashtag-box">#SociedadLatina #DerechosHumanos #IgualdadLatina #MigracionLatina #DerechosdelaMujer #PobrezaLatina #JusticiaSocial #ComunidadesVulnerables #InclusionSocial #ViolenciaDeGenero #DerechosCiviles #PeriodismoSocial #SolidaridadLatina #VozCiudadana</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ADAPTAR ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 — Si tu país no está en la lista</div>
+    <h2>Cómo adaptar cualquier set a tu país</h2>
+    <p>Si publicas desde Venezuela, Chile, Perú, Ecuador, Bolivia, Uruguay, Paraguay, Guatemala, Honduras, El Salvador, Costa Rica, Panamá, República Dominicana u otro país hispanohablante, sigue este método de tres pasos para construir tu propio set.</p>
+    <ol class="steps">
+        <li><strong>Parte de un set universal</strong> del nicho que cubres (política, economía, cultura, etc.).</li>
+        <li><strong>Sustituye la etiqueta de país por la tuya</strong> y suma tu ciudad capital — por ejemplo, cambia el genérico por #EconomiaChile y #Santiago.</li>
+        <li><strong>Investiga 2 hashtags locales</strong> que ya usen los medios establecidos de tu país en Instagram, y añádelos a tu rotación como hashtags fijos de referencia.</li>
+    </ol>
+    <div class="callout-green">
+        <strong>Ejemplo concreto</strong> — periodista de Chile cubriendo economía: <em>[Set Universal · Economía]</em> + #EconomiaChile #ChileHoy #NoticiasChile #Santiago. Esta mezcla combina alcance local con alcance internacional — la combinación más eficaz disponible.
+    </div>
+    <p>No necesitas reinventar la rueda: observa a quienes ya tienen audiencia en tu país y suma sus hashtags de referencia a los tuyos.</p>
+  </div>
+</section>
+
+<!-- ─── ROTACIÓN ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">05 — El secreto para no perder alcance</div>
+    <h2>Rotación semanal</h2>
+    <p>Los algoritmos de Instagram y Facebook detectan cuando siempre usas los mismos hashtags y reducen el alcance de tus publicaciones: la repetición se penaliza como comportamiento de spam. La solución es simple: alterna entre tu set de país y los sets universales de tu nicho. Esto mantiene la relevancia local y suma audiencia internacional al mismo tiempo.</p>
+    <h3>Ejemplo de rotación — medio de política en España</h3>
+    <table class="cal-table">
+        <tr><th>Semana</th><th>Set que usas</th></tr>
+        <tr><td>Semana 1</td><td>España · Política (Set 1)</td></tr>
+        <tr><td>Semana 2</td><td>Universal · Política (Set 16)</td></tr>
+        <tr><td>Semana 3</td><td>España · Política (Set 1)</td></tr>
+        <tr><td>Semana 4</td><td>Universal · General (Set 15)</td></tr>
+    </table>
+    <div class="callout">
+        <strong>Coherencia temática:</strong> si publicas sobre varios nichos en la semana, usa un set distinto por nicho. Nunca mezcles sets de nichos diferentes en una misma publicación — el algoritmo premia la coherencia.
+    </div>
+  </div>
+</section>
+
+<!-- ─── PLAN DE ACCIÓN ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Tu plan de acción</div>
+    <h2>Todo lo que necesitas para empezar hoy</h2>
+    <ol class="steps">
+        <li><strong>Identifica tu país y nicho.</strong> ¿Estás en España, México, Argentina o Colombia? ¿Cubres política, economía, cultura o deportes? Localiza el set correspondiente en esta guía.</li>
+        <li><strong>Copia tu set principal.</strong> Selecciona el set de tu país y nicho (Sets 1 a 14). Este será tu set base: tenlo guardado y listo para pegar en cada publicación relevante.</li>
+        <li><strong>Elige tu set universal de rotación.</strong> Empareja tu set de país con el set universal del mismo nicho (Sets 15 a 24). Altérnalo semana a semana para no repetir y ampliar tu alcance internacional.</li>
+        <li><strong>Adapta si tu país no está listado.</strong> Usa los tres pasos de adaptación: sustituye la etiqueta de país, añade tu ciudad capital e investiga 2 hashtags locales de medios establecidos.</li>
+        <li><strong>Aplica la regla de oro.</strong> Nunca más de 2 hashtags masivos por post, siempre mezcla nicho + general, y rota los sets cada semana.</li>
+    </ol>
+    <div class="callout-green">
+        <strong>Estos tres hábitos marcan la diferencia entre publicar y crecer:</strong> nicho + general en cada post, rotación semanal, y adaptación a tu país. Empieza en tu próxima publicación.
+    </div>
+  </div>
+</section>
+
+<!-- ─── CIERRE MARCA ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Acerca de este recurso</div>
+    <h2>Periodistas Digitales</h2>
+    <p>Este set de hashtags es parte del trabajo de <strong>Periodistas Digitales</strong>: ayudamos a periodistas y comunicadores a hacer crecer sus medios en redes con estrategia, sin depender de la publicidad paga.</p>
+    <p>Guárdalo a mano y vuelve a él cada vez que prepares una publicación. La constancia y la estrategia, juntas, son lo que convierte una cuenta nueva en un medio con audiencia real.</p>
+    <div class="cta-box">
+        <h3>Empieza con tu próximo post</h3>
+        <p>Elige tu set, mézclalo con el universal de tu nicho, y publica con la estrategia que la mayoría de los medios nuevos todavía no usa.</p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>

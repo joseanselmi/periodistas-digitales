@@ -1,0 +1,11 @@
+Vas a una entrevista con un funcionario público con 20 años de historial.
+
+Normalmente: 2 horas revisando notas viejas, buscando declaraciones anteriores, armando preguntas.
+
+Con NotebookLM: 15 minutos.
+
+Acá te muestro cómo.
+
+👉 Deslizá para ver el proceso exacto.
+
+#PeriodismoIA #TipsParaPeriodistas #NotebookLM

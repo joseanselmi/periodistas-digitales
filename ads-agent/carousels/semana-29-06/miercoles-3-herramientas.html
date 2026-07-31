@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>3 herramientas de IA — Miércoles 1/07</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.08; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:30px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.tag { display:inline-block; background:rgba(34,211,238,.12); color:#22d3ee; font-size:18px; font-weight:700; padding:6px 16px; border-radius:100px; margin-bottom:16px; }
+.num { font-size:120px; font-weight:900; line-height:1; background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip práctico · Miércoles</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>3 herramientas<br>de IA que podés<br><span class="accent">usar hoy mismo</span></h1>
+    <p class="lead">Gratis o casi gratis. Sin curso previo. Sin saber programar.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Herramienta 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="num">01</div>
+    <h2>Transcripción de<br>audio a texto</h2>
+    <p>Esa entrevista de 40 minutos que tenés que escuchar tres veces para sacar las citas exactas. La IA la transcribe completa en minutos, con marcas de tiempo.</p>
+    <p><strong>Te queda el trabajo real: elegir qué citar y verificar el contexto.</strong> No el de tipear mientras escuchás con un dedo en pausa.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Herramienta 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="num">02</div>
+    <h2>Resumen de<br>documentos largos</h2>
+    <p>Un fallo judicial de 80 páginas, un informe oficial, un PDF de presupuesto público. En vez de leerlo entero a las 11pm, le pedís a la IA un resumen con los puntos clave y las páginas exactas donde están.</p>
+    <p>Después vos leés esas páginas y confirmás. Más rápido, igual de riguroso.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Herramienta 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="num">03</div>
+    <h2>Titulares<br>alternativos<br>para probar</h2>
+    <p>Le pedís a la IA 8 versiones del mismo título con distintos ángulos. Probás dos o tres en redes y te quedás con el que mejor funciona.</p>
+    <p>Vos seguís decidiendo qué historia contar. La IA solo te da más opciones de cómo presentarla.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Última →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Para reflexionar</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Ninguna de estas<br>tres reemplaza<br><span class="accent">tu criterio.</span></h2>
+    <p>Todas te devuelven tiempo. Y ese tiempo es el que decidís qué hacer con él.</p>
+    <p>¿Cuál de las tres usarías primero? Contanos en los comentarios.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

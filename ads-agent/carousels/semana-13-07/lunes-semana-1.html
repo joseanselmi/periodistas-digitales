@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Semana 1 del sistema — Lunes 13/07</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:90px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.step { display:flex; align-items:flex-start; gap:20px; margin-bottom:28px; }
+.step-num { font-size:40px; font-weight:900; color:#6366f1; min-width:60px; }
+.step-text { font-size:30px; color:#cbd5e1; line-height:1.5; padding-top:4px; }
+.step-text strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Semana 1 del sistema</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>Tu nicho<br>y tu primera<br><span class="accent">nota</span> en<br>7 días.</h1>
+    <p class="lead">El plan exacto para la primera semana de tu periódico digital. Sin web, sin equipo, sin inversión.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver los pasos →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Elegí un tema,<br>no <span class="accent">una sección.</span></h2>
+    <div class="divider"></div>
+    <p>"Política" es una sección. <strong>"Lo que nadie te cuenta del transporte público en tu ciudad"</strong> es un nicho.</p>
+    <p>Cuanto más específico, más fácil es que la gente sepa por qué seguirte a ti y no a un medio grande.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Validá el nicho<br>en <span class="accent">un día,</span><br>no en un mes.</h2>
+    <div class="divider"></div>
+    <p>Buscá el tema en grupos de Facebook, foros y comentarios de noticias. <strong>¿La gente se queja? ¿Pregunta? ¿Discute?</strong></p>
+    <p>Si hay conversación activa, hay audiencia esperando a alguien que la organice mejor que nadie.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Tu primera nota<br>en <span class="accent">4 pasos.</span></h2>
+    <div class="divider"></div>
+    <div class="step"><span class="step-num">1.</span><span class="step-text">Elegí un hecho concreto de tu nicho (no una opinión)</span></div>
+    <div class="step"><span class="step-num">2.</span><span class="step-text">Usá IA para armar el primer borrador en minutos</span></div>
+    <div class="step"><span class="step-num">3.</span><span class="step-text">Editá con tu voz: lo que sabés tú, no lo sabe la IA</span></div>
+    <div class="step"><span class="step-num">4.</span><span class="step-text">Publicá donde ya está tu gente (no donde "debería" estar)</span></div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 4</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>No esperes<br>a tener <span class="accent">"todo listo".</span></h2>
+    <div class="divider"></div>
+    <p>Tu primera nota no necesita logo, ni web, ni diseño perfecto.</p>
+    <p>Necesita salir. <strong>El feedback real solo llega cuando alguien la lee.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Última →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Resumen</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Nicho. Validación.<br>Nota. <span class="accent">Publicar.</span></h2>
+    <div class="divider"></div>
+    <p class="lead">Eso es la semana 1. Nada más complicado que eso.</p>
+    <p>¿Ya tenés definido tu nicho o todavía estás dudando entre varios? Contámelo en los comentarios.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

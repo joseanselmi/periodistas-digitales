@@ -1,0 +1,50 @@
+{
+  "_comentario": [
+    "Fuentes del Radar de Tendencias. Una entrada por TEMA; cada tema es una lista",
+    "curada de cuentas de TikTok (sin la @).",
+    "",
+    "POR QUE CUENTAS Y NO PALABRAS CLAVE: TikTok cerro la busqueda por keyword",
+    "(devuelve captcha) y los hashtags piden registro de app. Los PERFILES publicos",
+    "si se leen gratis. Ademas, editorialmente es mejor: seguis fuentes, no palabras,",
+    "que es como trabaja una redaccion. Menos ruido y vos controlas la calidad.",
+    "",
+    "COMO ELEGIR LAS CUENTAS: mezcla tres tipos.",
+    "  1) MEDIOS       -> confirman que algo ya es noticia (llegan tarde pero validan)",
+    "  2) PERIODISTAS  -> cuentas personales, publican antes que su medio",
+    "  3) VIRALES/CALLE-> cuentas de sucesos, vecinos, humor local. Aca explota PRIMERO.",
+    "El valor del radar sale sobre todo del grupo 3: es lo que un periodista no mira.",
+    "",
+    "IMPORTANTE: verifica cada handle antes de agregarlo (abri tiktok.com/@handle).",
+    "Un handle inexistente no da error, simplemente devuelve 0 videos y no te enteras.",
+    "Se chequean todos de una con:  node scripts/agentes/radar-tendencias.mjs --verificar"
+  ],
+
+  "temas": {
+    "madrid": {
+      "titulo": "Madrid — ultima hora",
+      "descripcion": "Sucesos, politica local y virales de la ciudad de Madrid.",
+      "contexto": "Audiencia: periodistas en Espana que cubren Madrid. Interesa lo que pueda convertirse en nota local en las proximas 24-48h.",
+      "cuentas": [
+        "rtve",
+        "telecincoes",
+        "elpais",
+        "20minutos"
+      ],
+      "_pendiente": "Faltan las cuentas del grupo 3 (virales/calle de Madrid), que son las que dan la primicia. Agregarlas y correr --verificar."
+    },
+
+    "argentina": {
+      "titulo": "Argentina — ultima hora",
+      "descripcion": "Sucesos, politica y virales de Argentina.",
+      "contexto": "Audiencia: periodistas argentinos. Interesa lo que pueda ser nota o zocalo en las proximas 24-48h.",
+      "cuentas": [
+        "todonoticias",
+        "infobae",
+        "clarincom",
+        "lanacioncom",
+        "c5n"
+      ],
+      "_pendiente": "Faltan las cuentas del grupo 3 (virales/sucesos/vecinos), que son las que dan la primicia. Agregarlas y correr --verificar."
+    }
+  }
+}

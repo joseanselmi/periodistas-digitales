@@ -177,5 +177,11 @@ activar Leadr, marcado con `TODO Jose` en `asistente.js`.)
 - Es 1 número ↔ 1 Telegram (el de Jose). Alcanza para el volumen actual.
 - Para responder hay que usar **"Responder"** sobre el mensaje del cliente (así el bot sabe a
   quién mandar). Si Jose escribe suelto, el bot le recuerda cómo hacerlo.
-- Solo texto (los adjuntos entrantes llegan como `[imagen]`, `[audio]`, etc.; para verlos habría
-  que abrir la conversación por otro medio). Suficiente para el caso de uso actual.
+- **Adjuntos entrantes (desde 2026-07-11): sí se ven.** Cuando un cliente manda una foto,
+  nota de voz, video o documento, el bot baja el archivo de WhatsApp y **te lo reenvía a
+  Telegram como archivo de verdad** (además de la ficha con `🖼️ [imagen]`). Cómo: WhatsApp
+  no manda el archivo en el webhook, solo un `media id`; `wa.getMedia()` lo baja en 2 pasos
+  (GET `/{media-id}` → URL temporal → descarga con el token) y `tg.enviarMedia()` lo sube a
+  Telegram (`sendPhoto`/`sendVoice`/`sendVideo`/`sendDocument`, con reintento como documento
+  si el formato no entra). Cae en el mismo tema/chat que la ficha. Límite: 45 MB. Nació del
+  caso de Nelson (Ecuador, 10/07) que mandó una foto y solo se veía "[imagen]".

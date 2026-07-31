@@ -1,14 +1,21 @@
 {
-  "ultima_revision": "2026-07-02",
-  "anuncio_activo": "ad1-fomo (en Meta: 'Nuevo anuncio de Ventas', campaña 'Curso Sistema de ingresos diarios')",
-  "cpa_actual": 9.44,
-  "ctr_actual": 9.71,
-  "frecuencia_actual": 1.62,
-  "gasto_acumulado": 28.32,
-  "compras_acumuladas": 3,
-  "ventana": "30/06 → 02/07 (día 3)",
-  "decision": "MANTENER — CPA $9.44 bajo objetivo ($12), cerca del histórico ($10.19). NO escalar aún (requiere CPA<$8 x3 días). Geo Worldwide NO sangra (español mantiene en LatAm).",
-  "geo_ventas": "CO, DO, CR (todos geos buenos)",
-  "proxima_accion": "Chequeo día 4-5. Renombrar el anuncio en Meta a 'ad1-fomo · FOMO+IA' (housekeeping). Verificar en Hotmart que el 'Origen' de las ventas = ad1-fomo.",
-  "oportunidad_top": "Segmento 40-65 con CPA $6.33 nunca escalado — próximo test cuando haya base/margen"
+  "ultima_revision": "2026-07-08",
+  "anuncio_activo": "ad1-fomo (adset 'ad1-fomo · 30-55 intereses', campaña 'Curso Sistema de ingresos diarios para periodistas - VENTAS - Junio 2026')",
+  "ad_id": "120252823888070063",
+  "diagnostico_08_07_FINAL": {
+    "pregunta": "¿Por qué cayeron tanto los pagos iniciados (initiate_checkout) si no se tocó la landing?",
+    "hipotesis_descartadas": "1) 'Fatiga del creativo' → MAL (freq 1.36, sin saturación). 2) 'La edición del 05/07 reseteó el aprendizaje' → MAL: Jose confirmó que solo cambió el NOMBRE, y renombrar en Meta es cosmético (no resetea, no re-aprende). Confirmado por API: mismo ad ID corriendo sin cortes desde 29/06 → no hubo reset.",
+    "veredicto_real": "NO se rompió nada. La 'caída' es en gran parte (a) NORMALIZACIÓN post-lanzamiento — el ad arrancó el 30/06 con CTR inflado de 10% (pico de novedad) y se asentó en ~2.5-3% (su nivel real), y (b) RUIDO DE MUESTRA CHICA — los pagos iniciados diarios promedian ~4/día (267 LPV→29 init en 7d); a esa escala un día de 8 y uno de 1 son swings aleatorios normales, no un colapso. Prueba: día en curso ya de vuelta en 4 init + 1 compra, LPV 47.",
+    "serie_init_diaria": "30/06:9 · 01/07:7 · 02/07:5 · 03/07:3 · 04/07:3 · 05/07:8 · 06/07:2 · 07/07:1 · día en curso:4 → jumpy alrededor de una media ~4, NO un escalón",
+    "senal_real_menor": "El link-CTR sí se ablandó de verdad (~4.6% → ~2.5% en 8 días), pero es lo esperable cuando se asienta el pico de lanzamiento; con freq 1.36 no es fatiga. A vigilar, no a actuar.",
+    "no_es_lag": "Re-consulté 2 días después y los números malos no se rellenaron → real, no reporte incompleto.",
+    "no_es_la_pagina": "Pixel OK (compras el 07/07 y el día en curso); de los que clickean 69-97% llegan a la landing incluso los días malos."
+  },
+  "compras_7d": 3,
+  "gasto_7d_ad1": 68.01,
+  "frecuencia_actual": 1.36,
+  "recomendacion": "NO hacer nada. No está roto y ya rebota. Mirar el PROMEDIO MÓVIL de 3 días de pagos iniciados, no el número de un solo día (a ~4/día un día suelto es demasiado ruidoso para reaccionar). Refrescar con ad2-fomo2 (#39) SOLO si el promedio de 3 días sigue cayendo varios días más.",
+  "regla_aprendida": "A este volumen ($10/día, ~4 init/día) NO leer días sueltos: son ruido de Poisson. Reaccionar solo a tendencias de 3+ días. Y renombrar un anuncio en Meta es seguro (no resetea) — el mito de 'no tocar el nombre' no aplica; lo que sí resetea es editar creativo/targeting/optimización/budget.",
+  "proxima_accion": "Re-chequear el 11-12/07 el promedio móvil de 3 días de pagos iniciados. Si sigue bajando → publicar ad2-fomo2. Si se sostiene ~4-9/día → seguir igual y volver la energía al checkout (#40, la fuga real de COMPRAS).",
+  "caveat": "El checkout (86% abandono init→compra) sigue siendo la fuga de COMPRAS; es otro escalón y no tiene que ver con esta pregunta (que era sobre PAGOS INICIADOS)."
 }

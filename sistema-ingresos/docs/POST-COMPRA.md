@@ -7,21 +7,21 @@ cualquier sesión futura.
 Tres piezas:
 1. **Página de gracias** post-checkout (`/gracias`) — con la identidad de la landing.
 2. **Alta como `customer`** en la base de marketing (tabla nueva, cruza con #6).
-3. **Canal de Telegram** — bloque listo en la página pero apagado (el canal todavía no existe).
+3. **Canal de Telegram** — ✅ encendido (grupo creado, link de invitación en la página).
 
 ---
 
 ## 1. Página de gracias — `/gracias`
 
-- **Archivo:** [gracias.html](gracias.html). Servida en `https://sistemadeingresosdiariosia.com/gracias`
-  (rewrite `/gracias → /gracias.html` en [vercel.json](vercel.json); también responde `/gracias.html`).
+- **Archivo:** [gracias.html](../paginas/gracias.html). Servida en `https://sistemadeingresosdiariosia.com/gracias`
+  (rewrite `/gracias → /gracias.html` en [vercel.json](../vercel.json); también responde `/gracias.html`).
 - **Identidad:** reusa exactamente los tokens de la landing (`index.html`): mismas fuentes
   (Space Grotesk + DM Sans), misma paleta (`--bg #000`, `--indigo #6366f1`, `--cyan #22d3ee`,
   `--green #22c55e`), mismo nav (punto que pulsa + "Periodistas Digitales") y mismo footer.
 - **Contenido:** confirmación de pago + 3 próximos pasos:
   1. Revisá tu correo (Hotmart mandó el acceso al curso).
   2. Activá tu mes gratis de Leadr Pro (entrando a leadr.cloud con el email de compra).
-  3. Sumate a la comunidad de Telegram → **apagado por ahora** (ver punto 3).
+  3. Sumate a la comunidad de Telegram → **encendido** (botón con el link del grupo, ver punto 3).
 - **`noindex`:** la página lleva `<meta name="robots" content="noindex,nofollow">` (es una
   confirmación privada, no debe aparecer en Google).
 - **Meta Pixel:** dispara **solo `PageView`**. NO dispara `Purchase` del lado del navegador
@@ -51,7 +51,7 @@ bono de Leadr funcionan igual, porque van por el webhook, no por la página).
     `leadr_bono_otorgado`, **`telegram_estado`** (`pendiente`|`invitado`|`unido`|`baja`), `origen`.
   - RLS activo sin políticas (solo el webhook escribe con `service_role`; Metabase leerá con
     rol de solo-lectura). Mismo criterio que `ventas`/`clientes_potenciales`.
-- **Webhook** [api/hotmart.js](api/hotmart.js) → función `saveCustomer()`, llamada en la rama
+- **Webhook** [api/hotmart.js](../api/hotmart.js) → función `saveCustomer()`, llamada en la rama
   de compra aprobada (después de Meta CAPI + bono Leadr + `saveVenta`). Best-effort: si Supabase
   falla, loguea y devuelve 200 igual (no rompe el pago ni el bono).
   - **Idempotente por email** (`on_conflict=email`, `merge-duplicates`): una 2ª compra actualiza
@@ -64,18 +64,17 @@ bono de Leadr funcionan igual, porque van por el webhook, no por la página).
 
 ---
 
-## 3. Canal de Telegram — apagado hasta que exista
+## 3. Canal de Telegram — ✅ encendido (2026-07-03)
 
-**Decisión de Jose (2026-07-03):** el canal de Telegram **todavía no existe**. La página de
-gracias ya trae el bloque (paso 3) construido pero **apagado**:
+Jose creó el grupo de Telegram y pasó el link de invitación. Ya está en vivo en la página de
+gracias (paso 3):
 
-- En [gracias.html](gracias.html) hay una constante `const TELEGRAM_INVITE = "";`.
-  - **Vacía** → se muestra el estado "Canal lleno por ahora — te avisamos por email cuando lo
+- En [gracias.html](../paginas/gracias.html) la constante es `const TELEGRAM_INVITE = "https://t.me/+ywAiiHyHe7wyYjRk";`.
+  - **Con un link** `t.me/...` (estado actual) → el botón "Unirme al canal de Telegram" se enciende
+    solo y el aviso de "canal lleno" desaparece. Verificado en vivo tras `vercel --prod`.
+  - **Vacía** (estado anterior) → mostraba "Canal lleno por ahora — te avisamos por email cuando lo
     reabramos próximamente" (gancho de escasez, sin dejar un link roto).
-  - **Con un link** `t.me/...` → el botón "Unirme al canal de Telegram" se enciende solo y el
-    aviso de "muy pronto" desaparece.
-- **Para activarlo (cuando el canal exista):** crear el canal, sacar su link de invitación y
-  pegarlo en esa constante. Es el ÚNICO cambio necesario; después `vercel --prod`.
+- **Para cambiar el grupo:** reemplazar el link en esa constante y `vercel --prod`. Es el ÚNICO cambio.
 - **Mecánica elegida para v1:** link de invitación **fijo** (el mismo para todos). El link
   **único por comprador** (bot que genera un link de un solo uso por compra) queda para una v2
   si hace falta control de acceso.
@@ -91,6 +90,6 @@ gracias ya trae el bloque (paso 3) construido pero **apagado**:
 | Copy + diseño de la página de gracias | ✅ hecho (respeta la identidad de la landing) |
 | Publicar `/gracias` | ✅ LIVE (deploy prod, responde 200) |
 | Redirección post-compra en Hotmart | ⏳ **pendiente de Jose** (config en el panel de Hotmart) |
-| Mecánica de Telegram + CTA | 🟡 CTA construido y apagado; se enciende con `TELEGRAM_INVITE` cuando exista el canal |
+| Mecánica de Telegram + CTA | ✅ LIVE (grupo creado, link fijo en `TELEGRAM_INVITE`, botón visible, verificado en vivo) |
 | Alta del `customer` desde el webhook | ✅ LIVE (tabla `customers` + `saveCustomer`, validado en DB) |
 | Prueba E2E con compra real | ⏳ **a confirmar con la 1ª venta real** (checkout → gracias → fila en `customers`). No se simuló para no disparar Meta CAPI + bono Leadr + venta con datos falsos. |

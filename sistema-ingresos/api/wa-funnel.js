@@ -171,7 +171,7 @@ const SEGUIMIENTO = { minDiasDesdeOferta: 7, tmpl: 'seguimiento_lead' };
 // Regalo 5 (EMAIL) — "La revolución de los agentes de IA". Último regalo de VALOR,
 // después del Regalo 4 (WhatsApp, día 7) y antes de la oferta (día 9). Se dispara por
 // su propio atributo (MAIL5_AT), no por WA_STAGE: sólo a quien ya recibió el Regalo 4.
-// Copy espejo de la campaña 'leadgen-5-agentes-ia' de ads-agent/send-email.mjs (aprobada).
+// Copy espejo de la campaña 'leadgen-5-agentes-ia' de ads-agent/scripts/publicar/send-email.mjs (aprobada).
 const MAIL5 = {
   minDays: 8,        // ~1 día después del Regalo 4 (día 7); la oferta (día 9) no se toca
   afterStage: 4,     // sólo a quien ya pasó por el Regalo 4 (WhatsApp)
@@ -227,7 +227,7 @@ Leela con calma: es la base para que la IA deje de ser una herramienta suelta y 
 // desde el 13/07: Meta marca FALLIDO el 100% de los envíos). La oferta se "disparó" a 289 leads
 // que nunca la vieron. Este email la hace llegar por el canal que SÍ funciona (Brevo: 22,6% de
 // apertura, 0,45% de bounce al 21/07). Copy espejo de la plantilla `oferta_sistema_ingresos` v2
-// aprobada por Jose el 2026-07-09 (ver PLANTILLAS-WHATSAPP.md): posiciona el curso y hace tee-up
+// aprobada por Jose el 2026-07-09 (ver sistema-ingresos/docs/PLANTILLAS-WHATSAPP.md): posiciona el curso y hace tee-up
 // de la landing. NO revela el precio — eso lo hace la página (regla de la campaña).
 // Se dispara por su propio atributo (OFERTA_MAIL_AT), no toca WA_STAGE: si mañana WhatsApp
 // revive, el funnel sigue su curso sin duplicar nada.
@@ -287,7 +287,7 @@ https://sistemadeingresosdiariosia.com/?src=Email-Oferta&sck=email-oferta`,
 // El 28/07 había 285 leads esperando el Regalo 3 desde hacía diez días.
 //
 // Copy espejo de las plantillas `regalo3_periodico_digital` y `regalo4_sistema_completo`
-// (aprobadas, ver PLANTILLAS-WHATSAPP.md), adaptado a email. Las guías van como LINK con
+// (aprobadas, ver sistema-ingresos/docs/PLANTILLAS-WHATSAPP.md), adaptado a email. Las guías van como LINK con
 // tracking (`/api/d`), no adjuntas: así se cuenta quién la abrió de verdad (tarjeta #50).
 //
 // Estos SÍ avanzan WA_STAGE (a diferencia del Regalo 5 y la oferta, que llevan marcador

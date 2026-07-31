@@ -29,7 +29,7 @@ qué reglas sigue. Es lo que define su criterio cuando se lo invoca (por su skil
 - La forma de invocarlos como skills está en el equipo: skill `/equipo` (router)
   o `/<nombre>` directo.
 - Reglas de Trello por agente: ver [`trello-manager`](trello-manager.md) si
-  existe, o [ARQUITECTURA-DATOS.md](../ARQUITECTURA-DATOS.md) / el
+  existe, o [ARQUITECTURA-DATOS.md](../docs/ARQUITECTURA-DATOS.md) / el
   [README de ads-agent](../README.md).
 
 ## Editar un agente

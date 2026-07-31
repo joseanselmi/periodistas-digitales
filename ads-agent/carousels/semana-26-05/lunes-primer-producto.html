@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Primer producto 30 días — Lunes 26/05</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:800px; height:800px; background:radial-gradient(circle, rgba(99,102,241,.15) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.cyan { color:#22d3ee; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:92px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.week-badge { display:inline-flex; align-items:center; gap:12px; background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:100px; padding:10px 24px; margin-bottom:28px; font-size:15px; font-weight:700; color:#a5b4fc; letter-spacing:.06em; text-transform:uppercase; }
+.step-num { font-size:200px; font-weight:900; color:transparent; -webkit-text-stroke:2px rgba(99,102,241,.18); line-height:1; position:absolute; right:48px; bottom:48px; letter-spacing:-.06em; pointer-events:none; }
+.paso-title { font-size:50px; font-weight:900; color:#f1f5f9; line-height:1.1; letter-spacing:-.025em; margin-bottom:20px; }
+.paso-q { font-size:24px; font-weight:700; color:#6366f1; letter-spacing:.04em; margin-bottom:16px; font-style:italic; }
+.paso-desc { font-size:30px; color:#cbd5e1; line-height:1.6; max-width:880px; }
+.paso-desc strong { color:#f1f5f9; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+.cta-box { background:linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1)); border:1px solid rgba(99,102,241,.3); border-radius:24px; padding:36px 40px; display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+.cta-price { font-size:48px; font-weight:900; color:#f1f5f9; }
+.cta-label { font-size:14px; color:#6366f1; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.cta-btn { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:18px; font-weight:700; padding:18px 36px; border-radius:100px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Guía · 30 días</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>Tu primer<br>producto<br>periodístico<br><span class="accent">en 30 días.</span></h1>
+    <p class="lead">Sin empresa. Sin inversión.<br>Sin dejar tu trabajo actual.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el plan →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Semana 1 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Semana 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="week-badge">Días 1 al 7</div>
+    <div class="paso-title">Elegís el nicho</div>
+    <div class="paso-q">"¿Qué sé mejor que el 95% de los periodistas de mi ciudad?"</div>
+    <p class="paso-desc">No buscás un tema amplio. Buscás <strong>el más pequeño que puedas dominar completamente.</strong> Política local. Economía de tu provincia. Salud regional. Justicia.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Semana 2 →</div>
+  </div>
+  <div class="step-num">1</div>
+</div>
+
+<!-- SLIDE 3 — Semana 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Semana 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="week-badge">Días 8 al 14</div>
+    <div class="paso-title">Elegís el formato</div>
+    <p class="paso-desc"><strong>Newsletter, canal de WhatsApp, podcast, medio digital.</strong></p>
+    <p class="paso-desc" style="margin-top:16px;">Uno solo. No los cuatro al mismo tiempo. El que mejor encaje con cómo ya estás comunicando hoy.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Semana 3 →</div>
+  </div>
+  <div class="step-num">2</div>
+</div>
+
+<!-- SLIDE 4 — Semana 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Semana 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="week-badge">Días 15 al 21</div>
+    <div class="paso-title">Las 3 primeras<br>piezas de contenido</div>
+    <p class="paso-desc"><strong>Sin monetizar todavía.</strong> Solo construir audiencia. Solo demostrar que sabés de lo que hablás.</p>
+    <p class="paso-desc" style="margin-top:16px; font-size:26px;">Estas 3 piezas son tu portafolio. Son lo que mostrás cuando llegue el momento de cobrar.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Semana 4 →</div>
+  </div>
+  <div class="step-num">3</div>
+</div>
+
+<!-- SLIDE 5 — Semana 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Semana 4</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="week-badge">Días 22 al 30</div>
+    <div class="paso-title">Primer contacto<br>con potenciales clientes</div>
+    <p class="paso-desc"><strong>No vendés todavía.</strong> Consultás si les interesa tu audiencia.</p>
+    <p class="paso-desc" style="margin-top:16px; font-size:26px;">Una empresa local, una ONG de tu sector, un anunciante que ya cubriste. Tres mensajes. Tres conversaciones. Suficiente para saber si el nicho tiene mercado.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El resultado →</div>
+  </div>
+  <div class="step-num">4</div>
+</div>
+
+<!-- SLIDE 6 — Resultado -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Al final del mes</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Tenés el<br>esqueleto de un<br><span class="accent">negocio<br>periodístico.</span></h2>
+    <p style="font-size:29px; margin-top:8px;">Sin inversión. Sin renuncia. Sin esperar a que alguien te dé el permiso de empezar.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El sistema completo →</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — CTA -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">El sistema lleva esto más lejos</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>El <span class="accent">Sistema de<br>Ingresos Diarios</span><br>te da el mapa<br>completo.</h2>
+    <div class="divider"></div>
+    <div class="cta-box">
+      <div>
+        <div class="cta-label">Precio único</div>
+        <div class="cta-price">$10 USD</div>
+      </div>
+      <div class="cta-btn">Acceso inmediato · Link en bio</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

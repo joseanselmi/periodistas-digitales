@@ -1,0 +1,23 @@
+# Martes 23/06 — Texto puro — Activación de dolor
+
+---
+
+En 2026 los recortes en medios de LATAM no se frenaron. Se normalizaron.
+
+Colombia, México, Chile, Ecuador, Argentina: en cada uno de esos países hubo redacciones que este año achicaron planta otra vez.
+
+No por una crisis puntual. Por una reestructuración que ya es permanente.
+
+Y si trabajás en un medio, lo sabés mejor que nadie: no depende de tu desempeño.
+
+Depende de un Excel que no viste, de una decisión que tomaron en otra ciudad, de un anuncio que llega un lunes a las 9am sin aviso previo.
+
+Podés llevar quince años de carrera, fuentes que tardaste una década en construir, premios en la pared.
+
+Y seguís a una sola decisión ajena de quedarte sin nada.
+
+Esa es la parte que no se dice en las reuniones de equipo, pero que todos piensan cuando ven la noticia de otro medio recortando.
+
+¿Cuántas veces pensaste "¿y si me toca a mí"?
+
+#PeriodismoLatam #FuturoDelPeriodismo #RecortesEnMedios

@@ -21,5 +21,5 @@ y para poder reportar el estado del equipo.
 El "Panel de Comando" diario corre en la nube y no puede leer estos JSON del
 repo. Por eso [`sistema-ingresos/api/_lib/sync-estados.js`](../../sistema-ingresos/api/_lib/README.md)
 los copia a la tabla `agentes_estado` de Supabase, de donde el panel los lee.
-Detalle en [NOTIFICACIONES-CARTERO.md](../NOTIFICACIONES-CARTERO.md) (tarjeta
+Detalle en [NOTIFICACIONES-CARTERO.md](../docs/NOTIFICACIONES-CARTERO.md) (tarjeta
 Trello #32).

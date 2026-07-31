@@ -47,17 +47,17 @@ ELEVENLABS_API_KEY=...
 ### Scripts principales
 | Script | Qué hace | Cómo correr |
 |--------|---------|-------------|
-| `fetch-meta.mjs` | Baja campañas + métricas Meta | `META_ACCESS_TOKEN=x META_AD_ACCOUNT_ID=act_x node fetch-meta.mjs` |
-| `monitor.mjs` | Métricas diarias + alertas | Mismas vars |
-| `publish.mjs` | Publica ads en Meta (PAUSED) | `node publish.mjs campaigns/X/config.json` |
-| `audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node audit-cmo.mjs` |
-| `email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node email-agent.mjs` |
-| `organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x FAL_API_KEY=x node organic-agent.mjs --days=7 --images` |
-| `carousel-generator.mjs` | Carruseles HTML 1080x1080 | `ANTHROPIC_API_KEY=x node carousel-generator.mjs` |
-| `export-slides.mjs` | JPG por carpeta para subir | `node export-slides.mjs carousels/semana-X` |
-| `post-facebook.mjs` | Publica/programa en FB | `FB_PAGE_TOKEN=x node post-facebook.mjs <carpeta> [--schedule "YYYY-MM-DD HH:MM"]` |
-| `schedule-week.mjs` | Programa semana completa | `FB_PAGE_TOKEN=x FB_PAGE_ID=x node schedule-week.mjs` |
-| `add-nav.mjs` | Navegación slideshow a carruseles | `node add-nav.mjs` |
+| `scripts/datos/fetch-meta.mjs` | Baja campañas + métricas Meta | `META_ACCESS_TOKEN=x META_AD_ACCOUNT_ID=act_x node scripts/datos/fetch-meta.mjs` |
+| `scripts/agentes/monitor.mjs` | Métricas diarias + alertas | Mismas vars |
+| `scripts/publicar/publish.mjs` | Publica ads en Meta (PAUSED) | `node scripts/publicar/publish.mjs campaigns/X/config.json` |
+| `scripts/agentes/audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node scripts/agentes/audit-cmo.mjs` |
+| `scripts/agentes/email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node scripts/agentes/email-agent.mjs` |
+| `scripts/agentes/organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x FAL_API_KEY=x node scripts/agentes/organic-agent.mjs --days=7 --images` |
+| `scripts/generar/carousel-generator.mjs` | Carruseles HTML 1080x1080 | `ANTHROPIC_API_KEY=x node scripts/generar/carousel-generator.mjs` |
+| `scripts/exportar/export-slides.mjs` | JPG por carpeta para subir | `node scripts/exportar/export-slides.mjs carousels/semana-X` |
+| `scripts/publicar/post-facebook.mjs` | Publica/programa en FB | `FB_PAGE_TOKEN=x node scripts/publicar/post-facebook.mjs <carpeta> [--schedule "YYYY-MM-DD HH:MM"]` |
+| `scripts/programar/schedule-week.mjs` | Programa semana completa | `FB_PAGE_TOKEN=x FB_PAGE_ID=x node scripts/programar/schedule-week.mjs` |
+| `scripts/generar/add-nav.mjs` | Navegación slideshow a carruseles | `node scripts/generar/add-nav.mjs` |
 
 ### Librerías (lib/)
 | Archivo | Exporta |
@@ -111,7 +111,7 @@ Config: `campaigns/2026-05-08-v2/config.json`
 ## CONTENIDO ORGÁNICO FACEBOOK
 
 ### Estrategia
-- Archivo completo: `ESTRATEGIA-ORGANICO.md`
+- Archivo completo: `docs/ESTRATEGIA-ORGANICO.md`
 - 1 post/día, yo programo todo, Jose no toca nada
 - 5 posts fríos + 1 tibio + 1 caliente por semana
 - Boost $1/día × 7 días al mejor post orgánico cada semana
@@ -154,10 +154,10 @@ carousels/semana-DD-MM/para-subir/
 |---|-----|------------|
 | 1 | Emails sin envío | Cargar en Hotmart → Email marketing |
 | 2 | Testimonios landing vacíos | Jose sube capturas → `sistema-ingresos/img/` |
-| 3 | Campaña Meta v2 sin publicar | `node publish.mjs campaigns/2026-05-08-v2/config.json` |
+| 3 | Campaña Meta v2 sin publicar | `node scripts/publicar/publish.mjs campaigns/2026-05-08-v2/config.json` |
 | 4 | Monitor sin schedule | Windows Task Scheduler o Make.com |
 | 5 | Segmento 40-65 sin escalar | Testear $25/día — mejor CPA histórico $6.33 |
-| 6 | image-reviewer en publish.mjs | Integrar antes del próximo lanzamiento de ads |
+| 6 | image-reviewer en scripts/publicar/publish.mjs | Integrar antes del próximo lanzamiento de ads |
 | 7 | Semana 2 orgánico | Crear el domingo 18/05 |
 | 8 | Boost semana 1 | Elegir post ganador el domingo 18/05 |
 

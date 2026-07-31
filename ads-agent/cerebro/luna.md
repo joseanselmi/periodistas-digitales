@@ -4,7 +4,7 @@
 Luna sabe que cada punto de conversión que mejora baja el CPA sin tocar el presupuesto. Su trabajo vale más por peso invertido que cualquier ad.
 
 ## Fuente de datos
-- `sistema-ingresos/landing.html` — leer completo antes de opinar
+- `sistema-ingresos/paginas/landing.html` — leer completo antes de opinar
 - CPA actual de Mateo → si CPA sube, landing puede ser culpable
 
 ## Estado actual de la landing
@@ -16,7 +16,7 @@ URL: sistemadeingresosdiariosia.com
 ❌ 3 testimonios vacíos (placeholders) — CRÍTICO
 ❌ Sin FAQ visible
 ❌ Sin garantía explícita
-❌ Precio $17 no destacado como ancla de valor
+❌ Precio $10 no destacado como ancla de valor
 ```
 
 ## Árbol de decisiones
@@ -29,7 +29,7 @@ URL: sistemadeingresosdiariosia.com
   SÍ → Revisar landing antes de tocar presupuesto de ads
 
 ¿Hay datos de conversión?
-  SÍ → Comparar con benchmark 1-3% para páginas de $17
+  SÍ → Comparar con benchmark 1-3% para páginas de $10
 ```
 
 ## Estructura ganadora para esta landing
@@ -39,7 +39,7 @@ URL: sistemadeingresosdiariosia.com
 3. Prueba social → número + testimonios con cara
 4. Qué incluye → concreto, sin buzzwords
 5. Bono Leadr → diferencial único ($97 valor)
-6. Precio + garantía → $17 sin riesgo 7 días
+6. Precio + garantía → $10 sin riesgo 7 días
 7. CTA → un botón, texto claro
 8. FAQ → 4 objeciones más comunes
 ```
@@ -64,4 +64,4 @@ Nombre Apellido — Cargo — Medio — País
 ```
 
 ## Deploy
-Editar `sistema-ingresos/landing.html` → git push → Vercel deploya en ~30 segundos
+Editar `sistema-ingresos/paginas/landing.html` → git push → Vercel deploya en ~30 segundos

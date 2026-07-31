@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>IA y redacciones LATAM 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:80px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:52px; font-weight:900; color:#f1f5f9; line-height:1.1; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.stat { display:flex; align-items:baseline; gap:18px; margin-bottom:14px; }
+.stat .n { font-size:56px; font-weight:900; color:#22d3ee; }
+.stat .t { font-size:24px; color:#94a3b8; max-width:600px; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tendencia · Domingo</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>IA en las<br>redacciones<br>de <span class="accent">LATAM,<br>2026.</span></h1>
+    <p class="lead">Lo que está pasando, sin filtro y sin venderte nada.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Lo que avanza</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Lo que sí está<br>cambiando:</h2>
+    <div class="divider"></div>
+    <p>Medios medianos en México, Colombia y Chile ya usan IA para transcripción, primeras versiones de notas de agenda y monitoreo de redes sociales.</p>
+    <p>No reemplaza la verificación ni el criterio editorial. Acelera el trabajo repetitivo.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">El otro lado</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Lo que genera<br>tensión:</h2>
+    <div class="divider"></div>
+    <p>Algunas redacciones usan la eficiencia de la IA como excusa para justificar más recortes de personal, no para liberar tiempo del equipo que queda.</p>
+    <p><strong>La herramienta es neutral. La decisión de cómo usarla, no.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">El dato</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Lo que dicen<br>los periodistas:</h2>
+    <div class="stat"><div class="n">+5.500</div><div class="t">periodistas en 50 países ya forman parte de nuestra comunidad sobre IA aplicada al oficio.</div></div>
+    <p style="margin-top:10px;">La pregunta que más se repite no es "¿la IA me va a reemplazar?" sino "¿cómo la uso antes de que la use mi competencia?"</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tendencia · Domingo</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>¿Tu redacción<br>ya usa <span class="accent">IA</span><br>o todavía<br>no?</h1>
+    <p class="lead">Contanos en los comentarios qué están haciendo en tu medio (o si todavía es tabú hablar del tema).</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

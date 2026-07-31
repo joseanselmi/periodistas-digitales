@@ -25,7 +25,7 @@ BENCHMARKS REALES DE CAMPAÑAS ANTERIORES:
 - CTR mínimo: ${BRAND.benchmarks.ctrMin}% | bueno: ${BRAND.benchmarks.ctrGood}% | excelente: ${BRAND.benchmarks.ctrExcellent}%
 - CVR landing objetivo: ${BRAND.benchmarks.cvrTarget}%
 - ROAS real objetivo (con order bumps): ${BRAND.benchmarks.realRoasTarget}x
-- IMPORTANTE: El ROAS reportado en Meta parece bajo porque solo trackea $17 front-end. Con order bumps el AOV real es $26-30.
+- IMPORTANTE: El ROAS reportado en Meta parece bajo porque solo trackea $10 front-end. Con order bumps el AOV real es $26-30.
 `
 
   const prompt = `Eres un experto en Meta Ads para infoproductos en Latinoamérica.

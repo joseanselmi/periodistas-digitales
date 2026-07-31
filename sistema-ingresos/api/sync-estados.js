@@ -5,7 +5,7 @@
 //
 // Uso:  GET /api/sync-estados?key=<CRON_SECRET>   → corre el sync y devuelve el resumen
 // Seguridad: CRON_SECRET (header Authorization: Bearer <secret> o ?key=<secret>).
-// Detalle: ads-agent/NOTIFICACIONES-CARTERO.md · tarjeta Trello #32.
+// Detalle: ads-agent/docs/NOTIFICACIONES-CARTERO.md · tarjeta Trello #32.
 
 const { runSyncEstados } = require('./_lib/sync-estados');
 

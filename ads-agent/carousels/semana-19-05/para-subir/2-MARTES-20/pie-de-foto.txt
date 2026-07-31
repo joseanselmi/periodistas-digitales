@@ -1,0 +1,27 @@
+Estás tardando 3 horas en algo que podría llevarte 20 minutos.
+
+No lo digo como crítica. Lo digo porque me lo dijeron los periodistas que usan estas herramientas.
+
+Transcribir una entrevista de 45 minutos a mano: 2 horas mínimo.
+Con Whisper o Otter: 3 minutos. Revisión: 15 minutos más.
+
+Buscar datos para verificar una cifra: 40 minutos entre pestañas.
+Con Perplexity: 5 minutos, con las fuentes citadas.
+
+Estructurar una nota de investigación: 1 hora de borrador.
+Con un prompt bien hecho en Claude: 20 minutos.
+
+No es que la IA lo haga todo sola.
+
+Es que te devuelve el tiempo que perdés en las partes mecánicas — para que puedas ponerlo en las partes donde más valés: la fuente, el criterio, el contexto.
+
+¿Cuántas horas de trabajo periodístico perdés por semana en tareas que la IA puede acelerar?
+
+Eso multiplicado por 4 semanas. Por 12 meses.
+
+Eso es lo que cuesta no adaptarse.
+
+---
+*El Sistema de Ingresos Diarios incluye formación en estas herramientas. $10 USD — link en bio.*
+
+#PeriodismoIA #ProductividadPeriodística #HerramientasDigitales #PeriodismoLatam

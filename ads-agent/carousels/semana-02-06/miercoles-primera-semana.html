@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Primera semana en el Sistema — Miércoles 4/06</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; right:-200px; width:800px; height:800px; background:radial-gradient(circle, rgba(99,102,241,.16) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.cyan { color:#22d3ee; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:88px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.day-badge { display:inline-flex; gap:12px; align-items:center; background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:100px; padding:10px 24px; margin-bottom:24px; font-size:16px; font-weight:700; color:#a5b4fc; letter-spacing:.06em; text-transform:uppercase; }
+.day-title { font-size:52px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.025em; margin-bottom:16px; }
+.day-desc { font-size:30px; color:#cbd5e1; line-height:1.6; max-width:880px; }
+.day-desc strong { color:#f1f5f9; }
+.day-time { font-size:20px; color:#6366f1; font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-top:16px; }
+.step-num { font-size:200px; font-weight:900; color:transparent; -webkit-text-stroke:2px rgba(99,102,241,.16); line-height:1; position:absolute; right:48px; bottom:48px; letter-spacing:-.06em; pointer-events:none; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+.cta-box { background:linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1)); border:1px solid rgba(99,102,241,.3); border-radius:24px; padding:36px 40px; display:flex; align-items:center; justify-content:space-between; margin-top:24px; }
+.cta-price { font-size:48px; font-weight:900; color:#f1f5f9; }
+.cta-label { font-size:14px; color:#6366f1; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.cta-btn { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:18px; font-weight:700; padding:18px 36px; border-radius:100px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Onboarding · Día a día</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>¿Qué hacés<br>exactamente en<br>la primera semana<br><span class="accent">del Sistema?</span></h1>
+    <p class="lead">Día por día. Sin suposiciones.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el día 1 →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Día 1 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Día 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="day-badge">Inmediato al comprar</div>
+    <div class="day-title">Acceso + Módulo 1:<br>tu micro oferta</div>
+    <p class="day-desc">El primer módulo es el más importante. Definís <strong>qué sabés, para quién lo sabés, y cuánto vale.</strong></p>
+    <div class="day-time">⏱ 45 minutos</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Día 2 →</div>
+  </div>
+  <div class="step-num">1</div>
+</div>
+
+<!-- SLIDE 3 — Día 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Día 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="day-badge">Segundo día</div>
+    <div class="day-title">Meta Ads:<br>tu audiencia exacta</div>
+    <p class="day-desc">Módulo 2. Aprendés cómo funcionan los ads para periodistas. <strong>Hacés el primer análisis de tu audiencia ideal.</strong></p>
+    <div class="day-time">⏱ 1 hora</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Día 3 →</div>
+  </div>
+  <div class="step-num">2</div>
+</div>
+
+<!-- SLIDE 4 — Día 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Día 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="day-badge">Tercer día</div>
+    <div class="day-title">IA: instalás<br>y probás</div>
+    <p class="day-desc">Módulo 3. Configurás NotebookLM y Whisper. <strong>Primer test con material de tu trabajo real.</strong></p>
+    <p class="day-desc" style="font-size:26px; margin-top:12px;">La mayoría de las personas que llegan acá dicen lo mismo: "No sabía que era tan fácil."</p>
+    <div class="day-time">⏱ 1.5 horas (con los tests)</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Días 4 y 5 →</div>
+  </div>
+  <div class="step-num">3</div>
+</div>
+
+<!-- SLIDE 5 — Días 4-5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Días 4 y 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="day-badge">Cuarto y quinto día</div>
+    <div class="day-title">Accedés a Leadr</div>
+    <p class="day-desc">La plataforma incluida en el bono. Explorás los recursos, ves qué otros periodistas están haciendo, accedés a las plantillas.</p>
+    <p class="day-desc" style="margin-top:16px; font-size:26px;"><strong>Acá es donde muchos dicen que el bono solo ya valía los $10.</strong></p>
+    <div class="day-time">⏱ A tu ritmo</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Días 6 y 7 →</div>
+  </div>
+  <div class="step-num">45</div>
+</div>
+
+<!-- SLIDE 6 — Días 6-7 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Días 6 y 7</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="day-badge">Final de la primera semana</div>
+    <div class="day-title">Tenés el esqueleto<br>de tu sistema propio</div>
+    <p class="day-desc">Nicho definido. Micro oferta clara. Primeras herramientas activas. <strong>Sabés cuál es el próximo paso.</strong></p>
+    <p class="day-desc" style="font-size:26px; margin-top:16px;">No es magia. Es un sistema que funciona si lo usás.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Empezar →</div>
+  </div>
+  <div class="step-num">67</div>
+</div>
+
+<!-- SLIDE 7 — CTA -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Empezar toma 45 minutos</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>En 7 días tenés<br>más claridad que<br>en los últimos<br><span class="accent">12 meses.</span></h2>
+    <div class="divider"></div>
+    <div class="cta-box">
+      <div>
+        <div class="cta-label">Sistema de Ingresos Diarios</div>
+        <div class="cta-price">$10 USD</div>
+      </div>
+      <div class="cta-btn">Acceso inmediato · Link en bio</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

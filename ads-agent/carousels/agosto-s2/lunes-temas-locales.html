@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Temas locales — Lunes 03/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.prompt-box { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:32px 36px; margin-top:8px; }
+.prompt-box .ptitle { font-size:14px; color:#22d3ee; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+.prompt-box p { font-size:23px; color:#cbd5e1; line-height:1.55; margin-bottom:0; }
+.numlist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.numlist .item { display:flex; gap:18px; align-items:flex-start; }
+.numlist .n { font-size:30px; font-weight:900; color:#22d3ee; min-width:56px; }
+.numlist .t { font-size:27px; color:#cbd5e1; line-height:1.5; padding-top:2px; }
+.numlist .t strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>10 temas que<br>nadie en tu zona<br><span class="accent">está cubriendo</span></h1><p class="lead">Los huecos que dejan los medios grandes son tu oportunidad. Hoy, el prompt para encontrarlos.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">El problema</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Todos cubren<br>lo mismo</h2><div class="divider"></div><p>Los medios grandes van por las mismas noticias nacionales. Mientras tanto, en tu ciudad hay temas que la gente busca y nadie responde bien.</p><p><strong>Ahí, donde no hay oferta, está tu audiencia.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cómo funciona</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Qué hace<br>el prompt</h2><div class="divider"></div><p>Le das tu ciudad y tu área de interés. Te devuelve 10 ángulos de temas locales con potencial de audiencia: cosas específicas, buscables, que a un medio nacional no le interesan pero a tu vecino sí.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Copiable</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El <span class="accent">prompt</span></h2><div class="divider"></div><div class="prompt-box"><div class="ptitle">Copiá y pegá en ChatGPT o Claude</div><p>"Actúa como editor de un medio digital local. Vivo en [tu ciudad/región] y me interesa cubrir [tu tema: cultura, política local, gastronomía, deportes…]. Dame 10 ideas de temas o secciones que la gente de mi zona probablemente busca y que los medios grandes no cubren bien. Para cada una: el ángulo, por qué le importaría a un lector local y una idea de primer título. Sé específico de mi región, no genérico."</p></div></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Tip extra</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Afiná<br>el resultado</h2><div class="divider"></div><p>Si te da ideas muy generales, pedile: "hacelas más específicas de mi ciudad y basadas en cosas que están pasando esta semana".</p><p><strong>Cuanto más contexto le das, mejor sale.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cerrando</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>¿Sobre qué tema<br><span class="accent">arrancarías?</span></h2><div class="divider"></div><p class="lead">Contame en los comentarios el primer tema local que se te viene a la cabeza.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+<script>
+(function(){const s=document.querySelectorAll('.slide');let c=0;function go(d){s[c].classList.remove('active');c=Math.max(0,Math.min(s.length-1,c+d));s[c].classList.add('active')}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)})})()
+</script>
+</body>
+</html>

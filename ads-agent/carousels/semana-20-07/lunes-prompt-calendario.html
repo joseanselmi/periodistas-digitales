@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prompt calendario de contenido — Lunes 20/07</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:90px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.promptbox { background:rgba(99,102,241,.08); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:36px 40px; margin-top:8px; }
+.promptbox p { font-size:26px; color:#e2e8f0; font-style:italic; line-height:1.55; margin-bottom:0; }
+.steplist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.step { display:flex; gap:20px; align-items:flex-start; }
+.stepnum { width:42px; height:42px; border-radius:50%; background:rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; color:#22d3ee; flex-shrink:0; }
+.steptext { font-size:26px; color:#cbd5e1; line-height:1.5; padding-top:6px; }
+.steptext strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>El prompt que<br>planea tu<br><span class="accent">semana entera</span></h1>
+    <p class="lead">Copialo, pegalo en cualquier IA y en 2 minutos tenés el calendario de contenido de tu medio listo.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el prompt →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>El problema de<br>siempre</h2>
+    <div class="divider"></div>
+    <p>Llegás al lunes sin saber qué publicar el martes. Improvisás. Publicás cuando te acordás, no cuando conviene.</p>
+    <p>Resultado: <strong>tu medio se ve inconsistente</strong> y tu audiencia no sabe cuándo esperar contenido tuyo.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Copiá este<br>prompt</h2>
+    <div class="divider"></div>
+    <div class="promptbox">
+      <p>"Actuá como editor de contenido digital. Mi medio cubre [tu tema/zona]. Mi audiencia es [describí brevemente]. Dame un calendario de 7 días con: tema del día, formato (texto, video corto, infografía) y un título tentador para cada uno. Priorizá temas con relevancia local esta semana."</p>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>3 pasos para<br>usarlo bien</h2>
+    <div class="divider"></div>
+    <div class="steplist">
+      <div class="step">
+        <div class="stepnum">1</div>
+        <div class="steptext"><strong>Completá los corchetes</strong> con tu tema real (política local, economía, tu ciudad).</div>
+      </div>
+      <div class="step">
+        <div class="stepnum">2</div>
+        <div class="steptext"><strong>Pegalo en ChatGPT, Gemini o Claude.</strong> Cualquiera te sirve.</div>
+      </div>
+      <div class="step">
+        <div class="stepnum">3</div>
+        <div class="steptext"><strong>Ajustá lo que no te cierre.</strong> La IA propone, tú decidís.</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Lo que cambia</h2>
+    <div class="divider"></div>
+    <p class="lead">Pasás de improvisar cada mañana a tener un plan escrito antes de empezar la semana.</p>
+    <p>No es magia. Es <strong>orden</strong>. Y el orden es lo que te falta para publicar todos los días sin agotarte.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>¿Probaste este<br>prompt?</h2>
+    <div class="divider"></div>
+    <p class="lead">Contanos en los comentarios qué te armó la IA. Esta semana vamos a responder las objeciones más comunes de quienes quieren empezar su propio medio.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

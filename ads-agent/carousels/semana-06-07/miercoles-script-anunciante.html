@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Script primer anunciante — Miércoles 8/07</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:80px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.msg-box { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:32px 36px; margin-top:8px; }
+.msg-step { font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#22d3ee; font-weight:700; margin-bottom:12px; }
+.msg-text { font-size:27px; color:#e2e8f0; line-height:1.55; font-style:italic; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip de IA · Miércoles</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>El mensaje<br>para conseguir<br>tu primer<br><span class="accent">anunciante.</span></h1>
+    <p class="lead">Cuatro pasos, copiables tal cual, para cerrar tu primer cliente local sin sonar a vendedor desesperado.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el script →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Elegí un negocio que <span class="accent">ya conocés</span></h2>
+    <div class="divider"></div>
+    <p>No empieces con un desconocido. Una clínica, una ferretería, un restaurante donde ya comes. El primer "sí" siempre es más fácil con alguien que ya te tiene confianza.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>El mensaje <span class="accent">exacto</span></h2>
+    <div class="divider"></div>
+    <div class="msg-box">
+      <div class="msg-step">Mensaje de WhatsApp</div>
+      <div class="msg-text">"Hola [nombre], soy [tu nombre], periodista. Armé un periódico digital de [tu ciudad/tema] que ya leen [número] personas. Estoy abriendo espacio para 3 negocios locales este mes. ¿Te interesa que hablemos 10 minutos?"</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Si pregunta <span class="accent">precio</span></h2>
+    <div class="divider"></div>
+    <div class="msg-box">
+      <div class="msg-step">Respuesta</div>
+      <div class="msg-text">"Para los primeros 3 negocios estoy cobrando [precio inicial] por un mes, con mención en cada edición. Es la forma de que prueben sin compromiso grande."</div>
+    </div>
+    <p>El número "3" no es relleno: crea urgencia real sin inventar nada. Es tu primera edición, de verdad hay espacio limitado.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Paso 4</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Si dice que <span class="accent">no, todavía</span></h2>
+    <div class="divider"></div>
+    <p>"Entiendo, sin problema. ¿Te parece si te mando la primera edición igual para que veas cómo se ve?"</p>
+    <p>Casi siempre dicen que sí a esto. Y cuando ven el resultado terminado, la conversación de venta ya está medio hecha sola.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Resumen</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>No necesitas ser <span class="accent">vendedor.</span></h2>
+    <div class="divider"></div>
+    <p class="lead">Necesitas un mensaje claro y un negocio que ya conozcas. El resto se acomoda con la práctica.</p>
+    <p>¿Ya tienes en mente qué negocio le mandarías este mensaje hoy? Contámelo abajo.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

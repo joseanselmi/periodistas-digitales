@@ -1,7 +1,7 @@
 // Sync de métricas de Meta Ads POR DÍA y por anuncio → tabla `meta_insights_diario`
-// (Supabase periodistas-marketing). Equivalente serverless de ads-agent/meta-daily-sync.mjs.
+// (Supabase periodistas-marketing). Equivalente serverless de ads-agent/scripts/datos/meta-daily-sync.mjs.
 // Lo llama api/recuperacion.js en su corrida diaria, junto a runMetaSpendSync.
-// Detalle en ads-agent/ARQUITECTURA-DATOS.md y ads-agent/AGENTES-AUTONOMOS.md.
+// Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md y ads-agent/docs/AGENTES-AUTONOMOS.md.
 //
 // PARA QUÉ: la rutina autónoma de Mateo (nube, sin egress) no puede pegarle a Meta; lee las
 // métricas por día de esta tabla. Es el complemento "por día" de meta-spend-sync (acumulado).

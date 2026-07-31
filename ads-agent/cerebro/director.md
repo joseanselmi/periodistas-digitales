@@ -20,7 +20,7 @@ VACÍOS (oportunidades):
 ```
 
 ## ICP del alumno (nunca olvidar)
-Periodista LATAM 40-55 años, 10-20 años en medios tradicionales. Sin formación técnica. Quiere mantenerse relevante. $17 ya apostó — espera resultados reales.
+Periodista LATAM 40-55 años, 10-20 años en medios tradicionales. Sin formación técnica. Quiere mantenerse relevante. $10 ya apostó — espera resultados reales.
 
 ## Árbol de decisiones — ¿Qué grupo crear primero?
 ```

@@ -19,8 +19,8 @@ Una subcarpeta por semana o por tanda.
 Los HTML se arman con el generador y se exportan a imágenes:
 
 ```bash
-node ../carousel-generator.mjs      # genera el HTML del carrusel
-node ../export-slides.mjs           # HTML → slide-01.jpg, slide-02.jpg, ...
+node ../scripts/generar/carousel-generator.mjs      # genera el HTML del carrusel
+node ../scripts/exportar/export-slides.mjs           # HTML → slide-01.jpg, slide-02.jpg, ...
 ```
 
 ## Reglas
@@ -29,4 +29,4 @@ node ../export-slides.mjs           # HTML → slide-01.jpg, slide-02.jpg, ...
 - Revisar **legibilidad** antes de publicar (contraste, tamaño de texto): es un
   problema recurrente en placas de Facebook.
 - El arco semanal y el calendario de publicación están en
-  [ESTRATEGIA-ORGANICO.md](../ESTRATEGIA-ORGANICO.md).
+  [ESTRATEGIA-ORGANICO.md](../docs/ESTRATEGIA-ORGANICO.md).

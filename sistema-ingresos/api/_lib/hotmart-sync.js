@@ -1,6 +1,6 @@
 // Sync de Hotmart → Supabase, para correr desde el cron (api/recuperacion.js lo llama
-// al inicio de su corrida diaria). Equivalente serverless de ads-agent/hotmart-sync.mjs
-// (la versión CLI). Detalle en ads-agent/ARQUITECTURA-DATOS.md.
+// al inicio de su corrida diaria). Equivalente serverless de ads-agent/scripts/datos/hotmart-sync.mjs
+// (la versión CLI). Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md.
 //
 // Hace dos cosas, best-effort (si algo falla, loguea y sigue — nunca tumba la recuperación):
 //   1. RECONCILIA VENTAS: trae TODOS los productos de la cuenta (curso + upsells + lo que

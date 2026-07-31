@@ -1,0 +1,25 @@
+# Martes 30/06 — Texto puro — Activación de dolor
+
+---
+
+Te están pidiendo el doble de notas que hace tres años.
+
+Con el mismo sueldo. O peor, con uno más bajo en dólares reales.
+
+Es la conversación que se repite en redacciones de Bogotá, Ciudad de México, Quito y Buenos Aires: "ahora hay que producir más", dicen los editores. Más notas, más posteos, más video corto.
+
+Nadie agregó una hora más al día.
+
+Y la lógica detrás de eso nunca fue para vos. Era para el medio: más contenido, más tráfico, más inventario publicitario. Tu sueldo no estaba en esa ecuación.
+
+Así que terminás escribiendo seis notas en lugar de tres. Cubriendo redes además de la nota. Editando tu propio video porque "no hay presupuesto para editor".
+
+Y al final del mes, el número en tu cuenta es el mismo de siempre.
+
+Esa es la trampa: te venden la productividad como progreso. Pero progreso, para vos, sería ganar más. No producir más por lo mismo.
+
+El problema no es que trabajes con IA o sin IA. El problema es que nadie te enseñó a usar las herramientas que tenés a mano para que el tiempo que ganás sea tuyo, no del medio.
+
+¿Te pidieron más producción este año sin que te suba el sueldo? Contanos qué te dijeron cuando preguntaste por qué.
+
+#PeriodismoLatam #SueldoPeriodista #RedaccionesDigitales

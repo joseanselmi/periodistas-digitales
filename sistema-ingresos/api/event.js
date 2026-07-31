@@ -1,6 +1,6 @@
 // Ingesta de eventos de tracking (tabla `events` de la base de marketing).
 //
-// Lo llama el beacon del navegador (sistema-ingresos/track.js) en cada pageview y
+// Lo llama el beacon del navegador (sistema-ingresos/paginas/track.js) en cada pageview y
 // clic de checkout de las landings. Es un endpoint PÚBLICO (no lleva secreto: lo
 // dispara el visitante desde el navegador) — mismo criterio que un pixel de analytics.
 // Best-effort y liviano: responde 204 y nunca frena la navegación del usuario.

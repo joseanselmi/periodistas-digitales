@@ -1,2 +1,7 @@
 node_modules/
 .env
+.env.local
+
+# claves de servicio de Google (secretas, no van al repo)
+ga4-service-account.json
+*-service-account.json

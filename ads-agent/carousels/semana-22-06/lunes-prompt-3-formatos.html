@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prompt — 1 evento, 3 formatos en 5 minutos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:54px; font-weight:900; color:#f1f5f9; line-height:1.08; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.box { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:28px 32px; margin-bottom:18px; }
+.box .tag { font-size:13px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; }
+.code { font-family:'Inter',monospace; font-size:24px; color:#e2e8f0; line-height:1.55; background:rgba(99,102,241,.08); border:1px solid rgba(99,102,241,.25); border-radius:14px; padding:26px 28px; }
+.code .v { color:#22d3ee; }
+ol, ul { margin-left: 0; padding-left: 0; }
+li { font-size:29px; color:#cbd5e1; line-height:1.5; margin-bottom:16px; list-style:none; padding-left:48px; position:relative; }
+li::before { content: attr(data-n); position:absolute; left:0; top:-2px; width:36px; height:36px; border-radius:50%; background:rgba(99,102,241,.18); color:#a5b4fc; font-weight:800; font-size:18px; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>Una rueda<br>de prensa.<br><span class="accent">3 formatos.</span></h1>
+    <p class="lead">5 minutos con un prompt, en vez de 2 horas reescribiendo lo mismo tres veces.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el prompt →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>El problema de siempre:</h2>
+    <div class="divider"></div>
+    <p>Cubrís la rueda de prensa. Tomás notas a mano. Después tenés que escribir la nota completa, armar el hilo para redes y todavía sacar un post corto para la web.</p>
+    <p><strong>Mismo material. Tres reescrituras. Triple tiempo.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">El prompt</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Pegá tus notas crudas<br>y usá esto:</h2>
+    <div class="code">"Actúa como editor periodístico. Tengo estas notas de una rueda de prensa: <span class="v">[pegá tus apuntes]</span>. Generá: 1) nota completa de <span class="v">400 palabras</span> en tono informativo, 2) hilo de <span class="v">6 posts</span> para redes con un gancho fuerte en el primero, 3) post corto de <span class="v">3 líneas</span> para la web. Mantené los datos exactos, no inventes declaraciones."</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Por qué funciona</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>3 razones para usarlo<br>desde hoy:</h2>
+    <li data-n="1">Vos seguís siendo quien decide qué importa. La IA solo reformatea.</li>
+    <li data-n="2">El dato exacto (cifras, nombres, citas) queda intacto si pegás bien tus notas.</li>
+    <li data-n="3">Podés publicar en 3 canales el mismo día, no solo en uno.</li>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Cuidado con esto</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Una regla que no<br>podés saltarte:</h2>
+    <div class="divider"></div>
+    <p>Nunca le pidas a la IA que invente declaraciones, cifras o citas que no estaban en tus notas.</p>
+    <p><strong>La IA reformatea lo que vos reportaste. No reporta por vos.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Última →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>¿Vos cómo<br>cubrís hoy<br>las <span class="accent">ruedas<br>de prensa</span>?</h1>
+    <p class="lead">Contanos en los comentarios qué herramienta usás (o si todo lo hacés a mano todavía).</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

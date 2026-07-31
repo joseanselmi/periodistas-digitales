@@ -17,7 +17,7 @@ acá viven los **posts sueltos** con su calendario, texto e imagen.
 Lo produce el agente de orgánico (Luna):
 
 ```bash
-node ../organic-agent.mjs
+node ../scripts/agentes/organic-agent.mjs
 ```
 
 Las imágenes pasan por el revisor ([`../lib/image-reviewer.mjs`](../lib/README.md))
@@ -25,6 +25,6 @@ antes de quedar aprobadas (sin texto encima, persona latinoamericana, score ≥ 
 
 ## Relación con el resto
 
-- Estrategia y arco semanal: [ESTRATEGIA-ORGANICO.md](../ESTRATEGIA-ORGANICO.md).
+- Estrategia y arco semanal: [ESTRATEGIA-ORGANICO.md](../docs/ESTRATEGIA-ORGANICO.md).
 - Carruseles (multi-placa): [`../carousels/`](../carousels/).
 - Precio del curso en los textos = **$27**.

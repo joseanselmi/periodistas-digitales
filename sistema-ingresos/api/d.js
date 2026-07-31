@@ -40,6 +40,10 @@ async function logApertura({ file, src, sck, ip, ua }) {
         sck: sck || null,
         ip: ip || null,
         user_agent: ua || null,
+        // Sin esto la fila queda sin fecha: se sabe CUÁNTOS abrieron pero no CUÁNDO,
+        // y no se puede cruzar con el día que salió cada correo ni ver evolución.
+        // (Las 322 aperturas anteriores al 31/07/2026 quedaron sin fecha por este motivo.)
+        ocurrido_en: new Date().toISOString(),
         payload: { file, src: src || null, sck: sck || null },
       }),
       signal: ctrl.signal,

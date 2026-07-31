@@ -1,0 +1,7 @@
+El prompt que armé para planear el contenido de toda la semana en 2 minutos.
+
+Lo pegás en ChatGPT, Gemini o Claude, completás los corchetes con tu tema y tu audiencia, y te devuelve los 7 días organizados: tema, formato y título.
+
+Copialo del slide 3.
+
+¿Cuánto tiempo te ahorraría tener esto listo cada lunes? 👇

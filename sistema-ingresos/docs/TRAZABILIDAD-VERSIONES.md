@@ -100,7 +100,7 @@ Script solo-lectura, mide el checkout del curso por rango:
 
 ```bash
 cd ads-agent
-node --env-file=.env.local checkout-trazabilidad.mjs --desde=2026-07-17 [--hasta=2026-07-31]
+node --env-file=.env.local scripts/datos/checkout-trazabilidad.mjs --desde=2026-07-17 [--hasta=2026-07-31]
 ```
 
 ## Regla permanente
@@ -124,8 +124,8 @@ Para todo antes/después usar `events`. GA4 sirve para el corte por dispositivo,
 
 ```bash
 cd ads-agent
-node --env-file=.env.local fetch-clarity.mjs --days=3   # scroll, dead clicks, navegador, país
-node --env-file=.env.local fetch-ga4.mjs --days=10      # vistas por página
+node --env-file=.env.local scripts/datos/fetch-clarity.mjs --days=3   # scroll, dead clicks, navegador, país
+node --env-file=.env.local scripts/datos/fetch-ga4.mjs --days=10      # vistas por página
 ```
 
 ## Cambio ya cerrado: PayPal OFF (v2 checkout, 17/07)

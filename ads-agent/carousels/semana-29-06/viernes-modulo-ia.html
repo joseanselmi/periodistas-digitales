@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Oferta — Módulo IA — Viernes 3/07</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:54px; font-weight:900; color:#f1f5f9; line-height:1.08; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:16px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.tag { display:inline-block; background:rgba(34,211,238,.12); color:#22d3ee; font-size:18px; font-weight:700; padding:6px 16px; border-radius:100px; margin-bottom:16px; }
+li { font-size:27px; color:#cbd5e1; line-height:1.6; margin-bottom:14px; max-width:880px; }
+li strong { color:#f1f5f9; }
+.value-stack { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:16px; padding:28px 32px; margin-top:8px; }
+.row { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.row:last-child { border-bottom:none; }
+.row span.item { font-size:24px; color:#e2e8f0; }
+.row span.val { font-size:24px; color:#f59e0b; font-weight:700; }
+.total { display:flex; justify-content:space-between; align-items:center; padding-top:20px; margin-top:8px; }
+.total span.item { font-size:28px; color:#f1f5f9; font-weight:800; }
+.total span.val { font-size:32px; color:#22c55e; font-weight:900; }
+.price-box { text-align:center; margin-top:12px; }
+.price-old { font-size:30px; color:#94a3b8; text-decoration:line-through; margin-right:16px; }
+.price-new { font-size:64px; font-weight:900; color:#22c55e; }
+.cta-btn-full { display:block; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:26px; font-weight:800; padding:24px 48px; border-radius:100px; text-align:center; margin-top:24px; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label red">Oferta · Viernes</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>El módulo que<br>más nos piden<br><span class="accent">que expliquemos</span></h1>
+    <p class="lead">"IA aplicada al trabajo periodístico". Esto es exactamente lo que aprendés ahí.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">El módulo</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>No es un curso<br>de "prompts mágicos"</h2>
+    <p>Es la parte del Sistema de Ingresos Diarios donde te enseñamos a usar IA específicamente para el trabajo de periodista: research, redacción, edición y distribución.</p>
+    <p>Pensado para alguien que escribe notas, no para alguien que programa.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Qué aprendés ahí</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Adentro del módulo:</h2>
+    <ul>
+      <li><strong>Research asistido</strong> — cómo armar contexto y verificar datos sin perder horas.</li>
+      <li><strong>Generación de borradores</strong> — primeras versiones de notas cortas que después ajustás con tu voz.</li>
+      <li><strong>Producción multiplicada</strong> — cómo convertir una nota en varios formatos (redes, newsletter, video corto) sin rehacer todo desde cero.</li>
+      <li><strong>Distribución</strong> — cómo usar IA para que más gente vea lo que ya escribiste.</li>
+    </ul>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">El contexto</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Este módulo es parte<br>de algo más grande:<br><span class="accent">el Sistema de Ingresos Diarios</span></h2>
+    <p>5 pilares completos para construir ingresos propios como periodista, sin depender de un solo sueldo.</p>
+    <p>Más de 3.700 personas ya lo compraron.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Todo lo que incluye</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Hoy es viernes,<br>así que vamos<br>directo a la oferta:</h2>
+    <div class="value-stack">
+      <div class="row"><span class="item">Sistema de Ingresos Diarios</span><span class="val">$227</span></div>
+      <div class="row"><span class="item">Micro curso "IA para Periodistas"</span><span class="val">$47</span></div>
+      <div class="row"><span class="item">1 mes de Leadr (formación IA)</span><span class="val">$97</span></div>
+      <div class="row"><span class="item">+100 diseños Canva para medios</span><span class="val">$27</span></div>
+      <div class="row"><span class="item">+50 Prompts periodísticos</span><span class="val">$9</span></div>
+      <div class="total"><span class="item">Valor total</span><span class="val">$407</span></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label red">El precio real</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>No pagás $407.<br>Pagás:</h2>
+    <div class="price-box">
+      <span class="price-old">$407</span>
+      <span class="price-new">$10</span>
+    </div>
+    <p style="text-align:center; margin-top:24px;">El bono de Leadr (un mes de formación IA en nuestra plataforma propia) es exclusivo de esta oferta. No lo conseguís en ningún otro lado.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Última →</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Listo para empezar</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>El módulo de IA<br>te espera adentro<br>del Sistema completo.</h2>
+    <p>$10 USD. Acceso inmediato. Sin letra chica.</p>
+    <div class="cta-btn-full">Link en bio</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

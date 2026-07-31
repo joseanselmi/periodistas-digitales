@@ -1,7 +1,7 @@
 // Sync del GASTO de Meta Ads → tabla `campanas` (Supabase periodistas-marketing).
-// Equivalente serverless de ads-agent/meta-spend-sync.mjs, para correr desde el cron
+// Equivalente serverless de ads-agent/scripts/datos/meta-spend-sync.mjs, para correr desde el cron
 // (api/recuperacion.js lo llama al inicio de su corrida diaria, junto a runHotmartSync).
-// Detalle en ads-agent/ARQUITECTURA-DATOS.md.
+// Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md.
 //
 // Trae los insights por anuncio (Marketing API), extrae la matrícula `src` (adN-angulo)
 // del nombre del conjunto/anuncio, agrega por src y hace PATCH del gasto/CTR en la ficha

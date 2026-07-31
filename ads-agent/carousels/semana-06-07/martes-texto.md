@@ -1,0 +1,23 @@
+# Martes 7/07 — Texto puro — Activación de dolor
+
+---
+
+Hace seis meses que sabes que tienes que hacer algo distinto.
+
+Lo piensas los domingos en la noche, antes de volver a la rutina. Lo piensas cuando ves a un colega publicar algo propio. Lo piensas cada vez que llega el recibo de sueldo y no alcanza igual que antes.
+
+Y aun así, el lunes vuelves a hacer exactamente lo mismo que el lunes pasado.
+
+No es que te falte ambición. Es que cada vez que pensaste en empezar algo propio, apareció la misma lista de excusas: no tengo tiempo, no sé de tecnología, no tengo plata para invertir, no es el momento.
+
+La lista es la misma desde hace meses. Solo cambia la fecha.
+
+Mientras tanto, otros periodistas en tu misma situación —mismo sueldo, mismo cansancio, misma falta de tiempo— ya armaron algo propio. No porque tuvieran más recursos que tú. Porque dejaron de esperar el momento perfecto para dar el primer paso, aunque fuera chico.
+
+La parálisis por análisis no te protege. Solo te mantiene exactamente donde estás.
+
+¿Cuánto tiempo más vas a esperar el momento ideal que nunca llega?
+
+*Cuéntame en los comentarios: ¿qué es lo que más te frena a dar el primer paso?*
+
+#PeriodismoDigital #IngresosPropios #PeriodistasLatam

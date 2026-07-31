@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Qué incluye el Sistema — Lunes 2/06</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:800px; height:800px; background:radial-gradient(circle, rgba(99,102,241,.18) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.cyan { color:#22d3ee; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:88px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.modulo-label { font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#6366f1; margin-bottom:16px; }
+.modulo-title { font-size:52px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.025em; margin-bottom:20px; }
+.modulo-desc { font-size:30px; color:#cbd5e1; line-height:1.6; max-width:880px; }
+.modulo-desc strong { color:#f1f5f9; }
+.modulo-num { font-size:200px; font-weight:900; color:transparent; -webkit-text-stroke:2px rgba(99,102,241,.18); line-height:1; position:absolute; right:48px; bottom:48px; letter-spacing:-.06em; pointer-events:none; }
+.include-list { display:flex; flex-direction:column; gap:20px; }
+.inc-item { display:flex; gap:20px; align-items:flex-start; }
+.inc-check { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#22d3ee); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:#fff; flex-shrink:0; margin-top:4px; }
+.inc-text { font-size:31px; color:#f1f5f9; font-weight:600; line-height:1.3; }
+.inc-sub { font-size:20px; color:#94a3b8; margin-top:4px; font-weight:400; }
+.bono-box { background:linear-gradient(135deg, rgba(245,158,11,.1), rgba(251,191,36,.05)); border:1px solid rgba(245,158,11,.3); border-radius:20px; padding:28px 32px; margin-top:16px; }
+.bono-label { font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#f59e0b; margin-bottom:12px; }
+.bono-title { font-size:36px; font-weight:900; color:#f1f5f9; }
+.bono-val { font-size:24px; color:#cbd5e1; margin-top:4px; }
+.price-hero { font-size:140px; font-weight:900; color:#f1f5f9; line-height:1; letter-spacing:-.05em; }
+.price-sub { font-size:31px; color:#94a3b8; margin-top:8px; }
+.cta-btn-full { display:block; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:24px; font-weight:800; padding:24px 48px; border-radius:100px; text-align:center; margin-top:32px; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">El sistema · Lunes</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>¿Qué tiene el<br>Sistema de<br>Ingresos Diarios<br><span class="accent">exactamente?</span></h1>
+    <p class="lead">La pregunta que más me hacen.<br>Acá está la respuesta completa.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para verlo todo →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Qué es -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Qué es</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="modulo-title">Un sistema de 5 pasos<br>para generar ingresos<br>propios usando tu<br>conocimiento periodístico.</div>
+    <p class="modulo-desc" style="margin-top:24px;">No es un curso teórico. Es un sistema que +3.700 periodistas latinoamericanos ya aplicaron.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Módulo 1 →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — Módulo 1 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Módulo 1</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="modulo-label">Primer módulo</div>
+    <div class="modulo-title">La micro oferta</div>
+    <p class="modulo-desc">Cómo empaquetar lo que sabés en algo que la gente paga. <strong>Definís tu nicho, tu audiencia y tu propuesta de valor en un ejercicio de 45 minutos.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Módulo 2 →</div>
+  </div>
+  <div class="modulo-num">1</div>
+</div>
+
+<!-- SLIDE 4 — Módulo 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Módulo 2</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="modulo-label">Segundo módulo</div>
+    <div class="modulo-title">Meta Ads<br>para periodistas</div>
+    <p class="modulo-desc">Cómo llegar a tu audiencia exacta con <strong>$5/día.</strong> Sin agencia. Sin técnicos. Con la lógica de alguien que entiende a su lector.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Módulo 3 →</div>
+  </div>
+  <div class="modulo-num">2</div>
+</div>
+
+<!-- SLIDE 5 — Módulo 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Módulo 3</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="modulo-label">Tercer módulo</div>
+    <div class="modulo-title">IA en el trabajo<br>periodístico</div>
+    <p class="modulo-desc">Las herramientas exactas. Los prompts que funcionan. <strong>NotebookLM, Whisper, Perplexity, Claude.</strong> Con casos de uso reales para periodistas de LATAM.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El bono →</div>
+  </div>
+  <div class="modulo-num">3</div>
+</div>
+
+<!-- SLIDE 6 — Bono -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Bono exclusivo</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Incluye 1 mes<br>de <span class="accent">Leadr</span> —<br>la plataforma.</h2>
+    <div class="bono-box">
+      <div class="bono-label">Valor de Leadr</div>
+      <div class="bono-title">$97 USD/mes</div>
+      <div class="bono-val">Incluido gratis con el Sistema</div>
+    </div>
+    <p style="font-size:26px; margin-top:24px; color:#94a3b8;">Recursos, comunidad, plantillas y actualizaciones mensuales. Solo disponible para quienes compran el Sistema.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El precio →</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — CTA precio -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Todo esto por</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="price-hero">$10</div>
+    <div class="price-sub">USD · Acceso inmediato en Hotmart</div>
+    <div class="divider" style="margin-top:32px;"></div>
+    <p style="font-size:26px; color:#94a3b8;">3 módulos + 1 mes de Leadr ($97 de valor). Sin suscripción. Sin renuevos obligatorios.</p>
+    <div class="cta-btn-full">Link en bio · Acceso ya</div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

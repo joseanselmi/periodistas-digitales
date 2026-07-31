@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Primer anunciante — Miércoles 05/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.prompt-box { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:32px 36px; margin-top:8px; }
+.prompt-box .ptitle { font-size:14px; color:#22d3ee; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+.prompt-box p { font-size:23px; color:#cbd5e1; line-height:1.55; margin-bottom:0; }
+.numlist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.numlist .item { display:flex; gap:18px; align-items:flex-start; }
+.numlist .n { font-size:30px; font-weight:900; color:#22d3ee; min-width:56px; }
+.numlist .t { font-size:27px; color:#cbd5e1; line-height:1.5; padding-top:2px; }
+.numlist .t strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip práctico</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>Tu primer<br>anunciante está<br><span class="accent">a 10 cuadras</span></h1><p class="lead">No está en internet. Está en tu barrio. Los 3 negocios que primero le pagan a un medio local — y qué decirles.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Por qué ellos</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El negocio local<br>necesita lo<br>que tenés</h2><div class="divider"></div><p>Un comercio de barrio no puede competir en Facebook Ads con las grandes marcas. Pero sí puede aparecer en el medio que lee su propia clientela.</p><p><strong>Vos tenés exactamente eso: la atención de la gente de la zona.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Negocio 01</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El que ya invierte<br>en publicidad</h2><div class="divider"></div><p>Inmobiliarias, concesionarias, clínicas, gimnasios. Ya gastan en publicidad y entienden que cuesta dinero.</p><p><strong>Qué decirle:</strong> "Llego a [X] personas de [tu zona] cada semana. Te ofrezco una mención por [precio de prueba]."</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Negocio 02</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El que abrió<br>hace poco</h2><div class="divider"></div><p>Un restaurante nuevo, una tienda recién inaugurada. Necesitan que los conozcan ya y tienen presupuesto de lanzamiento.</p><p><strong>Qué decirle:</strong> "Puedo presentar tu apertura a mi audiencia local con una nota + menciones en redes."</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Negocio 03</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El que ya<br>te conoce</h2><div class="divider"></div><p>El comercio donde comprás, el profesional que te atiende. La confianza ya existe.</p><p><strong>Qué decirle, sin vueltas:</strong> "Armé un medio local sobre [tema]. ¿Te interesa que lo cuente a mi audiencia? Te paso los detalles."</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label amber">La clave</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Empezá<br>barato</h2><div class="divider"></div><p>Tu primer precio no es el definitivo. Es para romper el hielo y tener el primer "sí".</p><p><strong>Un anunciante que ya te pagó una vez es diez veces más fácil de renovar.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cerrando</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>¿Cuál de estos<br><span class="accent">tenés cerca?</span></h2><div class="divider"></div><p class="lead">Pensá en un negocio de tu barrio ahora mismo. Escribí cuál en los comentarios.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+<script>
+(function(){const s=document.querySelectorAll('.slide');let c=0;function go(d){s[c].classList.remove('active');c=Math.max(0,Math.min(s.length-1,c+d));s[c].classList.add('active')}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)})})()
+</script>
+</body>
+</html>

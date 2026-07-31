@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>+50 Prompts para Periodistas con Claude</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-mark { width:52px; height:52px; border-radius:14px; background:linear-gradient(135deg,var(--indigo),var(--cyan)); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.3rem; color:#07070f; margin-bottom:48px; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.4rem,6vw,3.6rem); margin-bottom:20px; max-width:560px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:480px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:16px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.82rem; margin-top:2px; }
+
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2rem; margin-bottom:10px; }
+.section-intro { color:var(--muted); margin-bottom:28px; font-size:.96rem; }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+
+.code-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .82rem;
+    color: #c4b5fd;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+.code-box .var { color: var(--cyan); font-weight:600; }
+
+.prompt-mini { margin-bottom: 24px; page-break-inside: avoid; break-inside: avoid; }
+.prompt-mini-head { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+.prompt-mini-num { font-family:'Space Grotesk',sans-serif; font-weight:800; color:var(--indigo); font-size:.95rem; min-width:26px; }
+.prompt-mini-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.02rem; color:var(--text); }
+.prompt-mini-desc { margin:0 0 8px 36px; font-size:.86rem; color:var(--muted); }
+.prompt-mini .code-box { margin: 0 0 0 36px; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 4px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:16px; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.prompt-mini, .cta-box, .callout, .callout-green {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-mark">{ }</div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Periodistas del Futuro IA</div>
+        <h1>+50 prompts<br><span class="accent">listos para copiar</span><br>en cada situación de tu trabajo.</h1>
+        <p class="cover-sub">La versión completa de la guía anterior: un prompt para cada momento del día — desde abrir un expediente hasta cerrar la nota. Copia, pega, reemplaza los corchetes con tu información.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── TOC ─── -->
+<section class="page">
+    <div class="eyebrow">Antes de arrancar</div>
+    <h2>8 situaciones, 50 prompts</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Investigación y verificación</div><div class="toc-desc">7 prompts — documentos, expedientes, fact-checking</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">Entrevistas</div><div class="toc-desc">7 prompts — antes, durante y después de hablar con la fuente</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Redacción y edición</div><div class="toc-desc">8 prompts — del borrador a la nota lista para publicar</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">Datos y documentos largos</div><div class="toc-desc">8 prompts — tablas, PDFs, registros públicos</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">Redes sociales y desinformación</div><div class="toc-desc">6 prompts — monitoreo, patrones, verificación de virales</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">Producción diaria y organización</div><div class="toc-desc">6 prompts — pauta, seguimiento de temas, gestión del día</div></div></div>
+        <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-title">Multimedia y formatos</div><div class="toc-desc">4 prompts — guiones, redes, newsletters</div></div></div>
+        <div class="toc-item"><span class="toc-num">08</span><div><div class="toc-title">Legal, ético y seguridad de fuentes</div><div class="toc-desc">4 prompts — proteger fuentes y evitar errores caros</div></div></div>
+    </div>
+</section>
+
+<!-- ─── 01 INVESTIGACIÓN ─── -->
+<section class="page">
+    <div class="eyebrow">01 — Investigación y verificación</div>
+    <h2>Investigación y verificación</h2>
+    <p class="section-intro">Para cuando tenés que procesar más información de la que podrías leer a mano en el tiempo que tenés.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">01</span><span class="prompt-mini-title">Primera lectura de un expediente largo</span></div>
+        <p class="prompt-mini-desc">Para no empezar a leer 80 páginas a ciegas.</p>
+        <div class="code-box">Actúa como mi analista de documentos. Te paso el texto de un expediente.
+Necesito: 1) resumen de cada sección, 2) nombres/montos/fechas relevantes,
+3) contradicciones internas, 4) qué partes merecen lectura profunda mía y por qué.
+No decidas relevancia periodística por mí — señalá los datos, yo decido la historia.
+Documento: <span class="var">[pega el texto, por partes si es largo]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">02</span><span class="prompt-mini-title">Mapa de personas y relaciones</span></div>
+        <p class="prompt-mini-desc">Cuando un caso tiene demasiados nombres para llevar en la cabeza.</p>
+        <div class="code-box">Te voy a pasar texto con muchos nombres de personas y empresas.
+Armame una lista de quién es quién (cargo o rol) y qué relación tiene
+con cada uno de los demás mencionados (jefe de, socio de, contratado por).
+Marcá con [VERIFICAR] cualquier relación que el texto no confirme explícitamente.
+Texto: <span class="var">[pega acá]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">03</span><span class="prompt-mini-title">Fact-checking de una afirmación viral</span></div>
+        <p class="prompt-mini-desc">Primer filtro antes de la verificación humana — nunca el filtro final.</p>
+        <div class="code-box">Actúa como mi verificador de hechos. Tu trabajo NO es decirme si es verdad
+o mentira — es ayudarme a verificarlo yo mismo.
+1) Identificá cada dato verificable (cifras, fechas, nombres, citas).
+2) Para cada uno, qué fuente lo confirmaría (documento oficial, registro,
+testigo directo).
+3) Señalá lenguaje ambiguo o que induzca a error.
+4) Armá 3-5 preguntas que le harías a la fuente original.
+No concluyas si es verdadero o falso.
+Afirmación: <span class="var">[pega acá]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">04</span><span class="prompt-mini-title">Comparar dos versiones de un comunicado</span></div>
+        <p class="prompt-mini-desc">Detectar qué cambiaron sin tener que leer línea por línea.</p>
+        <div class="code-box">Te paso dos versiones del mismo comunicado/documento, una anterior y una
+actual. Decime exactamente qué se agregó, qué se quitó y qué se reformuló
+(aunque sea sutil). Marcá los cambios que podrían ser editoriales (suavizar
+una frase) versus los que cambian un hecho o una cifra.
+Versión anterior: <span class="var">[pega]</span>
+Versión actual: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">05</span><span class="prompt-mini-title">Lista de preguntas pendientes de una investigación</span></div>
+        <p class="prompt-mini-desc">Para no perder el hilo entre una sesión de trabajo y la siguiente.</p>
+        <div class="code-box">Te voy a pasar mis notas de investigación hasta ahora, desordenadas.
+Armame: 1) qué ya está confirmado con fuente, 2) qué es todavía una hipótesis,
+3) qué preguntas concretas me faltan responder para poder publicar,
+ordenadas de la más urgente a la menos urgente.
+Notas: <span class="var">[pega tus notas]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">06</span><span class="prompt-mini-title">Traducir y verificar matices de una fuente en otro idioma</span></div>
+        <p class="prompt-mini-desc">Sin perder dobles sentidos del original.</p>
+        <div class="code-box">Actúa como mi traductor periodístico. Necesito: 1) traducción fiel, sin
+embellecer ni resumir, 2) marcar cualquier expresión ambigua o con doble
+sentido en el original, 3) lista de términos técnicos con su equivalente
+más preciso en español.
+Texto: <span class="var">[pega]</span>  Idioma original: <span class="var">[completa]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">07</span><span class="prompt-mini-title">Identificar lo que falta en una respuesta oficial</span></div>
+        <p class="prompt-mini-desc">Cuando una fuente oficial contesta, pero no contesta lo que preguntaste.</p>
+        <div class="code-box">Te paso la pregunta que le hice a una fuente oficial y la respuesta que dio.
+Decime: 1) si respondió realmente lo que se le preguntó, 2) qué parte de la
+pregunta evitó o no contestó, 3) qué seguimiento le haría a continuación
+para cerrar el hueco.
+Pregunta: <span class="var">[pega]</span>  Respuesta: <span class="var">[pega]</span></div>
+    </div>
+</section>
+
+<!-- ─── 02 ENTREVISTAS ─── -->
+<section class="page">
+    <div class="eyebrow">02 — Entrevistas</div>
+    <h2>Entrevistas</h2>
+    <p class="section-intro">Antes de sentarte con la fuente, durante la transcripción, y después para no perder ninguna cita fuerte.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">08</span><span class="prompt-mini-title">Guía de entrevista completa</span></div>
+        <p class="prompt-mini-desc">Preguntas que abren, profundizan y desafían.</p>
+        <div class="code-box">Voy a entrevistar a <span class="var">[cargo/nombre]</span> sobre <span class="var">[tema]</span>.
+Ya sé esto del tema: <span class="var">[lo que tengas]</span>.
+Armá: 3 preguntas de apertura sin sonar genéricas, 5 que profundicen
+de lo general a lo específico, 3 incómodas formuladas con respeto pero
+sin salida fácil (con una de seguimiento cada una por si evade), y un
+cierre que la deje hablando de algo que no esperaba.
+Evitá preguntas de sí/no.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">09</span><span class="prompt-mini-title">Anticipar las evasivas más probables</span></div>
+        <p class="prompt-mini-desc">Prepararte para lo que la fuente va a intentar no responder.</p>
+        <div class="code-box">Voy a preguntarle a <span class="var">[cargo]</span> sobre <span class="var">[tema sensible]</span>.
+Decime las 3 evasivas más probables que va a usar (negar, minimizar,
+desviar a otro responsable) y para cada una, una pregunta de seguimiento
+que no le deje esa salida.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">10</span><span class="prompt-mini-title">Transcripción y resumen ejecutivo</span></div>
+        <p class="prompt-mini-desc">Convertir horas de audio en lo esencial, en minutos.</p>
+        <div class="code-box">Actúa como mi productor editorial. Te paso la transcripción de una
+entrevista. Necesito: 1) resumen ejecutivo de 5 líneas (de qué habló,
+tono, qué quedó sin responder), 2) las 5 citas más fuertes TEXTUALES,
+3) contradicciones dentro de la misma entrevista, 4) afirmaciones que
+debería verificar antes de publicar. Mantené mi criterio editorial:
+vos identificás patrones, yo decido qué es noticia.
+Transcripción: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">11</span><span class="prompt-mini-title">Detectar titulares fuera de contexto</span></div>
+        <p class="prompt-mini-desc">Para vos decidir, no para publicar sin chequear.</p>
+        <div class="code-box">De esta transcripción, dame 3 frases que funcionarían como titular si se
+usan fuera de contexto. Esto es solo para que yo las detecte y decida
+si las uso con el contexto completo o las descarto — no para publicarlas
+recortadas.
+Transcripción: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">12</span><span class="prompt-mini-title">Preguntas de chequeo previo a publicar</span></div>
+        <p class="prompt-mini-desc">Última pasada antes de cerrar la nota basada en la entrevista.</p>
+        <div class="code-box">De esta transcripción, listame cada afirmación de la fuente que sea un
+dato concreto (cifra, fecha, acusación a un tercero) y que yo debería
+verificar antes de publicar, ordenadas de más a menos riesgosa si resulta
+ser falsa.
+Transcripción: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">13</span><span class="prompt-mini-title">Preparar contrapregunta con datos propios</span></div>
+        <p class="prompt-mini-desc">Cuando ya tenés información que contradice lo que va a decir la fuente.</p>
+        <div class="code-box">Voy a entrevistar a alguien que probablemente va a decir <span class="var">[lo que esperás que diga]</span>.
+Yo tengo este dato que lo contradice: <span class="var">[tu dato]</span>.
+Armame la forma más directa pero profesional de confrontarlo con esto
+en el momento, sin que suene a acusación antes de que termine de hablar.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">14</span><span class="prompt-mini-title">Resumen para quien no escuchó la entrevista</span></div>
+        <p class="prompt-mini-desc">Para pasarle el contexto rápido a tu editor.</p>
+        <div class="code-box">Resumime esta entrevista en 6 líneas para alguien que no la escuchó y
+necesita decidir en 30 segundos si es nota de tapa o nota secundaria:
+qué dijo, qué no dijo, y por qué importa hoy.
+Transcripción: <span class="var">[pega]</span></div>
+    </div>
+</section>
+
+<!-- ─── 03 REDACCIÓN Y EDICIÓN ─── -->
+<section class="page">
+    <div class="eyebrow">03 — Redacción y edición</div>
+    <h2>Redacción y edición</h2>
+    <p class="section-intro">Del borrador desordenado a la nota lista, sin perder tu voz en el camino.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">15</span><span class="prompt-mini-title">Estructura de nota desde cero</span></div>
+        <p class="prompt-mini-desc">Cuando tenés el tema pero no por dónde arrancar a escribir.</p>
+        <div class="code-box">Soy periodista de <span class="var">[tu medio/nicho]</span>. Necesito estructura de nota sobre <span class="var">[tema]</span>:
+lead de 3 líneas (qué, quién, cuándo, dónde, por qué), 5 párrafos con
+subtítulos propuestos, 3 datos que debería buscar para reforzar, y el
+ángulo que ningún otro medio está cubriendo todavía.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">16</span><span class="prompt-mini-title">Edición de un borrador propio</span></div>
+        <p class="prompt-mini-desc">Señala, no reescribe — mantiene tu voz.</p>
+        <div class="code-box">Actúa como mi editor. Te paso un borrador. Necesito que: 1) señales
+frases largas o confusas, 2) marques redundancias, 3) me digas si el
+lead responde qué/quién/cuándo/dónde/por qué en las primeras líneas,
+4) sugieras un orden alternativo de párrafos si no fluye. No reescribas
+todo de cero — señalá y sugerí, manteniendo mi voz.
+Borrador: <span class="var">[pega tu texto]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">17</span><span class="prompt-mini-title">5 opciones de titular</span></div>
+        <p class="prompt-mini-desc">Para no quedarte pegado en el primero que se te ocurrió.</p>
+        <div class="code-box">Dame 5 titulares distintos para esta nota: uno directo/informativo, uno
+con gancho emocional para redes, uno con pregunta, uno con cifra
+destacada, y uno corto para notificación push (máximo 8 palabras).
+Sin clickbait que no esté respaldado por el contenido.
+Nota: <span class="var">[pega el texto o el resumen]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">18</span><span class="prompt-mini-title">Chequeo de equilibrio y partes involucradas</span></div>
+        <p class="prompt-mini-desc">Antes de publicar, ver a quién no le diste voz todavía.</p>
+        <div class="code-box">Leé esta nota y decime: 1) qué personas o instituciones mencionadas no
+tienen voz directa en el texto, 2) si alguna acusación carece de la
+versión del acusado, 3) si el tono favorece a alguna de las partes sin
+que sea intencional.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">19</span><span class="prompt-mini-title">Versión corta para redes desde la nota larga</span></div>
+        <p class="prompt-mini-desc">Adaptar sin perder precisión.</p>
+        <div class="code-box">De esta nota, armame una versión de 5 líneas para Instagram/X que
+mantenga los datos exactos (sin redondear cifras de forma que cambie
+el sentido) y termine con una razón concreta para hacer clic y leer
+la nota completa.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">20</span><span class="prompt-mini-title">Detectar clichés y lugares comunes</span></div>
+        <p class="prompt-mini-desc">Para que no suene a nota genérica de cualquier medio.</p>
+        <div class="code-box">Marcá en este texto las frases hechas o clichés periodísticos ("en un
+hecho sin precedentes", "rompió el silencio") y proponé una alternativa
+más específica para cada una, basada en los datos reales de la nota.
+Texto: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">21</span><span class="prompt-mini-title">Bajar el nivel técnico sin perder precisión</span></div>
+        <p class="prompt-mini-desc">Para temas legales, médicos o técnicos.</p>
+        <div class="code-box">Este párrafo tiene términos técnicos de <span class="var">[área: legal/médica/financiera]</span>.
+Reescribilo para que lo entienda alguien sin formación en el tema, sin
+perder precisión en los datos. Marcá cada término que simplificaste y
+su significado exacto, para que yo confirme que no se perdió matiz.
+Párrafo: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">22</span><span class="prompt-mini-title">Última lectura antes de publicar</span></div>
+        <p class="prompt-mini-desc">El chequeo de 2 minutos antes de apretar "publicar".</p>
+        <div class="code-box">Hacé una última pasada de esta nota y decime, en una lista corta:
+1) algo que afirmás sin fuente citada, 2) una fecha o cifra que valga
+la pena reconfirmar, 3) si el título promete algo que el cuerpo no
+cumple del todo.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+</section>
+
+<!-- ─── 04 DATOS Y DOCUMENTOS ─── -->
+<section class="page">
+    <div class="eyebrow">04 — Datos y documentos largos</div>
+    <h2>Datos y documentos largos</h2>
+    <p class="section-intro">Cruces y lecturas que serían imposibles (o tomarían días) a simple vista.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">23</span><span class="prompt-mini-title">Detectar anomalías en una tabla de registros</span></div>
+        <p class="prompt-mini-desc">Gastos públicos, contratos, padrones.</p>
+        <div class="code-box">Actúa como mi analista de datos. Te paso una tabla o lista de registros.
+Necesito: 1) valores atípicos o fuera de rango, 2) repeticiones sospechosas
+(mismo proveedor, mismo monto, fechas seguidas), 3) hallazgos ordenados de
+más a menos llamativo, 4) qué confirmaría con una fuente humana antes de
+publicar cualquiera.
+Datos: <span class="var">[pega la tabla o las columnas relevantes]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">24</span><span class="prompt-mini-title">Resumen de expediente legal/judicial</span></div>
+        <p class="prompt-mini-desc">En lenguaje simple, sin perder lo importante.</p>
+        <div class="code-box">Te paso el texto de un documento legal o judicial extenso. Necesito:
+1) resumen en lenguaje simple de qué resuelve o establece, 2) fechas y
+plazos clave aparte, 3) cláusulas o párrafos más relevantes para una
+nota periodística, 4) términos legales que debería explicarle a mi
+audiencia en palabras simples, con traducción de cada uno.
+Documento: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">25</span><span class="prompt-mini-title">Comparar presupuestos de dos años</span></div>
+        <p class="prompt-mini-desc">Dónde subió, bajó o desapareció una partida.</p>
+        <div class="code-box">Te paso dos presupuestos (mismo organismo, años distintos). Decime qué
+partidas crecieron más del 20%, cuáles desaparecieron de un año a otro,
+y cuáles aparecen nuevas sin explicación en el texto.
+Presupuesto año 1: <span class="var">[pega]</span>  Presupuesto año 2: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">26</span><span class="prompt-mini-title">Convertir un PDF escaneado en datos usables</span></div>
+        <p class="prompt-mini-desc">Cuando el documento es texto sin estructura clara.</p>
+        <div class="code-box">Te paso texto extraído de un PDF, puede tener errores de formato.
+Organizalo en una tabla con estas columnas: <span class="var">[nombre, fecha, monto, etc.]</span>.
+Si algún dato no es legible o falta, marcalo como [ILEGIBLE] en vez de
+inventarlo.
+Texto: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">27</span><span class="prompt-mini-title">Explicar una cifra oficial en contexto</span></div>
+        <p class="prompt-mini-desc">Para que un número no quede flotando sin sentido.</p>
+        <div class="code-box">Esta cifra oficial es <span class="var">[la cifra y de dónde sale]</span>. Decime 3 formas de dar
+contexto que ayuden al lector a entender si es mucho o poco (comparación
+con años anteriores, con otro país de la región, per cápita) — y avisame
+si alguna comparación requeriría un dato que no tengo todavía.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">28</span><span class="prompt-mini-title">Detectar conflicto de interés en un registro</span></div>
+        <p class="prompt-mini-desc">Cruzar nombres entre dos listas distintas.</p>
+        <div class="code-box">Te paso dos listas: <span class="var">[ej: funcionarios públicos]</span> y <span class="var">[ej: dueños de empresas
+contratadas]</span>. Decime si hay coincidencias de nombre exactas o muy
+similares entre ambas listas, marcando claramente que una coincidencia
+de nombre no es prueba de nada por sí sola — solo una pista a verificar.
+Lista 1: <span class="var">[pega]</span>  Lista 2: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">29</span><span class="prompt-mini-title">Resumen ejecutivo de un informe técnico</span></div>
+        <p class="prompt-mini-desc">Para decidir en 2 minutos si vale una nota.</p>
+        <div class="code-box">Te paso un informe técnico largo. Necesito un resumen de máximo 8 líneas
+que responda: de qué trata, cuál es el hallazgo principal, a quién afecta,
+y si hay algo ahí que sería noticia hoy mismo.
+Informe: <span class="var">[pega o resumí las secciones más largas]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">30</span><span class="prompt-mini-title">Línea de tiempo a partir de documentos sueltos</span></div>
+        <p class="prompt-mini-desc">Ordenar cronológicamente lo que llega desordenado.</p>
+        <div class="code-box">Te voy a pasar fragmentos de distintos documentos con fechas. Armame
+una línea de tiempo ordenada cronológicamente, con una línea por evento,
+y marcá si dos eventos cercanos en fecha podrían estar relacionados entre sí.
+Fragmentos: <span class="var">[pega, uno por uno]</span></div>
+    </div>
+</section>
+
+<!-- ─── 05 REDES Y DESINFORMACIÓN ─── -->
+<section class="page">
+    <div class="eyebrow">05 — Redes sociales y desinformación</div>
+    <h2>Redes sociales y desinformación</h2>
+    <p class="section-intro">Para detectar patrones que a simple vista, leyendo post por post, no se ven.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">31</span><span class="prompt-mini-title">Detección de patrones coordinados</span></div>
+        <p class="prompt-mini-desc">Cuentas distintas, mismo mensaje sospechosamente parecido.</p>
+        <div class="code-box">Actúa como mi analista de patrones en redes. Te paso varias publicaciones
+sobre un mismo tema. Decime: 1) si hay frases o estructuras repetidas de
+forma sospechosa entre cuentas distintas, 2) si el lenguaje coincide con
+patrones de desinformación conocidos (urgencia exagerada, fuentes no
+verificables, llamados insistentes a compartir), 3) qué debería verificar
+antes de afirmar que es una campaña coordinada y no solo gente opinando
+lo mismo por separado.
+Publicaciones: <span class="var">[pega, una por línea]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">32</span><span class="prompt-mini-title">Evaluar si una cuenta parece bot</span></div>
+        <p class="prompt-mini-desc">Señales a mirar, no un veredicto automático.</p>
+        <div class="code-box">Te describo el comportamiento de una cuenta: <span class="var">[fecha de creación, frecuencia
+de posteo, tipo de contenido que comparte]</span>. Decime qué señales de las
+que te di son típicas de cuentas automatizadas o de granjas de bots, y
+cuáles podrían tener una explicación normal. No concluyas que es bot —
+dame el análisis para que yo decida.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">33</span><span class="prompt-mini-title">Verificar una imagen o video viral</span></div>
+        <p class="prompt-mini-desc">Primer chequeo antes de herramientas especializadas de verificación visual.</p>
+        <div class="code-box">Te describo una imagen/video que se está viralizando: <span class="var">[descripción y
+contexto en que circula]</span>. Decime qué preguntas básicas debería
+responder antes de darle cualquier credibilidad (de cuándo es realmente,
+de dónde, si el contexto que circula coincide con lo que se ve) y qué
+herramientas o búsquedas me ayudarían a confirmarlo.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">34</span><span class="prompt-mini-title">Resumir el sentimiento de cientos de comentarios</span></div>
+        <p class="prompt-mini-desc">Sin leerlos uno por uno.</p>
+        <div class="code-box">Te paso un volumen grande de comentarios sobre <span class="var">[tema/publicación]</span>.
+Resumime: 1) los 3 argumentos más repetidos a favor, 2) los 3 más
+repetidos en contra, 3) si hay algún dato o acusación que aparece
+varias veces y valdría la pena verificar.
+Comentarios: <span class="var">[pega una muestra representativa]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">35</span><span class="prompt-mini-title">Rastrear el origen de una afirmación viral</span></div>
+        <p class="prompt-mini-desc">Quién la dijo primero, según lo que tenés.</p>
+        <div class="code-box">Te paso varias versiones de la misma afirmación que circula, con sus
+fechas de publicación aproximadas. Decime cuál parece ser la versión
+más antigua de las que te pasé, y qué cambió entre esa y las versiones
+más recientes.
+Versiones: <span class="var">[pega cada una con su fecha]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">36</span><span class="prompt-mini-title">Redactar una aclaración o desmentido</span></div>
+        <p class="prompt-mini-desc">Cuando tu propio medio publicó algo que hay que corregir.</p>
+        <div class="code-box">Necesito redactar una aclaración porque publicamos <span class="var">[el error]</span> y el
+dato correcto es <span class="var">[el dato correcto]</span>. Escribila de forma directa y
+profesional, sin minimizar el error ni sobre-explicarlo, en un máximo
+de 4 líneas.</div>
+    </div>
+</section>
+
+<!-- ─── 06 PRODUCCIÓN Y ORGANIZACIÓN ─── -->
+<section class="page">
+    <div class="eyebrow">06 — Producción diaria y organización</div>
+    <h2>Producción diaria y organización</h2>
+    <p class="section-intro">Para el periodista que hace de todo — pauta, seguimiento, y administrar el propio medio.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">37</span><span class="prompt-mini-title">Pauta semanal de temas</span></div>
+        <p class="prompt-mini-desc">Cuando hay que llenar la semana y la cabeza está en blanco.</p>
+        <div class="code-box">Soy periodista de <span class="var">[nicho]</span> en <span class="var">[país/región]</span>. Dame 7 ideas de nota para
+esta semana, basadas en: temas de actualidad de mi área, fechas o
+eventos próximos relevantes, y ángulos que conecten lo local con lo
+nacional. Para cada una, una línea de por qué importa ahora.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">38</span><span class="prompt-mini-title">Seguimiento de un tema en curso</span></div>
+        <p class="prompt-mini-desc">Para no perder el hilo de una historia que se extiende en el tiempo.</p>
+        <div class="code-box">Este es el resumen de cómo venía cubriendo <span class="var">[tema]</span> hasta ahora:
+<span class="var">[pega tu resumen o notas anteriores]</span>. Esto es lo nuevo que pasó:
+<span class="var">[lo nuevo]</span>. Decime qué preguntas quedan abiertas y qué ángulo
+nuevo aparece con esta novedad que antes no estaba.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">39</span><span class="prompt-mini-title">Calendario editorial del mes</span></div>
+        <p class="prompt-mini-desc">Fechas que no podés perderte si cubrís tu nicho.</p>
+        <div class="code-box">Para un medio sobre <span class="var">[tu nicho]</span> en <span class="var">[país]</span>, decime qué fechas, eventos
+o efemérides de <span class="var">[mes]</span> deberían estar en mi calendario editorial,
+con una idea de ángulo para cada una que no sea la cobertura genérica
+que va a hacer todo el mundo.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">40</span><span class="prompt-mini-title">Responder consultas repetidas de la audiencia</span></div>
+        <p class="prompt-mini-desc">Una respuesta base que después personalizás.</p>
+        <div class="code-box">Mi audiencia me pregunta seguido sobre <span class="var">[pregunta frecuente de tu nicho]</span>.
+Armame una respuesta clara y completa que pueda adaptar rápido cada vez
+que me la repreguntan, en un tono <span class="var">[cercano/formal]</span>, sin que suene
+a respuesta copiada y pegada.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">41</span><span class="prompt-mini-title">Priorizar el día cuando hay demasiado</span></div>
+        <p class="prompt-mini-desc">Cuando todo parece urgente a la vez.</p>
+        <div class="code-box">Tengo estas tareas pendientes hoy: <span class="var">[listalas]</span>. Ayudame a ordenarlas
+por: qué tiene una fecha límite real hoy, qué puede esperar a mañana sin
+costo, y qué debería delegar o descartar directamente. Sin agregar
+tareas que no te di.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">42</span><span class="prompt-mini-title">Plantilla de seguimiento de fuentes</span></div>
+        <p class="prompt-mini-desc">Para no perder contactos valiosos en el caos del día a día.</p>
+        <div class="code-box">Ayudame a armar una plantilla simple (en texto, para copiar a una nota
+o planilla) para registrar mis fuentes: nombre, cargo, tema que cubre,
+última vez que hablamos, y qué le debo (un dato pendiente, una llamada
+de vuelta). Que sea rápida de llenar, no un formulario largo.</div>
+    </div>
+</section>
+
+<!-- ─── 07 MULTIMEDIA Y FORMATOS ─── -->
+<section class="page">
+    <div class="eyebrow">07 — Multimedia y formatos</div>
+    <h2>Multimedia y formatos</h2>
+    <p class="section-intro">Llevar la misma historia a los formatos donde está tu audiencia.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">43</span><span class="prompt-mini-title">Guion corto para video/reel</span></div>
+        <p class="prompt-mini-desc">De la nota escrita a 60 segundos de video.</p>
+        <div class="code-box">A partir de esta nota, armame un guion de 60 segundos para video vertical:
+gancho de los primeros 3 segundos, 3 puntos clave en lenguaje hablado
+(no leído), y cierre con la razón para ver/leer más. Marcá dónde irían
+cortes o cambios de plano.
+Nota: <span class="var">[pega o resumí]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">44</span><span class="prompt-mini-title">Hilo para X/Twitter desde una nota larga</span></div>
+        <p class="prompt-mini-desc">Sin perder el dato que sostiene todo.</p>
+        <div class="code-box">Convertí esta nota en un hilo de 6-8 publicaciones: la primera tiene que
+funcionar sola como gancho, cada una siguiente agrega un dato concreto
+(no relleno), y la última cierra con el link o la razón para leer la
+nota completa.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">45</span><span class="prompt-mini-title">Newsletter semanal desde tus notas de la semana</span></div>
+        <p class="prompt-mini-desc">Reunir lo publicado en un solo envío.</p>
+        <div class="code-box">Te paso los títulos y resúmenes de mis notas de esta semana. Armame
+un newsletter corto: una línea de apertura que conecte las notas con
+algo más amplio, un resumen de 1-2 líneas por nota con su link, y un
+cierre que invite a responder el mail (no solo a hacer clic).
+Notas de la semana: <span class="var">[pega título + resumen de cada una]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">46</span><span class="prompt-mini-title">Pie de foto que agrega información, no la repite</span></div>
+        <p class="prompt-mini-desc">Para que el pie no diga lo mismo que ya se ve en la imagen.</p>
+        <div class="code-box">Esta imagen muestra: <span class="var">[describí lo que se ve]</span>. El contexto de la nota
+es: <span class="var">[resumen]</span>. Armame un pie de foto que agregue información que
+NO es obvia mirando la imagen (quién, cuándo exacto, por qué importa
+esta escena puntual), en una sola línea.</div>
+    </div>
+</section>
+
+<!-- ─── 08 LEGAL, ÉTICO Y SEGURIDAD ─── -->
+<section class="page">
+    <div class="eyebrow">08 — Legal, ético y seguridad de fuentes</div>
+    <h2>Legal, ético y seguridad de fuentes</h2>
+    <p class="section-intro">Lo que más cuesta corregir después de publicado — revisarlo antes.</p>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">47</span><span class="prompt-mini-title">Chequeo de riesgo legal antes de publicar</span></div>
+        <p class="prompt-mini-desc">No reemplaza a un abogado — sí detecta lo obvio antes de mandarle el texto.</p>
+        <div class="code-box">Leé esta nota y marcá: 1) afirmaciones que atribuyen responsabilidad
+penal o delito a una persona identificada sin que se cite una fuente
+oficial (sentencia, denuncia formal), 2) frases que podrían leerse como
+difamatorias si el dato no está 100% confirmado, 3) dónde convendría
+agregar "según" o "presuntamente" si todavía no hay confirmación total.
+Esto no reemplaza una revisión legal — es solo una primera pasada.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">48</span><span class="prompt-mini-title">Anonimizar una fuente sin perder credibilidad</span></div>
+        <p class="prompt-mini-desc">Proteger a la fuente sin que el lector dude del dato.</p>
+        <div class="code-box">Tengo esta cita de una fuente que necesita protección de identidad:
+<span class="var">[la cita y el rol de la fuente]</span>. Ayudame a describir su rol de forma
+que el lector entienda por qué sabe lo que dice, sin dar ningún detalle
+que permita identificarla (evitar cargo exacto, género si no hace falta,
+ubicación específica).</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">49</span><span class="prompt-mini-title">Checklist de seguridad antes de publicar algo sensible</span></div>
+        <p class="prompt-mini-desc">Para investigaciones donde alguien puede quedar expuesto.</p>
+        <div class="code-box">Voy a publicar una investigación sobre <span class="var">[tema sensible]</span> que involucra a
+<span class="var">[tipo de fuente: funcionario, denunciante, testigo]</span>. Armame un checklist
+de seguridad para revisar antes de publicar: qué detalles podrían
+identificar a la fuente indirectamente, qué reacciones probables debería
+anticipar, y qué precauciones tomar con la fuente después de la
+publicación.</div>
+    </div>
+
+    <div class="prompt-mini">
+        <div class="prompt-mini-head"><span class="prompt-mini-num">50</span><span class="prompt-mini-title">Revisar si falta el derecho a réplica</span></div>
+        <p class="prompt-mini-desc">El chequeo final antes de publicar algo que señala a alguien.</p>
+        <div class="code-box">Esta nota señala o cuestiona a <span class="var">[persona/institución]</span>. Decime si el texto
+deja claro que se le dio la oportunidad de responder, y si no fue así,
+qué frase estándar debería agregar explicando que no respondió o no
+quiso declarar, para no dejar la nota desbalanceada.
+Nota: <span class="var">[pega]</span></div>
+    </div>
+</section>
+
+<!-- ─── CIERRE ─── -->
+<section class="page">
+    <div class="eyebrow">Antes de cerrar</div>
+    <div class="callout-green">
+        <strong>Ya tenés 50 prompts reales, listos para copiar.</strong> No hace falta usarlos todos de una — guardá esta guía y volvé a ella cuando te aparezca la situación. La idea no es memorizarlos, es saber que están ahí.
+    </div>
+    <p>Con esto y la guía anterior (el documento de contexto + el prompt maestro), ya tenés montado lo que casi nadie en tu redacción está usando todavía: un sistema, no prompts sueltos. Eso es, literalmente, el primer ladrillo de tu propio medio digital — la parte de producción de contenido con IA ya la tenés resuelta.</p>
+
+    <div class="cta-box">
+        <h3>Esto sigue</h3>
+        <p>En los próximos días te vamos a mandar algo más por WhatsApp — algo concreto para dar el siguiente paso. Si en algún momento dejás de ver nuestros emails en tu bandeja principal, buscá <strong>"Periodistas del Futuro IA"</strong> en tu correo (puede estar en spam la primera vez).</p>
+    </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>

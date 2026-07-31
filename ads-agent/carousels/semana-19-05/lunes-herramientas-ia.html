@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>5 Herramientas de IA — Lunes 19/05</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; flex-direction:column; }
+
+.slide {
+  width:1080px; height:1080px;
+  background:#07070f;
+  display:none; flex-direction:column;
+  justify-content:space-between;
+  padding:72px 80px 60px;
+  position:relative; overflow:hidden;
+}
+.slide.active { display:flex; }
+
+/* Glow fondo */
+.slide::before {
+  content:''; position:absolute;
+  top:-300px; right:-200px; width:800px; height:800px;
+  background:radial-gradient(circle, rgba(99,102,241,.14) 0%, transparent 65%);
+  pointer-events:none;
+}
+/* Barra izquierda */
+.slide::after {
+  content:''; position:absolute;
+  left:0; top:72px; bottom:60px; width:5px;
+  background:linear-gradient(180deg,#6366f1,#22d3ee);
+  border-radius:0 3px 3px 0;
+}
+
+/* TOP ROW */
+.top { display:flex; justify-content:space-between; align-items:flex-start; width:100%; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.slide-label { font-size:12px; color:#6366f1; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.slide-label.cyan { color:#22d3ee; }
+.slide-label.amber { color:#f59e0b; }
+.slide-label.green { color:#22c55e; }
+
+/* MAIN CONTENT */
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:32px 0 0; }
+
+/* BOTTOM ROW */
+.bottom { display:flex; justify-content:space-between; align-items:center; width:100%; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); transition:.2s; }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); display:flex; align-items:center; gap:8px; }
+.swipe-hint .arrow { font-size:18px; }
+
+/* TIPOGRAFÍA */
+h1 { font-size:88px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:32px; }
+h2 { font-size:64px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+h3 { font-size:44px; font-weight:800; color:#f1f5f9; line-height:1.1; letter-spacing:-.02em; margin-bottom:20px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.accent-amber { background:linear-gradient(135deg,#f59e0b,#fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+p.sub { font-size:24px; color:#94a3b8; line-height:1.55; }
+
+/* NÚMERO GRANDE */
+.big-num {
+  font-size:180px; font-weight:900; line-height:1;
+  color:transparent;
+  -webkit-text-stroke:2px rgba(99,102,241,.3);
+  position:absolute; right:60px; bottom:60px;
+  letter-spacing:-.06em;
+  pointer-events:none;
+}
+
+/* TOOL CARD */
+.tool-badge {
+  width:72px; height:72px; border-radius:20px;
+  background:rgba(99,102,241,.15);
+  border:1px solid rgba(99,102,241,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; margin-bottom:28px;
+}
+.tool-name { font-size:56px; font-weight:900; color:#f1f5f9; letter-spacing:-.03em; margin-bottom:8px; }
+.tool-tag { font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#22d3ee; margin-bottom:28px; }
+.tool-desc { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:880px; }
+.tool-desc strong { color:#f1f5f9; }
+
+/* CTA */
+.cta-box {
+  background:linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1));
+  border:1px solid rgba(99,102,241,.3);
+  border-radius:24px;
+  padding:36px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:16px;
+}
+.cta-price { font-size:48px; font-weight:900; color:#f1f5f9; }
+.cta-label { font-size:14px; color:#6366f1; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.cta-btn {
+  background:linear-gradient(135deg,#6366f1,#4f46e5);
+  color:#fff; font-size:18px; font-weight:700;
+  padding:18px 36px; border-radius:100px;
+  white-space:nowrap;
+}
+
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+
+ul { list-style:none; display:flex; flex-direction:column; gap:20px; margin-bottom:24px; }
+ul li { display:flex; gap:18px; font-size:29px; color:#cbd5e1; line-height:1.4; align-items:flex-start; }
+ul li::before { content:''; width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#22d3ee); flex-shrink:0; margin-top:10px; }
+ul li strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 — HOOK -->
+<div class="slide active">
+  <div class="top">
+    <span class="slide-label">Herramientas · 2025</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>5 tools de IA<br>para periodistas<br>que <span class="accent">ya cambiaron</span><br>cómo trabajan.</h1>
+    <p class="lead" style="margin-top:8px;">No ChatGPT genérico.<br>Herramientas específicas para lo que hacemos.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Deslizá para ver las herramientas <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — NotebookLM -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label cyan">Herramienta 1 de 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="tool-badge">📓</div>
+    <div class="tool-name">NotebookLM</div>
+    <div class="tool-tag">Google · Gratuita</div>
+    <p class="tool-desc">Subís documentos, grabaciones y PDFs.<br><strong>La IA los analiza y responde preguntas específicas sobre ese material.</strong></p>
+    <p class="tool-desc" style="margin-top:16px; font-size:23px;">Ideal para preparar entrevistas, cruzar declaraciones anteriores, investigaciones largas.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Siguiente herramienta <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — Whisper -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label cyan">Herramienta 2 de 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="tool-badge">🎙️</div>
+    <div class="tool-name">Whisper / Otter.ai</div>
+    <div class="tool-tag">Transcripción automática</div>
+    <p class="tool-desc"><strong>45 minutos de audio → texto en 3 minutos.</strong></p>
+    <p class="tool-desc" style="margin-top:16px;">Con timestamps e identificación de hablantes. Whisper es gratuito y open source. Otter.ai tiene plan gratuito con límite mensual.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot active"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Seguí deslizando <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 4 — Perplexity -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label cyan">Herramienta 3 de 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="tool-badge">🔍</div>
+    <div class="tool-name">Perplexity</div>
+    <div class="tool-tag">Verificación con fuentes citadas</div>
+    <p class="tool-desc">Buscador que <strong>cita las fuentes de cada dato.</strong></p>
+    <p class="tool-desc" style="margin-top:16px;">No perdés 40 minutos en pestañas. Especialmente útil para verificar cifras en tiempo real y rastrear cobertura internacional.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Quedan 3 más <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — Claude -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label cyan">Herramienta 4 de 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="tool-badge">🧠</div>
+    <div class="tool-name">Claude / ChatGPT</div>
+    <div class="tool-tag">Con el prompt correcto</div>
+    <p class="tool-desc">Estructura notas, genera titulares, resume fuentes, propone ángulos alternativos.</p>
+    <p class="tool-desc" style="margin-top:16px;"><strong>El truco está en el prompt.</strong> Un prompt bien configurado replica tu voz y criterio editorial. Uno genérico da resultados genéricos.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Última herramienta <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — Canva IA -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label cyan">Herramienta 5 de 5</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="tool-badge">🎨</div>
+    <div class="tool-name">Canva IA</div>
+    <div class="tool-tag">Diseño sin diseñador</div>
+    <p class="tool-desc">Infografías, piezas para redes, portadas de newsletter. <strong>Tu nota visual en 15 minutos.</strong></p>
+    <p class="tool-desc" style="margin-top:16px;">La generación de imágenes con IA elimina la dependencia de un diseñador para el contenido cotidiano.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+    </div>
+    <div class="swipe-hint">Una más → el sistema completo <span class="arrow">→</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — CTA -->
+<div class="slide">
+  <div class="top">
+    <span class="slide-label green">¿Querés aprenderlas todas?</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Las 5 están en el<br><span class="accent">Sistema de<br>Ingresos Diarios.</span></h2>
+    <div class="divider"></div>
+    <p style="font-size:29px; margin-bottom:32px;">Con los prompts exactos y casos de uso reales para periodistas latinoamericanos.</p>
+    <div class="cta-box">
+      <div>
+        <div class="cta-label">Acceso completo</div>
+        <div class="cta-price">$10 USD</div>
+      </div>
+      <div class="cta-btn">Ver el sistema · Link en bio</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div>
+    </div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+  let startX = 0
+  document.addEventListener('touchstart', e => startX = e.touches[0].clientX)
+  document.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 50) go(diff > 0 ? 1 : -1)
+  })
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# Martes 14/07 — Texto puro — Dolor
+
+---
+
+Hacé este ejercicio un minuto. En serio.
+
+Imaginate tu vida profesional dentro de un año exacto, si todo sigue exactamente igual que hoy.
+
+Mismo sueldo. Mismo jefe. Misma incertidumbre cada vez que se habla de "reestructuración" en la redacción.
+
+Misma sensación de que tu trabajo depende 100% de una decisión que no tomás tú.
+
+¿Cómo se ve esa imagen?
+
+Para muchos periodistas en Colombia, México y Argentina, ese año ya pasó. Y el siguiente. Y el de antes.
+
+No porque no sean buenos profesionales. Sino porque nunca encontraron el momento "perfecto" para empezar algo propio.
+
+Spoiler: ese momento no existe. Nunca vas a tener menos trabajo, menos cansancio o más certeza que hoy.
+
+Lo único que cambia con el tiempo es que la idea de empezar se vuelve más pesada, no más liviana.
+
+No te estoy diciendo que renuncies. Te estoy preguntando algo más simple.
+
+Si en un año seguís exactamente donde estás, ¿estás en paz con eso?
+
+*Si la respuesta fue no, decímelo en los comentarios. A veces el primer paso es solo nombrarlo en voz alta.*
+
+#PeriodismoDigital #IndependenciaEconomica #PeriodistasLatam

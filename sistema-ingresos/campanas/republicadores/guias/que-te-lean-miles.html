@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo hacer que miles vean las mismas noticias que hoy solo ven tus amigos — Guía gratuita</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+.page-inner { width:100%; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-logo-row { display:flex; align-items:center; gap:16px; margin-bottom:40px; }
+.cover-mark { width:72px; height:72px; flex-shrink:0; }
+.cover-mark img { width:100%; height:100%; object-fit:contain; }
+.cover-brandname { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.6rem; color:var(--text); letter-spacing:-.01em; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.4rem,6vw,3.6rem); margin-bottom:20px; max-width:560px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:480px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:18px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.15rem; margin-bottom:22px; }
+h3 { font-size:1.3rem; margin:28px 0 12px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+ol { color:var(--muted); margin:0 0 24px 20px; display:flex; flex-direction:column; gap:10px; }
+ol li strong { color:var(--text); }
+ol.steps { list-style:none; margin:0 0 24px; padding:0; counter-reset: step; display:flex; flex-direction:column; gap:16px; }
+ol.steps li { position:relative; padding-left:42px; color:var(--muted); counter-increment: step; }
+ol.steps li::before {
+    content: counter(step);
+    position:absolute; left:0; top:-2px;
+    width:28px; height:28px; border-radius:50%;
+    background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4);
+    color: var(--cyan); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    display:flex; align-items:center; justify-content:center;
+}
+ol.steps li strong { color:var(--text); }
+
+.code-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 14px;
+    padding: 30px 30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .92rem;
+    color: #c4b5fd;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+.code-box .var { color: var(--cyan); font-weight:600; }
+.code-box .tag { color: var(--amber); }
+.code-box .comment { color:#4b5563; font-size:.82rem; }
+
+.box-tag { display:inline-flex; align-items:center; gap:6px; font-size:.68rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px; }
+.box-tag.once { background:rgba(99,102,241,.15); color:#a5b4fc; border:1px solid rgba(99,102,241,.35); }
+.box-tag.each { background:rgba(34,211,238,.12); color:#67e8f9; border:1px solid rgba(34,211,238,.3); }
+
+.case-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 18px;
+}
+.case-num {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800;
+    font-size: 1.6rem;
+    color: var(--indigo);
+    flex-shrink: 0;
+    min-width: 36px;
+}
+.case-card h3 { margin:0 0 6px; font-size:1.15rem; }
+.case-card p { margin-bottom:0; font-size:.95rem; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-size: .98rem;
+    color: var(--text);
+    font-style: italic;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 4px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:16px; }
+
+.cal-table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:.85rem; }
+.cal-table th, .cal-table td { padding:12px 14px; border:1px solid var(--border); color:var(--muted); text-align:left; }
+.cal-table th { color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; background:rgba(99,102,241,.08); }
+.cal-table td:first-child { color:var(--text); font-weight:600; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.code-box, .case-card, .cta-box, .callout, .callout-green, .quote, .cal-table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+@media print {
+    /* El footer va despues del ultimo salto de pagina: solo, se lleva una hoja entera
+       para una linea de credito. En pantalla se ve; en el PDF no. */
+    footer { display:none; }
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-logo-row">
+        <div class="cover-mark"><img src="logo-periodistas-digitales.webp" alt="Periodistas Digitales"></div>
+        <div class="cover-brandname">Periodistas Digitales</div>
+    </div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Guía gratuita</div>
+        <h1>Cómo hacer que <span class="accent">miles vean</span> las mismas noticias que hoy solo ven tus amigos</h1>
+        <p class="cover-sub">Las 7 cosas que puedes cambiar hoy — sin publicar nada distinto de lo que ya publicas.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── EL PORQUÉ ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Primero, por qué pasa</div>
+    <h2>Los que te siguen no son los que te leen</h2>
+    <p>Cuando publicas algo, Facebook no se lo muestra a todos los que te siguen. Elige. Y para elegir usa, sobre todo, una señal: <strong>con quién interactuaste antes, y quién interactuó antes contigo.</strong></p>
+    <p>En un perfil personal esa lista tiene nombre y apellido: tu familia, tus amigos, tus excompañeros de la redacción. Los que te saludaron el cumpleaños, los que comentaron la foto de tus hijos. Entonces publicas una noticia sobre el presupuesto municipal y el sistema hace lo único que sabe hacer: <strong>se la muestra a ellos.</strong></p>
+    <p>Y ahí empieza el círculo. Tu prima comenta "qué grande". El sistema entiende que tu contenido le interesa a gente parecida a tu prima, y la próxima se la muestra a más gente parecida a tu prima. Cada vez más lejos de quien sí quería enterarse.</p>
+    <div class="quote">No tienes un problema de alcance. Tienes un problema de a quién le está llegando.</div>
+    <h3>Y hay algo que te cuesta todavía más</h3>
+    <p>Tú eliges la noticia. Sabes cuál importa y cuál no merece que la gente pierda el tiempo. <strong>Ese filtro es tu oficio.</strong> Pero cuando tocas <em>compartir</em>, Facebook muestra la marca de esa página, no la tuya: el lector ve el logo del canal, y si le interesa, los sigue a ellos.</p>
+    <p>Le estás poniendo tu criterio y tu constancia a <strong>hacerle prensa gratis a un medio que no te paga.</strong></p>
+    <div class="callout-green"><strong>Léela hasta el final.</strong> Las siete cosas que siguen te sirven desde hoy y son gratis. Pero lo que está en la última parte —el camino de cinco pasos para que este trabajo empiece a pagarte— vale más que las siete juntas. Y si eres periodista, es el que vas a querer usar.</div>
+  </div>
+</section>
+
+<!-- ─── 01 COMPARTIR ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">01 — Empieza por acá</div>
+    <h2>Deja de usar el botón "compartir"</h2>
+    <p>Ves la noticia en el noticiero o en la página de un diario, tocas <em>compartir</em>, le agregas una línea arriba y listo. Treinta segundos. Pasan tres cosas y las tres juegan en tu contra:</p>
+    <ul>
+        <li><strong>Lo compartido se reparte menos</strong> que una publicación propia. Facebook ya mostró ese contenido; tu vez es la segunda.</li>
+        <li><strong>La marca que se ve es la de ellos.</strong></li>
+        <li><strong>Si además lleva enlace afuera, peor.</strong> Lo que saca gente de Facebook se muestra menos que lo que se queda adentro.</li>
+    </ul>
+    <h3>Qué hacer en su lugar</h3>
+    <ol class="steps">
+        <li><strong>Publica la noticia con tus palabras, como publicación tuya.</strong> Tres a cinco líneas: qué pasó, dónde, a quién le afecta. No es plagiar — es lo que hace cualquier redacción cuando levanta una noticia de otra.</li>
+        <li><strong>Cita la fuente en tu texto.</strong> "Lo informó [el medio]". Cuatro palabras que te cubren y te hacen ver más serio, no menos.</li>
+        <li><strong>Pon una imagen propia:</strong> una foto tuya del lugar, o una placa simple con el titular.</li>
+        <li><strong>El enlace original va en el primer comentario.</strong> "Nota completa acá 👇".</li>
+    </ol>
+    <div class="callout">Reescribir la noticia te lleva tres minutos y hace que se vea, con tu nombre encima. Tocar "compartir" te lleva treinta segundos y hace que se vea poco, con el nombre de otro.</div>
+  </div>
+</section>
+
+<!-- ─── LA OBJECIÓN DE LA PÁGINA ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">La pregunta que te estás haciendo</div>
+    <h2>"¿Y no debería abrirme una página primero?"</h2>
+    <p>Es la pregunta correcta, y la respuesta es <strong>sí — y vas a llegar ahí con una ventaja.</strong></p>
+    <p>Una página es donde todo esto termina: es lo que se puede buscar, seguir, medir y vender. La mayoría de los que abren una empiezan desde cero, con un nombre nuevo y nadie del otro lado.</p>
+    <p>Tú no. Tú ya tienes lo que a esa gente le falta: <strong>lectores que te leen todos los días y la costumbre de publicar.</strong> Eso no se abre en tres minutos — te llevó años.</p>
+    <p>Por eso el orden importa. Primero haz que lo que publicas funcione donde ya te leen; después lo llevas a tu medio. Así <strong>tu página no arranca vacía: arranca con tu gente adentro.</strong></p>
+    <div class="quote">Primero haz que lo que publicas funcione donde ya te leen. Mudarlo viene después.</div>
+    <div class="callout-green">Las siete cosas de esta guía te sirven hoy en tu perfil — y te van a servir el doble el día que tengas tu medio, porque son exactamente las mismas.</div>
+  </div>
+</section>
+
+<!-- ─── 02 + 03 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">02 y 03 — Cómo lo escribes</div>
+    <h2>El primer renglón, y la pregunta del final</h2>
+    <h3>02 · Escribe la primera línea para el que no te conoce</h3>
+    <p>El feed te corta a las dos líneas. Lo que pongas ahí decide si alguien sigue leyendo. El error es dar por sabido el contexto: "otra vez lo mismo en la esquina de siempre" lo entiende tu vecino, y nadie más.</p>
+    <div class="code-box"><span class="comment">// Lo que se pone arriba de lo compartido</span>
+Miren esto 😱  Compartan para que se enteren todos!!
+
+<span class="comment">// Escrito para un lector</span>
+<span class="var">El hospital municipal lleva tres semanas sin tomógrafo.</span>
+Los estudios se derivan a 40 km.</div>
+    <h3>03 · Cambia la pregunta del final</h3>
+    <p>Los comentarios pesan mucho más que un "me gusta". Por eso casi todos cierran con una pregunta — y casi todos usan la que no funciona. <strong>"¿Qué opinan?" es exactamente la que trae el "qué grande" de tu prima.</strong> Una que sirve se responde con un <em>dato</em>, no con una opinión:</p>
+    <div class="code-box"><span class="comment">// No funciona</span>
+¿Qué opinan de esto?
+
+<span class="comment">// Funciona</span>
+<span class="var">¿En tu barrio también cortaron el agua hoy?</span> Dime cuál y lo sumo al mapa.</div>
+    <p>El que responde "en Villa Elena también" no te está halagando: te está dando información, y le está diciendo al sistema que este tema le importa.</p>
+  </div>
+</section>
+
+<!-- ─── 04 + 05 ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">04 y 05 — Cuándo y en qué formato</div>
+    <h2>La media hora que decide, y con qué publicas</h2>
+    <h3>04 · Los primeros treinta minutos</h3>
+    <p>Publicar y guardar el teléfono es el error más caro y el más fácil de corregir: <strong>lo que pasa en la primera media hora define cuánto se sigue mostrando después.</strong></p>
+    <ol class="steps">
+        <li><strong>Publica cuando puedas quedarte cerca.</strong> Vale más a las siete de la tarde contigo disponible que a las ocho de la mañana sin nadie.</li>
+        <li><strong>Responde cada comentario</strong> dentro de la primera media hora, y que la respuesta agregue algo. "Gracias" no es una conversación.</li>
+        <li><strong>Si alguien aporta un dato, súbelo a la publicación.</strong> "Actualizo: en Villa Elena también, me avisa Marta".</li>
+    </ol>
+    <h3>05 · Publica en el formato que hoy se reparte</h3>
+    <ol class="steps">
+        <li><strong>Una placa propia en vez de la miniatura ajena.</strong> El titular sobre fondo liso, siempre con el mismo diseño. Empieza a construir <em>tu</em> marca.</li>
+        <li><strong>Video corto cuando el tema lo permite.</strong> Treinta a sesenta segundos con el teléfono, sin edición. Es lo único que ninguna otra página puede copiar.</li>
+        <li><strong>Foto propia si puedes pasar por el lugar.</strong> Te convierte de repetidor en fuente.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─── 06 TITULAR ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">06 — Tu trabajo principal</div>
+    <h2>Titular de muro ≠ titular de diario</h2>
+    <p>Cuando levantas una noticia de otro medio, <strong>el titular que trae viene escrito para el diario de ellos, no para tu muro.</strong> El de diario es para quien ya decidió informarse. El de muro es para alguien que venía mirando fotos de un cumpleaños y hay que hacerlo frenar.</p>
+    <table class="cal-table">
+        <tr><th>Titular de diario</th><th>Titular de muro</th></tr>
+        <tr><td>Aumento del 12% en la tarifa de agua</td><td>El agua te va a llegar 12% más cara desde el mes que viene</td></tr>
+        <tr><td>Nuevo cronograma de recolección de residuos</td><td>Si sacas la basura los martes, te cambió el día</td></tr>
+        <tr><td>Reunión del Concejo por el presupuesto 2027</td><td>El Concejo define esta semana en qué se gasta la plata de tu municipio</td></tr>
+        <tr><td>Denuncian demoras en el hospital municipal</td><td>Tres semanas sin tomógrafo: los estudios se derivan a 40 km</td></tr>
+        <tr><td>Se aprobó la ordenanza de tránsito</td><td>Desde el lunes no se puede estacionar en estas seis calles</td></tr>
+    </table>
+    <p>El patrón: <strong>el de diario nombra el hecho; el de muro le dice al lector qué le cambia.</strong> Ninguno de la derecha miente ni infla nada.</p>
+  </div>
+</section>
+
+<!-- ─── 07 EL RECUENTO ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">07 — El diagnóstico</div>
+    <h2>El recuento que te va a doler</h2>
+    <p>No necesitas ninguna herramienta ni entrar a ningún panel: solo tu perfil y diez minutos.</p>
+    <ol class="steps">
+        <li><strong>Abre tus últimas diez publicaciones de noticias.</strong></li>
+        <li><strong>Anota quién comentó</strong>, nombre por nombre.</li>
+        <li><strong>Marca cada nombre con una letra.</strong> <strong>C</strong> de círculo: familia, amigos, gente que conoces fuera de internet. <strong>L</strong> de lector: alguien que llegó por el tema y no conoces personalmente.</li>
+        <li><strong>Cuenta.</strong></li>
+    </ol>
+    <p>Casi siempre la enorme mayoría son <strong>C</strong>. No porque publiques mal —publicas bien, y hace años—, sino porque estás publicando donde la audiencia disponible es la de tu vida.</p>
+    <div class="callout-green">Ese número es tu punto de partida. Aplica las seis cosas anteriores durante dos semanas y vuelve a contar: van a aparecer <strong>L</strong>. Pocos al principio, pero van a aparecer. Si no se movió nada, vuelve al punto 01 — en nueve de cada diez casos el problema sigue siendo el botón "compartir".</div>
+  </div>
+</section>
+
+<!-- ─── LA RUTA A MONETIZAR ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Y si quieres vivir de esto</div>
+    <h2>Los 5 pasos que siguen</h2>
+    <p>Todo lo anterior hace que te vean más y mejor. Pero informar todos los días gratis, mejor que antes, sigue siendo gratis. Si lo que quieres es que este trabajo <strong>te pague</strong>, el camino tiene cinco pasos y este es el orden. No es opinión: es el orden en que funciona.</p>
+    <div class="case-card">
+        <span class="case-num">1</span>
+        <div><h3>Ponle nombre y foco a lo que ya cubres</h3><p>El tema del que ya compartes noticias es tu nicho. Elegiste sin darte cuenta; ahora hay que declararlo.</p></div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">2</span>
+        <div><h3>Abre tu medio — ahora sí</h3><p>Nombre, identidad y primera publicación. Con el foco ya definido, deja de ser una página vacía.</p></div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">3</span>
+        <div><h3>Muda a los que ya te leen, sin perderlos</h3><p>La parte difícil de verdad. Si este paso sale mal, empiezas de cero y abandonas al mes.</p></div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">4</span>
+        <div><h3>Sostén la publicación diaria sin que te coma el día</h3><p>Un medio que publica salteado no se vende. Acá entra la IA: no para escribir por ti, para que el trabajo entre en media hora.</p></div>
+    </div>
+    <div class="case-card">
+        <span class="case-num">5</span>
+        <div><h3>Cobra: tu primer anunciante</h3><p>Un negocio de tu zona valora más 300 lectores de su barrio que 10.000 seguidores sueltos. Hay que saber pedirlo y cuánto pedir.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EL ACCESO ─── -->
+<section class="page">
+  <div class="page-inner">
+    <div class="eyebrow">Antes de cerrar</div>
+    <h2>Esos cinco pasos, acompañados</h2>
+    <p>Los cinco pasos de la página anterior son el <strong>Sistema de Ingresos Diarios</strong>: el método completo, paso a paso, desde ponerle nombre a lo que ya haces hasta cerrar tu primer anunciante. No es teoría sobre redes — es el camino concreto que ya recorrieron miles de periodistas.</p>
+    <p>Hace años que haces el trabajo de un medio: eliges qué importa, lo cuentas para que se entienda y sostienes la costumbre todos los días. <strong>Lo único que falta es que ese medio sea tuyo</strong> — y no la página del canal que vienes ayudando a crecer sin que nadie te lo agradezca.</p>
+    <div class="cta-box">
+        <h3>Tu acceso al sistema completo</h3>
+        <p>Los 5 módulos, las plantillas para tus placas, la guía de IA aplicada al periodismo y el acceso a la plataforma. <strong>Todo junto vale $217 USD.</strong></p>
+        <p style="font-size:1.05rem;"><strong style="color:#86efac;">Hoy está en $27 USD.</strong> Pago único, acceso de por vida, y garantía de 7 días: si en una semana no tienes tu medio publicado, te devuelven todo con un clic.</p>
+        <p style="margin-bottom:0;"><a href="https://sistemadeingresosdiariosia.com/tu-medio?src=guia-lectores" style="color:#67e8f9;font-weight:600;">Ver el sistema completo →</a></p>
+    </div>
+    <p style="margin-top:28px;margin-bottom:0;font-size:.8rem;color:rgba(255,255,255,.3);">© 2026 Periodistas Digitales — José Fiaccini · sistemadeingresosdiariosia.com</p>
+  </div>
+</section>
+
+<footer>
+    © 2026 Periodistas Digitales — José Fiaccini · sistemadeingresosdiariosia.com
+</footer>
+
+</body>
+</html>

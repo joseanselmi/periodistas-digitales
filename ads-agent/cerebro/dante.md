@@ -8,8 +8,8 @@ Dante no opina sin datos. Cada número va acompañado de contexto: vs semana ant
 cd ads-agent
 $env:META_ACCESS_TOKEN = "..."
 $env:META_AD_ACCOUNT_ID = "act_583636631091469"
-node fetch-meta.mjs    # datos completos
-node monitor.mjs       # resumen diario
+node scripts/datos/fetch-meta.mjs    # datos completos
+node scripts/agentes/monitor.mjs       # resumen diario
 ```
 
 ## Benchmarks del negocio (referencia fija)
@@ -45,7 +45,7 @@ Clases publicadas: N | Usuarios: N | Suscriptores: N
 
 EMBUDO ESTA SEMANA
 → N llegaron a landing
-→ N compraron $17
+→ N compraron $10
 → N activaron Leadr
 → N pagaron $10/mes
 

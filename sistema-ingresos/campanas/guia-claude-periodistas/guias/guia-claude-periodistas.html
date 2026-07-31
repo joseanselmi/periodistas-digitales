@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J7J27BYHF0');
+</script>
+<!-- Microsoft Clarity — mapas de calor + grabaciones de sesión — proyecto v9wfmhebpr -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "v9wfmhebpr");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía para Periodistas — Cómo usar Claude para investigar, escribir y editar más rápido</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --bg: #07070f;
+    --surface: rgba(255,255,255,.04);
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --indigo: #6366f1;
+    --cyan: #22d3ee;
+    --amber: #f59e0b;
+    --green: #22c55e;
+}
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--text); font-family:'DM Sans',sans-serif; font-size:17px; line-height:1.7; }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.accent { background:linear-gradient(135deg,var(--indigo),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.page { max-width:760px; margin:0 auto; padding:64px 32px; }
+.divider { width:56px; height:3px; background:linear-gradient(90deg,var(--indigo),var(--cyan)); border-radius:2px; margin:28px 0; }
+
+/* ── COVER ── */
+.cover { min-height:100vh; display:flex; flex-direction:column; padding:72px 56px; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-260px; left:-200px; width:760px; height:760px; background:radial-gradient(circle, rgba(99,102,241,.22) 0%, transparent 70%); pointer-events:none; }
+.cover-mark { width:52px; height:52px; border-radius:14px; background:linear-gradient(135deg,var(--indigo),var(--cyan)); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.3rem; color:#07070f; margin-bottom:48px; }
+.cover-eyebrow { font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); margin-bottom:24px; }
+.cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.cover h1 { font-size:clamp(2.4rem,6vw,3.6rem); margin-bottom:20px; max-width:560px; }
+.cover-sub { color:var(--muted); font-size:1.15rem; max-width:480px; margin-bottom:0; }
+.cover-brand { font-size:.85rem; color:rgba(255,255,255,.3); letter-spacing:.06em; }
+
+/* ── TOC ── */
+.toc-list { display:flex; flex-direction:column; }
+.toc-item { display:flex; align-items:baseline; gap:18px; padding:18px 0; border-bottom:1px solid var(--border); }
+.toc-item:first-child { padding-top:0; }
+.toc-num { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--indigo); min-width:28px; }
+.toc-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text); }
+.toc-desc { color:var(--muted); font-size:.85rem; margin-top:2px; }
+
+/* ── CONTENT ── */
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px; }
+h2 { font-size:2.15rem; margin-bottom:22px; }
+h3 { font-size:1.3rem; margin:28px 0 12px; color:var(--text); }
+p { color:var(--muted); margin-bottom:16px; }
+p strong { color:var(--text); }
+ul { list-style:none; margin:0 0 24px; padding:0; display:flex; flex-direction:column; gap:14px; }
+ul li { position:relative; padding-left:22px; color:var(--muted); }
+ul li::before { content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--indigo); }
+ul li strong { color:var(--text); }
+ol { color:var(--muted); margin:0 0 24px 20px; display:flex; flex-direction:column; gap:10px; }
+ol li strong { color:var(--text); }
+ol.steps { list-style:none; margin:0 0 24px; padding:0; counter-reset: step; display:flex; flex-direction:column; gap:16px; }
+ol.steps li { position:relative; padding-left:42px; color:var(--muted); counter-increment: step; }
+ol.steps li::before {
+    content: counter(step);
+    position:absolute; left:0; top:-2px;
+    width:28px; height:28px; border-radius:50%;
+    background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.4);
+    color: var(--cyan); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    display:flex; align-items:center; justify-content:center;
+}
+ol.steps li strong { color:var(--text); }
+
+/* ── DEVICE MOCKUP (paso cero) ── */
+.device-mockup { background:#0d0d18; border:1px solid var(--border); border-radius:16px; overflow:hidden; margin:8px 0 28px; box-shadow:0 20px 50px -20px rgba(0,0,0,.6); }
+.device-bar { background:#13131f; padding:11px 18px; display:flex; align-items:center; gap:7px; border-bottom:1px solid var(--border); }
+.device-dot { width:9px; height:9px; border-radius:50%; }
+.device-url { margin-left:14px; background:#1a1a28; border-radius:7px; padding:5px 16px; font-size:.72rem; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+.device-body { padding:26px 24px 22px; }
+.device-newchat { display:inline-flex; align-items:center; gap:6px; background:var(--indigo); color:#fff; font-size:.72rem; font-weight:700; padding:7px 16px; border-radius:8px; margin-bottom:22px; }
+.device-input { background:#13131f; border:1px solid var(--border); border-radius:12px; padding:14px 18px; color:var(--muted); font-size:.85rem; display:flex; justify-content:space-between; align-items:center; }
+.device-send { width:26px; height:26px; border-radius:50%; background:var(--cyan); color:#07070f; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+
+.code-box {
+    background: rgba(99,102,241,.07);
+    border: 1px solid rgba(99,102,241,.22);
+    border-radius: 14px;
+    padding: 30px 30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: .92rem;
+    color: #c4b5fd;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+.code-box .var { color: var(--cyan); font-weight:600; }
+.code-box .tag { color: var(--amber); }
+.code-box .comment { color:#4b5563; font-size:.82rem; }
+
+.box-tag { display:inline-flex; align-items:center; gap:6px; font-size:.68rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px; }
+.box-tag.once { background:rgba(99,102,241,.15); color:#a5b4fc; border:1px solid rgba(99,102,241,.35); }
+.box-tag.each { background:rgba(34,211,238,.12); color:#67e8f9; border:1px solid rgba(34,211,238,.3); }
+
+.example-grid { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+.example-bad, .example-good {
+    border-radius: 14px;
+    padding: 20px 24px;
+    font-size: .92rem;
+}
+.example-bad { background: rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.example-good { background: rgba(34,197,94,.07); border:1px solid rgba(34,197,94,.25); color:#86efac; }
+.example-label { display:block; font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; opacity:.85; }
+
+.case-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 18px;
+}
+.case-num {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800;
+    font-size: 1.6rem;
+    color: var(--indigo);
+    flex-shrink: 0;
+    min-width: 36px;
+}
+.case-card h3 { margin:0 0 6px; font-size:1.15rem; }
+.case-card p { margin-bottom:0; font-size:.95rem; }
+.case-card .code-box { margin-top:16px; margin-bottom:0; font-size:.85rem; }
+
+.callout {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: .95rem;
+    color: #fcd34d;
+}
+.callout-green {
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.25);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 0 0 28px;
+    font-size: .96rem;
+    color: #86efac;
+}
+.callout-green strong { color: #bbf7d0; }
+.quote {
+    border-left: 3px solid var(--cyan);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-size: .98rem;
+    color: var(--text);
+    font-style: italic;
+}
+.source { font-size:.78rem; color: rgba(255,255,255,.28); margin-top:-12px; margin-bottom:20px; }
+
+.cta-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(34,211,238,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 20px;
+    padding: 32px 34px;
+    margin-top: 4px;
+}
+.cta-box h3 { margin-top:0; margin-bottom:12px; }
+.cta-box p { margin-bottom:16px; }
+
+footer { border-top:1px solid var(--border); padding:36px 32px; text-align:center; color:rgba(255,255,255,.3); font-size:.8rem; }
+
+.code-box, .case-card, .cta-box, .callout, .callout-green, .quote, .example-bad, .example-good, .device-mockup {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+@media print {
+    .page:not(:last-of-type) { page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── COVER ─── -->
+<section class="cover">
+    <div class="cover-mark">{ }</div>
+    <div class="cover-body">
+        <div class="cover-eyebrow">Periodistas Digitales</div>
+        <h1>Guía para periodistas:<br><span class="accent">cómo usar Claude</span><br>para investigar, escribir<br>y editar más rápido.</h1>
+        <p class="cover-sub">No necesitas saber nada de tecnología. Esta guía te explica todo desde cero, paso a paso: cómo abrir Claude por primera vez, cómo armar tu propio documento de contexto, y 10 formas reales en que ya lo están usando redacciones de investigación en 2026.</p>
+    </div>
+    <div class="cover-brand">sistemadeingresosdiariosia.com</div>
+</section>
+
+<!-- ─── TABLA DE CONTENIDOS ─── -->
+<section class="page">
+    <div class="eyebrow">Antes de arrancar</div>
+    <h2>Qué vas a encontrar acá</h2>
+    <div class="toc-list">
+        <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-title">Esto es para ti, aunque nunca hayas tocado una IA</div><div class="toc-desc">Por qué la experiencia que ya tienes vale más que saber de tecnología</div></div></div>
+        <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-title">Cómo abres Claude por primera vez</div><div class="toc-desc">El paso a paso literal, desde crear la cuenta</div></div></div>
+        <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-title">Qué es realmente "hacer un prompt"</div><div class="toc-desc">La diferencia entre una respuesta genérica y una que sirve</div></div></div>
+        <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-title">Tu propio documento de contexto (Claude.md)</div><div class="toc-desc">El truco que usan los que ya le sacan provecho todos los días</div></div></div>
+        <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-title">El prompt maestro</div><div class="toc-desc">Lo que pegas una sola vez, y lo que pides en cada nota</div></div></div>
+        <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-title">10 formas en que el periodismo ya usa IA</div><div class="toc-desc">Con un prompt completo y listo para copiar en cada una</div></div></div>
+        <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-title">Antes de cerrar</div><div class="toc-desc">Lo que esto no reemplaza, y qué sigue</div></div></div>
+    </div>
+</section>
+
+<!-- ─── INTRO MOTIVACIONAL ─── -->
+<section class="page">
+    <div class="eyebrow">01 — Antes de arrancar</div>
+    <h2>Esto es para ti, aunque nunca hayas tocado una IA</h2>
+    <p>Si piensas "yo no entiendo de tecnología, esto no es para mí", quédate tranquilo: no estás solo, y la buena noticia es que esa idea está equivocada. Un estudio reciente sobre periodistas e IA encontró algo que sorprende: <strong>los periodistas más veteranos son los que usan la IA con más criterio</strong>, no los más jóvenes. La experiencia para detectar qué es noticia, qué fuente es confiable y qué hay que verificar dos veces — eso no lo da ningún curso de tecnología. Eso lo tienes tú, de años de oficio.</p>
+    <p>La presidenta de un medio español lo resumió así, y es la frase que más vale la pena recordar de toda esta guía:</p>
+    <div class="quote">"Tener miedo a la IA es como si hubiésemos tenido miedo a la rotativa."</div>
+    <p>Hoy, <strong>7 de cada 10 periodistas</strong> ya usan inteligencia artificial en su trabajo diario. No para que escriba por ellos — para no perder horas en tareas que la IA hace en minutos, y dedicar ese tiempo a lo que de verdad importa: investigar, contrastar, y contar lo que nadie más está contando. Eso, ningún programa va a poder hacerlo nunca. Como dijo un periodista argentino especializado en tecnología: <em>"La inteligencia artificial puede producir contenido. Lo que no puede producir es periodismo."</em></p>
+    <p>Esta guía no asume que sabes nada. Vamos a ir despacio, un paso a la vez.</p>
+</section>
+
+<!-- ─── CÓMO ABRIR CLAUDE ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">02 — Paso cero</div>
+    <h2>Cómo abres Claude por primera vez</h2>
+    <p>Si nunca usaste Claude, empieza por acá. Es gratis para arrancar y no necesitas instalar nada.</p>
+    <div class="device-mockup">
+        <div class="device-bar">
+            <span class="device-dot" style="background:#ef4444"></span>
+            <span class="device-dot" style="background:#f59e0b"></span>
+            <span class="device-dot" style="background:#22c55e"></span>
+            <span class="device-url">claude.ai</span>
+        </div>
+        <div class="device-body">
+            <span class="device-newchat">+ Nuevo chat</span>
+            <div class="device-input"><span>Escribe tu mensaje acá...</span><span class="device-send">→</span></div>
+        </div>
+    </div>
+    <ol class="steps">
+        <li>Entra a <strong>claude.ai</strong> desde tu celular o tu computadora, igual que entrarías a cualquier sitio web.</li>
+        <li>Crea una cuenta gratis con tu correo electrónico (te van a pedir confirmar el mail, es automático).</li>
+        <li>Vas a ver una pantalla parecida a la de arriba: un botón <strong>"Nuevo chat"</strong> y un cuadro de texto abajo. Ahí es donde escribes o pegas todo lo que vamos a ver en esta guía.</li>
+        <li>Escribes o pegas tu texto, apretas Enter (o el botón con la flecha), y Claude te responde en segundos, como un chat de WhatsApp.</li>
+    </ol>
+    <p>Eso es todo lo técnico que vas a necesitar saber. De acá en adelante, todo lo que tienes que hacer es copiar y pegar.</p>
+</section>
+
+<!-- ─── QUÉ ES UN PROMPT ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">03 — Lo más importante de esta guía</div>
+    <h2>Qué es realmente "hacer un prompt"</h2>
+    <p>Un prompt es, simplemente, lo que tú le escribes a Claude. Pero hay una diferencia enorme entre escribirle cualquier cosa y escribirle con instrucciones claras — y esa diferencia es la que separa una respuesta genérica de una que de verdad te sirve para tu nota.</p>
+    <p>Mira la diferencia con un ejemplo real:</p>
+    <div class="example-grid">
+        <div class="example-bad"><span class="example-label">Prompt vago (resultado genérico)</span>"Escribime algo sobre el aumento de tarifas de luz."</div>
+        <div class="example-good"><span class="example-label">Prompt con instrucciones claras (resultado usable)</span>"Soy periodista de un medio local en Ecuador. Necesito una estructura de nota sobre el aumento de tarifas de luz anunciado esta semana: lead de 3 líneas, 3 datos que debería buscar para reforzar, y el ángulo que ningún otro medio está cubriendo todavía."</div>
+    </div>
+    <p>La diferencia no es la inteligencia de Claude — es cuánta información le diste. Cuanto más vago el prompt, más genérica la respuesta. Cuanto más específico, más se parece a algo que realmente podrías publicar.</p>
+    <p>Hay una estructura que funciona casi siempre, porque es la forma en que Claude fue entrenado para interpretar instrucciones. Se reduce a 5 piezas — no hace falta usarlas las 5 cada vez, pero cuantas más completes, menos vueltas vas a dar para llegar a algo usable:</p>
+    <ol>
+        <li><strong>Rol</strong> — quién quieres que sea Claude en esta conversación ("actúa como mi editor")</li>
+        <li><strong>Tarea</strong> — qué necesitas que haga, en una frase clara</li>
+        <li><strong>Contexto</strong> — la información de fondo que necesita para no inventar (tu medio, tu audiencia, los datos del caso)</li>
+        <li><strong>Formato</strong> — cómo quieres la respuesta (lista, párrafo, tabla, longitud)</li>
+        <li><strong>Restricciones</strong> — qué evitar (sin clichés, sin inventar datos, sin opinar)</li>
+    </ol>
+</section>
+
+<!-- ─── TU DOCUMENTO DE CONTEXTO ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">04 — El truco que usan los que ya le sacan provecho</div>
+    <h2>Tu propio "documento de contexto"</h2>
+    <p>Acá viene la parte que de verdad cambia todo. Entre programadores que usan Claude todos los días existe una práctica llamada <strong>Claude.md</strong>: un archivo de texto donde escriben, una sola vez, las reglas y el contexto que quieren que Claude respete siempre — y se lo pasan al inicio de cada conversación nueva, en vez de explicarlo de cero cada vez. Tú puedes hacer exactamente lo mismo, sin tocar una línea de código.</p>
+    <p>Stephen Stirling, periodista de investigación, lo resumió en una frase que se volvió referencia entre quienes ya usan IA en redacciones:</p>
+    <div class="quote">"Fija tus estándares antes de empezar." — así describió su propio proceso para usar Claude sin perder el rigor editorial, escribiendo de antemano qué cosas Claude no debía hacer nunca (inventar citas, asumir datos, opinar) antes de pedirle cualquier tarea.</div>
+    <p>No necesitas saber programar para esto. Alcanza con guardar un documento — puede ser una nota en tu celular, un Word, o un Google Doc, lo que ya uses normalmente — donde escribas:</p>
+    <ul>
+        <li><strong>Tu nicho y tu medio</strong> — de qué escribes y para quién</li>
+        <li><strong>Tu estilo editorial</strong> — formal, cercano, investigativo</li>
+        <li><strong>Tus reglas no negociables</strong> — "nunca inventes una cita", "marca siempre qué necesito verificar yo"</li>
+        <li><strong>Ejemplos de tu propia escritura</strong> — para que la voz que te devuelva se parezca a la tuya, no a un genérico de internet</li>
+    </ul>
+    <p>Una vez que lo tienes guardado, lo único que haces es abrirlo, copiar todo el texto, y pegarlo al inicio de cada conversación nueva con Claude — antes de pedirle cualquier cosa.</p>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">04 — Tu propio documento de contexto</div>
+    <h3 style="margin-top:0;">¿No sabes por dónde empezar a definir tu estilo?</h3>
+    <p>No hace falta que lo pienses solo. Pégale esto a Claude primero, y deja que sea Claude el que te ayude a construirlo, haciéndote preguntas como lo haría un colega:</p>
+    <span class="box-tag once">Se pega una sola vez</span>
+    <div class="code-box"><span class="comment">// Pega esto para que Claude te ayude a armar tu propio documento</span>
+
+Quiero crear mi documento de contexto personal para usarte
+como asistente editorial.
+Hazme 5 preguntas, una por una, para entender: mi nicho,
+mi medio, mi audiencia, mi estilo de escritura y mis reglas
+no negociables como periodista.
+Cuando termines de preguntarme, arma mi Claude.md: un
+documento final en formato markdown con todo lo anterior,
+listo para que yo lo guarde como archivo y lo pegue al
+inicio de cada conversación nueva.</div>
+    <p>Responde sus preguntas con tranquilidad — no hay respuesta incorrecta, no es un examen. En unos minutos vas a tener tu propio documento, escrito con tus palabras, no con las nuestras. Cuando Claude te lo entregue, copia todo ese texto y guárdalo donde guardes tus documentos habitualmente — así lo tienes a mano la próxima vez.</p>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">04 — Tu propio documento de contexto</div>
+    <h3 style="margin-top:0;">Haz que Claude aprenda tu estilo de tus propias notas</h3>
+    <p>Decir "mi estilo es cercano" o "investigativo" es abstracto — a Claude le sirve mucho más ver ejemplos reales de cómo escribes. Busca 2 o 3 notas que ya hayas publicado (las puedes copiar de tu propio medio) y pégale esto junto con ellas, para que sea Claude el que encuentre el patrón, en vez de adivinarlo tú:</p>
+    <span class="box-tag once">Se pega una sola vez</span>
+    <div class="code-box"><span class="comment">// Pega esto junto con 2 o 3 notas tuyas ya publicadas</span>
+
+Te voy a pasar 2 o 3 notas que ya escribí. Analiza mi estilo:
+extensión de oraciones, cómo armo los leads, qué vocabulario
+uso, qué tipo de frases evito.
+Resúmemelo en un párrafo corto que pueda agregar a mi
+documento de contexto, para que de ahora en más escribas
+con mi voz — no con una genérica.
+
+<span class="var">[pega acá tus notas]</span></div>
+    <p>Ese párrafo que te devuelve lo agregas directo al ítem "Ejemplos de tu propia escritura" de tu documento de contexto. Cuanto más reales sean los ejemplos que le pasas, menos genérico se va a sentir todo lo que escriba después.</p>
+    <p>Si prefieres algo más rápido para empezar ya mismo, en la página siguiente tienes una plantilla lista para completar tú mismo.</p>
+</section>
+
+<!-- ─── EL PROMPT MAESTRO ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">05 — Plantilla lista para completar</div>
+    <h2>El prompt que pegas una sola vez</h2>
+    <p>Reemplaza lo que está entre corchetes con tus datos reales:</p>
+    <span class="box-tag once">Se pega una sola vez, al inicio del chat</span>
+    <div class="code-box"><span class="comment">// Pega esto al inicio de cualquier conversación con Claude</span>
+
+Actúa como mi asistente editorial personal.
+Soy periodista especializado en <span class="var">[TU NICHO]</span>.
+Mi medio se llama <span class="var">[NOMBRE DE TU MEDIO]</span>.
+Mi audiencia: <span class="var">[QUIÉNES SON TUS LECTORES]</span>.
+Mi estilo: <span class="var">[SERIO / CERCANO / INVESTIGATIVO]</span>.
+
+Reglas que no rompes nunca:
+- Nunca inventes citas, datos o fuentes.
+- Si no estás seguro de algo, dímelo en vez de asumir.
+- Marca siempre qué datos necesito verificar yo antes de publicar.
+
+Cuando te comparta un tema, espera mis instrucciones.
+No hagas nada hasta que yo te diga qué necesito.</div>
+    <p>Pegas esto <strong>una sola vez</strong> al inicio del chat. Claude te va a confirmar que entendió y va a esperar tu primer tema — no hace falta que repitas todo esto otra vez mientras siga la misma conversación.</p>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">05 — El prompt maestro</div>
+    <h3 style="margin-top:0;">Y esto le pides para cada nota</h3>
+    <p>A partir de ahí, para cada nota nueva, simplemente cuéntale el tema y agrégale esto:</p>
+    <span class="box-tag each">Se pega por cada nota nueva</span>
+    <div class="code-box"><span class="comment">// Cuando le compartas un tema:</span>
+
+1. Titular con gancho emocional para redes
+2. Titular alternativo directo/informativo
+3. Lead de 3 líneas (qué, quién, cuándo, dónde, por qué)
+4. Estructura de nota: 5 párrafos con subtítulos propuestos
+5. <span class="var">3 datos o estadísticas</span> que deberías buscar para reforzar
+6. <span class="var">3 fuentes confiables</span> de tu región para consultar
+7. El ángulo que nadie más está cubriendo
+8. Versión corta para redes sociales</div>
+    <div class="callout">
+        <strong>Esto no es opcional:</strong> incluso los estudios sobre IA en redacciones de investigación insisten en lo mismo — la verificación humana de fuentes y datos sigue siendo indelegable. Claude propone, tú confirmas. Los datos y fuentes que te sugiera son un punto de partida para buscar, nunca el punto final para publicar.
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">05 — Un paso más allá</div>
+    <h3 style="margin-top:0;">Un dato más, para cuando quieras ir un paso más allá</h3>
+    <p>Además de pegar tu documento de contexto a mano, Claude tiene una función llamada <strong>Skills</strong>: carpetas de instrucciones que Claude guarda y reutiliza solo, sin que tengas que repetir el prompt cada vez. Se crean con lenguaje normal, en español, sin programar — y existen dos tipos: las que ya vienen incluidas (por ejemplo, para crear documentos de Word, Excel o PDF) y las que armas tú mismo para tu flujo de trabajo particular. No la vamos a explicar en detalle acá — eso está en la guía completa de $5 — pero quédate con el nombre: es el siguiente nivel después de dominar el prompt maestro.</p>
+</section>
+
+<!-- ─── 10 CASOS DE USO ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">06 — Lo que ya están haciendo redacciones de investigación</div>
+    <h2>10 formas en que el periodismo ya usa IA</h2>
+    <p>Esto no es teoría ni una lista inventada para vender algo. Son usos documentados en redacciones e investigaciones reales durante 2025-2026, citados por organizaciones serias de periodismo. Cada uno tiene su propio prompt completo, listo para copiar y pegar.</p>
+    <h3 style="margin-top:8px;">Investigación y verificación</h3>
+    <div class="case-card">
+        <span class="case-num">01</span>
+        <div>
+            <h3>Análisis de documentos masivos</h3>
+            <p>Revisar decenas de páginas de expedientes o informes que antes tomaban días de trabajo, reducido a minutos — manteniendo el criterio editorial sobre qué es relevante.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi analista de documentos. Te voy a pasar el texto
+de un expediente o informe extenso.
+
+Necesito que:
+1. Resumas de qué trata cada sección.
+2. Señales menciones a personas, empresas, montos o fechas
+   relevantes.
+3. Marques contradicciones internas dentro del mismo documento.
+4. Me digas qué partes merecen una lectura más profunda de mi
+   parte, y por qué.
+
+No asumas relevancia periodística por mí — señálame los datos,
+yo decido cuál es la historia.
+
+Documento: <span class="var">[pega el texto, por partes si es muy largo]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">02</span>
+        <div>
+            <h3>Detección de desinformación y bots</h3>
+            <p>Analizar patrones en publicaciones de redes (repetición, lenguaje, comportamiento) para identificar posibles campañas coordinadas de desinformación.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi analista de patrones en redes sociales. Te voy
+a pasar varias publicaciones sobre un mismo tema.
+
+Dime:
+1. Si hay frases o estructuras que se repiten de forma
+   sospechosa entre cuentas distintas.
+2. Si el lenguaje usado coincide con patrones conocidos de
+   desinformación (urgencia exagerada, fuentes no
+   verificables, llamados insistentes a compartir).
+3. Qué debería verificar antes de afirmar que es una campaña
+   coordinada, y no solo gente opinando lo mismo por separado.
+
+Publicaciones: <span class="var">[pega las publicaciones, una por línea]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">03</span>
+        <div>
+            <h3>Periodismo de datos a gran escala</h3>
+            <p>Cruzar registros (gastos públicos, contratos, padrones) para detectar anomalías o patrones que serían imposibles de ver a simple vista.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi analista de datos. Te voy a pasar una tabla
+o lista de registros.
+
+Necesito que:
+1. Detectes valores atípicos o fuera de rango.
+2. Identifiques repeticiones sospechosas (mismo proveedor,
+   mismo monto, fechas seguidas).
+3. Ordenes los hallazgos de más a menos llamativo.
+4. Me digas qué necesitaría confirmar con una fuente humana
+   antes de publicar cualquiera de estos hallazgos.
+
+Datos: <span class="var">[pega la tabla o copia las columnas relevantes]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">04</span>
+        <div>
+            <h3>Fact-checking asistido</h3>
+            <p>Cruzar una afirmación contra fuentes confiables rápidamente, como primer filtro — con verificación humana final siempre obligatoria.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi verificador de hechos. Te voy a pasar una
+afirmación que apareció en una fuente (red social, comunicado,
+declaración pública). Tu trabajo NO es decirme si es verdad
+o mentira — es ayudarme a verificarla yo mismo.
+
+Haz esto, en este orden:
+1. Identifica cada dato verificable dentro de la afirmación
+   (cifras, fechas, nombres, lugares, citas).
+2. Para cada uno, dime qué tipo de fuente serviría para
+   confirmarlo (documento oficial, registro público, testigo
+   directo, archivo de medios).
+3. Señala si hay lenguaje ambiguo o que podría inducir a error.
+4. Dime si el patrón se parece a desinformación conocida
+   (cifras descontextualizadas, atribución falsa, recorte
+   de declaraciones).
+5. Arma 3 a 5 preguntas que le harías a la fuente original
+   si pudieras contactarla.
+
+No concluyas si es verdadero o falso. Tu rol termina en darme
+el mapa de qué verificar y cómo.
+
+Afirmación: <span class="var">[pega acá la afirmación]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">05</span>
+        <div>
+            <h3>Transcripción y resumen de entrevistas</h3>
+            <p>Convertir horas de audio en texto y extraer las citas más relevantes en minutos, en vez de transcribir a mano.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi productor editorial para entrevistas.
+Te voy a pasar la transcripción completa de una entrevista
+que grabé. Quiero esto, en este orden:
+
+1. Resumen ejecutivo de 5 líneas: de qué habló la fuente,
+   qué tono usó, qué quedó sin responder.
+2. Las 5 citas más fuertes, transcriptas TEXTUALMENTE
+   (no las reformules), con el minuto aproximado si lo tengo
+   marcado en el texto.
+3. Contradicciones o cambios de postura dentro de la misma
+   entrevista, si los hay.
+4. 3 frases que funcionarían como titular si se usan fuera
+   de contexto — esto es solo para que yo las detecte y decida,
+   no para que las use sin chequear.
+5. Lista de afirmaciones de la fuente que debería verificar
+   antes de publicar, porque son datos concretos (cifras,
+   fechas, acusaciones).
+
+Mantén mi criterio editorial: tú identificas patrones,
+yo decido qué es noticia.
+
+Transcripción: <span class="var">[pega acá la transcripción]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <h3 style="margin-top:8px;">Producción diaria</h3>
+    <div class="case-card">
+        <span class="case-num">06</span>
+        <div>
+            <h3>Generación de preguntas de entrevista</h3>
+            <p>Preparar preguntas que abren, profundizan y desafían, antes de sentarte con la fuente.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi productor antes de una entrevista. Voy a
+entrevistar a <span class="var">[cargo/nombre]</span> sobre <span class="var">[tema]</span>.
+Esto es lo que ya sé del tema: <span class="var">[contexto que tengas]</span>.
+
+Arma una guía de entrevista completa:
+1. 3 preguntas de apertura que rompan el hielo sin sonar
+   genéricas.
+2. 5 preguntas que profundicen en los puntos centrales,
+   ordenadas de lo más general a lo más específico.
+3. 3 preguntas incómodas que esta persona probablemente
+   no quiera responder — formuladas con respeto, pero sin
+   dejarle salida fácil.
+4. Para cada pregunta incómoda, una de seguimiento por si
+   responde con evasivas.
+5. Una pregunta de cierre que la deje hablando de algo que
+   no esperaba que le preguntaran.
+
+Evita preguntas que se respondan con sí/no. Cada una tiene
+que invitar a desarrollar.</div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">07</span>
+        <div>
+            <h3>Revisión de casos legales y judiciales</h3>
+            <p>Ordenar expedientes largos y señalar qué cláusulas o fechas son relevantes para la investigación.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi asistente para revisar expedientes. Te voy
+a pasar el texto de un documento legal o judicial extenso.
+
+Necesito:
+1. Un resumen en lenguaje simple de qué resuelve o establece
+   el documento.
+2. Las fechas y plazos clave, marcados aparte.
+3. Las cláusulas o párrafos que parecen más relevantes para
+   una nota periodística.
+4. Los términos legales que debería explicarle a mi audiencia
+   en palabras simples, con una traducción de cada uno.
+
+Documento: <span class="var">[pega el texto]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">08</span>
+        <div>
+            <h3>Monitoreo de fuentes y contenido</h3>
+            <p>Detectar qué cambió en una página, comunicado o declaración que revisas seguido, sin tener que comparar todo a mano.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi asistente de monitoreo. Te voy a pasar el
+contenido de una fuente que reviso seguido (un organismo,
+una empresa, un funcionario).
+
+Dime:
+1. Qué cambió respecto a la versión anterior, si te paso
+   ambas.
+2. Qué anuncios o datos nuevos aparecen.
+3. Si hay algo que contradice declaraciones anteriores de
+   la misma fuente.
+
+Contenido actual: <span class="var">[pega acá]</span>
+Contenido anterior (si lo tienes): <span class="var">[pega acá]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">09</span>
+        <div>
+            <h3>Traducción y verificación de fuentes en otros idiomas</h3>
+            <p>Acceder a documentos o reportes que no están en español, sin perder matices del original.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi traductor periodístico. Te voy a pasar un
+texto en otro idioma.
+
+Necesito:
+1. Una traducción fiel, sin embellecer ni resumir.
+2. Que marques cualquier expresión ambigua o con doble
+   sentido en el original.
+3. Una lista de los términos técnicos que aparecen, con su
+   equivalente más preciso en español.
+
+Texto: <span class="var">[pega el texto]</span>
+Idioma original: <span class="var">[completa]</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="page" style="padding-top:0;">
+    <div class="case-card">
+        <span class="case-num">10</span>
+        <div>
+            <h3>Redacción de borradores y edición de estilo</h3>
+            <p>Generar una primera estructura editable y limpiar redundancias — manteniendo tu voz, no la de un genérico de internet.</p>
+            <div class="code-box"><span class="comment">// Prompt completo</span>
+
+Actúa como mi editor. Te voy a pasar un borrador.
+
+Necesito que:
+1. Señales frases largas o confusas.
+2. Marques redundancias.
+3. Me digas si el lead responde qué, quién, cuándo, dónde
+   y por qué en las primeras líneas.
+4. Sugieras un orden alternativo de párrafos, si el actual
+   no fluye.
+
+No reescribas todo de cero — señala y sugiere cambios,
+manteniendo mi voz.
+
+Borrador: <span class="var">[pega tu texto]</span></div>
+        </div>
+    </div>
+    <p class="source">Basado en reportes de Reuters Institute for the Study of Journalism, Global Investigative Journalism Network (GIJN) y Stanford HAI sobre uso de IA en redacciones de investigación, 2025-2026.</p>
+</section>
+
+<!-- ─── REFUERZO MOTIVACIONAL + CIERRE / CTA ─── -->
+<section class="page" style="padding-top:0;">
+    <div class="eyebrow">07 — Antes de cerrar</div>
+    <div class="callout-green">
+        <strong>Algo importante antes de irte:</strong> nada de esto te reemplaza. Las redacciones que ya usan IA todos los días no dejaron de ser periodistas — siguen siendo los que validan, contrastan y deciden qué es noticia. Eso lo sigue haciendo una persona, no un programa. Lo único que cambia es cuánto tiempo pierdes antes de empezar a hacer lo que realmente importa.
+    </div>
+    <p>Si llegaste hasta acá, ya tienes en tus manos lo que necesitas para investigar, escribir y editar más rápido desde hoy: el documento de contexto, el prompt maestro, y 10 prompts completos listos para usar. Eso ya es más de lo que regalan la mayoría de guías como esta.</p>
+    <p>Lo que viene a continuación es opcional, pero te lo contamos igual:</p>
+
+    <div class="cta-box">
+        <h3>Esto no termina acá</h3>
+        <p>Por haber descargado esta guía, en los próximos días te vamos a mandar algo más completo: cómo usar las <strong>Skills</strong> y las <strong>Tools</strong> de Claude para automatizar tareas enteras, no solo prompts sueltos — explicado sin tecnicismos, paso a paso.</p>
+        <p style="color:var(--text);font-weight:600;margin-bottom:0;">Es nuestro regalo por estar acá: vas a poder acceder por una pequeña inversión de $5 USD. Lo vas a recibir por email.</p>
+    </div>
+</section>
+
+<footer>© 2026 Periodistas Digitales — sistemadeingresosdiariosia.com</footer>
+
+</body>
+</html>

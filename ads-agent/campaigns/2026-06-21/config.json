@@ -1,0 +1,264 @@
+{
+  "name": "Sistema de Ingresos — Campaña v3 (10 ads, basados en análisis histórico de ads viejos)",
+  "date": "2026-06-21",
+  "objective": "PURCHASE",
+  "pixel": "1086780383211630",
+  "landingUrl": "https://sistemadeingresosdiariosia.com",
+  "notes": "10 ads nuevos. 7 iteran sobre la fórmula ganadora histórica ('8.0 P1': pregunta FOMO + IA + 4 semanas + bullets + CTA + regalos, CPA $10.63 y ángulo 'IA + periodismo' que es el que más convirtió siempre). 3 son exploratorios (testimonio narrativo, antes/después sin texto, mecanismo/cómo funciona) para abrir ángulos no testeados aún. No duplica los 3 ads de campaigns/2026-05-08-v2/. Todos usan 'tú', sin claims de ingresos garantizados, sin dinero en cámara.",
+
+  "adSets": [
+
+    {
+      "id": "ad-4-fomo-colegas-ia",
+      "name": "AD 4 — FOMO colegas + IA (frío, intereses)",
+      "awarenessLevel": "1 — Problema-consciente",
+      "anguloFuente": "Réplica directa del hook ganador histórico '8.0 P1' (103 compras, CPA $10.63): pregunta FOMO sobre colegas usando IA.",
+      "targeting": {
+        "countries": ["EC", "PR", "CO", "MX", "CL"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "interests": ["periodismo", "medios digitales", "inteligencia artificial", "comunicación"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 10,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "¿Tus colegas ya están usando IA y tú todavía no sabes por dónde empezar?\n\nEl periodismo cambió de velocidad. Quedarse mirando no es gratis.\n\nCon el Sistema de Ingresos Diarios para Periodistas aprendes a crear tu propio periódico digital con IA — sin dejar tu trabajo actual, con 6 horas a la semana.\n\nIncluye 1 mes gratis de Leadr, la plataforma donde +5.500 periodistas ya están aprendiendo a usar IA en su trabajo real.\n\n👉 Por $10 USD, pago único. Sin suscripción.",
+      "headline": "¿Tus colegas ya usan IA? Tú también puedes — desde $10 USD",
+      "description": "+5.500 periodistas en 50 países · Pago único · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Cinematic dark editorial, vertical 9:16. Latin American journalist in their 40s, focused expression, working at night on a laptop showing a clean digital newspaper interface in Spanish. Deep blue/purple dramatic lighting, press badge visible on desk. No cash, no charts. Ultra realistic, photojournalism aesthetic.",
+      "imageNotes": "Mismo ángulo visual que la campaña v2 ad-1 para mantener consistencia de marca. Vertical para Stories/Reels."
+    },
+
+    {
+      "id": "ad-5-prueba-social-bono",
+      "name": "AD 5 — Prueba social +5.500 + value stack completo",
+      "awarenessLevel": "2 — Solución-consciente",
+      "anguloFuente": "Réplica de la estructura de 'AD 3 P2' (54 compras, CPA $8.45): prueba social directa + bullets de valor.",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "CL", "PE"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "lookalike": { "source": "COMPRAS 180 DIAS", "percent": 1 },
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 10,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "+5.500 periodistas en 50 países ya tienen su propio medio digital.\n\nPor $10 USD consigues:\n✅ El método paso a paso para crear tu periódico digital con IA\n✅ Micro curso de IA para periodistas (ChatGPT + Claude aplicados a tu trabajo)\n✅ +100 templates de Canva para medios\n✅ 1 mes gratis en Leadr — exclusivo, no se vende por separado ($97 de valor)\n✅ Garantía de 7 días\n\nValor real: $227. Hoy: $10.\n\n👉 Acceso inmediato.",
+      "headline": "$227 en valor por $10 USD — incluye Leadr gratis",
+      "description": "Pago único · Acceso inmediato · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Dark modern flatlay product photography, 1:1 square. A closed MacBook-style laptop on a dark wood desk, screen turned off and reflecting a soft indigo-to-cyan ambient glow (#6366f1 to #22d3ee gradient lighting from off-frame), next to a closed leather notebook, a pen, and a phone face-down. Minimalist, professional, tech-editorial product shot, shallow depth of field. Completely free of any text, screens, or UI elements.",
+      "imageNotes": "Cuadrado para feed. Foco en el value stack, no en una persona — para variar formato visual respecto a ad-4."
+    },
+
+    {
+      "id": "ad-6-segmento-40-65",
+      "name": "AD 6 — Segmento 40-65 (mejor CPA histórico $6.33)",
+      "awarenessLevel": "2 — Solución-consciente",
+      "anguloFuente": "Replica el segmento de edad de '2.0 SG 40+65' (CPA $6.33, el más eficiente del historial) con copy directo y sin rodeos.",
+      "targeting": {
+        "countries": ["EC", "CO", "MX", "PR", "DO", "UY"],
+        "ageMin": 40,
+        "ageMax": 65,
+        "language": ["es"],
+        "interests": ["periodismo", "medios de comunicación", "jubilación", "inteligencia artificial"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 15,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "Llevas años en el periodismo. Sabes contar historias mejor que nadie.\n\nLo único que falta es saber usar la IA para convertir eso en tu propio medio digital — sin aprender de cero, sin tecnicismos.\n\nEl Sistema de Ingresos Diarios para Periodistas te da el paso a paso, en 6 horas semanales, con 1 mes de Leadr incluido.\n\n+5.500 periodistas en 50 países ya lo usan.\n\n👉 $10 USD. Pago único.",
+      "headline": "Tu experiencia + IA = tu propio medio digital",
+      "description": "Para periodistas con trayectoria · $10 USD · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Cinematic dark portrait, vertical 9:16. Latin American journalist in their 50s, calm and confident expression, seated at a home desk with warm lamp light, laptop showing a digital newspaper. Dignified, experienced presence — not a 'senior citizen' stock cliché. Deep blue tones, dramatic but warm lighting.",
+      "imageNotes": "Evitar estética de adulto mayor genérica — debe verse como un profesional con trayectoria, no jubilado."
+    },
+
+    {
+      "id": "ad-7-testimonio-narrativo",
+      "name": "AD 7 — Testimonio narrativo (exploratorio)",
+      "awarenessLevel": "2 — Solución-consciente",
+      "anguloFuente": "EXPLORATORIO — no hay anuncio histórico con esta estructura narrativa de 3 actos. Inspirado en 'AD 2 social proof' de la v2 pero con foco 100% en la historia, sin bullets.",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "CL"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "interests": ["periodismo", "medios digitales"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 8,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "Hace seis meses, Andrea cerraba notas para un medio que pagaba cada vez menos.\n\nUna noche, en vez de seguir buscando otro trabajo igual, abrió ChatGPT y empezó a armar su propio periódico digital. Sin saber de tecnología. Sin renunciar a su trabajo.\n\nHoy escribe lo que quiere, cuando quiere, y construye algo que es suyo.\n\nEl camino que siguió está en el Sistema de Ingresos Diarios para Periodistas. $10 USD, con 1 mes de Leadr incluido.\n\n👉 El primer paso es hoy.",
+      "headline": "Andrea dejó de esperar y construyó lo suyo",
+      "description": "Historia real de transición · $10 USD · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Intimate cinematic close-up, vertical 9:16. Latin American woman journalist, late 30s, looking at her laptop screen with a quiet, determined half-smile, warm desk lamp light against dark room. Screen glow reflects softly on her face. No text overlay. Photojournalism quality, emotional but not staged.",
+      "imageNotes": "Debe sentirse como una foto real, no un stock posado. Expresión sutil, no sonrisa exagerada."
+    },
+
+    {
+      "id": "ad-8-antes-despues-visual",
+      "name": "AD 8 — Antes/después visual sin texto (exploratorio)",
+      "awarenessLevel": "1 — Problema-consciente",
+      "anguloFuente": "EXPLORATORIO — los anuncios históricos con mejor CTR (IMG 1.0 LP1, 7.64%) usaban copy emocional pero ninguno usó un creativo split visual puro. Probamos que la imagen cargue todo el peso del mensaje.",
+      "targeting": {
+        "countries": ["EC", "PR", "CO", "MX"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "interests": ["periodismo", "redacciones", "comunicación"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 8,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "El periodismo cambió. La pregunta es qué haces con eso.\n\nCon el Sistema de Ingresos Diarios para Periodistas aprendes a usar la IA para crear tu propio periódico digital — sin dejar tu trabajo, sin saber de tecnología.\n\n+5.500 periodistas en 50 países ya dieron el salto.\n\n👉 $10 USD. Acceso inmediato.",
+      "headline": "De redacción ajena a medio propio",
+      "description": "+5.500 periodistas · $10 USD · Sin suscripción",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Split-screen composition, vertical 9:16, dark background, NO text overlay. Left half: a journalist in a crowded traditional newsroom, fluorescent cold light, slightly tense posture. Right half: the same person at a calm home desk at night, warm indigo/cyan glow from a laptop showing their own digital newspaper. Clear visual contrast in lighting and posture — let the image tell the whole story.",
+      "imageNotes": "Cero texto en la imagen — el split visual debe comunicar todo. Misma persona y vestuario en ambos lados para coherencia."
+    },
+
+    {
+      "id": "ad-9-urgencia-precio",
+      "name": "AD 9 — Urgencia de precio + bono exclusivo",
+      "awarenessLevel": "3 — Precio y prueba social",
+      "anguloFuente": "Variante de 'IMG 1.0 LP1' (CTR 7.64%, el más alto del historial) combinada con el cierre de precio de 'AD 3 — Retargeting' de la v2.",
+      "targeting": {
+        "customAudience": "Visitas LP últimos 30 días",
+        "excludeCustomAudiences": ["COMPRAS 7 DIAS"],
+        "countries": ["worldwide"],
+        "language": ["es"],
+        "ageMin": 30,
+        "ageMax": 55
+      },
+      "dailyBudget": 6,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "El periodismo no va a esperarte.\n\nCada mes que pasa sin saber usar IA es terreno que pierdes frente a colegas que ya empezaron.\n\nHoy el Sistema de Ingresos Diarios para Periodistas todavía cuesta $10 USD — con 1 mes de Leadr incluido, un bono que no se vende por separado.\n\nEsto no se queda así para siempre.\n\n👉 Asegura tu acceso ahora.",
+      "headline": "Hoy todavía son $10 USD. Con Leadr incluido.",
+      "description": "Oferta por tiempo limitado · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Dark cinematic close-up, square 1:1. Latin American professional in their 40s holding a phone with a checkout screen glowing softly, thoughtful and decided expression, dramatic indigo backlight. No visible price text rendered in image (keep numbers in ad copy, not image) to stay under Meta's text-in-image guideline.",
+      "imageNotes": "No poner el precio como texto dentro de la imagen — dejarlo solo en el copy para cumplir la política de Meta (texto < 20%)."
+    },
+
+    {
+      "id": "ad-10-mecanismo-bullets",
+      "name": "AD 10 — Mecanismo / cómo funciona (exploratorio)",
+      "awarenessLevel": "2 — Solución-consciente",
+      "anguloFuente": "EXPLORATORIO — ningún anuncio histórico explicó el mecanismo paso a paso. Apunta a audiencia más racional/escéptica que necesita ver el 'cómo' antes del 'qué'.",
+      "targeting": {
+        "countries": ["MX", "CO", "EC", "CL", "AR"],
+        "ageMin": 28,
+        "ageMax": 50,
+        "language": ["es"],
+        "interests": ["periodismo", "marketing digital", "inteligencia artificial", "emprendimiento digital"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 8,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "¿Cómo se crea un periódico digital con IA en 6 horas a la semana? Así:\n\n1️⃣ Elige tu nicho con el método guiado\n2️⃣ Usa IA (ChatGPT + Claude) para investigar, escribir y editar\n3️⃣ Publica con +100 templates de Canva listos\n4️⃣ Aprende a monetizarlo paso a paso en Leadr (1 mes gratis incluido)\n\nSin saber de tecnología. Sin dejar tu trabajo actual.\n\n+5.500 periodistas ya lo hicieron. $10 USD, pago único.\n\n👉 Empieza hoy.",
+      "headline": "4 pasos para tu periódico digital con IA",
+      "description": "Método paso a paso · $10 USD · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Clean dark abstract graphic, square 1:1. Minimalist 4-step visual flow rendered as glowing connected nodes (indigo #6366f1 to cyan #22d3ee gradient lines) on a deep dark background (#07070f), each node a simple icon shape: a magnifying glass, a chat bubble, a layout grid, an upward arrow. Modern editorial-tech aesthetic, completely free of any text, letters, or words — purely iconographic and abstract.",
+      "imageNotes": "Usar el estilo 'nodos glow' del resto del ecosistema de diagramas de la marca. Texto mínimo, solo números 1-4."
+    },
+
+    {
+      "id": "ad-11-pregunta-directa-ia",
+      "name": "AD 11 — Pregunta directa ángulo IA (variante corta)",
+      "awarenessLevel": "1 — Problema-consciente",
+      "anguloFuente": "Variante corta del hook ganador '8.0 P1', probando una versión más breve (el historial mostró que copies cortos en 'AD 4 P2' tuvieron el CTR más alto, 5.61%).",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "PR"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "interests": ["periodismo", "inteligencia artificial"],
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 7,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "¿Sabes usar IA en tu trabajo, o todavía no?\n\nTe enseñamos a crear tu propio periódico digital con IA, en 6 horas a la semana.\n\n+5.500 periodistas ya lo hicieron. Incluye 1 mes de Leadr gratis.\n\n👉 $10 USD. Acceso inmediato.",
+      "headline": "¿Sabes usar IA en tu trabajo, o todavía no?",
+      "description": "+5.500 periodistas · $10 USD · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Cinematic close-up portrait, vertical 9:16, well-lit despite moody tone. Latin American journalist mid-30s to mid-40s, direct eye contact with camera, neutral-confident expression, clearly visible face with soft key light from the front-left and a indigo-cyan rim light on the edges (#6366f1 to #22d3ee). Dark editorial background but the subject's face and eyes are bright and sharply lit, not silhouetted. Bold portrait-poster feel.",
+      "imageNotes": "Foto tipo retrato directo a cámara — distinto a los ads 4, 6 y 7 que muestran a la persona trabajando, no mirando a cámara."
+    },
+
+    {
+      "id": "ad-12-retargeting-garantia",
+      "name": "AD 12 — Retargeting con foco en garantía",
+      "awarenessLevel": "3 — Precio y prueba social",
+      "anguloFuente": "Segunda variante de retargeting (distinta a ad-3 de la v2), foco específico en la garantía de 7 días como remoción de riesgo en vez de precio/urgencia.",
+      "targeting": {
+        "customAudience": "Visitas LP últimos 14 días",
+        "excludeCustomAudiences": ["COMPRAS 7 DIAS"],
+        "countries": ["worldwide"],
+        "language": ["es"],
+        "ageMin": 25,
+        "ageMax": 60
+      },
+      "dailyBudget": 6,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "Si todavía no te decidiste, probablemente no es por el precio.\n\nEs porque no sabes si te va a funcionar a ti.\n\nPor eso hay garantía de 7 días: lo prueba, y si no es para ti, un clic y te devolvemos los $10 USD completos.\n\nNo hay riesgo. Solo falta el primer paso.\n\n👉 Empieza ahora.",
+      "headline": "7 días de garantía. Cero riesgo real.",
+      "description": "Devolución completa · $10 USD · Acceso inmediato",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Dark minimalist graphic, square 1:1. A single glowing shield or checkmark icon in cyan-to-indigo gradient (#22d3ee to #6366f1) centered on a deep dark background (#07070f), subtle and modern, no cash or financial icons. Clean, trustworthy, editorial-tech mood.",
+      "imageNotes": "Visual simple centrado en la idea de seguridad/garantía, distinto al resto que usa fotos de personas."
+    },
+
+    {
+      "id": "ad-13-lookalike-identidad",
+      "name": "AD 13 — Lookalike + ángulo identidad profesional",
+      "awarenessLevel": "2 — Solución-consciente",
+      "anguloFuente": "Combina el ángulo de identidad ('quién eres como periodista') con targeting lookalike de compradores, sin repetir el copy de ad-5.",
+      "targeting": {
+        "countries": ["CO", "MX", "EC", "CL", "PE", "DO"],
+        "ageMin": 30,
+        "ageMax": 55,
+        "language": ["es"],
+        "lookalike": { "source": "COMPRAS 30 DIAS", "percent": 2 },
+        "excludeCustomAudiences": ["COMPRAS 180 DIAS", "COMPRAS 30 DIAS"],
+        "advantageAudience": true
+      },
+      "dailyBudget": 8,
+      "optimization": "OFFSITE_CONVERSIONS",
+      "primaryText": "No dejaste el periodismo. El periodismo cambió de formato.\n\nLos periodistas que están construyendo su propio medio digital con IA no dejaron de ser periodistas — encontraron una forma nueva de hacerlo, con más control y sin depender de una redacción ajena.\n\nEl Sistema de Ingresos Diarios para Periodistas te da el camino, en 6 horas semanales, con 1 mes de Leadr incluido.\n\n👉 $10 USD. Pago único.",
+      "headline": "Sigues siendo periodista. Solo cambia el formato.",
+      "description": "+5.500 periodistas · $10 USD · Garantía 7 días",
+      "cta": "LEARN_MORE",
+      "imagePrompt": "Cinematic dark editorial portrait, vertical 9:16. Latin American journalist in their 40s, relaxed and proud posture, standing near a home desk with laptop showing their own digital newspaper in the background, soft indigo/cyan ambient light. Confident, identity-affirming mood rather than work-in-progress mood.",
+      "imageNotes": "Postura de pie y orgullosa (no sentado trabajando como ad-4 y ad-6) para diferenciar visualmente este ángulo de identidad."
+    }
+
+  ],
+
+  "rulesOfPause": {
+    "noConversionAfterDays": 4,
+    "minSpendBeforeCut": 20,
+    "cpaMax": 18,
+    "notes": "Pausa si en 4 días y $20 gastados no hay compra. CPA > $18 en escala = pausar y revisar. Benchmark histórico real: CPA target $10.50 (brand-context.mjs)."
+  },
+
+  "testingPlan": {
+    "week1": "Correr los 10 ads en paralelo con budgets bajos ($6-15/día) — medir CTR y CPA temprano, no tomar decisiones de pausa antes de $20 gastados por ad.",
+    "week2": "Pausar los que no lleguen a CTR 1.5% o CPA > $18. Duplicar budget en los 2-3 ganadores.",
+    "week3": "De los ganadores, testear nueva imagen sobre el mismo copy (mismo método que v2: copy ganador × imagen distinta).",
+    "week4": "Comparar el mejor de los 7 'iteración' vs. el mejor de los 3 'exploratorios' — si un exploratorio gana, abre una línea de ángulo nueva para la próxima tanda."
+  }
+}

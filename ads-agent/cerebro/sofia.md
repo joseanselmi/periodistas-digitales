@@ -76,7 +76,7 @@ Sofía tiene autorización para levantar la mano e interrumpir aunque sea "el d�
 
 ```
 ¿Hay compradores.csv?
-  NO → ALERTA: generar con parse-compradores.mjs antes de cualquier envío
+  NO → ALERTA: generar con scripts/datos/parse-compradores.mjs antes de cualquier envío
   SÍ → continuar
 
 ¿Cuántos contactos hay en compradores.csv?
@@ -101,13 +101,13 @@ cd ads-agent
 $env:BREVO_API_KEY = "ver .env o 1Password — no commitear"
 
 # L1 a nuevo segmento de 100
-node send-email.mjs --campaign leadr-l1 --offset [N] --limit 100
+node scripts/publicar/send-email.mjs --campaign leadr-l1 --offset [N] --limit 100
 
 # L2 al segmento que recibió L1 ayer
-node send-email.mjs --campaign leadr-l2 --offset [N] --limit [X]
+node scripts/publicar/send-email.mjs --campaign leadr-l2 --offset [N] --limit [X]
 
 # L3 al segmento que recibió L2 ayer
-node send-email.mjs --campaign leadr-l3 --offset [N] --limit [X]
+node scripts/publicar/send-email.mjs --campaign leadr-l3 --offset [N] --limit [X]
 ```
 
 ## Secuencia de emails — arco narrativo
@@ -145,11 +145,11 @@ Sofía tiene acceso al inbox de jose@sistemadeingresosdiariosia.com vía IMAP.
 Comando para leer inbox:
 ```powershell
 cd ads-agent
-node check-inbox.mjs --dias 7          # no leídos, últimos 7 días
-node check-inbox.mjs --all --dias 30   # todos, últimos 30 días
+node scripts/datos/check-inbox.mjs --dias 7          # no leídos, últimos 7 días
+node scripts/datos/check-inbox.mjs --all --dias 30   # todos, últimos 30 días
 ```
 
-Cada vez que Sofía es invocada, corre `node check-inbox.mjs --dias 3` y clasifica:
+Cada vez que Sofía es invocada, corre `node scripts/datos/check-inbox.mjs --dias 3` y clasifica:
 - ✅ Positivos (interés, compra, agradecimiento) → reportar a Jose con nombre y email
 - ❓ Preguntas → redactar respuesta sugerida para que Jose apruebe
 - 🔴 Bajas → registrar, no responder

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Embudos — Periodistas Digitales</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #07070f;
+  --indigo: #6366f1;
+  --cyan: #22d3ee;
+  --green: #22c55e;
+  --amber: #f59e0b;
+}
+body {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(99,102,241,.10), transparent 38%),
+    radial-gradient(circle at 85% 70%, rgba(34,211,238,.07), transparent 42%),
+    var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: #f1f5f9;
+  min-height: 100vh;
+  padding: 48px 40px 100px;
+}
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 16px; }
+h1 {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.subtitle { font-size: 12px; color: #374151; letter-spacing: .08em; text-transform: uppercase; }
+
+/* ── LEYENDA ── */
+.legend {
+  max-width: 1100px;
+  margin: 28px auto 44px;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #64748b; font-weight: 600; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.ld-traffic  { background: #22d3ee; box-shadow: 0 0 6px rgba(34,211,238,.6); }
+.ld-checkout { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,.6); }
+.ld-monetize { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,.6); }
+.ld-leadr    { background: #6366f1; box-shadow: 0 0 6px rgba(99,102,241,.7); }
+
+/* ══════════════════════════════════════
+   CANVAS — nodos (placas) + líneas SVG
+══════════════════════════════════════ */
+.canvas-scroll { overflow-x: auto; padding-bottom: 12px; }
+.canvas {
+  position: relative;
+  width: 2020px;
+  height: 540px;
+  margin: 0 auto;
+}
+.canvas svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ── conector recto entre placas de un mismo canal ── */
+.wire {
+  position: absolute;
+  height: 2px;
+  top: 0; left: 0;
+  background: linear-gradient(90deg, rgba(99,102,241,.55), rgba(34,211,238,.55));
+  box-shadow: 0 0 8px rgba(34,211,238,.45);
+  border-radius: 2px;
+}
+
+/* ── placas ── */
+.plate {
+  position: absolute;
+  width: 130px; height: 80px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.035);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.09);
+  display: flex; flex-direction: column; gap: 3px;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.plate:hover { transform: translateY(-3px); }
+.plate-traffic  { border-color: rgba(34,211,238,.4);  box-shadow: 0 0 22px rgba(34,211,238,.08); }
+.plate-checkout { border-color: rgba(34,197,94,.45);  box-shadow: 0 0 22px rgba(34,197,94,.1); }
+.plate-monetize { border-color: rgba(245,158,11,.45); box-shadow: 0 0 22px rgba(245,158,11,.08); }
+
+.p-num { font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.plate-traffic .p-num  { color: #22d3ee; }
+.plate-checkout .p-num { color: #4ade80; }
+.plate-monetize .p-num { color: #fbbf24; }
+.p-title { font-size: 12.5px; font-weight: 800; color: #f1f5f9; line-height: 1.15; }
+.p-sub { font-size: 9.5px; color: #475569; line-height: 1.3; }
+
+/* ── placa pendiente de construir (regalos por WhatsApp, todavía no existe) ── */
+.plate-pending {
+  border-style: dashed;
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.015);
+  box-shadow: none;
+}
+.plate-pending .p-num { color: #64748b; }
+.plate-pending .p-title { color: #94a3b8; }
+.ld-pending { background: transparent; border: 1px dashed rgba(255,255,255,.4); box-shadow: none; }
+
+/* ── etiqueta de canal, flotando a la izquierda de cada fila ── */
+.lane-label {
+  position: absolute;
+  width: 150px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.lane-1 .lane-label { color: #22d3ee; }
+.lane-2 .lane-label { color: #a78bfa; }
+
+/* ── nodo Leadr — placa grande de convergencia ── */
+.leadr-plate {
+  position: absolute;
+  width: 200px; height: 116px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1));
+  border: 1px solid rgba(99,102,241,.5);
+  box-shadow: 0 0 50px rgba(99,102,241,.18);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 6px; padding: 0 16px;
+}
+.leadr-title {
+  font-size: 22px; font-weight: 900; letter-spacing: -.02em;
+  background: linear-gradient(135deg, #818cf8, #22d3ee);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.leadr-sub { font-size: 9.5px; color: #94a3b8; line-height: 1.5; }
+
+/* ── placeholder canal futuro ── */
+.add-channel {
+  position: absolute;
+  width: 130px; height: 80px;
+  border-radius: 14px;
+  border: 1px dashed rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  font-size: 9.5px; font-weight: 700; color: #374151; line-height: 1.4;
+  padding: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Embudos — Periodistas Digitales</h1>
+  <p class="subtitle">Camino del cliente · canales interconectados, todos convergen en Leadr</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot ld-traffic"></span>Tráfico / captación</div>
+  <div class="legend-item"><span class="legend-dot ld-checkout"></span>Checkout (ingreso inicial)</div>
+  <div class="legend-item"><span class="legend-dot ld-monetize"></span>Order bump / Upsell / Downsell</div>
+  <div class="legend-item"><span class="legend-dot ld-leadr"></span>Leadr (recurrencia real)</div>
+  <div class="legend-item"><span class="legend-dot ld-pending"></span>Pendiente de construir</div>
+</div>
+
+<div class="canvas-scroll">
+<div class="canvas">
+
+  <!-- ═══ líneas curvas de convergencia (SVG) ═══ -->
+  <svg viewBox="0 0 2020 540" width="2020" height="540">
+    <defs>
+      <linearGradient id="wireGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#6366f1" stop-opacity=".7"/>
+        <stop offset="100%" stop-color="#22d3ee" stop-opacity=".7"/>
+      </linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="2.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- canal 1 (fila superior, último nodo) → Leadr -->
+    <path d="M 1084 140 C 1400 140, 1600 230, 1780 270" fill="none" stroke="url(#wireGrad)" stroke-width="2.5" filter="url(#glow)"/>
+    <!-- canal 2 (fila inferior, último nodo) → Leadr -->
+    <path d="M 1700 420 C 1745 420, 1755 330, 1780 300" fill="none" stroke="url(#wireGrad)" stroke-width="2.5" filter="url(#glow)"/>
+    <!-- stub punteado del futuro canal → Leadr -->
+    <path d="M 1805 500 C 1850 500, 1860 380, 1780 320" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-dasharray="5 6"/>
+  </svg>
+
+  <!-- ═══ CANAL 1 — Meta Ads directo (fila superior, y centro = 140) ═══ -->
+  <div class="lane-label" style="left:30px; top:48px;">Canal 1<br>Meta Ads directo</div>
+
+  <div class="plate plate-traffic" style="left:30px; top:100px;">
+    <span class="p-num">01</span><span class="p-title">Ads de Meta</span><span class="p-sub">Instagram / Facebook</span>
+  </div>
+  <div class="wire" style="left:160px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:184px; top:100px;">
+    <span class="p-num">02</span><span class="p-title">Landing</span><span class="p-sub">sistemadeingresosdiariosia.com</span>
+  </div>
+  <div class="wire" style="left:314px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-checkout" style="left:338px; top:100px;">
+    <span class="p-num">03</span><span class="p-title">Checkout</span><span class="p-sub">$27 · Hotmart</span>
+  </div>
+  <div class="wire" style="left:468px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:492px; top:100px;">
+    <span class="p-num">04</span><span class="p-title">Order Bump</span><span class="p-sub">en el checkout</span>
+  </div>
+  <div class="wire" style="left:622px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:646px; top:100px;">
+    <span class="p-num">05</span><span class="p-title">Upsell</span><span class="p-sub">post-compra</span>
+  </div>
+  <div class="wire" style="left:776px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:800px; top:100px;">
+    <span class="p-num">06</span><span class="p-title">Downsell</span><span class="p-sub">si rechaza el upsell</span>
+  </div>
+  <div class="wire" style="left:930px; top:139px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:954px; top:100px;">
+    <span class="p-num">07</span><span class="p-title">Pág. de gracias</span><span class="p-sub">entrega de accesos</span>
+  </div>
+
+  <!-- ═══ CANAL 2 — Meta Lead Ads + embudo de regalos (fila inferior, y centro = 420) ═══ -->
+  <div class="lane-label" style="left:30px; top:328px;">Canal 2<br>Meta Lead Ads + embudo de regalos</div>
+
+  <div class="plate plate-traffic" style="left:30px; top:380px;">
+    <span class="p-num">01</span><span class="p-title">Anuncio Meta</span><span class="p-sub">Lead Ad · $1/día</span>
+  </div>
+  <div class="wire" style="left:160px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:184px; top:380px;">
+    <span class="p-num">02</span><span class="p-title">Formulario</span><span class="p-sub">nativo Meta · Make</span>
+  </div>
+  <div class="wire" style="left:314px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:338px; top:380px;">
+    <span class="p-num">03</span><span class="p-title">Regalo 1</span><span class="p-sub">email instantáneo</span>
+  </div>
+  <div class="wire" style="left:468px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:492px; top:380px;">
+    <span class="p-num">04</span><span class="p-title">Regalo 2</span><span class="p-sub">email +48h · Brevo</span>
+  </div>
+  <div class="wire" style="left:622px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-pending" style="left:646px; top:380px;">
+    <span class="p-num">05</span><span class="p-title">Regalo 3</span><span class="p-sub">WhatsApp (pendiente)</span>
+  </div>
+  <div class="wire" style="left:776px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-pending" style="left:800px; top:380px;">
+    <span class="p-num">06</span><span class="p-title">Regalo 4</span><span class="p-sub">WhatsApp (pendiente)</span>
+  </div>
+  <div class="wire" style="left:930px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-traffic" style="left:954px; top:380px;">
+    <span class="p-num">07</span><span class="p-title">Oferta del curso</span><span class="p-sub">Sistema de Ingresos</span>
+  </div>
+  <div class="wire" style="left:1084px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-checkout" style="left:1108px; top:380px;">
+    <span class="p-num">08</span><span class="p-title">Checkout</span><span class="p-sub">$27 · Hotmart</span>
+  </div>
+  <div class="wire" style="left:1238px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:1262px; top:380px;">
+    <span class="p-num">09</span><span class="p-title">Order Bump</span><span class="p-sub">en el checkout</span>
+  </div>
+  <div class="wire" style="left:1392px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:1416px; top:380px;">
+    <span class="p-num">10</span><span class="p-title">Upsell</span><span class="p-sub">post-compra</span>
+  </div>
+  <div class="wire" style="left:1546px; top:419px; width:24px;"></div>
+
+  <div class="plate plate-monetize" style="left:1570px; top:380px;">
+    <span class="p-num">11</span><span class="p-title">Downsell</span><span class="p-sub">si rechaza el upsell</span>
+  </div>
+
+  <!-- ═══ placeholder canal futuro ═══ -->
+  <div class="add-channel" style="left:1745px; top:460px;">+ Próximo canal<br>se conecta acá</div>
+
+  <!-- ═══ Leadr — nodo de convergencia ═══ -->
+  <div class="leadr-plate" style="left:1780px; top:222px;">
+    <div class="leadr-title">Leadr</div>
+    <p class="leadr-sub">$10/mes · Basic gratis para siempre como puerta de entrada</p>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>

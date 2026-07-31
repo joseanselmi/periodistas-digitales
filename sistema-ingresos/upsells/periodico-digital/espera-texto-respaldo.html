@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google Analytics 4 (gtag.js) — propiedad "Sistema de Ingresos Diarios" G-J7J27BYHF0 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J7J27BYHF0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J7J27BYHF0');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESPERA — tu compra no ha terminado · Sistema de Ingresos Diarios</title>
+    <meta name="description" content="Una última cosa antes de terminar: sumá tu propio periódico digital con redacción IA a tu compra.">
+    <!-- Página de upsell post-compra (OTO). No debe indexarse. -->
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+        --bg:      #000000;
+        --bg-2:    #06060f;
+        --surface: rgba(255,255,255,0.04);
+        --border:  rgba(255,255,255,0.08);
+        --text:    #f1f5f9;
+        --muted:   #64748b;
+        --muted-hi:#94a3b8;
+        --indigo:  #6366f1;
+        --cyan:    #22d3ee;
+        --green:   #22c55e;
+        --green-hi:#4ade80;
+        --amber:   #f59e0b;
+        --ease:    cubic-bezier(.25,.46,.45,.94);
+    }
+
+    html { scroll-behavior: smooth; color-scheme: dark; }
+    body {
+        background: var(--bg); color: var(--text);
+        font-family: 'DM Sans', sans-serif; font-size: 17px; line-height: 1.65;
+        overflow-x: hidden; min-height: 100vh;
+        display: flex; flex-direction: column;
+    }
+    h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -.025em; line-height: 1.1; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV (idéntico al ecosistema) ── */
+    .nav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 24px;
+        background: rgba(0,0,0,.7); backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .95rem; color: var(--text); }
+    .nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--indigo); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
+    @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.6)} 50%{box-shadow:0 0 0 6px rgba(99,102,241,0)} }
+
+    /* ── BTN ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; border-radius: 999px; padding: 16px 32px; font-size: 1.02rem; transition: transform .2s, opacity .2s, background .2s; cursor: pointer; border: none; }
+    .btn:hover { transform: scale(1.03); }
+    .btn-green { background: var(--green); color: #000; }
+    .btn-green:hover { background: var(--green-hi); }
+    .btn-decline { background: transparent; color: var(--muted); font-weight: 500; font-size: .92rem; text-decoration: underline; text-underline-offset: 3px; }
+    .btn-decline:hover { color: var(--muted-hi); transform: none; }
+
+    /* ── LAYOUT ── */
+    main {
+        flex: 1; position: relative;
+        padding: 116px 24px 64px;
+        display: flex; flex-direction: column; align-items: center;
+    }
+    main::before {
+        content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+        background:
+            radial-gradient(60% 45% at 50% 0%, rgba(99,102,241,.18), transparent 70%),
+            radial-gradient(40% 40% at 82% 16%, rgba(34,211,238,.10), transparent 70%);
+    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
+
+    /* ── ALERTA HONESTA ── */
+    .warn-badge {
+        display: inline-flex; align-items: center; gap: 9px;
+        background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.4);
+        color: var(--amber); border-radius: 999px;
+        padding: 8px 18px; font-size: .8rem; font-weight: 600; letter-spacing: .04em;
+        margin-bottom: 22px;
+    }
+    .warn-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); animation: pulse-dot 2s ease-in-out infinite; }
+
+    h1 { font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.14; margin-bottom: 16px; }
+    h1 em { font-style: normal; background: linear-gradient(135deg, var(--indigo), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .lead { color: var(--muted-hi); font-size: 1.1rem; line-height: 1.7; margin-bottom: 20px; }
+    .lead strong { color: var(--text); }
+
+    .caution {
+        display: flex; gap: 12px; align-items: flex-start;
+        background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.25);
+        border-radius: 14px; padding: 15px 18px; margin-bottom: 40px;
+        color: var(--muted-hi); font-size: .93rem; line-height: 1.55;
+    }
+    .caution svg { width: 20px; height: 20px; stroke: var(--amber); flex-shrink: 0; margin-top: 2px; }
+
+    /* ── SECCIÓN ── */
+    .eyebrow { font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--indigo); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    .eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--indigo); }
+
+    .pitch { color: var(--muted-hi); font-size: 1.04rem; line-height: 1.75; margin-bottom: 40px; }
+    .pitch strong { color: var(--text); }
+
+    /* ── VALUE STACK ── */
+    .stack {
+        background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+        padding: 8px 8px; margin-bottom: 14px; overflow: hidden;
+    }
+    .stack-row {
+        display: flex; gap: 14px; align-items: flex-start;
+        padding: 16px 16px; border-bottom: 1px solid var(--border);
+    }
+    .stack-row:last-child { border-bottom: none; }
+    .stack-check {
+        flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.4);
+    }
+    .stack-check svg { width: 14px; height: 14px; stroke: var(--green-hi); }
+    .stack-text { flex: 1; }
+    .stack-text h3 { font-size: 1.02rem; font-weight: 600; margin-bottom: 3px; font-family: 'DM Sans', sans-serif; letter-spacing: normal; }
+    .stack-text p { color: var(--muted); font-size: .88rem; line-height: 1.5; }
+    .stack-val { flex-shrink: 0; color: var(--muted-hi); font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .92rem; white-space: nowrap; }
+    .stack-val s { color: var(--muted); opacity: .7; }
+
+    /* ── PRECIO ── */
+    .price-box {
+        text-align: center; background: linear-gradient(180deg, rgba(99,102,241,.10), rgba(34,211,238,.04));
+        border: 1px solid rgba(99,102,241,.3); border-radius: 18px;
+        padding: 30px 24px; margin-bottom: 22px;
+    }
+    .price-total { color: var(--muted-hi); font-size: .95rem; margin-bottom: 6px; }
+    .price-total s { color: var(--muted); }
+    .price-now { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-bottom: 6px; }
+    .price-now .amount { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(3rem, 9vw, 4.2rem); line-height: 1; background: linear-gradient(135deg, var(--indigo), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .price-now .once { color: var(--muted-hi); font-size: 1rem; font-weight: 500; }
+    .price-note { color: var(--amber); font-size: .84rem; font-weight: 600; }
+
+    /* ── GARANTÍA ── */
+    .guarantee {
+        display: flex; gap: 12px; align-items: flex-start;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 14px; padding: 16px 18px; margin-bottom: 32px;
+        color: var(--muted-hi); font-size: .92rem; line-height: 1.55;
+    }
+    .guarantee svg { width: 22px; height: 22px; stroke: var(--green-hi); flex-shrink: 0; margin-top: 1px; }
+    .guarantee strong { color: var(--text); }
+
+    /* ── CTA ── */
+    .cta { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+    .cta .btn-green { width: 100%; max-width: 420px; padding: 18px 32px; font-size: 1.08rem; }
+    .cta-sub { color: var(--muted); font-size: .82rem; text-align: center; }
+    .config-pending {
+        display: none; width: 100%; max-width: 420px; text-align: center;
+        background: rgba(245,158,11,.08); border: 1px dashed rgba(245,158,11,.4);
+        border-radius: 12px; padding: 14px; color: var(--amber); font-size: .86rem; font-weight: 500;
+    }
+
+    /* ── FOOTER ── */
+    footer { background: #000; border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; color: var(--muted); font-size: .82rem; }
+    footer strong { color: var(--muted-hi); }
+    footer a { color: var(--muted); }
+
+    @media (max-width: 560px) {
+        main { padding: 104px 18px 52px; }
+        .stack-row { padding: 14px 12px; gap: 11px; }
+        .stack-text h3 { font-size: .96rem; }
+        .stack-val { font-size: .85rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; }
+    }
+    </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1086780383211630');
+    fbq('track', 'PageView');
+    // Solo PageView. La compra del upsell la confirma Hotmart (webhook/CAPI server-side),
+    // no la disparamos acá para no duplicar. Ver sistema-ingresos/docs/POST-COMPRA.md.
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1086780383211630&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+    <div class="nav-logo">
+        <span class="nav-logo-dot"></span>
+        <span>Periodistas Digitales</span>
+    </div>
+</nav>
+
+<main>
+    <div class="wrap">
+
+        <span class="warn-badge"><span class="dot"></span> Espera — un último paso</span>
+
+        <h1>Tu compra <em>todavía no terminó</em>.</h1>
+        <p class="lead">Ya sos parte del Sistema de Ingresos Diarios. Antes de darte tus accesos, quiero ofrecerte <strong>una sola cosa más</strong> — y solo la vas a ver acá, ahora.</p>
+
+        <div class="caution">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            <div>No cierres esta página ni toques <strong>Atrás</strong>: tu compra ya está aprobada y todavía estás dentro del proceso. En un clic sumás esta oferta a la misma tarjeta, o seguís sin ella.</div>
+        </div>
+
+        <p class="eyebrow">Lo que te falta</p>
+
+        <p class="pitch">Ya aprendiste a <strong>generar ingresos</strong>. Pero te falta algo que te vuelve imparable: <strong>tu propio medio</strong>. Imaginá un <strong>periódico digital moderno, en vivo, con tu nombre y tu marca</strong> — y llenándose de notas escritas por IA <strong>con tu estilo</strong>, sin que las escribas vos y <strong>sin saber una línea de código</strong>. Eso es lo que te llevás hoy.</p>
+
+        <p class="eyebrow">Todo lo que incluye</p>
+
+        <div class="stack">
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Sistema "Tu periódico en una tarde"</h3><p>Planilla + los 2 mega-prompts + tu web en vivo con Lovable. Todo con herramientas gratis.</p></div>
+                <span class="stack-val">$197</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Prompt Constructor del Sitio</h3><p>Lee tu planilla y te arma el diario entero. Copy-paste, sin tocar código.</p></div>
+                <span class="stack-val">$67</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Prompt Redacción IA</h3><p>Escribe muchas notas con TU estilo en formato pegar-y-listo. Tu diario nunca queda vacío.</p></div>
+                <span class="stack-val">$67</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Planilla plantilla ya publicada</h3><p>Con columnas y notas de ejemplo, lista para copiar. No arrancás de una hoja en blanco.</p></div>
+                <span class="stack-val">$37</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>3 videos de los pasos que traban</h3><p>Publicar el CSV · conectarlo en Lovable · pegar en la planilla. Los 3 puntos donde la gente se frena, resueltos.</p></div>
+                <span class="stack-val">$47</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Sitio de respaldo + mini-FAQ</h3><p>Una plantilla lista por si algo falla, y los 5 errores comunes ya resueltos.</p></div>
+                <span class="stack-val">$29</span>
+            </div>
+            <div class="stack-row">
+                <span class="stack-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <div class="stack-text"><h3>Bonus — Camino Nivel 2</h3><p>Cómo migrar a una base más grande (Supabase) cuando tu diario crezca. Mismo sitio, sin rehacer nada.</p></div>
+                <span class="stack-val">Incluido</span>
+            </div>
+        </div>
+
+        <div class="price-box">
+            <p class="price-total">Valor real de todo esto: <s>$444</s></p>
+            <div class="price-now">
+                <span class="amount">$37</span>
+                <span class="once">un solo pago</span>
+            </div>
+            <p class="price-note">Solo en esta página · no vuelve a aparecer</p>
+        </div>
+
+        <div class="guarantee">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div><strong>Montás tu periódico o te lo devuelvo.</strong> Seguí los pasos; si no lográs tu diario en vivo, me escribís y te devuelvo los $37 del upsell, sin preguntas. Tu curso queda intacto.</div>
+        </div>
+
+        <div class="cta">
+            <a href="#" id="acceptBtn" class="btn btn-green">✓ Sí, agregar a mi compra por $37</a>
+            <div class="config-pending" id="configPending">⚙ Falta pegar las URLs de Hotmart (aceptar/rechazar) para activar los botones. Ver OFERTA.md.</div>
+            <p class="cta-sub">Se cobra a la misma tarjeta, en 1 clic. Sin volver a cargar datos.</p>
+            <a href="#" id="declineBtn" class="btn btn-decline">No, gracias — prefiero seguir sin mi periódico</a>
+        </div>
+
+    </div>
+</main>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+    <p><strong>Periodistas Digitales</strong></p>
+    <p style="margin-top:8px;">© 2026 Sistema de Ingresos Diarios para Periodistas — José Fiaccini</p>
+</footer>
+
+<script>
+/* ── CONFIG — links del upsell 1-clic de Hotmart ──────────────────────────────
+   Cuando el 2º producto ("Tu Periódico Digital + Redacción IA", $37) esté creado
+   en Hotmart y el Funil/Upsell configurado, Hotmart te da dos URLs:
+     ACCEPT_URL  → botón verde: cobra $37 con 1 clic a la misma tarjeta.
+     DECLINE_URL → botón "No gracias": sigue el embudo hasta /gracias sin cobrar.
+   Pegalas acá abajo. Mientras estén vacías, los botones NO quedan rotos:
+   se muestra el aviso "config pendiente" (mismo patrón que TELEGRAM_INVITE en
+   gracias.html). Ver sistema-ingresos/upsells/periodico-digital/OFERTA.md §7. */
+const ACCEPT_URL  = "";
+const DECLINE_URL = "/gracias.html";   // fallback seguro: si no hay upsell configurado, seguir al gracias
+
+(function () {
+    const accept  = document.getElementById('acceptBtn');
+    const decline = document.getElementById('declineBtn');
+    const pending = document.getElementById('configPending');
+
+    if (ACCEPT_URL) {
+        accept.href = ACCEPT_URL;
+    } else {
+        // Sin URL de cobro: no dejar un botón que no hace nada; avisar en pantalla.
+        accept.style.display = 'none';
+        if (pending) pending.style.display = 'block';
+    }
+    decline.href = DECLINE_URL || "/gracias.html";
+})();
+</script>
+
+<!-- Tracking de eventos → tabla `events` (base de marketing). Ver track.js -->
+<script>window.PD_TRACK={funnel:'meta-ads-directo',step:'upsell-espera'};</script>
+<script src="/track.js" defer></script>
+</body>
+</html>

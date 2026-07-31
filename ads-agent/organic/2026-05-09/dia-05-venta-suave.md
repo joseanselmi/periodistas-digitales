@@ -18,7 +18,7 @@ Hoy hay más de 5.500 periodistas en 50 países que siguieron el mismo camino. A
 
 Si sos periodista en México, Ecuador, Chile, Argentina, Puerto Rico o Colombia y estás leyendo esto con esa sensación conocida en el pecho — sabés cuál es —, el link está en bio.
 
-$17 USD. Acceso inmediato.
+$10 USD. Acceso inmediato.
 
 ---
 

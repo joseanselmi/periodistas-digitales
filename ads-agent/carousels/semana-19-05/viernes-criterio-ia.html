@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tu criterio + IA — Viernes 23/05</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:800px; height:800px; background:radial-gradient(circle, rgba(99,102,241,.15) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.cyan { color:#22d3ee; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:90px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.accent-amber { background:linear-gradient(135deg,#f59e0b,#fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.col-title { font-size:14px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:20px; }
+.col-title.indigo { color:#6366f1; } .col-title.cyan { color:#22d3ee; } .col-title.amber { color:#f59e0b; }
+.big-label { font-size:52px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.025em; margin-bottom:20px; }
+ul { list-style:none; display:flex; flex-direction:column; gap:18px; margin-bottom:24px; }
+ul li { display:flex; gap:18px; font-size:29px; color:#cbd5e1; line-height:1.4; align-items:flex-start; }
+ul li::before { content:''; width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#22d3ee); flex-shrink:0; margin-top:10px; }
+ul li strong { color:#f1f5f9; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+.equation { display:flex; align-items:center; gap:24px; margin-bottom:32px; flex-wrap:wrap; }
+.eq-part { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:16px; padding:20px 28px; font-size:24px; font-weight:700; color:#a5b4fc; text-align:center; }
+.eq-op { font-size:40px; color:rgba(255,255,255,.2); font-weight:300; }
+.eq-result { background:linear-gradient(135deg,rgba(99,102,241,.25),rgba(34,211,238,.15)); border:1px solid rgba(99,102,241,.4); border-radius:16px; padding:20px 28px; font-size:24px; font-weight:800; color:#f1f5f9; }
+.cta-box { background:linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1)); border:1px solid rgba(99,102,241,.3); border-radius:24px; padding:36px 40px; display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+.cta-price { font-size:48px; font-weight:900; color:#f1f5f9; }
+.cta-label { font-size:14px; color:#6366f1; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.cta-btn { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:18px; font-weight:700; padding:18px 36px; border-radius:100px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">El sistema · Viernes</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>Los periodistas<br>que más ganan<br>no son los<br><span class="accent">más jóvenes.</span></h1>
+    <p class="lead">Son los que combinaron lo que ya saben con lo que la IA puede hacer.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver el sistema →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Lo que ya tenés</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="big-label">Tu capital<br>periodístico</div>
+    <ul>
+      <li><strong>Fuentes reales</strong> que confían en vos</li>
+      <li><strong>Criterio editorial</strong> construido en años</li>
+      <li><strong>Confianza del lector</strong> que ningún algoritmo tiene</li>
+      <li><strong>Contexto profundo</strong> de tu territorio</li>
+    </ul>
+    <p style="font-size:26px; color:#94a3b8;">Esto no lo tiene alguien que empezó hace dos años.<br>Esto no lo puede replicar una IA.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Lo que te falta →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Lo que te falta</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="big-label" style="color:#f59e0b;">El sistema<br>de cobro</div>
+    <ul>
+      <li><strong>Velocidad de producción</strong> — los medios quieren más en menos tiempo</li>
+      <li><strong>Distribución propia</strong> — sin depender de que otro te publique</li>
+      <li><strong>Modelo de monetización</strong> — saber cómo convertir tu audiencia en ingreso</li>
+    </ul>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Lo que la IA aporta →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Lo que la IA aporta</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="big-label" style="color:#22d3ee;">La máquina<br>que acelera</div>
+    <ul>
+      <li>Producción <strong>3× más rápida</strong> en tareas mecánicas</li>
+      <li>Formatos para <strong>cada plataforma</strong> desde una sola nota</li>
+      <li>Investigación acelerada con <strong>fuentes verificadas</strong></li>
+      <li>Diseño visual <strong>sin diseñador</strong></li>
+    </ul>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">La combinación →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">La combinación</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <p style="font-size:24px; color:#94a3b8; margin-bottom:28px;">LA ECUACIÓN</p>
+    <div class="equation">
+      <div class="eq-part">Tu criterio<br>+ fuentes</div>
+      <div class="eq-op">+</div>
+      <div class="eq-part">IA para<br>producir</div>
+      <div class="eq-op">+</div>
+      <div class="eq-part">Sistema de<br>distribución</div>
+      <div class="eq-op">=</div>
+      <div class="eq-result">Ingresos<br>propios</div>
+    </div>
+    <p style="font-size:29px; margin-top:8px;">Esto no se aprende en la redacción. Se aprende en un sistema específico.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El precio te va a sorprender →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="top">
+    <span class="label amber">La realidad del mercado</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Los periodistas<br>que <span class="accent-amber">no</span> tienen<br>el sistema<br>dependen de<br>que alguien más<br>lo tenga.</h2>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El sistema →</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — CTA -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">¿Lo querés?</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2><span class="accent">Sistema de<br>Ingresos Diarios</span><br>para Periodistas.</h2>
+    <div class="divider"></div>
+    <p style="font-size:29px; margin-bottom:32px;">Tu criterio + IA + distribución. El sistema completo por menos de lo que cuesta una noche de streaming.</p>
+    <div class="cta-box">
+      <div>
+        <div class="cta-label">Precio único</div>
+        <div class="cta-price">$10 USD</div>
+      </div>
+      <div class="cta-btn">Acceso inmediato · Link en bio</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

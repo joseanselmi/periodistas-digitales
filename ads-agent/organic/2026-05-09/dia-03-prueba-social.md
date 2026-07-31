@@ -22,7 +22,7 @@ Camila es una de más de 5.500 periodistas en 50 países que ya arrancaron con e
 
 Vos podés ser el próximo.
 
-El Sistema de Ingresos Diarios cuesta $17 USD e incluye 1 mes de Leadr (valor $97) sin cargo adicional.
+El Sistema de Ingresos Diarios cuesta $10 USD e incluye 1 mes de Leadr (valor $97) sin cargo adicional.
 
 → Mirá el sistema completo en el link de la bio.
 

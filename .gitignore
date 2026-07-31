@@ -11,6 +11,11 @@
 # env files
 **/.env*
 
+# claves de servicio / service accounts de Google (NUNCA al repo — son secretas)
+**/*-service-account.json
+**/ga4-service-account.json
+/periodistas-analytics-*.json
+
 # vercel
 **/.vercel
 
@@ -39,3 +44,14 @@
 # material de trabajo local (PDFs, imágenes, videos, repos clonados, material
 # viejo) — no es código, no va al repo. Se movió todo a _material/ el 2026-06-28.
 /_material/
+
+# borradores de video para revisar (no versionar)
+_revisar/
+
+# insumos pesados del scraper del curso de Hotmart (2026-07-30): el audio
+# descargado son ~800 MB de intermedios — lo que sirve son las transcripciones
+# (.txt/.md), que sí se versionan. El perfil de Chrome son ~400 MB de sesión
+# para no re-loguearse. Ninguno de los dos estaba ignorado: un `git add -A`
+# habría intentado commitear 3 GB.
+/ads-agent/hotmart-transcripts/audio/
+/ads-agent/hotmart-chrome-profile/

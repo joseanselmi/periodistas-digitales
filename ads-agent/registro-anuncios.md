@@ -4,8 +4,8 @@ Log vivo de cada anuncio: **qué probamos, por qué, cómo salió y qué decidim
 Lo lee y escribe Mateo (skill `/mateo`, modo "crear anuncio"). Cada vez que se crea
 un anuncio se agrega un renglón; cuando corre, se cargan resultados y la decisión.
 
-- Detalle técnico de tracking: `sistema-ingresos/TRACKING.md`
-- Estrategia, benchmarks y árbol de decisiones: `ads-agent/cerebro/mateo.md` + `ads-agent/SISTEMA-ADS.md`
+- Detalle técnico de tracking: `sistema-ingresos/docs/TRACKING.md`
+- Estrategia, benchmarks y árbol de decisiones: `ads-agent/cerebro/mateo.md` + `ads-agent/docs/SISTEMA-ADS.md`
 - Playbook de configuración (replicable a otros productos): Trello #23
 
 ---
@@ -29,6 +29,25 @@ exploramos ángulos nuevos hasta tener una base de compras.
 **🟢 Lanzado 2026-06-30** — anuncio `ad1-fomo` a $10/día (creativo FOMO+IA, copy sin precio, geo Worldwide + español + exclusiones). Ver palancas y reglas abajo.
 
 **✅ Primer chequeo 2026-07-02 (día 3, Mateo):** $28.32 gastados · **3 compras · CPA $9.44** · CTR 9.71% · freq 1.62. Bajo el objetivo ($12) y cerca del histórico ($10.19). Geo NO sangra: el español lo mantiene en LatAm (fuera de target solo centavos); las 3 ventas fueron de CO, DO y CR. **Decisión: MANTENER**, próximo chequeo día 4-5. Escalar +30% recién si CPA < $8 sostenido 3 días.
+
+**✅ Chequeo día 4 — 2026-07-03 (Mateo, análisis profundo con desgloses):** lifetime $32.72 · **3 compras · CPA $10.91** · CTR 7.91% · link-CTR 3.91% · CPC-link $0.18 · freq 1.55 (sin fatiga). +$4.40 desde el día 3 sin nueva compra → CPA subió de $9.44 a $10.91 (sigue < $12). **Decisión: MANTENER.** Hallazgos que definen el próximo anuncio:
+- **Embudo:** 185 link clicks → 141 LPV → **21 initiate_checkout → 3 compras**. La fuga real está en el checkout (86% abandono) y en LPV→checkout (15%), NO en el anuncio. El creativo trae clicks baratos y de sobra.
+- **Edad:** 45-64 se comió **$20.27 (62% del gasto) con 0 compras**. Los 3 compradores cayeron en 25-34, 35-44 y 65+. El creativo atrae clickers mayores que no compran → ⚠️ **contradice el test "40-65" que figuraba como próximo #1** (ese $6.33 fue otro creativo/época).
+- **Género:** male 83% del gasto, CPA $13.56 · female CPA $5.24 (2.6× más eficiente, recibe 1/5 del budget).
+- **Placement:** Facebook feed carga todo ($19.04, 2 compras, CTR 11.55%). Instagram feed gastó $6.77 con 0 compras. Reels/stories flojos (creativo estático, no vertical).
+- **País:** compras CO/DO/CR. A vigilar: MX $6.47 y AR $3.50 gastados sin compra (CTR alto pero no convierten). Geo NO sangra fuera de LatAm.
+- **Caveat:** solo 3 compras → cortes DIRECCIONALES, no leyes. Sirven para elegir la próxima palanca, no para cerrar conclusiones.
+
+**⚽ (2026-07-03) Nuevo ángulo pedido por Jose — `ad3-mundial` (newsjacking del Mundial):** aprovechar la ventana del **Mundial 2026 (en curso, USA/MX/CA)** como gancho *topical* del MISMO mecanismo probado (FOMO + IA + periodismo → ingresos propios). NO es un exploratorio nuevo: es el ganador con un hook time-limited. El copy usa el Mundial como prueba de que "la atención vale oro" y aterriza en la promesa real del curso (método de ingresos para periodistas), **no** promete armar un medio que rankee en Google Noticias. En preparación — ver fila `ad3-mundial` en el registro. **Budget-fit decidido:** $10/día en conjunto propio, en paralelo a ad1 (~$20/día total mientras dure el Mundial). Pendiente: creativo (Higgsfield, **sin marcas FIFA**) + OK de Jose al copy.
+
+**🔴 (2026-07-05) CERRADO — Jose apagó ad3-mundial antes de tiempo.** No esperó al fin del Mundial: en 3 días ($6.34) el gancho topical rindió PEOR que ad1 (link-CTR 2.51% vs 3.91%, clics ~75% más caros) y no dejó ninguna compra (18 LPV → 2 init → 0 venta). La hipótesis "el Mundial sube CTR/baja CPA" quedó refutada. Decisión: volver a **un anuncio por vez** (ad1, el ganador) y poner la energía en el checkout (#40), que es la fuga real — no en meter más tráfico frío en paralelo. Muestra chica ($6.34 < $20) → lectura direccional, aceptable por ser el ad secundario.
+
+**🔎 (2026-07-08→09) Diagnóstico "cayeron los pagos iniciados" — NO se rompió nada: ruido de muestra chica + normalización post-lanzamiento.** Jose objetó (con razón) que era "imposible en tan poco tiempo", y aclaró que **solo le cambió el NOMBRE** al anuncio. Conclusión final tras descartar hipótesis:
+- **No es la edición.** Renombrar en Meta es cosmético (no resetea aprendizaje). Confirmado por API: mismo ad ID corriendo sin cortes desde el 29/06 → no hubo reset. (Descarté antes "fatiga" — freq 1.36, sin saturación.)
+- **No es la página / ni lag.** Pixel OK (compras el 07/07 y el día en curso); 69-97% de los que clickean llegan a la landing incluso los días malos; los números no se rellenaron al re-consultar.
+- **Qué pasó de verdad:** (a) **normalización** — el ad arrancó con CTR inflado de 10% (pico de novedad el 30/06) y se asentó en ~2.5-3%, su nivel real; (b) **ruido** — los pagos iniciados promedian **~4/día** (a $10/día); a esa escala un día de 8 y uno de 1 son swings aleatorios, no un escalón. Serie: `30/06:9 · …05/07:8 · 06/07:2 · 07/07:1 · día en curso:4` = jumpy alrededor de ~4. Ya rebota (4 init + compra).
+- **➡️ Acción: NADA.** No está roto. Mirar el **promedio móvil de 3 días**, no el día suelto. Refrescar con ad2-fomo2 ([#39](https://trello.com/c/DfdLqvnD)) solo si el promedio de 3 días sigue cayendo varios días más.
+- **🧠 Regla aprendida:** a este volumen no leer días sueltos (ruido de Poisson) — reaccionar solo a tendencias de 3+ días. Renombrar un anuncio es seguro; lo que sí resetea es editar creativo/targeting/optimización/presupuesto.
 
 ## ⏭️ Próximos tests en cola (cuando haya datos/presupuesto)
 
@@ -63,7 +82,9 @@ La MISMA matrícula aparece en los 4 lugares:
 
 | src | Anuncio (nombre en Meta) | Ángulo / nivel | Segmento | Hipótesis | Creativo | $/día | Estado | Lanzado | CPA | CTR | Compras | Decisión |
 |-----|--------------------------|----------------|----------|-----------|----------|-------|--------|---------|-----|-----|---------|----------|
-| `ad1-fomo` | ad1-fomo · FOMO+IA (en Meta figura como "Nuevo anuncio de Ventas" — renombrar) | FOMO+IA / N1 | 30-55 · Worldwide+español+exclusiones | Control: ángulo validado sostiene CPA<$12 a $10/día | ads1-fomo.png ✅ (sin $) | $10 | 🟢 Activo | 2026-06-30 | **$9.44** | **9.71%** | **3** | ✅ MANTENER (chequeo día 3, 02/07). CPA bajo objetivo. Geo NO sangra (español lo mantiene en LatAm; ventas de CO/DO/CR). Escalar solo si CPA<$8 x3 días. |
+| `ad1-fomo` | ad1-fomo · FOMO+IA (en Meta figura como "Nuevo anuncio de Ventas" — renombrar) | FOMO+IA / N1 | 30-55 · Worldwide+español+exclusiones | Control: ángulo validado sostiene CPA<$12 a $10/día | ads1-fomo.png ✅ (sin $) | $10 | 🟢 Activo | 2026-06-30 | **$10.91** | **7.91%** | **3** | ✅ MANTENER (día 4, 03/07). CPA $10.91 < objetivo. Fuga real = checkout (21 init→3 compra). 45-64 comió 62% del gasto con 0 ventas → el creativo empuja a no-compradores. |
+| `ad2-fomo2` | ad2-fomo2 · FOMO+IA creativo B | FOMO+IA / N1 | **= ad1** (30-55 intereses) | **1 variable = SOLO el sujeto de la foto**: periodista más joven (~37) reorienta entrega a 25-44 y baja CPA sin tocar targeting/texto | ✅ ads2-fomo2.png (1080×1080, listo) | $10 | 🟢 Creativo listo — falta publicar | — | — | — | — | Trello [#39](https://trello.com/c/DfdLqvnD). Decisión: conjunto propio $10/día vs. mismo de ad1. Ficha: `ads-curso/ad2-fomo2/`. |
+| `ad3-mundial` | ad3-mundial · Mundial (newsjacking) | FOMO+IA *topical* / N1 | = ad1 base LatAm · **conjunto PROPIO** (paralelo a ad1) | **1 variable vs ad1 = el gancho**: hook topical del Mundial 2026 (ventana de máx. relevancia) sube CTR / baja CPA vs el FOMO evergreen | ✅ corregido y verificado LIVE (`ads3-mundial-publicado.png`) | **$10** (conjunto propio, ~$20/día total con ad1) | 🔴 **PAUSADO 05/07** (adset PAUSED, verificado API) | 2026-07-02 | — (0 compras) | **4.02%** (link 2.51%) | **0** | ❌ **HIPÓTESIS REFUTADA — apagado por Jose 05/07.** El gancho del Mundial NO le ganó al evergreen: link-CTR 2.51% vs 3.91% de ad1, y CPC-link $0.317 vs $0.18 (clics ~75% más caros). $6.34 gastados → 18 LPV → 2 initiate_checkout → **0 compras**. Como era un 2º adset ($10/día extra, ~$20 total) bajo presupuesto acotado y perdía en su propia métrica clave, se concentra en ad1 (ganador probado) + arreglar el checkout (#40, fuga real). Caveat: $6.34 < umbral $20/4 días → corte DIRECCIONAL (muestra chica), no ley — pero razonable por ser el anuncio secundario. |
 
 ## 🎚️ Palancas a ajustar según las métricas
 

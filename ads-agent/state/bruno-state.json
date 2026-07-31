@@ -1,0 +1,8 @@
+{
+  "ultimo_analisis": null,
+  "area_analizada": null,
+  "hallazgos_criticos": [],
+  "proxima_accion": "Correr análisis completo de integridad inicial",
+  "equipo": "IT",
+  "reporta_a": "Ricardo (CMO) para métricas de negocio, Max (QA) para anomalías técnicas"
+}

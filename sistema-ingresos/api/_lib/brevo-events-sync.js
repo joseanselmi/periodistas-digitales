@@ -11,7 +11,7 @@
 //
 // Lo llama api/salud.js en cada corrida diaria (Vercel Hobby solo deja 2 crons,
 // así que se cuelga del que ya existe). También se puede correr a mano:
-//   node ads-agent/sync-comunicaciones.mjs --dias 30
+//   node ads-agent/scripts/datos/sync-comunicaciones.mjs --dias 30
 
 const BREVO_URL = 'https://api.brevo.com/v3/smtp/statistics/events';
 

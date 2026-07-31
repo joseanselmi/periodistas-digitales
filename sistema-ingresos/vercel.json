@@ -13,6 +13,42 @@
     { "path": "/api/recuperacion", "schedule": "0 15 * * *" }
   ],
   "rewrites": [
-    { "source": "/gracias", "destination": "/gracias.html" }
+    { "source": "/", "destination": "/paginas/index.html" },
+    { "source": "/index.html", "destination": "/paginas/index.html" },
+    { "source": "/landing.html", "destination": "/paginas/landing.html" },
+    { "source": "/landing-leadgen-v1.html", "destination": "/paginas/landing-leadgen-v1.html" },
+    { "source": "/gracias", "destination": "/paginas/gracias.html" },
+    { "source": "/gracias.html", "destination": "/paginas/gracias.html" },
+    { "source": "/privacidad", "destination": "/paginas/privacidad.html" },
+    { "source": "/privacidad.html", "destination": "/paginas/privacidad.html" },
+    { "source": "/track.js", "destination": "/paginas/track.js" },
+    { "source": "/logo-periodistas-digitales.webp", "destination": "/campanas/guia-claude-periodistas/guias/logo-periodistas-digitales.webp" },
+
+    { "source": "/tu-medio", "destination": "/campanas/republicadores/landing/tu-medio.html" },
+
+    { "source": "/que-te-lean-miles.pdf", "destination": "/campanas/republicadores/guias/que-te-lean-miles.pdf" },
+
+    { "source": "/guia-claude-periodistas.pdf", "destination": "/campanas/guia-claude-periodistas/guias/guia-claude-periodistas.pdf" },
+    { "source": "/guia-completa-50-prompts.pdf", "destination": "/campanas/guia-claude-periodistas/guias/guia-completa-50-prompts.pdf" },
+    { "source": "/guia-periodico-digital-ig-fb.pdf", "destination": "/campanas/guia-claude-periodistas/guias/guia-periodico-digital-ig-fb.pdf" },
+    { "source": "/guia-5-pilares-ingresos-periodico-digital.pdf", "destination": "/campanas/guia-claude-periodistas/guias/guia-5-pilares-ingresos-periodico-digital.pdf" },
+    { "source": "/guia-agentes-ia-periodistas.pdf", "destination": "/campanas/guia-claude-periodistas/guias/guia-agentes-ia-periodistas.pdf" },
+
+    { "source": "/guia-claude-periodistas.html", "destination": "/campanas/guia-claude-periodistas/guias/guia-claude-periodistas.html" },
+    { "source": "/guia-completa-50-prompts.html", "destination": "/campanas/guia-claude-periodistas/guias/guia-completa-50-prompts.html" },
+    { "source": "/guia-periodico-digital-ig-fb.html", "destination": "/campanas/guia-claude-periodistas/guias/guia-periodico-digital-ig-fb.html" },
+    { "source": "/guia-5-pilares-ingresos-periodico-digital.html", "destination": "/campanas/guia-claude-periodistas/guias/guia-5-pilares-ingresos-periodico-digital.html" },
+    { "source": "/guia-agentes-ia-periodistas.html", "destination": "/campanas/guia-claude-periodistas/guias/guia-agentes-ia-periodistas.html" },
+
+    { "source": "/upsell-periodico/espera.html", "destination": "/upsells/periodico-digital/espera.html" },
+    { "source": "/upsell-periodico/espera-texto-respaldo.html", "destination": "/upsells/periodico-digital/espera-texto-respaldo.html" }
+  ],
+  "redirects": [
+    { "source": "/campanas/:path*.md", "destination": "/", "permanent": false },
+    { "source": "/campanas/:path*.html", "destination": "/", "permanent": false },
+    { "source": "/campanas/:path*.pdf", "destination": "/", "permanent": false },
+    { "source": "/docs/:path*.md", "destination": "/", "permanent": false },
+    { "source": "/curso/:path*", "destination": "/", "permanent": false },
+    { "source": "/order-bumps/:path*", "destination": "/", "permanent": false }
   ]
 }

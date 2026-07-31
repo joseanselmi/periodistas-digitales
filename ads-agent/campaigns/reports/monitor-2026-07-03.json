@@ -1,0 +1,566 @@
+{
+  "date": "2026-07-03",
+  "now": {
+    "spend": 14.3,
+    "impressions": 19054,
+    "clicks": 538,
+    "purchases": 1,
+    "ctr": 5.20540175,
+    "cpm": 1.813882,
+    "activeAds": 4
+  },
+  "prev": {
+    "spend": 42.58,
+    "impressions": 29251,
+    "clicks": 1177,
+    "purchases": 3,
+    "ctr": 5.9264244999999995,
+    "cpm": 2.3801750000000004,
+    "activeAds": 4
+  },
+  "alerts": [
+    "🟡 AVISO: Gasto cayó más del 50% — ¿ads pausados?"
+  ],
+  "topAds": [
+    {
+      "campaign_name": "Curso Sistema de ingresos diarios para periodistas - VENTAS - Junio 2026",
+      "adset_name": "ad1-fomo · 30-55 intereses",
+      "ad_name": "Nuevo anuncio de Ventas",
+      "impressions": "1497",
+      "clicks": "102",
+      "spend": "8.72",
+      "reach": "988",
+      "ctr": "6.813627",
+      "cpm": "5.824983",
+      "cpp": "8.825911",
+      "frequency": "1.515182",
+      "actions": [
+        {
+          "action_type": "web_in_store_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "omni_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "link_click",
+          "value": "47"
+        },
+        {
+          "action_type": "initiate_checkout",
+          "value": "5"
+        },
+        {
+          "action_type": "offsite_purchase_add_20_s_calls",
+          "value": "1"
+        },
+        {
+          "action_type": "offsite_conversion.fb_pixel_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "offsite_conversion.fb_pixel_initiate_checkout",
+          "value": "5"
+        },
+        {
+          "action_type": "offsite_initiate_checkout_add_20_s_calls",
+          "value": "5"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "10"
+        },
+        {
+          "action_type": "offsite_content_view_add_20_s_calls",
+          "value": "58"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "35"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "35"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "67"
+        },
+        {
+          "action_type": "like",
+          "value": "1"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "13"
+        },
+        {
+          "action_type": "onsite_web_app_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "68"
+        },
+        {
+          "action_type": "purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_web_view_content",
+          "value": "58"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "13"
+        },
+        {
+          "action_type": "onsite_web_app_view_content",
+          "value": "58"
+        },
+        {
+          "action_type": "post",
+          "value": "1"
+        },
+        {
+          "action_type": "view_content",
+          "value": "58"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "2"
+        },
+        {
+          "action_type": "web_app_in_store_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "2"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "10"
+        },
+        {
+          "action_type": "onsite_web_initiate_checkout",
+          "value": "5"
+        },
+        {
+          "action_type": "omni_initiated_checkout",
+          "value": "5"
+        },
+        {
+          "action_type": "offsite_content_view_add_meta_leads",
+          "value": "58"
+        },
+        {
+          "action_type": "onsite_web_purchase",
+          "value": "1"
+        },
+        {
+          "action_type": "video_view",
+          "value": "7"
+        },
+        {
+          "action_type": "omni_view_content",
+          "value": "58"
+        },
+        {
+          "action_type": "offsite_conversion.fb_pixel_view_content",
+          "value": "58"
+        }
+      ],
+      "cost_per_action_type": [
+        {
+          "action_type": "web_in_store_purchase",
+          "value": "8.72"
+        },
+        {
+          "action_type": "omni_purchase",
+          "value": "8.72"
+        },
+        {
+          "action_type": "initiate_checkout",
+          "value": "1.744"
+        },
+        {
+          "action_type": "offsite_initiate_checkout_add_20_s_calls",
+          "value": "1.744"
+        },
+        {
+          "action_type": "offsite_content_view_add_20_s_calls",
+          "value": "0.150345"
+        },
+        {
+          "action_type": "omni_view_content",
+          "value": "0.150345"
+        },
+        {
+          "action_type": "offsite_purchase_add_20_s_calls",
+          "value": "8.72"
+        },
+        {
+          "action_type": "video_view",
+          "value": "1.245714"
+        },
+        {
+          "action_type": "link_click",
+          "value": "0.185532"
+        },
+        {
+          "action_type": "like",
+          "value": "8.72"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "0.670769"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "0.130149"
+        },
+        {
+          "action_type": "onsite_web_initiate_checkout",
+          "value": "1.744"
+        },
+        {
+          "action_type": "onsite_web_purchase",
+          "value": "8.72"
+        },
+        {
+          "action_type": "view_content",
+          "value": "0.150345"
+        },
+        {
+          "action_type": "purchase",
+          "value": "8.72"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "0.128235"
+        },
+        {
+          "action_type": "offsite_content_view_add_meta_leads",
+          "value": "0.150345"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "0.249143"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "0.249143"
+        },
+        {
+          "action_type": "omni_initiated_checkout",
+          "value": "1.744"
+        }
+      ],
+      "date_start": "2026-07-02",
+      "date_stop": "2026-07-02"
+    },
+    {
+      "campaign_name": "interacción",
+      "adset_name": "Interacción",
+      "ad_name": "Interacción",
+      "impressions": "12231",
+      "clicks": "277",
+      "spend": "3.26",
+      "reach": "11575",
+      "ctr": "2.264737",
+      "cpm": "0.266536",
+      "cpp": "0.281641",
+      "frequency": "1.056674",
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "28"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "113"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "5"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "6696"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "183"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "6696"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "189"
+        },
+        {
+          "action_type": "post",
+          "value": "25"
+        },
+        {
+          "action_type": "onsite_conversion.post_unsave",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "45"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "44"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "108"
+        },
+        {
+          "action_type": "video_view",
+          "value": "6485"
+        }
+      ],
+      "cost_per_action_type": [
+        {
+          "action_type": "video_view",
+          "value": "0.000503"
+        },
+        {
+          "action_type": "link_click",
+          "value": "0.116429"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "0.017814"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "0.000487"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "0.000487"
+        }
+      ],
+      "date_start": "2026-07-02",
+      "date_stop": "2026-07-02"
+    },
+    {
+      "campaign_name": "interacción",
+      "adset_name": "Calentamiento 1 - 15/12/25",
+      "ad_name": "V1 15/12/25 1USD",
+      "impressions": "4281",
+      "clicks": "48",
+      "spend": "1.46",
+      "reach": "4232",
+      "ctr": "1.121233",
+      "cpm": "0.341042",
+      "cpp": "0.344991",
+      "frequency": "1.011578",
+      "actions": [
+        {
+          "action_type": "post_reaction",
+          "value": "22"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "2"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "3093"
+        },
+        {
+          "action_type": "like",
+          "value": "2"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "40"
+        },
+        {
+          "action_type": "comment",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "3095"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "42"
+        },
+        {
+          "action_type": "post",
+          "value": "5"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "12"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_comment",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "12"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "20"
+        },
+        {
+          "action_type": "video_view",
+          "value": "3053"
+        }
+      ],
+      "cost_per_action_type": [
+        {
+          "action_type": "video_view",
+          "value": "0.000478"
+        },
+        {
+          "action_type": "like",
+          "value": "0.73"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "0.0365"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "0.000472"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "0.000472"
+        }
+      ],
+      "date_start": "2026-07-02",
+      "date_stop": "2026-07-02"
+    },
+    {
+      "campaign_name": "LEADGEN | Guía Claude Periodistas | $1d | 2026-06",
+      "adset_name": "WW-ES | 25-65 | Adv+",
+      "ad_name": "AD1 | Sorpresa-FOMO | v1",
+      "impressions": "1045",
+      "clicks": "111",
+      "spend": "0.86",
+      "reach": "967",
+      "ctr": "10.62201",
+      "cpm": "0.822967",
+      "cpp": "0.889349",
+      "frequency": "1.080662",
+      "actions": [
+        {
+          "action_type": "offsite_complete_registration_add_meta_leads",
+          "value": "21"
+        },
+        {
+          "action_type": "link_click",
+          "value": "44"
+        },
+        {
+          "action_type": "offsite_search_add_meta_leads",
+          "value": "21"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "5"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "50"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "6"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "50"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "6"
+        },
+        {
+          "action_type": "post",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "5"
+        },
+        {
+          "action_type": "lead",
+          "value": "21"
+        },
+        {
+          "action_type": "offsite_content_view_add_meta_leads",
+          "value": "21"
+        },
+        {
+          "action_type": "onsite_conversion.lead_grouped",
+          "value": "21"
+        }
+      ],
+      "cost_per_action_type": [
+        {
+          "action_type": "offsite_submit_application_add_meta_leads",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "offsite_search_add_meta_leads",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "offsite_complete_registration_add_meta_leads",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "link_click",
+          "value": "0.019545"
+        },
+        {
+          "action_type": "onsite_conversion.lead_grouped",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "0.143333"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "0.0172"
+        },
+        {
+          "action_type": "lead",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "offsite_contact_website_add_meta_leads",
+          "value": "0.040952"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "0.0172"
+        },
+        {
+          "action_type": "offsite_content_view_add_meta_leads",
+          "value": "0.040952"
+        }
+      ],
+      "date_start": "2026-07-02",
+      "date_stop": "2026-07-02"
+    }
+  ]
+}

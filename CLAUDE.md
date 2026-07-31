@@ -7,6 +7,33 @@ Este repo contiene dos proyectos principales:
   `sistema-ingresos-landing`, dominio `sistemadeingresosdiariosia.com`).
 - `ads-agent/` — agentes de marketing (Meta Ads, email, contenido orgánico, etc.)
 
+### Dónde vive cada cosa (reorganizado el 2026-07-30)
+
+- `ads-agent/scripts/<grupo>/` — todos los ejecutables, agrupados por función:
+  `datos/` (fetch y syncs) · `agentes/` (analizan y deciden) · `generar/` ·
+  `programar/` · `publicar/` (⚠️ salen al mundo) · `exportar/` · `curso/` ·
+  `utiles/`. **Se corren parados en `ads-agent/`**, no dentro de `scripts/`:
+  varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+  carpeta. Ej: `cd ads-agent && node scripts/datos/fetch-meta.mjs`.
+- `ads-agent/docs/` y `sistema-ingresos/docs/` — la documentación. En la raíz de
+  cada proyecto solo quedan `README.md` y lo que tiene que estar ahí sí o sí.
+- `sistema-ingresos/guias/` — las guías-regalo (`.html` + `.pdf`). **Su URL
+  pública sigue siendo la de la raíz** (`/guia-x.pdf`), sostenida por los
+  `rewrites` de `sistema-ingresos/vercel.json`: esos links ya salieron por email
+  y WhatsApp. Guía nueva = sumar su par de rewrites ahí.
+
+**Después de mover, renombrar o borrar archivos — y antes de deployar:**
+
+```bash
+node herramientas/verificar-repo.mjs
+```
+
+Chequea las tres cosas que se rompen en silencio: los links y rutas escritos en
+docs/código, los anclajes de ruta de `ads-agent/scripts/` (un script puede correr
+sin error y no hacer nada si perdió su `.env.local`), y que toda URL pública en
+uso siga resolviendo contra `vercel.json`. No ejecuta ningún script — varios
+publican anuncios o mandan mails.
+
 > **Leadr se separó de este repo el 2026-06-27.** Antes vivía en `leadr/app/`.
 > Ahora es un repositorio independiente (`https://github.com/joseanselmi/leadr`)
 > en la carpeta hermana `../Leadr`, con su propio deploy en Vercel
@@ -16,7 +43,7 @@ Este repo contiene dos proyectos principales:
 > compartido. Si una tarea es de la plataforma Leadr, se trabaja en `../Leadr`,
 > no acá.
 
-## ⚡ Antes de contestar cualquier pregunta de estado — `node estado.mjs`
+## ⚡ Antes de contestar cualquier pregunta de estado — `node herramientas/estado.mjs`
 
 Jose pregunta cosas como "¿cómo va el envío de mails?", "¿cómo venimos con X?".
 El estado real NO está en el repo: vive en Trello (qué falta), Supabase (ventas,
@@ -25,8 +52,8 @@ cola hay). Reconstruirlo a mano cada sesión es lento y termina en preguntas cuy
 respuesta ya estaba decidida en una tarjeta. Para eso está:
 
 ```bash
-node estado.mjs            # trae todo en vivo y reescribe ESTADO.md (~40 s)
-node estado.mjs --rapido   # sin la cola del embudo (el paso lento)
+node herramientas/estado.mjs            # trae todo en vivo y reescribe ESTADO.md (~40 s)
+node herramientas/estado.mjs --rapido   # sin la cola del embudo (el paso lento)
 ```
 
 Reglas:
@@ -76,13 +103,13 @@ chequear directamente. Estas reglas se aplican siempre, automáticamente
 Si las herramientas `mcp__trello__*` no aparecen en la sesión (el `.mcp.json`
 recién se cargó y todavía no fue aprobado/reiniciado), hay un **fallback**
 funcional sin depender del MCP: `ads-agent/lib/trello.mjs` y la CLI
-`ads-agent/trello-task.mjs` (usa la misma API REST de Trello directamente):
+`ads-agent/scripts/utiles/trello-task.mjs` (usa la misma API REST de Trello directamente):
 
 ```bash
 cd ads-agent
-node trello-task.mjs crear <Agente> "<título>" --list "Por hacer" [--desc "..."]
-node trello-task.mjs listar <Agente>
-node trello-task.mjs mover <cardId> "<lista>"
+node scripts/utiles/trello-task.mjs crear <Agente> "<título>" --list "Por hacer" [--desc "..."]
+node scripts/utiles/trello-task.mjs listar <Agente>
+node scripts/utiles/trello-task.mjs mover <cardId> "<lista>"
 ```
 
 Detalle completo en [ads-agent/README.md](ads-agent/README.md).

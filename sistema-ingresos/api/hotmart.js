@@ -6,7 +6,7 @@
 // de "1 mes gratis de Leadr", llama a la API interna de Leadr
 // (POST /api/internal/course-access) en vez de compartir código o base de datos.
 //
-// Tracking (ver sistema-ingresos/TRACKING.md): el evento Purchase se manda a Meta
+// Tracking (ver sistema-ingresos/docs/TRACKING.md): el evento Purchase se manda a Meta
 // por la Conversions API con el máximo de datos disponibles para subir el Event
 // Match Quality:
 //   · PII hasheada (SHA-256): email, teléfono, nombre, apellido, ciudad, CP, país.
@@ -16,7 +16,7 @@
 //     optimice SOLO compras del curso).
 //   · event_id: id de transacción de Hotmart → deduplica reintentos del webhook.
 //
-// Clientes potenciales (ver ARQUITECTURA-DATOS.md): además de la compra, este
+// Clientes potenciales (ver ads-agent/docs/ARQUITECTURA-DATOS.md): además de la compra, este
 // webhook registra a quien entró al checkout y NO compró — carrito abandonado o
 // pago rechazado — en la tabla `clientes_potenciales` de la base de marketing
 // (Supabase periodistas-marketing), para poder recuperarlos después por mail/WhatsApp.
@@ -110,7 +110,7 @@ function buildUserData(buyer, address, fb) {
     ct: sha256(address.city),
     zp: sha256(address.zip),
     // country: Meta lo quiere como ISO-2 en minúscula; si Hotmart manda el nombre
-    // completo igual lo hasheamos (mejor algo que nada), pero ver TRACKING.md.
+    // completo igual lo hasheamos (mejor algo que nada), pero ver sistema-ingresos/docs/TRACKING.md.
     country: sha256(address.country),
   }
   // fbp/fbc van EN CRUDO (no se hashean).

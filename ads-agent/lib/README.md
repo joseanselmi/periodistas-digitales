@@ -1,7 +1,7 @@
 # lib/ — Módulos compartidos
 
 Código reutilizable que importan los scripts de `ads-agent/`. No se corre solo:
-son piezas que usan `review.mjs`, `organic-agent.mjs`, `publish.mjs`, etc.
+son piezas que usan `scripts/agentes/review.mjs`, `scripts/agentes/organic-agent.mjs`, `scripts/publicar/publish.mjs`, etc.
 
 | Archivo | Qué hace |
 |---|---|

@@ -1,0 +1,24 @@
+{
+  // Carpetas que NO son del proyecto: las genera una herramienta y no se tocan
+  // a mano. Se ocultan del explorador para que el árbol muestre solo lo nuestro.
+  // Siguen existiendo en disco — esto es solo la vista.
+  "files.exclude": {
+    "**/.vercel": true,
+    "**/node_modules": true
+  },
+
+  // Que la búsqueda tampoco se ensucie con material local pesado.
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.vercel": true,
+    "_material": true,
+    "ads-agent/hotmart-transcripts": true
+  },
+
+  // Los reportes del QA se regeneran en cada corrida: se muestran anidados bajo
+  // el script que los escribe, en vez de como tres archivos sueltos.
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "qa-salud-sitio.mjs": "reporte-salud-sitio.*"
+  }
+}

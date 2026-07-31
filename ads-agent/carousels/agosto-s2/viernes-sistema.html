@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El Sistema — Viernes 07/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.prompt-box { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:32px 36px; margin-top:8px; }
+.prompt-box .ptitle { font-size:14px; color:#22d3ee; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+.prompt-box p { font-size:23px; color:#cbd5e1; line-height:1.55; margin-bottom:0; }
+.numlist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.numlist .item { display:flex; gap:18px; align-items:flex-start; }
+.numlist .n { font-size:30px; font-weight:900; color:#22d3ee; min-width:56px; }
+.numlist .t { font-size:27px; color:#cbd5e1; line-height:1.5; padding-top:2px; }
+.numlist .t strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+<div class="slide active">
+  <div class="top">
+    <span class="label amber">El sistema</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>Todo en<br>un solo<br><span class="accent">lugar</span></h1><p class="lead">El método de 4 semanas que ya usaron +3.700 personas para armar un medio propio que cobra.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Las 4 semanas</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El camino,<br>por partes</h2><div class="divider"></div><div class="numlist"><div class="item"><div class="n">01</div><div class="t"><strong>Elegí</strong> tu nicho rentable.</div></div><div class="item"><div class="n">02</div><div class="t"><strong>Armá</strong> tu medio y tu distribución.</div></div><div class="item"><div class="n">03</div><div class="t"><strong>Producí</strong> más con IA, sin perder tu voz.</div></div><div class="item"><div class="n">04</div><div class="t"><strong>Conseguí</strong> tu primera fuente de ingresos.</div></div></div></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Incluye</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Lo que<br>te llevás</h2><div class="divider"></div><div class="numlist"><div class="item"><div class="n">›</div><div class="t">El <strong>sistema completo</strong> paso a paso.</div></div><div class="item"><div class="n">›</div><div class="t">Los <strong>3 bonos</strong> prácticos.</div></div><div class="item"><div class="n">›</div><div class="t"><strong>1 mes de Leadr</strong> de regalo ($97 de valor).</div></div></div></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">El valor</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>$227 en<br>valor real</h2><div class="divider"></div><p>El sistema + los 3 bonos + el mes de Leadr suman <strong>$227 de valor</strong>.</p><p>No lo pagás.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label amber">El precio</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>Hoy:<br><span class="accent">$27 USD</span></h1><p class="lead">Pago único. Acceso inmediato. 7 días de garantía: si no es para vos, te devolvemos todo.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cerrando</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El link está<br><span class="accent">en la bio</span></h2><div class="divider"></div><p class="lead">Acceso inmediato por $27 USD. Si venís posponiendo esto, hoy es un buen día para empezar.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+<script>
+(function(){const s=document.querySelectorAll('.slide');let c=0;function go(d){s[c].classList.remove('active');c=Math.max(0,Math.min(s.length-1,c+d));s[c].classList.add('active')}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)})})()
+</script>
+</body>
+</html>

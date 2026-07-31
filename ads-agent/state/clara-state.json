@@ -5,5 +5,5 @@
   "proxima_ejecucion": "2026-05-24",
   "responsable": "Dante",
   "frecuencia": "diaria",
-  "comando": "node ads-agent/clara.mjs"
+  "comando": "node ads-agent/scripts/agentes/clara.mjs"
 }

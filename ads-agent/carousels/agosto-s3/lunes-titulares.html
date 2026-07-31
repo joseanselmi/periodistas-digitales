@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Titulares — Lunes 10/08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; left:-200px; width:900px; height:900px; background:radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.amber { color:#f59e0b; } .label.green { color:#22c55e; } .label.red { color:#ef4444; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:84px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:56px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:29px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:18px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:35px; color:#cbd5e1; line-height:1.5; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:28px; }
+.prompt-box { background:rgba(255,255,255,.04); border:1px solid rgba(99,102,241,.3); border-radius:20px; padding:32px 36px; margin-top:8px; }
+.prompt-box .ptitle { font-size:14px; color:#22d3ee; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+.prompt-box p { font-size:23px; color:#cbd5e1; line-height:1.55; margin-bottom:0; }
+.numlist { display:flex; flex-direction:column; gap:18px; margin-top:8px; }
+.numlist .item { display:flex; gap:18px; align-items:flex-start; }
+.numlist .n { font-size:30px; font-weight:900; color:#22d3ee; min-width:56px; }
+.numlist .t { font-size:27px; color:#cbd5e1; line-height:1.5; padding-top:2px; }
+.numlist .t strong { color:#f1f5f9; }
+</style>
+</head>
+<body>
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tip de IA</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h1>10 titulares<br>que la gente<br><span class="accent">sí clickea</span></h1><p class="lead">El titular decide si tu nota se lee o pasa de largo. Hoy, el prompt para no quedarte con el primero que se te ocurre.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">La diferencia</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Titular ≠<br>clickbait</h2><div class="divider"></div><p>Un buen titular no engaña. Da claridad y la curiosidad justa para querer saber más. El clickbait promete y no cumple; el buen titular promete y cumple.</p><p><strong>La misma nota, con mejor titular, puede duplicar sus lecturas.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cómo funciona</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Qué hace<br>el prompt</h2><div class="divider"></div><p>Le das el tema de tu nota y para quién es. Te devuelve 10 titulares con ángulos distintos: uno directo, uno con pregunta, uno con dato, uno con curiosidad.</p><p>Vos elegís el que mejor le hable a tu audiencia.</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label green">Copiable</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>El <span class="accent">prompt</span></h2><div class="divider"></div><div class="prompt-box"><div class="ptitle">Copiá y pegá en ChatGPT o Claude</div><p>"Actúa como editor experto en titulares para medios digitales. Mi nota trata sobre [tema]. Mi audiencia es [describí: periodistas, vecinos de tu ciudad…]. Dame 10 titulares distintos, variados en ángulo (directo, pregunta, dato, curiosidad, beneficio). Claros, honestos (nada de clickbait) y de menos de 12 palabras. Marcá cuál recomendás y por qué."</p></div></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label amber">Tip extra</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>Probá dos<br>y medí</h2><div class="divider"></div><p>Si podés, publicá la misma nota con dos titulares distintos (uno hoy, otro en otra red) y mirá cuál trae más lecturas.</p><p><strong>Con el tiempo vas a saber qué le gusta a tu audiencia, no a la teoría.</strong></p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Seguí deslizando →</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="top">
+    <span class="label indigo">Cerrando</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main"><h2>¿El peor titular<br>que <span class="accent">pusiste?</span></h2><div class="divider"></div><p class="lead">Todos tenemos uno. Contámelo en los comentarios, sin vergüenza 😅</p></div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint">Fin del carrusel</div>
+  </div>
+</div>
+<script>
+(function(){const s=document.querySelectorAll('.slide');let c=0;function go(d){s[c].classList.remove('active');c=Math.max(0,Math.min(s.length-1,c+d));s[c].classList.add('active')}document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)})})()
+</script>
+</body>
+</html>

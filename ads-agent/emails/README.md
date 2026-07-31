@@ -20,8 +20,8 @@ de lo que se fue enviando.
 Lo maneja el agente de email (Sofía):
 
 ```bash
-node ../email-agent.mjs      # arma / avanza la secuencia
-node ../send-email.mjs       # envío (por Brevo)
+node ../scripts/agentes/email-agent.mjs      # arma / avanza la secuencia
+node ../scripts/publicar/send-email.mjs       # envío (por Brevo)
 ```
 
 ## Regla importante

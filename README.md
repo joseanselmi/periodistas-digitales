@@ -16,6 +16,16 @@ Periodistas Digitales").
 | [`sistema-ingresos/`](sistema-ingresos/) | Landing + backend del curso **"Sistema de Ingresos Diarios"** (pago único en Hotmart, $27). HTML de las páginas + funciones serverless (`api/`) que corren en Vercel. | Vercel `sistema-ingresos-landing` → `sistemadeingresosdiariosia.com` |
 | [`ads-agent/`](ads-agent/) | **Equipo de agentes de marketing** (Meta Ads, email, contenido orgánico, carruseles). Scripts `.mjs` que se corren a mano + los "cerebros", el estado y el material que producen. | Se corre local (Node) / algunas rutinas viven en Vercel dentro de `sistema-ingresos/api/` |
 
+## Los comandos
+
+En [`herramientas/`](herramientas/README.md), porque operan sobre el repo entero
+y no sobre un proyecto:
+
+```bash
+node herramientas/estado.mjs           # qué está pasando en el negocio (reescribe ESTADO.md)
+node herramientas/verificar-repo.mjs   # que nada quedó apuntando a un lugar que ya no existe
+```
+
 ## Lo que NO está en este repo
 
 - **Leadr** (la plataforma, `leadr.cloud`) se separó a su propio repositorio el
@@ -28,7 +38,15 @@ Periodistas Digitales").
 
 ## Cómo está documentado
 
-Cada carpeta con contenido propio tiene su `README.md` explicando qué guarda y
-cómo se usa. Empezá por el README del proyecto que te interese
+**La regla: nada suelto.** Cada carpeta con contenido propio tiene su
+`README.md`, que dice qué guarda, **de qué carpeta cuelga** y cómo se usa. En la
+raíz quedan solo los archivos que tienen que estar ahí (este README, `CLAUDE.md`,
+`ESTADO.md`, `.gitignore`, `.mcp.json`, `skills-lock.json`).
+
+Empezá por el README del proyecto que te interese
 ([sistema-ingresos](sistema-ingresos/README.md) ·
 [ads-agent](ads-agent/README.md)) y desde ahí bajás a cada subcarpeta.
+
+Se exceptúan a propósito las carpetas de **assets fechados** (`carousels/semana-*`,
+`creatives/2026-*`, `campaigns/*/images`), cuyo README padre ya las explica, y los
+repos de terceros clonados dentro de `_material/`, que no se documentan por dentro.

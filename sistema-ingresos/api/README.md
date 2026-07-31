@@ -1,9 +1,44 @@
 # api/ — Funciones serverless (Vercel)
 
+**Padre:** [`sistema-ingresos/`](../README.md)
+
 Cada archivo `.js` de esta carpeta (menos `_lib/`) es un **endpoint** que Vercel
 publica como `/api/<archivo>`. Son el backend propio del curso: procesan la
 compra, trackean, recuperan carritos, corren el embudo de WhatsApp y vigilan la
 salud de todo.
+
+## 🔒 Esta carpeta no se mueve ni se renombra
+
+El nombre `api` y su ubicación **no son una decisión nuestra**: Vercel convierte
+en función serverless únicamente lo que encuentra en `api/` en la raíz del
+proyecto. Es un contrato de la plataforma.
+
+Si se mueve "para ordenar", los 12 endpoints **dejan de existir sin ningún error
+visible**: no falla el deploy, no salta nada. Simplemente el webhook de compra de
+Hotmart empieza a devolver 404 y los dos crons dejan de correr — y nos enteramos
+por una venta que no quedó registrada.
+
+Por eso está chequeado automáticamente:
+
+```bash
+node herramientas/verificar-repo.mjs   # paso "Contrato con Vercel"
+```
+
+Verifica que `api/` siga en su lugar, que cada función declarada en
+[`../vercel.json`](../vercel.json) exista, y que cada cron apunte a un archivo
+real (un cron a una ruta muerta tampoco falla: simplemente no pasa nada todos los
+días).
+
+Lo mismo vale para `.vercel/`, que crea el CLI al enlazar el proyecto: es local,
+está gitignorada y no se toca. Está oculta del explorador en
+[`.vscode/settings.json`](../../.vscode/settings.json) para que no ensucie el árbol.
+
+## Lo de acá adentro no se sirve como archivo
+
+Vercel no expone estáticamente el contenido de `api/`: `/api/README.md`,
+`/api/_lib/wa.js` y `/.vercel/project.json` dan **404** (verificado con
+`vercel dev` el 2026-07-31). Solo responden los endpoints. Por eso `_lib/` puede
+guardar helpers con lógica sensible sin quedar expuesta.
 
 ## Endpoints
 

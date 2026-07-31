@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Periodismo independiente Latam — Domingo 1/06</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; font-family:'Inter',sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.slide { width:1080px; height:1080px; background:#07070f; display:none; flex-direction:column; justify-content:space-between; padding:72px 80px 60px; position:relative; overflow:hidden; }
+.slide.active { display:flex; }
+.slide::before { content:''; position:absolute; top:-300px; right:-200px; width:800px; height:800px; background:radial-gradient(circle, rgba(34,211,238,.12) 0%, transparent 65%); pointer-events:none; }
+.slide::after { content:''; position:absolute; left:0; top:72px; bottom:60px; width:5px; background:linear-gradient(180deg,#6366f1,#22d3ee); border-radius:0 3px 3px 0; }
+.top { display:flex; justify-content:space-between; align-items:flex-start; }
+.brand { font-size:13px; color:rgba(255,255,255,.22); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+.label { font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.label.indigo { color:#6366f1; } .label.cyan { color:#22d3ee; } .label.green { color:#22c55e; }
+.main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 0; }
+.bottom { display:flex; justify-content:space-between; align-items:center; }
+.dots { display:flex; gap:8px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); }
+.dot.active { background:#6366f1; width:24px; border-radius:4px; }
+.swipe-hint { font-size:14px; color:rgba(255,255,255,.25); }
+h1 { font-size:92px; font-weight:900; color:#f1f5f9; line-height:1.0; letter-spacing:-.04em; margin-bottom:28px; }
+h2 { font-size:60px; font-weight:900; color:#f1f5f9; line-height:1.05; letter-spacing:-.03em; margin-bottom:24px; }
+.accent { background:linear-gradient(135deg,#6366f1,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+p { font-size:31px; color:#cbd5e1; line-height:1.6; max-width:900px; margin-bottom:20px; }
+p strong { color:#f1f5f9; }
+p.lead { font-size:37px; color:#cbd5e1; line-height:1.5; }
+.stat-country { font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#22d3ee; margin-bottom:16px; }
+.stat-num { font-size:120px; font-weight:900; color:#f1f5f9; line-height:1; letter-spacing:-.05em; margin-bottom:8px; }
+.stat-num .pct { font-size:72px; }
+.stat-desc { font-size:31px; color:#cbd5e1; line-height:1.5; max-width:860px; }
+.stat-desc strong { color:#f1f5f9; }
+.pattern-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+.ptag { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.2); border-radius:8px; padding:8px 18px; font-size:16px; color:#a5b4fc; font-weight:700; }
+.divider { width:56px; height:4px; background:linear-gradient(90deg,#6366f1,#22d3ee); border-radius:2px; margin-bottom:32px; }
+.cta-box { background:linear-gradient(135deg, rgba(99,102,241,.2), rgba(34,211,238,.1)); border:1px solid rgba(99,102,241,.3); border-radius:24px; padding:36px 40px; display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+.cta-price { font-size:48px; font-weight:900; color:#f1f5f9; }
+.cta-label { font-size:14px; color:#6366f1; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.cta-btn { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:18px; font-weight:700; padding:18px 36px; border-radius:100px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <div class="top">
+    <span class="label indigo">Tendencia · Domingo</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h1>El periodismo<br>independiente<br>en Latinoamérica<br><span class="accent">está creciendo.</span></h1>
+    <p class="lead">No son excepciones. Son parte de un movimiento. Acá están los números.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Deslizá para ver los datos →</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Colombia -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">🇨🇴 Colombia</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="stat-num">+40<span class="pct">%</span></div>
+    <p class="stat-desc"><strong>de periodistas trabajando como freelance</strong> entre 2020 y 2024.</p>
+    <p class="stat-desc" style="font-size:26px; margin-top:16px;">Fuente: FNPI (Fundación Nuevo Periodismo Iberoamericano). No es una tendencia anecdótica — es un cambio estructural.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">México →</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — México -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">🇲🇽 México</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="stat-num">300<span class="pct">+</span></div>
+    <p class="stat-desc"><strong>newsletters periodísticos activos en 2024.</strong></p>
+    <p class="stat-desc" style="font-size:26px; margin-top:16px;">El 80% surgieron después de la pandemia. Muchos de periodistas de medios tradicionales que decidieron no esperar a que alguien los contratara.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Ecuador →</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 — Ecuador -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">🇪🇨 Ecuador</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <div class="stat-num">35<span class="pct">%</span></div>
+    <p class="stat-desc"><strong>crecieron los medios nativos digitales</strong> mientras los impresos cayeron 28%.</p>
+    <p class="stat-desc" style="font-size:26px; margin-top:16px;">La tendencia es clara: donde se concentra el crecimiento es en los medios independientes, pequeños y específicos.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El patrón que se repite →</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — El patrón -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">El perfil que se repite</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Periodistas de<br><span class="accent">35–55 años</span><br>con 10+ años<br>de experiencia.</h2>
+    <div class="pattern-row">
+      <div class="ptag">Medios propios</div>
+      <div class="ptag">Nicho específico</div>
+      <div class="ptag">Experiencia real</div>
+    </div>
+    <p style="font-size:29px;">No los más jóvenes. Los que tenían <strong>el conocimiento y decidieron usarlo diferente.</strong></p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="swipe-hint">Lo que tienen en común →</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — Denominador común -->
+<div class="slide">
+  <div class="top">
+    <span class="label cyan">Lo que tienen en común</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>Nicho claro.<br>Audiencia específica.<br><span class="accent">2+ fuentes<br>de ingreso.</span></h2>
+    <p style="font-size:29px; margin-top:8px;">No diversificaron al azar. Siguieron un sistema que priorizaba audiencia primero, monetización después.</p>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="swipe-hint">El sistema →</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — CTA -->
+<div class="slide">
+  <div class="top">
+    <span class="label green">Tu turno</span>
+    <span class="brand">@periodistasdelfuturo</span>
+  </div>
+  <div class="main">
+    <h2>No necesitás<br>ser el primero.<br>Necesitás<br><span class="accent">el sistema correcto.</span></h2>
+    <div class="divider"></div>
+    <div class="cta-box">
+      <div>
+        <div class="cta-label">Sistema de Ingresos Diarios</div>
+        <div class="cta-price">$10 USD</div>
+      </div>
+      <div class="cta-btn">Acceso inmediato · Link en bio</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <div class="swipe-hint" style="color:rgba(255,255,255,.1);">Fin del carrusel</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide')
+  let cur = 0
+  function go(dir) {
+    slides[cur].classList.remove('active')
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir))
+    slides[cur].classList.add('active')
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1)
+    if (e.key === 'ArrowLeft') go(-1)
+  })
+})()
+</script>
+</body>
+</html>

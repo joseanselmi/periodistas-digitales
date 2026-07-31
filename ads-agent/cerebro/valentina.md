@@ -42,7 +42,7 @@ LUNES (Martes a las máximo):
   → Crear los 7 posts de la semana siguiente
   → Generar carruseles HTML
   → Exportar slides
-  → Programar todo via schedule-week.mjs
+  → Programar todo via scripts/programar/schedule-week.mjs
 
 CUALQUIER DÍA:
   → Verificar que el post del día se publicó correctamente
@@ -70,13 +70,13 @@ $env:FB_PAGE_ID = "439763019230527"
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 
 # Generar carruseles
-node carousel-generator.mjs
+node scripts/generar/carousel-generator.mjs
 
 # Exportar slides
-node export-slides.mjs carousels/semana-[DD-MM]
+node scripts/exportar/export-slides.mjs carousels/semana-[DD-MM]
 
 # Programar semana
-node schedule-week.mjs
+node scripts/programar/schedule-week.mjs
 ```
 
 ## CHECKLIST DE LEGIBILIDAD (obligatorio antes de publicar)

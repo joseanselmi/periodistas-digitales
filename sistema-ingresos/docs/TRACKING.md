@@ -136,7 +136,7 @@ Doble fuente de verdad: **Hotmart SRC** (manual, exacto) + **Meta Ads Manager**
 ## Pendiente / fase 2
 
 - Si `sck` trunca fbp/fbc: store propio (Vercel KV o la tabla `events` de
-  `ads-agent/ARQUITECTURA-DATOS.md`) con un `ref` corto + IP/User-Agent reales del
+  `ads-agent/docs/ARQUITECTURA-DATOS.md`) con un `ref` corto + IP/User-Agent reales del
   comprador (capturados en un endpoint redirector `/api/checkout` en vez del link
   directo) → empuja el match quality al máximo.
 - Ajustar `country` a ISO-2 si Hotmart manda el nombre completo del país.

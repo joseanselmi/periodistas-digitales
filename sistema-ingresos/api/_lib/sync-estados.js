@@ -6,7 +6,7 @@
 // el mail diario salía sin los datos de los agentes. Solución (Plan B): este sync corre
 // donde SÍ hay internet + credenciales (Vercel), lee los state JSON del GitHub público
 // y los deja en `agentes_estado`; el Panel los lee por MCP de Supabase (que la nube sí
-// alcanza, igual que la sección Ventas). Detalle en ads-agent/NOTIFICACIONES-CARTERO.md.
+// alcanza, igual que la sección Ventas). Detalle en ads-agent/docs/NOTIFICACIONES-CARTERO.md.
 //
 // CÓMO: lista los *-state.json del repo (GitHub contents API; si falla, usa una lista
 // fija de respaldo), baja cada uno por raw.githubusercontent (repo público, sin token) y

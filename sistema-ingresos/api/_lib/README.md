@@ -7,7 +7,7 @@ para reusarlos entre varios endpoints.
 
 | Archivo | Qué hace |
 |---|---|
-| `hotmart-sync.js` | Sync Hotmart → Supabase: reconcilia TODAS las ventas (curso + upsells + cross-sell que quizá no pasa por el webhook) y captura pagos rechazados como `clientes_potenciales`. Versión serverless de `ads-agent/hotmart-sync.mjs`. |
+| `hotmart-sync.js` | Sync Hotmart → Supabase: reconcilia TODAS las ventas (curso + upsells + cross-sell que quizá no pasa por el webhook) y captura pagos rechazados como `clientes_potenciales`. Versión serverless de `ads-agent/scripts/datos/hotmart-sync.mjs`. |
 | `meta-spend-sync.js` | Sync del **gasto** de Meta Ads → tabla `campanas` (agregado por `src`). |
 | `sync-estados.js` | Sync del **estado de los agentes** (`ads-agent/state/*.json` del GitHub público) → tabla `agentes_estado`, para que el Panel de Comando en la nube los lea. |
 | `wa.js` | Helper de WhatsApp Cloud API: manda las plantillas aprobadas de recuperación (`recup_abandono_1/2`, `recup_rechazo_1/2`). Lo usan el webhook (1er mensaje) y el motor diario (recordatorio). |
@@ -18,4 +18,4 @@ para reusarlos entre varios endpoints.
 > `versiones-sync.js` métricas de checkout/landing). Cada uno lleva su cabecera.
 
 Detalle de toda la tubería de datos:
-[ads-agent/ARQUITECTURA-DATOS.md](../../../ads-agent/ARQUITECTURA-DATOS.md).
+[ads-agent/docs/ARQUITECTURA-DATOS.md](../../../ads-agent/docs/ARQUITECTURA-DATOS.md).
