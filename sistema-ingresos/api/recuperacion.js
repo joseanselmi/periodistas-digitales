@@ -41,7 +41,7 @@ const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
 const { runMetaDailySync } = require('./_lib/meta-daily-sync');
 const { runSyncEstados } = require('./_lib/sync-estados');
 const { runVersionesSync } = require('./_lib/versiones-sync');
-const { publicarStoryDelDia } = require('./story-diaria');
+const { publicarStoryDelDia } = require('./_lib/story-diaria');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;

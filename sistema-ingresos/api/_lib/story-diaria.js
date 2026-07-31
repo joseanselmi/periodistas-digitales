@@ -121,19 +121,8 @@ async function publicarStoryDelDia({ fecha = hoyARG(), dryRun = false } = {}) {
 
 module.exports = { publicarStoryDelDia, hoyARG };
 
-// También expuesto como endpoint, para dispararlo a mano o probarlo:
-//   /api/story-diaria?dry=1   → dice qué publicaría, sin publicar
-module.exports.default = async function handler(req, res) {
-  const { searchParams } = new URL(req.url, 'http://localhost');
-  const secreto = process.env.CRON_SECRET;
-  // Publicar en la fanpage es un efecto hacia afuera: no queda abierto.
-  if (secreto && searchParams.get('key') !== secreto && !searchParams.get('dry')) {
-    res.status(401).json({ error: 'no autorizado' });
-    return;
-  }
-  const out = await publicarStoryDelDia({
-    fecha: searchParams.get('fecha') || hoyARG(),
-    dryRun: searchParams.get('dry') === '1',
-  });
-  res.status(out.ok ? 200 : 500).json(out);
-};
+// NO es un endpoint, y no puede serlo: el plan Hobby de Vercel topea en 12
+// funciones serverless y api/ ya tiene las 12 exactas. Por eso vive en _lib/
+// (Vercel ignora lo que empieza con "_") y lo llama api/recuperacion.js en su
+// cron diario. Si alguna vez hace falta dispararla a mano:
+//   cd ads-agent && node --env-file=.env.local scripts/publicar/post-story.mjs --dry-run
