@@ -90,7 +90,9 @@ Dark cinematic wide shot. Map of Latin America glowing with connected points bet
 ## PROCESO DE GENERACIÓN
 
 1. Copiar el prompt del banco
-2. Generar en **fal.ai** (Flux Pro) o **Midjourney** — ambos dan resultados fotorrealistas
+2. Generar en el chat **📣 Ads** del proyecto de ChatGPT — ver
+   [`../docs/CHATGPT-IMAGENES.md`](../docs/CHATGPT-IMAGENES.md). (fal.ai/Midjourney/higgsfield
+   quedaron fuera el 03/07/2026.)
 3. Revisar contra las 7 reglas de imagen antes de aprobar
 4. Si la imagen tiene texto en ella → rechazar, regenerar
 5. Si la persona tiene rasgos europeos o anglosajones → rechazar, regenerar

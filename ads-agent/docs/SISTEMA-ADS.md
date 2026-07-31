@@ -26,7 +26,8 @@ Si el ángulo no existe: escribir el copy, agregarlo al banco, entonces usarlo.
 
 ### Paso 3 — Creativo
 Ir a `playbooks/creative-bank.md`, elegir el tipo de imagen.
-Generar con `node lib/fal.mjs` o con el prompt en Midjourney/fal.ai.
+Generar **en el chat 📣 Ads del proyecto de ChatGPT** — ver [`CHATGPT-IMAGENES.md`](CHATGPT-IMAGENES.md).
+(`lib/fal.mjs` y higgsfield ya no se usan.)
 Revisar con `node lib/image-reviewer.mjs`.
 
 ### Paso 4 — Config JSON
