@@ -100,10 +100,17 @@ async function saludFunnel() {
     const dia = (v) => String(v || '').slice(0, 10);
     const hoyISO = new Date().toISOString().slice(0, 10);
     const ayerISO = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    // Los compradores salen del embudo. Se excluyen acá también —y no sólo en wa-funnel— para que
+    // este número y el de /api/wa-funnel?mode=dry sean EL MISMO: dos paneles que dicen cosas
+    // distintas sobre lo mismo dejan de mirarse, y encima "faltan 4" no bajaría nunca de 4.
+    const ventas = await sb('ventas?select=email');
+    const compradores = new Set((ventas || []).map((v) => String(v.email || '').toLowerCase().trim()).filter(Boolean));
+
     let falta = 0, mailsHoy = 0, mailsAyer = 0, bloqueados = 0;
     const porPieza = {};
     for (const c of all) {
       if (c.emailBlacklisted) { bloqueados++; continue; } // Brevo no les entrega: fuera a propósito
+      if (compradores.has(String(c.email || '').toLowerCase().trim())) continue;
       const a = c.attributes || {};
       if (dia(a.WA_SENT_AT) === hoyISO) mailsHoy++;
       if (dia(a.WA_SENT_AT) === ayerISO) mailsAyer++;
