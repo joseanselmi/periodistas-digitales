@@ -41,6 +41,7 @@ const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
 const { runMetaDailySync } = require('./_lib/meta-daily-sync');
 const { runSyncEstados } = require('./_lib/sync-estados');
 const { runVersionesSync } = require('./_lib/versiones-sync');
+const { publicarStoryDelDia } = require('./story-diaria');
 
 const BREVO = 'https://api.brevo.com/v3';
 const HORA = 3600000;
@@ -334,6 +335,17 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'versiones_sync', ...ver }));
       } catch (e) {
         console.error('versiones-sync (no frena la recuperación):', e.message);
+      }
+      // VALENTINA — la story del día en la fanpage. Las stories de página NO se
+      // pueden programar (la API las publica al instante y duran 24 h), así que
+      // la única forma de sostener una por día es dispararla una vez por día, y
+      // este es el cron que ya corre. Idempotente: si corre dos veces no duplica.
+      // Best-effort: una story no puede frenar la recuperación de carritos.
+      try {
+        const story = await publicarStoryDelDia();
+        console.log(JSON.stringify({ type: 'story_diaria', ...story }));
+      } catch (e) {
+        console.error('story-diaria (no frena la recuperación):', e.message);
       }
     }
 

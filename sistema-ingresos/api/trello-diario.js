@@ -84,6 +84,42 @@ async function agendaTrello(mode = 'run') {
 
   const agentesDe = (c) => (c.idLabels || []).map((id) => labelName[id]).filter(Boolean).join(', ') || '—';
 
+  // ── RICARDO — mover lo que ya está decidido ────────────────────────────────
+  // La regla del proyecto es fija y no necesita criterio humano: una tarjeta pasa
+  // a Hecho SOLO con el checklist 100% tildado; si le falta un ítem, va a En
+  // revisión. Es exactamente el tipo de decisión que no tiene por qué esperar a
+  // que Jose entre al tablero, y además es reversible de un clic.
+  //
+  // Deliberadamente NO cierra nada por su cuenta ni tilda ítems: solo acomoda la
+  // tarjeta en la columna que su propio checklist ya dictó.
+  const revision = lists.find((l) => norm(l.name).includes('revision'));
+  const progreso = lists.find((l) => norm(l.name).includes('progreso'));
+  const movidas = [];
+
+  if (hechoId && revision) {
+    // Solo miramos las que están en juego: mirar las 100 tarjetas del tablero
+    // serían 100 llamadas a la API en cada corrida.
+    const enJuego = cards.filter((c) => c.idList === revision.id || (progreso && c.idList === progreso.id));
+    for (const c of enJuego) {
+      let items;
+      try {
+        items = await trello(`/cards/${c.id}/checklists?fields=name&checkItems=all&checkItem_fields=state`);
+      } catch { continue; }
+      const todos = (items || []).flatMap((ch) => ch.checkItems || []);
+      if (!todos.length) continue;                       // sin checklist no se decide nada
+      if (todos.some((i) => i.state !== 'complete')) continue;
+
+      const destino = c.idList === revision.id ? hechoId : revision.id;
+      const nombreDestino = c.idList === revision.id ? 'Hecho' : 'En revisión';
+      if (mode !== 'run') { movidas.push({ name: c.name, a: nombreDestino, url: c.shortUrl, simulado: true }); continue; }
+      try {
+        await moveCard(c.id, destino);
+        await comment(c.id, `Movida a **${nombreDestino}**: los ${todos.length} ítems del checklist están tildados. (automático, agenda del tablero)`);
+        movidas.push({ name: c.name, a: nombreDestino, url: c.shortUrl });
+      } catch { /* si Trello falla, la agenda igual sale */ }
+    }
+  }
+
   // Candidatas: con fecha, no tildadas, no en Hecho.
   const activas = cards.filter((c) => c.due && !c.dueComplete && c.idList !== hechoId);
 
@@ -120,7 +156,7 @@ async function agendaTrello(mode = 'run') {
   const hoy = pendientes.filter((c) => diasDesdeHoy(c.due) === 0).map(fmt);
   const proximas = pendientes.filter((c) => { const d = diasDesdeHoy(c.due); return d >= 1 && d <= 3; }).map(fmt).sort((a, b) => a.dias - b.dias);
 
-  return { htmlBlock: armarBloque({ ejecutadas, vencidas, hoy, proximas }), ejecutadas, vencidas, hoy, proximas };
+  return { htmlBlock: armarBloque({ ejecutadas, vencidas, hoy, proximas }), ejecutadas, movidas, vencidas, hoy, proximas };
 }
 
 // ── HTML del bloque (mismo estilo oscuro del Panel de Salud) ────────────────
