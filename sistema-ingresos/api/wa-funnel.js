@@ -1449,38 +1449,45 @@ export default async function handler(req, res) {
 //
 // Los mails que NO salen de este archivo (Regalo 1 y la guía de republicadores
 // salen de Make; el Regalo 2 es una plantilla de Brevo) los resuelve el script.
+//
+// Es una FUNCIÓN y no una constante a propósito: este archivo es el cron del
+// embudo y arranca en frío muchas veces por día. Armar cinco mails en HTML al
+// cargar el módulo sería trabajo que nadie pidió — y una forma de romper el
+// envío desde un lugar que no tiene nada que ver con enviar.
 // ─────────────────────────────────────────────────────────────────────────────
-export const CONTENIDO_EMBUDO = [
-  {
-    tag: 'regalo3-periodico',
-    subject: REGALOS_EMAIL[3].subject,
-    ...armarEmailRegalo(REGALOS_EMAIL[3]),
-    fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#REGALOS_EMAIL[3]',
-  },
-  {
-    tag: 'regalo4-pilares',
-    subject: REGALOS_EMAIL[4].subject,
-    ...armarEmailRegalo(REGALOS_EMAIL[4]),
-    fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#REGALOS_EMAIL[4]',
-  },
-  {
-    tag: MAIL5_TAG,
-    subject: MAIL5.subject,
-    html: MAIL5.html,
-    text: MAIL5.text,
-    fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#MAIL5',
-  },
-  {
-    tag: MAILOFERTA_TAG,
-    subject: MAILOFERTA.subject,
-    html: MAILOFERTA.html,
-    text: MAILOFERTA.text,
-    fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#MAILOFERTA',
-  },
-  {
-    tag: OFERTA_REENVIO.tag,
-    subject: OFERTA_REENVIO.subject,
-    ...armarEmailReenvio(),
-    fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#OFERTA_REENVIO',
-  },
-];
+export function contenidoEmbudo() {
+  return [
+    {
+      tag: 'regalo3-periodico',
+      subject: REGALOS_EMAIL[3].subject,
+      ...armarEmailRegalo(REGALOS_EMAIL[3]),
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#REGALOS_EMAIL[3]',
+    },
+    {
+      tag: 'regalo4-pilares',
+      subject: REGALOS_EMAIL[4].subject,
+      ...armarEmailRegalo(REGALOS_EMAIL[4]),
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#REGALOS_EMAIL[4]',
+    },
+    {
+      tag: MAIL5_TAG,
+      subject: MAIL5.subject,
+      html: MAIL5.html,
+      text: MAIL5.text,
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#MAIL5',
+    },
+    {
+      tag: MAILOFERTA_TAG,
+      subject: MAILOFERTA.subject,
+      html: MAILOFERTA.html,
+      text: MAILOFERTA.text,
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#MAILOFERTA',
+    },
+     {
+      tag: OFERTA_REENVIO.tag,
+      subject: OFERTA_REENVIO.subject,
+      ...armarEmailReenvio(),
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#OFERTA_REENVIO',
+    },
+  ];
+}

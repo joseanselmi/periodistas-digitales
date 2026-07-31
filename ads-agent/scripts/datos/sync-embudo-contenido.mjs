@@ -8,7 +8,7 @@
  * actualizado_en`), así la página puede decir "esto es lo que se manda, tomado
  * el 31/07" en vez de mentir con una copia sin fecha.
  *
- *   1. Los mails del funnel de regalos → `CONTENIDO_EMBUDO` de
+ *   1. Los mails del funnel de regalos → `contenidoEmbudo()` de
  *      sistema-ingresos/api/wa-funnel.js (la MISMA definición que se envía).
  *   2. El Regalo 2 → plantilla 1 de Brevo (la manda una automatización de Brevo).
  *   3. El Regalo 1 y la guía de republicadores → escenario 9474482 de Make, que
@@ -59,7 +59,7 @@ if (!DRY && !SALIDA_SQL && (!SUPA_URL || !SUPA_KEY)) {
 // suelto no. Le dejamos un `require` anclado a SU carpeta para poder importarlo
 // desde acá. Es solo para leerlo: no cambia nada de cómo corre en producción.
 globalThis.require ??= createRequire(pathToFileURL(WA_FUNNEL))
-const { CONTENIDO_EMBUDO } = await import(pathToFileURL(WA_FUNNEL).href)
+const { contenidoEmbudo } = await import(pathToFileURL(WA_FUNNEL).href)
 
 // ── Los dos mails que arma Make (escenario 9474482) ──────────────────────────
 // Transcriptos del blueprint. Si se edita el copy en Make, hay que actualizarlos
@@ -110,7 +110,7 @@ async function desdeBrevo() {
   }]
 }
 
-const todos = [...CONTENIDO_EMBUDO, ...DESDE_MAKE, ...await desdeBrevo()]
+const todos = [...contenidoEmbudo(), ...DESDE_MAKE, ...await desdeBrevo()]
 
 const sql = []
 

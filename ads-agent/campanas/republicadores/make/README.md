@@ -1,4 +1,26 @@
-# Make — escenario "Funnel Leads - Instantaneo (webhook)" (id 9474482)
+# Make — los escenarios de captura de leads
+
+**Un escenario por formulario.** Cada webhook de Facebook Lead Ads queda atado a UN
+formulario, así que no hay forma de que uno solo atienda a los dos.
+
+| Formulario | Hook | Escenario | Entrega |
+|---|---|---|---|
+| `1075862554796241` · Guía Claude | 4236957 | **9474482** `Funnel Leads - Instantaneo (webhook)` | mail de Claude · Brevo lista 5 · funnel `meta-leadgen-guia-claude` |
+| `1405521768162136` · ad5-lectores | 4291425 | **9601453** `Funnel Leads - Republicadores (webhook)` | guía "Que te lean miles" · Brevo lista 6 · funnel `meta-leadgen-republicadores` |
+
+> 🚨 **NO vaciar el campo "Form" del escenario 9474482.** Ese escenario conserva adentro
+> un router con una rama para "cualquier otro formulario", que hoy nunca se dispara
+> porque su webhook solo recibe el de la Guía Claude. Si se vacía ese campo, los leads
+> del formulario nuevo caerían **en los dos escenarios a la vez** y la persona recibiría
+> el correo duplicado. Cada formulario nuevo va con su propio escenario.
+
+**Campaña nueva = formulario nuevo = hook nuevo + escenario nuevo.** Se clona el 9601453
+y se cambian: el `formId` del hook, el contenido del mail, el `listIds` de Brevo y el
+`funnel` de `/api/lead`.
+
+---
+
+## Historia: el escenario 9474482 (por qué tiene un router adentro)
 
 Es el único escenario que recibe los leads de **todos** los formularios de Facebook Lead
 Ads. Modificado el 31/07/2026 para que cada campaña entregue lo suyo.
