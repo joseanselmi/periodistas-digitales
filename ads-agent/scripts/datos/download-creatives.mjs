@@ -5,7 +5,7 @@
  *   node scripts/datos/download-creatives.mjs --solo-activos   (solo effective_status === 'ACTIVE')
  *
  * Variables requeridas: META_ACCESS_TOKEN, META_AD_ACCOUNT_ID
- * Guarda en: creatives/<fecha>/<ad_id>__<nombre>.{jpg|mp4}
+ * Guarda en: datos/creatives/<fecha>/<ad_id>__<nombre>.{jpg|mp4}
  */
 
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
@@ -79,7 +79,7 @@ const objetivo = SOLO_ACTIVOS ? ads.filter(a => a.effective_status === 'ACTIVE')
 console.log(`   ${objetivo.length} anuncios a procesar\n`)
 
 const today = new Date().toISOString().slice(0, 10)
-const outDir = join('creatives', today)
+const outDir = join('datos', 'creatives', today)
 mkdirSync(outDir, { recursive: true })
 
 let descargadas = 0

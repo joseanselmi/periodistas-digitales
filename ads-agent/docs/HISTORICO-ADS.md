@@ -1,6 +1,10 @@
 # TRACKING DE RESULTADOS — Meta Ads
 **Producto:** Sistema de Ingresos Diarios para Periodistas ($10 USD)
 
+> ⚠️ Documento **histórico**. El precio que figura abajo ($10 / $11.99) es el de
+> las campañas de entonces: **hoy el curso vale US$ 27**. Se conserva por los
+> aprendizajes y los CPA de cada versión, no como referencia de precio.
+
 ---
 
 ## RESUMEN HISTÓRICO

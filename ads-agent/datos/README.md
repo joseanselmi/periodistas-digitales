@@ -11,6 +11,10 @@ sin consecuencia**: se vuelve a generar corriendo el script otra vez.
 | `reports/` | `scripts/agentes/monitor.mjs` | El informe diario de monitoreo |
 | `auditorias/` | `scripts/agentes/audit-cmo.mjs` | Las auditorías del CMO sobre una campaña |
 | `radar/` | `scripts/agentes/radar-tendencias.mjs` | Qué se está hablando hoy en las fuentes que seguimos |
+| `creatives/` | `scripts/datos/download-creatives.mjs` | Las imágenes y videos reales de los anuncios, bajados de Meta |
+
+> Los creativos de `2026-06-19/` son de anuncios que corrieron a **$11.99**, el
+> precio viejo. Sirven de archivo, no de referencia.
 
 Se corren siempre parados en `ads-agent/`:
 
