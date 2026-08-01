@@ -27,14 +27,24 @@ el día que esa guía se reemplace, el nombre miente.
 
 ## La carpeta
 
-Una por segmento, acá en `ads-agent/campanas/<segmento>/`, con la estrategia:
+Una por campaña, acá en `ads-agent/campanas/<campaña>/`, con **todo lo suyo
+adentro** — incluidos sus anuncios:
 
 ```
-campanas/<segmento>/
-  README.md          ← a quién le habla, el ángulo, dónde está cada pieza, las reglas
+campanas/<campaña>/
+  README.md          ← a quién le habla, el ángulo, el estado de cada pieza
   COPY.md            ← copy y racional de la landing
   EMBUDO-GUIAS.md    ← problemas del segmento + secuencia de imanes
+  ads/               ← una carpeta por anuncio: <matrícula>/ficha.md + creativo
 ```
+
+> **Los anuncios van adentro de su campaña, no en una carpeta aparte.**
+> Hasta el 2026-08-01 vivían todos juntos en `ads-agent/ads-curso/`, que era
+> transversal: para saber de qué campaña era un anuncio había que abrir su ficha.
+> Ahora la carpeta lo dice. Misma regla que las imágenes: cada cosa con lo que la
+> usa, nada en un cajón compartido.
+
+Y `historico/` guarda las campañas viejas por fecha, del esquema anterior.
 
 ## El nombre interno NO se filtra a las URLs públicas
 
@@ -56,7 +66,7 @@ atados.
 ## Dónde vive cada cosa
 
 - **Estrategia** (esto) → `ads-agent/campanas/<segmento>/` — no se deploya
-- **Anuncios** → `ads-agent/ads-curso/<matrícula>/ficha.md` — matrícula `adN-angulo`
+- **Anuncios** → `ads-agent/campanas/<campaña>/ads/<matrícula>/ficha.md` — matrícula `adN-angulo`
 - **Landings y guías públicas** → `sistema-ingresos/` — es lo único que Vercel publica
 
 ## Campañas activas

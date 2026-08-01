@@ -30,7 +30,7 @@
   > ⚠️ **Cambiada el 2026-07-30.** Antes apuntaba a la landing general (`/?src=ad4-perfil`).
   > El ángulo del anuncio ("ya publicas noticias en tu perfil") no tenía continuidad en esa
   > página, que abre con "Sabés hacer periodismo / nadie te enseñó a vivir de él". Ahora
-  > apunta a **`/tu-medio`** ([tu-medio.html](../../../sistema-ingresos/campanas/republicadores/landing/tu-medio.html)), la landing
+  > apunta a **`/tu-medio`** ([tu-medio.html](../../../../../sistema-ingresos/campanas/republicadores/landing/tu-medio.html)), la landing
   > segmentada con el mismo mensaje de punta a punta. Copy y racional:
   > `../estrategia/COPY.md`.
 - **Título:** Tu propio periódico digital con IA

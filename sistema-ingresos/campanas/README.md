@@ -19,7 +19,7 @@ y no tienen por qué estar en el árbol que se deploya.
 | Qué | Dónde |
 |---|---|
 | Estrategia, copy, embudo | [`ads-agent/campanas/<segmento>/`](../../ads-agent/campanas/README.md) |
-| Fichas de anuncios | `ads-agent/ads-curso/<matrícula>/` |
+| Fichas de anuncios | `ads-agent/campanas/<campaña>/ads/<matrícula>/` |
 | Landing y guías (esto) | `sistema-ingresos/campanas/<segmento>/` |
 
 > Hasta el 2026-07-30 esta carpeta guardaba todo junto. Se separó al aplicar la

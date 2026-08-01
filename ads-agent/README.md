@@ -72,13 +72,14 @@ scripts/     ← todos los ejecutables, agrupados por lo que hacen:
 campanas/    ← las campañas, por segmento (la convención del 30/07):
              ├── README.md    ← cómo se nombra una campaña y dónde va cada pieza
              ├── <segmento>/  ← su estrategia y su copy (lo público está en sistema-ingresos)
+             ├── <campaña>/ads/ ← los anuncios de esa campaña (ficha + creativo)
              └── historico/   ← las campañas viejas por fecha + el TEMPLATE
 datos/       ← ⚙️ lo que ESCRIBEN los scripts (regenerable, no se edita a mano):
              ├── meta-exports/ ← los dumps de la API de Meta (fetch-meta)
              ├── reports/      ← los informes de monitor
              ├── auditorias/   ← las auditorías del CMO
              └── radar/        ← el radar de tendencias (fuentes.json SÍ se edita)
-ads-curso/   ← una ficha por anuncio (<matrícula>/ficha.md)
+
 docs/        ← documentación del sistema (ARQUITECTURA-DATOS, SISTEMA-ADS, ...)
 cerebro/     ← quién es cada agente y cómo decide
 state/       ← qué hizo cada agente. ⚠️ NO se mueve: el Panel de Comando lo lee
@@ -97,7 +98,7 @@ lib/         ← módulos compartidos:
 
 En la raíz quedan solo `README.md`, `CEREBRO.md` (índice del equipo) y
 `registro-anuncios.md` — este último no es documentación sino el registro
-operativo de los anuncios, y las fichas de `ads-curso/` lo apuntan por ruta
+operativo de los anuncios, y las fichas de `campanas/<campaña>/ads/` lo apuntan por ruta
 relativa.
 
 ## Flujo

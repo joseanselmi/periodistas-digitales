@@ -55,5 +55,5 @@
 **🟢 LANZADO — 2026-06-30, $10/día.**
 - Geo: Worldwide + español + exclusiones (decisión de Jose; **palanca #1 a vigilar**).
 - Copy sin precio · Creativo `ads1-fomo.png` · URL con `?src=ad1-fomo`.
-- Palancas y reglas de decisión completas: ver `../../registro-anuncios.md`.
+- Palancas y reglas de decisión completas: ver `../../../../registro-anuncios.md`.
 - ⛔ NO tocar antes de $20 gastados / 4 días. **Primer chequeo serio: día 3-4** (Mateo monitoreo).
