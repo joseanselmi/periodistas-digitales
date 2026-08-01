@@ -9,7 +9,7 @@ dotenv.config({ path: '../leadr/app/.env.local' });
 // Este script vive en scripts/curso/; las transcripciones estan en la raiz de ads-agent.
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TRANSCRIPTS_DIR = 'C:\\Users\\Jose Anselmi\\Videos\\hotmart\\transcripciones';
-const OUT_DIR = path.join(RAIZ, '..', '_material', 'curso-luis-mena');
+const OUT_DIR = path.join(RAIZ, '..', '_material', 'luis-mena');
 const LESSONS_FILE = path.join(OUT_DIR, 'lessons.json');
 const PROGRESS_FILE = path.join(OUT_DIR, 'progress.json');
 

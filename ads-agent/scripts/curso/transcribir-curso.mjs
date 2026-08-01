@@ -14,7 +14,7 @@ const execAsync = promisify(exec);
 // (scripts/curso/), pero los datos viven en la raiz de ads-agent.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RAIZ = path.join(__dirname, '..', '..');
-const OUT_DIR = path.join(RAIZ, '..', '_material', 'curso-luis-mena');
+const OUT_DIR = path.join(RAIZ, '..', '_material', 'luis-mena');
 const AUDIO_DIR = path.join(OUT_DIR, 'audio');
 const CHROME_PROFILE = path.join(RAIZ, 'hotmart-chrome-profile');
 const MEMORY_FILE = 'C:\\Users\\Jose Anselmi\\.claude\\projects\\c--Users-Jose-Anselmi-OneDrive-Escritorio-Periodistas-Digitales\\memory\\curso_sistema_ingresos_diarios.md';

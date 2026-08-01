@@ -7,15 +7,12 @@
 
 import Anthropic from '@anthropic-ai/sdk'
 import { writeFileSync, mkdirSync } from 'fs'
-import { generateImage, downloadImage } from '../../lib/fal.mjs'
 import { BRAND } from '../../lib/brand-context.mjs'
-import { generateAndReview } from '../../lib/image-reviewer.mjs'
 
 const client    = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const args      = process.argv.slice(2)
 const days      = parseInt(args.find(a => a.startsWith('--days='))?.split('=')[1] || '7')
 const platform  = args.find(a => a.startsWith('--platform='))?.split('=')[1] || 'both'
-const genImages = args.includes('--images') && !!process.env.FAL_API_KEY
 
 if (!process.env.ANTHROPIC_API_KEY) {
   console.error('❌ Falta ANTHROPIC_API_KEY')
@@ -134,7 +131,7 @@ RESPONDÉ SOLO CON:
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 console.log('\n📱 ORGANIC AGENT — Generando calendario de contenido')
-console.log(`   Días: ${days} | Plataforma: ${platform} | Imágenes con revisión IA: ${genImages ? 'sí' : 'no'}`)
+console.log(`   Días: ${days} | Plataforma: ${platform}`)
 console.log()
 
 const today  = new Date()
@@ -162,35 +159,6 @@ for (let i = 0; i < days; i++) {
   process.stdout.write(' ✅')
 
   const post = { day: i + 1, date: dateStr, type: contentType.type, platform, copy, hashtags, notes, imageUrl: null }
-
-  // Generar imagen con revisión automática
-  if (genImages) {
-    process.stdout.write(' [generando imagen]')
-    try {
-      const generateFn = async (prompt) => {
-        const url = await generateImage(prompt, { size: 'square_hd', steps: 30 })
-        return downloadImage(url)
-      }
-      const imgBuffer = await generateAndReview(
-        generateFn,
-        `SCENE: ${contentType.imageScene}`,
-        contentType.type,
-        copy,
-        (attempt, review) => {
-          if (review.aprobada || review.score >= 7) {
-            process.stdout.write(` [✅ ${review.score}/10]`)
-          } else {
-            process.stdout.write(` [❌ intento ${attempt} — ${review.razon.slice(0, 60)}]`)
-          }
-        }
-      )
-      const imgPath = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-imagen.jpg`
-      writeFileSync(imgPath, imgBuffer)
-      post.imageUrl = imgPath
-    } catch (e) {
-      process.stdout.write(` [error: ${e.message}]`)
-    }
-  }
 
   // Guardar post
   const postPath = `${outDir}/dia-${String(i + 1).padStart(2, '0')}-${contentType.type}.md`

@@ -24,7 +24,7 @@
 ### Variables de entorno — `leadr/app/.env.local`
 ```
 ANTHROPIC_API_KEY=sk-ant-api03-bmBNCX...
-FAL_API_KEY=0bfe28dd-31e3-...
+(el proveedor de imágenes es ChatGPT, manual — ver docs/CHATGPT-IMAGENES.md)
 META_PIXEL_ID=1086780383211630
 META_CAPI_TOKEN=EAASob...
 FB_PAGE_TOKEN=EAAX3KwDW0p8BReZ...  ← PERMANENTE, no vence
@@ -52,7 +52,7 @@ ELEVENLABS_API_KEY=...
 | `scripts/publicar/publish.mjs` | Publica ads en Meta (PAUSED) | `node scripts/publicar/publish.mjs campanas/historico/X/config.json` |
 | `scripts/agentes/audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node scripts/agentes/audit-cmo.mjs` |
 | `scripts/agentes/email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node scripts/agentes/email-agent.mjs` |
-| `scripts/agentes/organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x FAL_API_KEY=x node scripts/agentes/organic-agent.mjs --days=7 --images` |
+| `scripts/agentes/organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x (el proveedor de imágenes es ChatGPT, manual — ver docs/CHATGPT-IMAGENES.md)
 | `scripts/generar/carousel-generator.mjs` | Carruseles HTML 1080x1080 | `ANTHROPIC_API_KEY=x node scripts/generar/carousel-generator.mjs` |
 | `scripts/exportar/export-slides.mjs` | JPG por carpeta para subir | `node scripts/exportar/export-slides.mjs carousels/semana-X` |
 | `scripts/publicar/post-facebook.mjs` | Publica/programa en FB | `FB_PAGE_TOKEN=x node scripts/publicar/post-facebook.mjs <carpeta> [--schedule "YYYY-MM-DD HH:MM"]` |
@@ -64,7 +64,6 @@ ELEVENLABS_API_KEY=...
 |---------|---------|
 | `brand-context.mjs` | BRAND — producto, audiencia, paleta, benchmarks |
 | `brand-palette.mjs` | PALETTE — colores exactos + paletteCSS() |
-| `fal.mjs` | generateImage(), downloadImage() |
 | `reviewer.mjs` | reviewAd(), printReview() |
 | `image-reviewer.mjs` | reviewImage(), generateAndReview(), LATAM_IMAGE_PREFIX |
 

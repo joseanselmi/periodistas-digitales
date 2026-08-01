@@ -159,8 +159,8 @@ si el chat se enfría y se pierde el hilo de referencias, la familia se corre.
 
 ## 5. Lo que ya NO se usa
 
-- **higgsfield** — dado de baja como proveedor. Sus skills y MCP (`higgsfield-*`) siguen
+- **higgsfield** — dado de baja como proveedor. Sus 4 skills y los 2 repos clonados en `_material/` se **eliminaron** el 2026-08-01 (6 MB). Lo que seguía
   instalados pero **no se rutea generación de imágenes por ahí sin avisar**.
-- **fal.ai** — no se usa ($0). `ads-agent/lib/fal.mjs` queda como código muerto.
+- **fal.ai** — no se usa ($0). Su cliente `lib/fal.mjs` se **eliminó** el 2026-08-01, junto con `generate-campaign-images.mjs`, que dependía por completo de él.
 - **API de OpenAI Images** (pago) — opción futura para automatizar cuando haya volumen.
   Hoy fuera de alcance: todo es manual por la web.

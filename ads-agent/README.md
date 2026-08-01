@@ -6,7 +6,7 @@ Agente que genera, revisa y publica anuncios de Meta Ads.
 
 ```
 ANTHROPIC_API_KEY=...
-FAL_API_KEY=...
+(el proveedor de imágenes es ChatGPT, manual — ver docs/CHATGPT-IMAGENES.md)
 TRELLO_API_KEY=...
 TRELLO_TOKEN=...
 ```
@@ -90,7 +90,6 @@ emails/      ← secuencias de email + logs de envío
 lib/         ← módulos compartidos:
              ├── brand-context.mjs   ← identidad de marca, audiencia, precio
              ├── brand-palette.mjs   ← paleta oficial de color
-             ├── fal.mjs             ← generación de imágenes (Flux)
              ├── reviewer.mjs        ← revisión de ad (imagen + copy) con Claude Vision
              ├── image-reviewer.mjs  ← revisor universal de imágenes generadas
              └── trello.mjs          ← cliente del tablero por agente

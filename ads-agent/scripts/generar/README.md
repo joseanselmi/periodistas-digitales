@@ -15,6 +15,5 @@ orgánico. Escriben en [`../../carousels/`](../../carousels/README.md) y
 - `gen-agosto.mjs`
 - `gen-muro-agosto.mjs`
 - `gen-muro-stories.mjs`
-- `generate-campaign-images.mjs`
 
 Generan **borradores**. La revisión visual la hace Jose antes de que nada salga.
