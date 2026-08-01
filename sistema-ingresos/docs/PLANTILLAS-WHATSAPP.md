@@ -45,6 +45,10 @@ curl -s "https://graph.facebook.com/v21.0/3355115811326692/message_templates?fie
 
 ## Embudo de regalos (`api/wa-funnel.js`)
 
+> Acá están las **plantillas**. La lógica de **quién recibe qué y cuándo** —que desde el
+> 2026-08-01 va por email y se decide por lo que le FALTA a cada lead, no por `WA_STAGE`—
+> está en [EMBUDO-REGALOS.md](EMBUDO-REGALOS.md).
+
 ### `regalo3_periodico_digital` ✅
 - **Header:** DOCUMENT (se adjunta el PDF `guia-periodico-digital-ig-fb.pdf`)
 - **Footer:** `Periodistas del Futuro IA`
