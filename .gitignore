@@ -64,10 +64,11 @@
 # borradores de video para revisar (no versionar)
 _revisar/
 
-# insumos pesados del scraper del curso de Hotmart (2026-07-30): el audio
-# descargado son ~800 MB de intermedios — lo que sirve son las transcripciones
-# (.txt/.md), que sí se versionan. El perfil de Chrome son ~400 MB de sesión
-# para no re-loguearse. Ninguno de los dos estaba ignorado: un `git add -A`
-# habría intentado commitear 3 GB.
-/ads-agent/hotmart-transcripts/audio/
+# Material del curso de Luis Mena (2026-08-01). Son transcripciones LITERALES de
+# un curso PAGO de un tercero, más capturas de la sesión de Hotmart de Jose.
+# Este repositorio es PÚBLICO: transcribir un curso que compraste para estudiarlo
+# es una cosa, publicarlo en internet es otra. Se conserva en disco —es la fuente
+# de docs/ESTILO-LUIS-MENA.md y del método— pero no se versiona.
+# El perfil de Chrome, además, son ~400 MB de sesión para no re-loguearse.
+/ads-agent/hotmart-transcripts/
 /ads-agent/hotmart-chrome-profile/

@@ -52,7 +52,7 @@ Otros scripts útiles: `scripts/agentes/organic-agent.mjs` (orgánico), `scripts
 `scripts/datos/hotmart-sync.mjs` / `scripts/datos/meta-spend-sync.mjs` (syncs de datos).
 
 > **Todos los scripts se corren parados en `ads-agent/`**, no dentro de
-> `scripts/`. Varios buscan el `.env.local`, `state/` o `hotmart-transcripts/`
+> `scripts/`. Varios buscan el `.env.local`, `state/` o `hotmart-transcripts/ (local, gitignorado)`
 > relativos a esta carpeta.
 
 ## Estructura
