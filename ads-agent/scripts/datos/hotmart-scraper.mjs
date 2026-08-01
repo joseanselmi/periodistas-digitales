@@ -12,7 +12,7 @@ dotenv.config({ path: '../leadr/app/.env.local' });
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const MEMORY_FILE = 'C:\\Users\\Jose Anselmi\\.claude\\projects\\c--Users-Jose-Anselmi-OneDrive-Escritorio-Periodistas-Digitales\\memory\\curso_sistema_ingresos_diarios.md';
 const CHROME_PROFILE = path.join(RAIZ, 'hotmart-chrome-profile'); // sesión persistente
-const OUT_DIR = path.join(RAIZ, 'hotmart-transcripts');
+const OUT_DIR = path.join(RAIZ, '..', '_material', 'curso-luis-mena');
 
 // Credenciales por entorno, NUNCA en el código: este repo es público (lo dice
 // sistema-ingresos/api/_lib/sync-estados.js, que baja archivos por raw sin token).
@@ -267,7 +267,7 @@ async function main() {
     if (toProcess.length === 0) {
       log('⚠️  No encontré links. Guardando screenshot para debug...');
       await shot(page, 'debug-no-lessons');
-      log('Revisá hotmart-transcripts/debug-no-lessons.png');
+      log('Revisá _material/curso-luis-mena/debug-no-lessons.png');
     } else {
       // Modo automático
       log(`\n🤖 Procesando ${toProcess.length} lecciones automáticamente...\n`);

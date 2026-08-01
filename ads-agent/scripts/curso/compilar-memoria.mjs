@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 // Este script vive en scripts/curso/; los datos estan en la raiz de ads-agent.
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const OUT_DIR = path.join(RAIZ, 'hotmart-transcripts');
+const OUT_DIR = path.join(RAIZ, '..', '_material', 'curso-luis-mena');
 const EXTRA_DIR = path.join(OUT_DIR, 'extra');
 const MEMORY_FILE = 'C:\\Users\\Jose Anselmi\\.claude\\projects\\c--Users-Jose-Anselmi-OneDrive-Escritorio-Periodistas-Digitales\\memory\\curso_sistema_ingresos_diarios.md';
 
