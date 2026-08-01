@@ -1,7 +1,7 @@
 /**
  * export-slides-auto.mjs — Exporta slides de cualquier semana automáticamente
  * Lee pie-de-foto.txt existente. Detecta la subcarpeta por nombre del HTML.
- * Uso: node scripts/exportar/export-slides-auto.mjs carousels/semana-19-05
+ * Uso: node scripts/exportar/export-slides-auto.mjs carousels/publicados/semana-19-05
  */
 
 import puppeteer from 'puppeteer'
@@ -9,7 +9,7 @@ import { readdirSync, mkdirSync, existsSync, readFileSync } from 'fs'
 import { resolve, join, basename } from 'path'
 
 const folder    = process.argv[2]
-if (!folder) { console.error('Uso: node scripts/exportar/export-slides-auto.mjs carousels/semana-XX-XX'); process.exit(1) }
+if (!folder) { console.error('Uso: node scripts/exportar/export-slides-auto.mjs carousels/publicados/semana-XX-XX'); process.exit(1) }
 
 const absFolder = resolve(folder)
 const outRoot   = join(absFolder, 'para-subir')

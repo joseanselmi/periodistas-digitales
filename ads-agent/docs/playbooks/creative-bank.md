@@ -91,7 +91,7 @@ Dark cinematic wide shot. Map of Latin America glowing with connected points bet
 
 1. Copiar el prompt del banco
 2. Generar en el chat **📣 Ads** del proyecto de ChatGPT — ver
-   [`../docs/CHATGPT-IMAGENES.md`](../docs/CHATGPT-IMAGENES.md). (fal.ai/Midjourney/higgsfield
+   [`../docs/CHATGPT-IMAGENES.md`](../CHATGPT-IMAGENES.md). (fal.ai/Midjourney/higgsfield
    quedaron fuera el 03/07/2026.)
 3. Revisar contra las 7 reglas de imagen antes de aprobar
 4. Si la imagen tiene texto en ella → rechazar, regenerar

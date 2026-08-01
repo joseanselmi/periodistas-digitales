@@ -347,7 +347,7 @@ reales; `events` queda vacía a propósito.
   ($10/mes). Cada fila trae `producto_id_hotmart` → cruza directo con `ventas.producto_id`
   (verificado: el curso matchea sus 3 ventas, cada order bump/cross-sell su venta). `tipo`:
   `curso_principal`/`order_bump`/`upsell`/`downsell`/`cross_sell`/`membresia`/`lead_magnet`.
-- **`funnels`** + **`funnel_steps`** — espejo del mapa `ads-agent/dashboards/FUNNELS.html`.
+- **`funnels`** + **`funnel_steps`** — espejo del mapa `ads-agent/docs/dashboards/FUNNELS.html`.
   2 embudos sembrados: **Canal 1 "Meta Ads directo"** (7 pasos: ads→landing→checkout→order
   bump→upsell→downsell→gracias) y **Canal 2 "Meta Lead Ads + regalos"** (11 pasos:
   anuncio→formulario→regalos 1-4→oferta→checkout→order bump→upsell→downsell). Ambos venden el
@@ -559,7 +559,7 @@ camino que la sección Ventas, que sí funciona en la nube).
 | `customers` ✅ | quién compró al menos una vez | **creada 2026-07-03** — se llena desde el webhook (`saveCustomer`); ver "Actualización (2026-07-03): tabla `customers`" arriba |
 | `products` ✅ | catálogo: Sistema de Ingresos Diarios ($27 con order bump/upsell/downsell), Leadr ($10/mes) | **creada 2026-07-03** — sembrada con 6 productos de Hotmart + Leadr Pro; cruza con `ventas.producto_id` |
 | `ventas` ✅ (era `purchases`) | quién compró qué, cuándo, cuánto, con atribución por anuncio | **creada 2026-07-02** — se llena desde el webhook (`saveVenta`); ver "Actualización (2026-07-02): tabla `ventas`" arriba |
-| `funnels` ✅ | definición de cada embudo (ver `ads-agent/dashboards/FUNNELS.html` para el mapa visual actual) | **creada 2026-07-03** — 2 embudos sembrados; `slug` legible, ej. `meta-leadgen-guia-claude` |
+| `funnels` ✅ | definición de cada embudo (ver `ads-agent/docs/dashboards/FUNNELS.html` para el mapa visual actual) | **creada 2026-07-03** — 2 embudos sembrados; `slug` legible, ej. `meta-leadgen-guia-claude` |
 | `funnel_steps` ✅ | los pasos de cada funnel, en orden, con su URL/identificador | **creada 2026-07-03** — 18 pasos sembrados, espejo de los nodos de FUNNELS.html |
 | `events` ✅ (vacía) | cada visita/click real, con URL, parámetro `sck`/UTM, a qué `funnel_step` corresponde, y `lead_id`/`customer_id` si ya se identificó a la persona | **creada 2026-07-03** — la tabla existe; falta "alimentarla" con el tracking (ver pendiente abajo) |
 | `campanas` ✅ | catálogo de anuncios de ads + gasto/métricas de Meta; ata el gasto con las ventas por `src` | **creada 2026-07-03** (no estaba en el boceto original) — cruza por `src` para CPA/ROAS; ver "Actualización (2026-07-03): tabla `campanas`" arriba |
@@ -596,7 +596,7 @@ en la tarjeta Trello #60.
 
 ## Relación con lo ya construido
 
-- El funnel "Meta Lead Ads + embudo de regalos" (Canal 2 en `ads-agent/dashboards/FUNNELS.html`) es el primer caso real que esta base debería trackear: Anuncio → Formulario → Regalo 1 (email) → Regalo 2 (email +48h, Brevo) → Regalo 3/4 (WhatsApp, pendiente de construir) → Oferta del curso → Checkout → Order Bump → Upsell → Downsell.
+- El funnel "Meta Lead Ads + embudo de regalos" (Canal 2 en `ads-agent/docs/dashboards/FUNNELS.html`) es el primer caso real que esta base debería trackear: Anuncio → Formulario → Regalo 1 (email) → Regalo 2 (email +48h, Brevo) → Regalo 3/4 (WhatsApp, pendiente de construir) → Oferta del curso → Checkout → Order Bump → Upsell → Downsell.
 - El escenario de Make que capta el lead y dispara los regalos — desde el **2026-07-03** es `9474482` "Funnel Leads - Instantaneo (webhook)" (antes `9433023`, polling, hoy desactivado) — también inserta el lead en la tabla `leads` (módulo `/api/lead`). ✅ hecho.
 
 ## Actualización (2026-07-16): tabla `brevo_stats` (foto de stats de email)

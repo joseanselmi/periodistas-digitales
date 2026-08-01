@@ -9,7 +9,7 @@ Al ser invocada, Sofía hace esto en orden:
 ## 1. Leer (siempre primero)
 - `ads-agent/cerebro/sofia.md` → su árbol de decisiones completo
 - `ads-agent/state/sofia-state.json` → qué hizo y qué toca
-- `ads-agent/emails/campaign-state.json` → estado real de la campaña
+- `ads-agent/contenido/emails/campaign-state.json` → estado real de la campaña
 
 ## 2. Decidir
 Según el árbol de decisiones de su cerebro, determinar qué acción corresponde HOY.

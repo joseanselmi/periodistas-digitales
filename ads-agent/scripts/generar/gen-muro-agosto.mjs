@@ -131,7 +131,7 @@ const vs = (badTag, bad, goodTag, good) => `<div class="vs">
 // ═══════════════════════ CARRUSELES ═══════════════════════════════════════════
 const CAROUSELS = [
   // ── Dom 16 — el más fuerte de la guía, va primero ────────────────────────
-  { folder: 'carousels/muro-s1', file: 'domingo-marca-ajena.html', title: 'La marca que se ve — Domingo 16/08',
+  { folder: 'contenido/carousels/muro-s1', file: 'domingo-marca-ajena.html', title: 'La marca que se ve — Domingo 16/08',
     slides: [
       { label: 'El punto ciego', body: `<h1>Compartes.<br>Y el nombre<br>que se ve<br><span class="hl">no es el tuyo</span></h1><p class="lead">Le estás haciendo prensa gratis a un medio que no te paga. Todos los días.</p>` },
       { label: 'Lo que haces', body: `<h2>El trabajo<br>es tuyo</h2><div class="divider"></div><p>Revisas, descartas, eliges. Sabes cuál importa y cuál no merece que la gente pierda el tiempo.</p><p><strong>Ese filtro es tu oficio. Te llevó años.</strong></p>` },
@@ -142,7 +142,7 @@ const CAROUSELS = [
     ] },
 
   // ── Lun 17 — el mecanismo ────────────────────────────────────────────────
-  { folder: 'carousels/muro-s1', file: 'lunes-mecanismo.html', title: 'Los que te siguen — Lunes 17/08',
+  { folder: 'contenido/carousels/muro-s1', file: 'lunes-mecanismo.html', title: 'Los que te siguen — Lunes 17/08',
     slides: [
       { label: 'Por qué pasa', body: `<h1>Publicaste<br>la nota del año.<br><span class="hl">La vio tu tía</span></h1><p class="lead">No es mala suerte y no es el alcance. Es a quién le está llegando.</p>` },
       { label: 'Cómo elige', body: `<h2>Facebook<br>no se lo<br>muestra a todos</h2><div class="divider"></div><p>Cuando publicas, elige a quién. Y para elegir usa sobre todo una señal: con quién interactuaste antes, y quién interactuó antes contigo.</p>` },
@@ -153,7 +153,7 @@ const CAROUSELS = [
     ] },
 
   // ── Mié 19 — qué hacer en lugar de compartir ─────────────────────────────
-  { folder: 'carousels/muro-s1', file: 'miercoles-en-vez-de-compartir.html', title: 'En vez de compartir — Miércoles 19/08',
+  { folder: 'contenido/carousels/muro-s1', file: 'miercoles-en-vez-de-compartir.html', title: 'En vez de compartir — Miércoles 19/08',
     slides: [
       { label: 'Empieza por acá', body: `<h1>Treinta segundos<br>que te cuestan<br><span class="hl">todos tus</span><br><span class="hl">lectores</span></h1><p class="lead">Lo que tarda tocar "compartir". Los cuatro pasos que lo reemplazan tardan tres minutos.</p>` },
       { label: 'Paso 01', color: 'green', body: `<h2>Publícala<br>con tus<br>palabras</h2><div class="divider"></div><p>Como publicación tuya, no como compartida. Tres a cinco líneas: qué pasó, dónde, a quién le afecta.</p><p><strong>No es plagiar. Es lo que hace cualquier redacción cuando levanta una noticia de otra.</strong></p>` },
@@ -164,7 +164,7 @@ const CAROUSELS = [
     ] },
 
   // ── Vie 21 — la tabla de titulares ───────────────────────────────────────
-  { folder: 'carousels/muro-s1', file: 'viernes-titulares.html', title: 'Titular de muro — Viernes 21/08',
+  { folder: 'contenido/carousels/muro-s1', file: 'viernes-titulares.html', title: 'Titular de muro — Viernes 21/08',
     slides: [
       { label: 'Tu trabajo principal', body: `<h1>Nadie frena<br>el dedo por<br>un titular<br><span class="hl">de diario</span></h1><p class="lead">El que trae la nota está escrito para quien ya entró a informarse. Tu lector venía mirando fotos de un cumpleaños.</p>` },
       { label: 'La diferencia', body: `<h2>Dos lectores<br>distintos</h2><div class="divider"></div><p>El titular de diario es para quien ya decidió informarse: entró a buscar noticias.</p><p><strong>El de muro es para alguien que venía mirando fotos de un cumpleaños. Hay que hacerlo frenar.</strong></p>` },
@@ -176,7 +176,7 @@ const CAROUSELS = [
     ] },
 
   // ── Dom 23 — la primera línea ────────────────────────────────────────────
-  { folder: 'carousels/muro-s2', file: 'domingo-primera-linea.html', title: 'La primera línea — Domingo 23/08',
+  { folder: 'contenido/carousels/muro-s2', file: 'domingo-primera-linea.html', title: 'La primera línea — Domingo 23/08',
     slides: [
       { label: 'Cómo lo escribes', body: `<h1>Te leen<br>dos líneas.<br><span class="hl">Y las estás</span><br><span class="hl">regalando</span></h1><p class="lead">El feed corta ahí. Lo que pongas arriba decide si alguien sigue leyendo o sigue de largo.</p>` },
       { label: 'El error', body: `<h2>Das por sabido<br>el contexto</h2><div class="divider"></div><p>"Otra vez lo mismo en la esquina de siempre" lo entiende tu vecino.</p><p><strong>Y nadie más. El que no te conoce ya siguió de largo.</strong></p>` },
@@ -187,7 +187,7 @@ const CAROUSELS = [
     ] },
 
   // ── Lun 24 — el recuento C/L ─────────────────────────────────────────────
-  { folder: 'carousels/muro-s2', file: 'lunes-recuento.html', title: 'El recuento — Lunes 24/08',
+  { folder: 'contenido/carousels/muro-s2', file: 'lunes-recuento.html', title: 'El recuento — Lunes 24/08',
     slides: [
       { label: 'El diagnóstico', body: `<h1>En diez minutos<br>vas a saber si<br>tienes lectores<br><span class="hl">o conocidos</span></h1><p class="lead">Sin herramientas ni paneles. Tu perfil, una hoja y dos letras.</p>` },
       { label: 'Paso 01', color: 'green', body: `<h2>Abre tus<br>últimas diez<br>publicaciones</h2><div class="divider"></div><p>Las de noticias. Las de la familia no cuentan para esto.</p>` },
@@ -201,7 +201,7 @@ const CAROUSELS = [
     ] },
 
   // ── Mié 26 — los formatos que hoy se reparten ────────────────────────────
-  { folder: 'carousels/muro-s2', file: 'miercoles-formatos.html', title: 'Los formatos — Miércoles 26/08',
+  { folder: 'contenido/carousels/muro-s2', file: 'miercoles-formatos.html', title: 'Los formatos — Miércoles 26/08',
     slides: [
       { label: 'Con qué publicas', body: `<h1>La peor imagen<br>es la que<br><span class="hl">viene sola</span></h1><p class="lead">La miniatura que trae el enlace del otro medio. Y es la que pone todo el mundo. Hay tres que la reemplazan.</p>` },
       { label: 'Formato 01', color: 'green', body: `<h2>Una placa<br>propia</h2><div class="divider"></div><p>El titular sobre fondo liso, siempre con el mismo diseño: los mismos colores, la misma tipografía, tu nombre en una esquina.</p><p><strong>Además de mostrarse más, empieza a construir tu marca. A las semanas se reconoce sin leer quién la publicó.</strong></p>` },
@@ -212,7 +212,7 @@ const CAROUSELS = [
     ] },
 
   // ── Vie 28 — VENTA: los 5 pasos ──────────────────────────────────────────
-  { folder: 'carousels/muro-s2', file: 'viernes-cinco-pasos.html', title: 'Los 5 pasos — Viernes 28/08',
+  { folder: 'contenido/carousels/muro-s2', file: 'viernes-cinco-pasos.html', title: 'Los 5 pasos — Viernes 28/08',
     slides: [
       { label: 'Y si quieres vivir de esto', color: 'amber', body: `<h1>Informar gratis,<br>pero mejor,<br><span class="hl">sigue siendo</span><br><span class="hl">gratis</span></h1><p class="lead">Todo lo de estas semanas hace que te vean más y mejor. Si lo que quieres es que este trabajo te pague, el camino tiene cinco pasos.</p>` },
       { label: 'Paso 01', body: `<h2>Ponle nombre<br>y foco a lo<br>que ya cubres</h2><div class="divider"></div><p>El tema del que ya compartes noticias es tu nicho. Lo elegiste sin darte cuenta.</p><p><strong>Ahora hay que declararlo.</strong></p>` },
@@ -226,7 +226,7 @@ const CAROUSELS = [
     ] },
 
   // ── Dom 30 — qué mira un negocio ─────────────────────────────────────────
-  { folder: 'carousels/muro-s3', file: 'domingo-que-mira-un-negocio.html', title: 'Qué mira un negocio — Domingo 30/08',
+  { folder: 'contenido/carousels/muro-s3', file: 'domingo-que-mira-un-negocio.html', title: 'Qué mira un negocio — Domingo 30/08',
     slides: [
       { label: 'Del otro lado', body: `<h1>Lo primero<br>que mira no es<br>cuántos<br><span class="hl">te siguen</span></h1><p class="lead">Qué se pregunta de verdad un negocio de tu zona antes de decidir si te paga. Cuatro cosas, en orden.</p>` },
       { label: 'Mira 01', body: `<h2>Si le hablas<br>a su cliente</h2><div class="divider"></div><p>Lo primero que se pregunta no es a cuánta gente llegas. Es si esa gente le puede comprar a él.</p><p><strong>Lectores de su barrio le sirven. Seguidores sueltos de cualquier lado, no.</strong></p>` },
@@ -237,7 +237,7 @@ const CAROUSELS = [
     ] },
 
   // ── Lun 31 — cierre de mes ───────────────────────────────────────────────
-  { folder: 'carousels/muro-s3', file: 'lunes-vuelve-a-contar.html', title: 'Vuelve a contar — Lunes 31/08',
+  { folder: 'contenido/carousels/muro-s3', file: 'lunes-vuelve-a-contar.html', title: 'Vuelve a contar — Lunes 31/08',
     slides: [
       { label: 'Cierre de agosto', body: `<h1>Vuelve<br><span class="hl">a contar</span></h1><p class="lead">Último día del mes. Si hiciste el recuento hace dos semanas, hoy toca repetirlo — y comparar.</p>` },
       { label: 'El repaso', body: `<h2>Lo que<br>vimos<br>este mes</h2><div class="divider"></div>${numlist([
@@ -260,7 +260,7 @@ const CAROUSELS = [
 // ═══════════════════════ CAPTIONS ═════════════════════════════════════════════
 const CAPTIONS = {
   // ── muro-s1 (Dom 16 → Sáb 22) ──
-  'carousels/muro-s1|7-DOMINGO': `Tocas "compartir" y le haces prensa gratis a un medio que no te paga.
+  'contenido/carousels/muro-s1|7-DOMINGO': `Tocas "compartir" y le haces prensa gratis a un medio que no te paga.
 
 Revisas, descartas, eliges. Sabes cuál importa y cuál no merece que la gente pierda el tiempo. Ese filtro es tu oficio y te llevó años.
 
@@ -272,7 +272,7 @@ Treinta segundos que salen caros. En el carrusel, la cuenta completa.
 
 ¿Cuántas de tus últimas diez son publicación tuya y cuántas son de otro? 👇`,
 
-  'carousels/muro-s1|1-LUNES': `Publicaste la nota del año. La vio tu tía.
+  'contenido/carousels/muro-s1|1-LUNES': `Publicaste la nota del año. La vio tu tía.
 
 Cuando publicas, Facebook no se lo muestra a todos. Elige. Y para elegir usa sobre todo una señal: con quién interactuaste antes, y quién interactuó antes contigo.
 
@@ -286,7 +286,7 @@ No tienes un problema de alcance. Tienes un problema de a quién le está llegan
 
 Mira los comentarios de tu última noticia: ¿se parecen más a un saludo o a una conversación sobre el tema? 👇`,
 
-  'carousels/muro-s1|2-MARTES': `"¿Y no debería abrirme una página primero?"
+  'contenido/carousels/muro-s1|2-MARTES': `"¿Y no debería abrirme una página primero?"
 
 Es la pregunta correcta. Y la respuesta es sí — pero vas a llegar ahí con una ventaja que conviene no desperdiciar.
 
@@ -304,7 +304,7 @@ Todo lo que estamos viendo estas semanas te sirve hoy en tu perfil. Y te va a se
 
 ¿Ya intentaste abrir una página alguna vez? Cuéntame cómo te fue. 👇`,
 
-  'carousels/muro-s1|3-MIERCOLES': `Treinta segundos que te cuestan todos tus lectores.
+  'contenido/carousels/muro-s1|3-MIERCOLES': `Treinta segundos que te cuestan todos tus lectores.
 
 Es lo que tarda tocar "compartir": ves la noticia, le agregas una línea arriba y listo. El problema es que esos treinta segundos hacen que se vea poco y con el nombre de otro.
 
@@ -316,7 +316,7 @@ No es plagiar. Es lo que hace cualquier redacción cuando levanta una noticia de
 
 Pruébalo con una sola noticia esta semana y compara cómo le fue contra la anterior. Dime qué pasó. 👇`,
 
-  'carousels/muro-s1|4-JUEVES': `"¿Qué opinan?" es la pregunta que garantiza que te comente tu prima. Y nadie más.
+  'contenido/carousels/muro-s1|4-JUEVES': `"¿Qué opinan?" es la pregunta que garantiza que te comente tu prima. Y nadie más.
 
 Casi todos cerramos las publicaciones con una pregunta, y casi todos usamos justo esa.
 
@@ -335,7 +335,7 @@ Y hay un efecto secundario: te obliga a preguntar algo que de verdad quieres sab
 
 Fíjate cómo terminaste tu última publicación. ¿Pediste una opinión o pediste un dato? 👇`,
 
-  'carousels/muro-s1|5-VIERNES': `Nadie frena el dedo por "Aumento del 12% en la tarifa de agua".
+  'contenido/carousels/muro-s1|5-VIERNES': `Nadie frena el dedo por "Aumento del 12% en la tarifa de agua".
 
 Pero sí por "El agua te va a llegar 12% más cara desde el mes que viene". Es la misma noticia.
 
@@ -347,7 +347,7 @@ El patrón: el de diario nombra el hecho, el de muro le dice al lector qué le c
 
 Escribe abajo un titular que hayas publicado esta semana y te devuelvo la versión de muro. 👇`,
 
-  'carousels/muro-s1|6-SABADO': `Publicas y guardas el teléfono. Ahí se murió la nota.
+  'contenido/carousels/muro-s1|6-SABADO': `Publicas y guardas el teléfono. Ahí se murió la nota.
 
 Lo que pasa en la primera media hora define cuánto se sigue mostrando después. Si en ese rato nadie comenta ni responde nada, el sistema entiende que no interesa y deja de repartirlo. Después ya no hay forma de recuperarlo, por buena que fuera la nota.
 
@@ -364,7 +364,7 @@ Esa media hora no es tiempo extra: es la misma publicación, trabajada cuando to
 ¿A qué hora sueles publicar? Y más importante: ¿estás ahí cuando lo haces? 👇`,
 
   // ── muro-s2 (Dom 23 → Sáb 29) ──
-  'carousels/muro-s2|7-DOMINGO': `Te leen dos líneas. Y las estás regalando.
+  'contenido/carousels/muro-s2|7-DOMINGO': `Te leen dos líneas. Y las estás regalando.
 
 El feed corta ahí: lo que pongas arriba decide si alguien sigue leyendo o sigue de largo.
 
@@ -376,7 +376,7 @@ El antes y el después de la misma noticia, en el carrusel.
 
 Lee las dos primeras líneas de tu última publicación en voz alta. ¿Se entiende sin el resto? 👇`,
 
-  'carousels/muro-s2|1-LUNES': `En diez minutos vas a saber si tienes lectores o conocidos.
+  'contenido/carousels/muro-s2|1-LUNES': `En diez minutos vas a saber si tienes lectores o conocidos.
 
 Sin herramientas ni paneles. Tu perfil, una hoja y dos letras.
 
@@ -390,7 +390,7 @@ Ese número es tu punto de partida. Aplica las cosas de estas dos semanas y vuel
 
 El paso a paso está en el carrusel. Si te animas, dime cómo te dio. 👇`,
 
-  'carousels/muro-s2|2-MARTES': `Ya te escribieron. "¿Me compartes esto?"
+  'contenido/carousels/muro-s2|2-MARTES': `Ya te escribieron. "¿Me compartes esto?"
 
 El gimnasio que abrió, la veterinaria de la esquina, el que organiza la feria. Te piden difusión porque saben que la gente de la ciudad te lee. Y tú la das, porque sale natural y porque no está mal ayudar.
 
@@ -404,7 +404,7 @@ Lo incómodo es que ese pedido es, en realidad, la mejor noticia que te dieron e
 
 ¿A ti ya te pidieron difusión gratis? Cuéntame qué contestaste. 👇`,
 
-  'carousels/muro-s2|3-MIERCOLES': `La peor imagen que puedes poner es la que viene sola.
+  'contenido/carousels/muro-s2|3-MIERCOLES': `La peor imagen que puedes poner es la que viene sola.
 
 La miniatura que trae el enlace del otro medio. Y es la que pone todo el mundo.
 
@@ -416,7 +416,7 @@ El peor de los tres es mejor que la miniatura ajena.
 
 ¿Cuál te queda más a mano para mañana? 👇`,
 
-  'carousels/muro-s2|4-JUEVES': `"Once años publicando para mis conocidos."
+  'contenido/carousels/muro-s2|4-JUEVES': `"Once años publicando para mis conocidos."
 
 Eso me escribió un periodista al día siguiente de hacer el recuento de las C y las L.
 
@@ -438,7 +438,7 @@ Me dijo que hacía años que no se ponía contento con un número tan chico.
 
 Si haces el recuento, cuéntame cómo te dio. 👇`,
 
-  'carousels/muro-s2|5-VIERNES': `Todo lo de estas semanas hace que te vean más y mejor. Pero informar gratis, mejor que antes, sigue siendo gratis.
+  'contenido/carousels/muro-s2|5-VIERNES': `Todo lo de estas semanas hace que te vean más y mejor. Pero informar gratis, mejor que antes, sigue siendo gratis.
 
 Si lo que quieres es que este trabajo te pague, el camino tiene cinco pasos y este es el orden. No es opinión: es el orden en que funciona.
 
@@ -448,7 +448,7 @@ Los cinco, uno por uno, en el carrusel.
 
 Esos cinco pasos acompañados son el Sistema de Ingresos Diarios: pago único, acceso de por vida y garantía de 7 días. El enlace está en la biografía.`,
 
-  'carousels/muro-s2|6-SABADO': `El miedo no es al trabajo. Es a perder lo que ya tienes.
+  'contenido/carousels/muro-s2|6-SABADO': `El miedo no es al trabajo. Es a perder lo que ya tienes.
 
 Es lo que frena a casi todos los periodistas que ya publican y podrían tener algo propio. No es pereza ni falta de ideas: es que abrir un lugar nuevo se siente como abandonar el que funciona.
 
@@ -465,7 +465,7 @@ No es saltar al vacío. Es mudarse con las cosas.
 ¿Qué es lo que más te costaría dejar atrás? Cuéntame abajo. 👇`,
 
   // ── muro-s3 (Dom 30 → Lun 31) ──
-  'carousels/muro-s3|7-DOMINGO': `Lo primero que mira un negocio antes de pagarte no es cuántos te siguen.
+  'contenido/carousels/muro-s3|7-DOMINGO': `Lo primero que mira un negocio antes de pagarte no es cuántos te siguen.
 
 Eso es lo que casi todos creen, y por eso muchos esperan a "tener suficiente" para animarse a cobrar.
 
@@ -475,7 +475,7 @@ Las cuatro, en orden, en el carrusel.
 
 Si un negocio de tu ciudad ya te escribió pidiendo un favor, ya te considera un medio. ¿Te pasó? 👇`,
 
-  'carousels/muro-s3|1-LUNES': `Último día de agosto. Si hiciste el recuento de las C y las L hace dos semanas, hoy toca repetirlo.
+  'contenido/carousels/muro-s3|1-LUNES': `Último día de agosto. Si hiciste el recuento de las C y las L hace dos semanas, hoy toca repetirlo.
 
 Tus últimas diez publicaciones de noticias, quién comentó, la letra al lado. Y comparar.
 

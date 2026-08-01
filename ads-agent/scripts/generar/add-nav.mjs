@@ -1,10 +1,10 @@
 import { readFileSync, writeFileSync } from 'fs'
 
 const files = [
-  'carousels/semana-12-05/lunes-prompt-maestro.html',
-  'carousels/semana-12-05/miercoles-whatsapp.html',
-  'carousels/semana-12-05/viernes-primer-anunciante.html',
-  'carousels/semana-12-05/domingo-google-noticias.html',
+  'contenido/carousels/publicados/semana-12-05/lunes-prompt-maestro.html',
+  'contenido/carousels/publicados/semana-12-05/miercoles-whatsapp.html',
+  'contenido/carousels/publicados/semana-12-05/viernes-primer-anunciante.html',
+  'contenido/carousels/publicados/semana-12-05/domingo-google-noticias.html',
 ]
 
 const navCSS = `

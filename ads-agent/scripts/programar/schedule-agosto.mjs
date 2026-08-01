@@ -17,21 +17,21 @@ function toUnix(dateStr, hour = 8) {
 }
 
 const POSTS = [
-  { folder: 'carousels/agosto-s1/para-subir/6-SABADO',    date: '2026-08-01', label: 'Sáb 01/08 — Texto: "el mes que viene sí"' },
-  { folder: 'carousels/agosto-s1/para-subir/7-DOMINGO',   date: '2026-08-02', label: 'Dom 02/08 — Carrusel: 6 señales de agosto' },
-  { folder: 'carousels/agosto-s2/para-subir/1-LUNES',     date: '2026-08-03', label: 'Lun 03/08 — Carrusel: prompt temas locales' },
-  { folder: 'carousels/agosto-s2/para-subir/2-MARTES',    date: '2026-08-04', label: 'Mar 04/08 — Texto: "te rebotaron la nota"' },
-  { folder: 'carousels/agosto-s2/para-subir/3-MIERCOLES', date: '2026-08-05', label: 'Mié 05/08 — Carrusel: primer anunciante local' },
-  { folder: 'carousels/agosto-s2/para-subir/4-JUEVES',    date: '2026-08-06', label: 'Jue 06/08 — Texto: 3 primeros cobros (prueba social)' },
-  { folder: 'carousels/agosto-s2/para-subir/5-VIERNES',   date: '2026-08-07', label: 'Vie 07/08 — Carrusel VENTA: el Sistema ($27)' },
-  { folder: 'carousels/agosto-s2/para-subir/6-SABADO',    date: '2026-08-08', label: 'Sáb 08/08 — Texto: saber vs cobrar' },
-  { folder: 'carousels/agosto-s2/para-subir/7-DOMINGO',   date: '2026-08-09', label: 'Dom 09/08 — Carrusel: IA y búsqueda' },
-  { folder: 'carousels/agosto-s3/para-subir/1-LUNES',     date: '2026-08-10', label: 'Lun 10/08 — Carrusel: prompt titulares' },
-  { folder: 'carousels/agosto-s3/para-subir/2-MARTES',    date: '2026-08-11', label: 'Mar 11/08 — Texto: "cuando me echen"' },
-  { folder: 'carousels/agosto-s3/para-subir/3-MIERCOLES', date: '2026-08-12', label: 'Mié 12/08 — Carrusel: producir el doble con IA' },
-  { folder: 'carousels/agosto-s3/para-subir/4-JUEVES',    date: '2026-08-13', label: 'Jue 13/08 — Texto: Paola (prueba social)' },
-  { folder: 'carousels/agosto-s3/para-subir/5-VIERNES',   date: '2026-08-14', label: 'Vie 14/08 — Carrusel VENTA: sin tecnología ($27)' },
-  { folder: 'carousels/agosto-s3/para-subir/6-SABADO',    date: '2026-08-15', label: 'Sáb 15/08 — Texto: mitad de agosto' },
+  { folder: 'contenido/carousels/agosto-s1/para-subir/6-SABADO',    date: '2026-08-01', label: 'Sáb 01/08 — Texto: "el mes que viene sí"' },
+  { folder: 'contenido/carousels/agosto-s1/para-subir/7-DOMINGO',   date: '2026-08-02', label: 'Dom 02/08 — Carrusel: 6 señales de agosto' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/1-LUNES',     date: '2026-08-03', label: 'Lun 03/08 — Carrusel: prompt temas locales' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/2-MARTES',    date: '2026-08-04', label: 'Mar 04/08 — Texto: "te rebotaron la nota"' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/3-MIERCOLES', date: '2026-08-05', label: 'Mié 05/08 — Carrusel: primer anunciante local' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/4-JUEVES',    date: '2026-08-06', label: 'Jue 06/08 — Texto: 3 primeros cobros (prueba social)' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/5-VIERNES',   date: '2026-08-07', label: 'Vie 07/08 — Carrusel VENTA: el Sistema ($27)' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/6-SABADO',    date: '2026-08-08', label: 'Sáb 08/08 — Texto: saber vs cobrar' },
+  { folder: 'contenido/carousels/agosto-s2/para-subir/7-DOMINGO',   date: '2026-08-09', label: 'Dom 09/08 — Carrusel: IA y búsqueda' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/1-LUNES',     date: '2026-08-10', label: 'Lun 10/08 — Carrusel: prompt titulares' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/2-MARTES',    date: '2026-08-11', label: 'Mar 11/08 — Texto: "cuando me echen"' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/3-MIERCOLES', date: '2026-08-12', label: 'Mié 12/08 — Carrusel: producir el doble con IA' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/4-JUEVES',    date: '2026-08-13', label: 'Jue 13/08 — Texto: Paola (prueba social)' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/5-VIERNES',   date: '2026-08-14', label: 'Vie 14/08 — Carrusel VENTA: sin tecnología ($27)' },
+  { folder: 'contenido/carousels/agosto-s3/para-subir/6-SABADO',    date: '2026-08-15', label: 'Sáb 15/08 — Texto: mitad de agosto' },
 ]
 
 async function uploadPhoto(imagePath) {

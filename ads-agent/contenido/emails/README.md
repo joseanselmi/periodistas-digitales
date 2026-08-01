@@ -28,5 +28,5 @@ node ../scripts/publicar/send-email.mjs       # envío (por Brevo)
 
 Los agentes **no envían emails nuevos sin aprobación**. En regalos 1–4 no se
 menciona el precio; el precio se revela recién en la oferta final. Ver
-[README de ads-agent](../README.md) y el cerebro de Sofía en
-[`../cerebro/`](../cerebro/README.md).
+[README de ads-agent](../../README.md) y el cerebro de Sofía en
+[`../cerebro/`](../../cerebro/README.md).

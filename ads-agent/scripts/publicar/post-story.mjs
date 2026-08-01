@@ -18,7 +18,7 @@ import { resolve, join } from 'path'
 const PAGE_TOKEN = process.env.FB_PAGE_TOKEN
 const PAGE_ID    = process.env.FB_PAGE_ID || '439763019230527'
 const BASE       = 'https://graph.facebook.com/v21.0'
-const DIR        = resolve('carousels/muro-stories')
+const DIR        = resolve('contenido/carousels/muro-stories')
 const LOG        = resolve('state/stories-publicadas.json')
 
 const args   = process.argv.slice(2)

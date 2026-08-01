@@ -11,7 +11,7 @@
  *   BREVO_API_KEY  — del .env.local
  *
  * Contactos:
- *   Poner el CSV de Hotmart en: ads-agent/emails/compradores.csv
+ *   Poner el CSV de Hotmart en: ads-agent/contenido/emails/compradores.csv
  *   Formato esperado: email,nombre  (primera fila = encabezado)
  *
  * Ejemplo:
@@ -41,7 +41,7 @@ const offsetArg = process.argv.find((a, i) => process.argv[i - 1] === '--offset'
 const csvArg    = process.argv.find((a, i) => process.argv[i - 1] === '--csv')
 const LIMIT     = limitArg  ? parseInt(limitArg)  : null
 const OFFSET    = offsetArg ? parseInt(offsetArg) : 0
-const CSV_PATH  = csvArg ?? 'emails/compradores.csv'
+const CSV_PATH  = csvArg ?? 'contenido/emails/compradores.csv'
 
 // ─── Remitente ────────────────────────────────────────────────────────────────
 
@@ -885,7 +885,7 @@ async function main() {
   }
 
   // Actualizar campaign-state.json
-  const statePath = resolve('emails/campaign-state.json')
+  const statePath = resolve('contenido/emails/campaign-state.json')
   if (existsSync(statePath)) {
     const state = JSON.parse(readFileSync(statePath, 'utf-8'))
     const paso  = state.secuencia.find(s => s.id === campaignArg)

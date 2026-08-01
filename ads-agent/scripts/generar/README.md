@@ -3,8 +3,8 @@
 **Padre:** [`ads-agent/scripts/`](../) · **Abuelo:** [`ads-agent/`](../../README.md)
 
 Producen las piezas: carruseles, imágenes de campaña, posts del calendario
-orgánico. Escriben en [`../../carousels/`](../../carousels/README.md) y
-[`../../organic/`](../../organic/README.md).
+orgánico. Escriben en [`../../carousels/`](../../contenido/carousels/README.md) y
+[`../../organic/`](../../contenido/organic/README.md).
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
 > varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa

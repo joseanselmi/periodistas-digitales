@@ -28,17 +28,17 @@ function toUnix(dateStr, hour = 8) {
 
 const SCHEDULE = [
   {
-    folder: 'carousels/semana-12-05/para-subir/1-LUNES',
+    folder: 'contenido/carousels/publicados/semana-12-05/para-subir/1-LUNES',
     date: '2026-05-10', hour: 18,  // HOY a las 6pm
     label: 'Sáb 10/05 — Texto inspiracional (hoy)'
   },
   {
-    folder: 'carousels/semana-12-05/para-subir/7-DOMINGO',
+    folder: 'contenido/carousels/publicados/semana-12-05/para-subir/7-DOMINGO',
     date: '2026-05-11', hour: 8,
     label: 'Dom 11/05 — Carrusel Google/noticias'
   },
   {
-    folder: 'carousels/semana-12-05/para-subir/1-LUNES',
+    folder: 'contenido/carousels/publicados/semana-12-05/para-subir/1-LUNES',
     date: '2026-05-12', hour: 8,
     label: 'Lun 12/05 — Carrusel Prompt Maestro'
   },
@@ -46,15 +46,15 @@ const SCHEDULE = [
 
 // Wait — necesito mapear las carpetas correctamente
 const POSTS = [
-  { folder: 'carousels/semana-12-05/para-subir/0-SABADO-10', date: '2026-05-10', hour: 18, label: 'Sáb 10 — Texto inspiracional (HOY 18hs)' },
-  { folder: 'carousels/semana-12-05/para-subir/7-DOMINGO',   date: '2026-05-11', hour: 8,  label: 'Dom 11 — Google cambió las noticias' },
-  { folder: 'carousels/semana-12-05/para-subir/1-LUNES',     date: '2026-05-12', hour: 8,  label: 'Lun 12 — Prompt Maestro' },
-  { folder: 'carousels/semana-12-05/para-subir/2-MARTES-13', date: '2026-05-13', hour: 8,  label: 'Mar 13 — El periodismo que te enseñaron' },
-  { folder: 'carousels/semana-12-05/para-subir/3-MIERCOLES', date: '2026-05-14', hour: 8,  label: 'Mié 14 — WhatsApp Channels' },
-  { folder: 'carousels/semana-12-05/para-subir/4-JUEVES-15', date: '2026-05-15', hour: 8,  label: 'Jue 15 — Historia Andrés Mora' },
-  { folder: 'carousels/semana-12-05/para-subir/5-VIERNES',   date: '2026-05-16', hour: 8,  label: 'Vie 16 — Primer anunciante local' },
-  { folder: 'carousels/semana-12-05/para-subir/6-SABADO-17', date: '2026-05-17', hour: 8,  label: 'Sáb 17 — Reflexión de cierre' },
-  { folder: 'carousels/semana-12-05/para-subir/9-DOMINGO-18',date: '2026-05-18', hour: 8,  label: 'Dom 18 — NotebookLM para periodistas' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/0-SABADO-10', date: '2026-05-10', hour: 18, label: 'Sáb 10 — Texto inspiracional (HOY 18hs)' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/7-DOMINGO',   date: '2026-05-11', hour: 8,  label: 'Dom 11 — Google cambió las noticias' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/1-LUNES',     date: '2026-05-12', hour: 8,  label: 'Lun 12 — Prompt Maestro' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/2-MARTES-13', date: '2026-05-13', hour: 8,  label: 'Mar 13 — El periodismo que te enseñaron' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/3-MIERCOLES', date: '2026-05-14', hour: 8,  label: 'Mié 14 — WhatsApp Channels' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/4-JUEVES-15', date: '2026-05-15', hour: 8,  label: 'Jue 15 — Historia Andrés Mora' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/5-VIERNES',   date: '2026-05-16', hour: 8,  label: 'Vie 16 — Primer anunciante local' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/6-SABADO-17', date: '2026-05-17', hour: 8,  label: 'Sáb 17 — Reflexión de cierre' },
+  { folder: 'contenido/carousels/publicados/semana-12-05/para-subir/9-DOMINGO-18',date: '2026-05-18', hour: 8,  label: 'Dom 18 — NotebookLM para periodistas' },
 ]
 
 // ─── API helpers ──────────────────────────────────────────────────────────────

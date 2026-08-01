@@ -121,7 +121,7 @@ for (const email of SEQUENCE) {
 }
 
 // Guardar secuencia completa como JSON (para importar a ESP)
-writeFileSync('emails/secuencia-completa.json', JSON.stringify(results, null, 2))
+writeFileSync('contenido/emails/secuencia-completa.json', JSON.stringify(results, null, 2))
 
 console.log('\n' + '═'.repeat(55))
 console.log('SECUENCIA GENERADA')

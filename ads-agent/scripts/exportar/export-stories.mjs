@@ -6,7 +6,7 @@ import puppeteer from 'puppeteer'
 import { readdirSync } from 'fs'
 import { resolve, join, basename } from 'path'
 
-const folder = process.argv[2] || 'carousels/muro-stories'
+const folder = process.argv[2] || 'contenido/carousels/muro-stories'
 const abs = resolve(folder)
 const files = readdirSync(abs).filter(f => f.endsWith('.html')).sort()
 

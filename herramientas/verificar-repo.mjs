@@ -84,7 +84,11 @@ function chequearRutasEnTexto() {
 // Carpetas que el propio script crea al arrancar: que no existan no es un error.
 // hotmart-chrome-profile es el userDataDir de puppeteer — se borró el 2026-07-30
 // para recuperar 391 MB y se regenera sola (pide login a Hotmart una vez).
-const SE_CREAN_SOLAS = new Set(['hotmart-chrome-profile']);
+// Se crean solas al correr, y el código ya contempla que no existan todavía.
+const SE_CREAN_SOLAS = new Set([
+  'hotmart-chrome-profile',                 // userDataDir de puppeteer
+  'state/stories-publicadas.json',          // lo escribe post-story la 1ª vez
+]);
 
 function chequearAnclajes() {
   const baseScripts = join(ROOT, 'ads-agent', 'scripts');
@@ -141,13 +145,18 @@ function chequearAnclajes() {
     // escribiendo en 'campaigns' y, como usa mkdirSync, la RECREABA en silencio.
     // No fallaba: simplemente dejaba el export en una carpeta fantasma.
     const CWD = join(ROOT, 'ads-agent');
-    for (const m of src.matchAll(/(?:join|mkdirSync|readFileSync|writeFileSync|existsSync)\(\s*'([\w-]+)\/?[\w./-]*'/g)) {
-      const primerSegmento = m[1];
-      // solo nos importan los que parecen carpetas del proyecto
-      if (!/^(datos|campanas|carousels|organic|emails|state|lib|docs|ads-curso|playbooks|dashboards|creatives|hotmart-transcripts|scripts|results)$/.test(primerSegmento)) continue;
+    const CARPETAS = /^(datos|campanas|contenido|state|lib|docs|scripts)$/;
+    for (const m of src.matchAll(/'([\w-]+\/[\w./-]*)'/g)) {
+      const ruta = m[1].replace(/\/$/, '');
+      if (!CARPETAS.test(ruta.split('/')[0])) continue;
+      if (SE_CREAN_SOLAS.has(ruta)) continue;
+      if (ruta.includes('${')) continue;
       revisadas++;
-      if (!existsSync(join(CWD, primerSegmento))) {
-        rotas.push({ rel, ref: `'${primerSegmento}/…'`, tipo: 'carpeta relativa al cwd que ya no existe' });
+      // Se valida la ruta COMPLETA, no solo el primer segmento. Mover
+      // carousels/semana-* a carousels/publicados/ dejó 76 rutas rotas que el
+      // chequeo anterior daba por buenas porque "carousels/" seguía existiendo.
+      if (!existsSync(join(CWD, ruta))) {
+        rotas.push({ rel, ref: `'${ruta}'`, tipo: 'ruta relativa al cwd que ya no existe' });
       }
     }
   }

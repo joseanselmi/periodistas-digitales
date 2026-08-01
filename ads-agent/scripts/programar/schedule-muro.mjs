@@ -22,23 +22,23 @@ function toUnix(dateStr, hour = 8) {
 
 const POSTS = [
   // ── Serie de la guía (16→24), en el orden en que se lee ──
-  { folder: 'carousels/muro-s1/para-subir/7-DOMINGO',   date: '2026-08-16', label: 'Dom 16/08 — C · La marca que se ve es la de ellos' },
-  { folder: 'carousels/muro-s1/para-subir/1-LUNES',     date: '2026-08-17', label: 'Lun 17/08 — C · Los que te siguen no son los que te leen' },
-  { folder: 'carousels/muro-s1/para-subir/2-MARTES',    date: '2026-08-18', label: 'Mar 18/08 — T · "¿Y no debería abrirme una página primero?"' },
-  { folder: 'carousels/muro-s1/para-subir/3-MIERCOLES', date: '2026-08-19', label: 'Mié 19/08 — C · En vez de "compartir", estos 4 pasos' },
-  { folder: 'carousels/muro-s1/para-subir/4-JUEVES',    date: '2026-08-20', label: 'Jue 20/08 — T · La pregunta que se responde con un dato' },
-  { folder: 'carousels/muro-s1/para-subir/5-VIERNES',   date: '2026-08-21', label: 'Vie 21/08 — C · Titular de muro ≠ titular de diario' },
-  { folder: 'carousels/muro-s1/para-subir/6-SABADO',    date: '2026-08-22', label: 'Sáb 22/08 — T · Los primeros treinta minutos' },
-  { folder: 'carousels/muro-s2/para-subir/7-DOMINGO',   date: '2026-08-23', label: 'Dom 23/08 — C · La primera línea para el que no te conoce' },
-  { folder: 'carousels/muro-s2/para-subir/1-LUNES',     date: '2026-08-24', label: 'Lun 24/08 — C · El recuento C/L' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/7-DOMINGO',   date: '2026-08-16', label: 'Dom 16/08 — C · La marca que se ve es la de ellos' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/1-LUNES',     date: '2026-08-17', label: 'Lun 17/08 — C · Los que te siguen no son los que te leen' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/2-MARTES',    date: '2026-08-18', label: 'Mar 18/08 — T · "¿Y no debería abrirme una página primero?"' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/3-MIERCOLES', date: '2026-08-19', label: 'Mié 19/08 — C · En vez de "compartir", estos 4 pasos' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/4-JUEVES',    date: '2026-08-20', label: 'Jue 20/08 — T · La pregunta que se responde con un dato' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/5-VIERNES',   date: '2026-08-21', label: 'Vie 21/08 — C · Titular de muro ≠ titular de diario' },
+  { folder: 'contenido/carousels/muro-s1/para-subir/6-SABADO',    date: '2026-08-22', label: 'Sáb 22/08 — T · Los primeros treinta minutos' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/7-DOMINGO',   date: '2026-08-23', label: 'Dom 23/08 — C · La primera línea para el que no te conoce' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/1-LUNES',     date: '2026-08-24', label: 'Lun 24/08 — C · El recuento C/L' },
   // ── Mismo público, cierre de mes (25→31) ──
-  { folder: 'carousels/muro-s2/para-subir/2-MARTES',    date: '2026-08-25', label: 'Mar 25/08 — T · Te piden difusión, no te pagan' },
-  { folder: 'carousels/muro-s2/para-subir/3-MIERCOLES', date: '2026-08-26', label: 'Mié 26/08 — C · Tres formatos que hoy se reparten' },
-  { folder: 'carousels/muro-s2/para-subir/4-JUEVES',    date: '2026-08-27', label: 'Jue 27/08 — T · Once años publicando para conocidos (prueba social)' },
-  { folder: 'carousels/muro-s2/para-subir/5-VIERNES',   date: '2026-08-28', label: 'Vie 28/08 — C · VENTA: los 5 pasos (enlace en bio)' },
-  { folder: 'carousels/muro-s2/para-subir/6-SABADO',    date: '2026-08-29', label: 'Sáb 29/08 — T · El miedo a perder lo que ya tienes' },
-  { folder: 'carousels/muro-s3/para-subir/7-DOMINGO',   date: '2026-08-30', label: 'Dom 30/08 — C · Qué mira un negocio antes de pagarte' },
-  { folder: 'carousels/muro-s3/para-subir/1-LUNES',     date: '2026-08-31', label: 'Lun 31/08 — C · Vuelve a contar (cierre de agosto)' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/2-MARTES',    date: '2026-08-25', label: 'Mar 25/08 — T · Te piden difusión, no te pagan' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/3-MIERCOLES', date: '2026-08-26', label: 'Mié 26/08 — C · Tres formatos que hoy se reparten' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/4-JUEVES',    date: '2026-08-27', label: 'Jue 27/08 — T · Once años publicando para conocidos (prueba social)' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/5-VIERNES',   date: '2026-08-28', label: 'Vie 28/08 — C · VENTA: los 5 pasos (enlace en bio)' },
+  { folder: 'contenido/carousels/muro-s2/para-subir/6-SABADO',    date: '2026-08-29', label: 'Sáb 29/08 — T · El miedo a perder lo que ya tienes' },
+  { folder: 'contenido/carousels/muro-s3/para-subir/7-DOMINGO',   date: '2026-08-30', label: 'Dom 30/08 — C · Qué mira un negocio antes de pagarte' },
+  { folder: 'contenido/carousels/muro-s3/para-subir/1-LUNES',     date: '2026-08-31', label: 'Lun 31/08 — C · Vuelve a contar (cierre de agosto)' },
 ]
 
 async function uploadPhoto(imagePath) {

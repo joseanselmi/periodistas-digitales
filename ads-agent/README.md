@@ -1,6 +1,22 @@
-# Ads Agent — Sistema de Ingresos Diarios
+# ads-agent — todo el marketing
 
-Agente que genera, revisa y publica anuncios de Meta Ads.
+> **El nombre quedó chico.** Nació como "agente que genera, revisa y publica
+> anuncios de Meta Ads", y hoy acá vive **toda la operación de marketing**: el
+> equipo, las campañas, el contenido orgánico, el email y las herramientas.
+> Renombrarlo sería tocar decenas de rutas en código, docs y rutinas de nube por
+> una mejora estética. Se deja, y esta nota evita la confusión.
+
+Cinco cosas, y cada una en su carpeta:
+
+| | Dónde |
+|---|---|
+| **Las herramientas** | [`scripts/`](scripts/README.md) · [`lib/`](lib/README.md) |
+| **Las campañas** (con sus anuncios adentro) | [`campanas/`](campanas/README.md) |
+| **El contenido** que se publica | [`contenido/`](contenido/) — carruseles, orgánico, email |
+| **El equipo** | [`cerebro/`](cerebro/README.md) quién es · [`state/`](state/README.md) qué hizo |
+| **Lo que producen los scripts** | [`datos/`](datos/README.md) |
+
+Más [`docs/`](docs/README.md) con la documentación, los playbooks y los mapas.
 
 ## Variables de entorno necesarias
 
@@ -89,9 +105,7 @@ organic/     ← posts orgánicos diarios (calendario + texto + imagen)
 emails/      ← secuencias de email + logs de envío
 lib/         ← módulos compartidos:
              ├── brand-context.mjs   ← identidad de marca, audiencia, precio
-             ├── brand-palette.mjs   ← paleta oficial de color
              ├── reviewer.mjs        ← revisión de ad (imagen + copy) con Claude Vision
-             ├── image-reviewer.mjs  ← revisor universal de imágenes generadas
              └── trello.mjs          ← cliente del tablero por agente
 ```
 

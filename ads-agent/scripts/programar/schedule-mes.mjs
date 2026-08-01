@@ -21,31 +21,31 @@ function toUnix(dateStr, hour = 8) {
 // ─── CALENDARIO COMPLETO ──────────────────────────────────────────────────────
 const POSTS = [
   // S2 — "La IA es tu herramienta"
-  { folder: 'carousels/semana-19-05/para-subir/1-LUNES-19',     date: '2026-05-19', hour: 8,  label: 'Lun 19/05 — 5 herramientas de IA' },
-  { folder: 'carousels/semana-19-05/para-subir/2-MARTES-20',    date: '2026-05-20', hour: 8,  label: 'Mar 20/05 — 3 horas que perdés sin IA' },
-  { folder: 'carousels/semana-19-05/para-subir/3-MIERCOLES-21', date: '2026-05-21', hour: 8,  label: 'Mié 21/05 — NotebookLM para entrevistas' },
-  { folder: 'carousels/semana-19-05/para-subir/4-JUEVES-22',    date: '2026-05-22', hour: 8,  label: 'Jue 22/05 — Historia Camila (IA + freelance)' },
-  { folder: 'carousels/semana-19-05/para-subir/5-VIERNES-23',   date: '2026-05-23', hour: 8,  label: 'Vie 23/05 — Tu criterio + IA' },
-  { folder: 'carousels/semana-19-05/para-subir/6-SABADO-24',    date: '2026-05-24', hour: 8,  label: 'Sáb 24/05 — La IA no te reemplaza' },
-  { folder: 'carousels/semana-19-05/para-subir/7-DOMINGO-25',   date: '2026-05-25', hour: 8,  label: 'Dom 25/05 — 5 señales IA en LATAM' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/1-LUNES-19',     date: '2026-05-19', hour: 8,  label: 'Lun 19/05 — 5 herramientas de IA' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/2-MARTES-20',    date: '2026-05-20', hour: 8,  label: 'Mar 20/05 — 3 horas que perdés sin IA' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/3-MIERCOLES-21', date: '2026-05-21', hour: 8,  label: 'Mié 21/05 — NotebookLM para entrevistas' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/4-JUEVES-22',    date: '2026-05-22', hour: 8,  label: 'Jue 22/05 — Historia Camila (IA + freelance)' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/5-VIERNES-23',   date: '2026-05-23', hour: 8,  label: 'Vie 23/05 — Tu criterio + IA' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/6-SABADO-24',    date: '2026-05-24', hour: 8,  label: 'Sáb 24/05 — La IA no te reemplaza' },
+  { folder: 'contenido/carousels/publicados/semana-19-05/para-subir/7-DOMINGO-25',   date: '2026-05-25', hour: 8,  label: 'Dom 25/05 — 5 señales IA en LATAM' },
 
   // S3 — "Otros ya lo están haciendo"
-  { folder: 'carousels/semana-26-05/para-subir/1-LUNES-26',     date: '2026-05-26', hour: 8,  label: 'Lun 26/05 — Primer producto en 30 días' },
-  { folder: 'carousels/semana-26-05/para-subir/2-MARTES-27',    date: '2026-05-27', hour: 8,  label: 'Mar 27/05 — Cada mes que esperás' },
-  { folder: 'carousels/semana-26-05/para-subir/3-MIERCOLES-28', date: '2026-05-28', hour: 8,  label: 'Mié 28/05 — 5 formatos que generan ingresos' },
-  { folder: 'carousels/semana-26-05/para-subir/4-JUEVES-29',    date: '2026-05-29', hour: 8,  label: 'Jue 29/05 — Historia Roberto (Ecuador)' },
-  { folder: 'carousels/semana-26-05/para-subir/5-VIERNES-30',   date: '2026-05-30', hour: 8,  label: 'Vie 30/05 — 3 modelos de ingreso' },
-  { folder: 'carousels/semana-26-05/para-subir/6-SABADO-31',    date: '2026-05-31', hour: 8,  label: 'Sáb 31/05 — El freelance no es plan B' },
-  { folder: 'carousels/semana-26-05/para-subir/7-DOMINGO-01jun',date: '2026-06-01', hour: 8,  label: 'Dom 1/06 — Periodismo independiente LATAM' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/1-LUNES-26',     date: '2026-05-26', hour: 8,  label: 'Lun 26/05 — Primer producto en 30 días' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/2-MARTES-27',    date: '2026-05-27', hour: 8,  label: 'Mar 27/05 — Cada mes que esperás' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/3-MIERCOLES-28', date: '2026-05-28', hour: 8,  label: 'Mié 28/05 — 5 formatos que generan ingresos' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/4-JUEVES-29',    date: '2026-05-29', hour: 8,  label: 'Jue 29/05 — Historia Roberto (Ecuador)' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/5-VIERNES-30',   date: '2026-05-30', hour: 8,  label: 'Vie 30/05 — 3 modelos de ingreso' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/6-SABADO-31',    date: '2026-05-31', hour: 8,  label: 'Sáb 31/05 — El freelance no es plan B' },
+  { folder: 'contenido/carousels/publicados/semana-26-05/para-subir/7-DOMINGO-01jun',date: '2026-06-01', hour: 8,  label: 'Dom 1/06 — Periodismo independiente LATAM' },
 
   // S4 — "Es tu momento" (conversión)
-  { folder: 'carousels/semana-02-06/para-subir/1-LUNES-02',     date: '2026-06-02', hour: 8,  label: 'Lun 2/06 — Qué incluye el Sistema' },
-  { folder: 'carousels/semana-02-06/para-subir/2-MARTES-03',    date: '2026-06-03', hour: 8,  label: 'Mar 3/06 — $10 ¿cuánto cuesta no tenerlo?' },
-  { folder: 'carousels/semana-02-06/para-subir/3-MIERCOLES-04', date: '2026-06-04', hour: 8,  label: 'Mié 4/06 — Primera semana en el Sistema' },
-  { folder: 'carousels/semana-02-06/para-subir/4-JUEVES-05',    date: '2026-06-05', hour: 8,  label: 'Jue 5/06 — Testimonios Diego, Marcela, Fernando' },
-  { folder: 'carousels/semana-02-06/para-subir/5-VIERNES-06',   date: '2026-06-06', hour: 8,  label: 'Vie 6/06 — Oferta final' },
-  { folder: 'carousels/semana-02-06/para-subir/6-SABADO-07',    date: '2026-06-07', hour: 8,  label: 'Sáb 7/06 — Lo que construiste merece ser cobrado' },
-  { folder: 'carousels/semana-02-06/para-subir/7-DOMINGO-08',   date: '2026-06-08', hour: 8,  label: 'Dom 8/06 — Una decisión' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/1-LUNES-02',     date: '2026-06-02', hour: 8,  label: 'Lun 2/06 — Qué incluye el Sistema' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/2-MARTES-03',    date: '2026-06-03', hour: 8,  label: 'Mar 3/06 — $10 ¿cuánto cuesta no tenerlo?' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/3-MIERCOLES-04', date: '2026-06-04', hour: 8,  label: 'Mié 4/06 — Primera semana en el Sistema' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/4-JUEVES-05',    date: '2026-06-05', hour: 8,  label: 'Jue 5/06 — Testimonios Diego, Marcela, Fernando' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/5-VIERNES-06',   date: '2026-06-06', hour: 8,  label: 'Vie 6/06 — Oferta final' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/6-SABADO-07',    date: '2026-06-07', hour: 8,  label: 'Sáb 7/06 — Lo que construiste merece ser cobrado' },
+  { folder: 'contenido/carousels/publicados/semana-02-06/para-subir/7-DOMINGO-08',   date: '2026-06-08', hour: 8,  label: 'Dom 8/06 — Una decisión' },
 ]
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -162,8 +162,8 @@ console.log(`🔴 Errores                : ${errors.length}`)
 
 if (skip.length > 0) {
   console.log('\n⚠️  Para los posts sin imágenes (carruseles), corré primero:')
-  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/semana-19-05')
-  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/semana-26-05')
-  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/semana-02-06')
+  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/publicados/semana-19-05')
+  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/publicados/semana-26-05')
+  console.log('   node scripts/exportar/export-slides-auto.mjs carousels/publicados/semana-02-06')
   console.log('   Y luego volvé a correr: node scripts/programar/schedule-mes.mjs')
 }

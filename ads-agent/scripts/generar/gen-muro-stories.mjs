@@ -13,7 +13,7 @@
 import { writeFileSync, mkdirSync } from 'fs'
 import { join, resolve } from 'path'
 
-const OUT = 'carousels/muro-stories'
+const OUT = 'contenido/carousels/muro-stories'
 
 const HEAD = (title) => `<!DOCTYPE html>
 <html lang="es">

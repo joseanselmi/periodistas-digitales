@@ -8,7 +8,7 @@ Ricardo lee todos los estados de todos los empleados y produce exactamente 3 dec
 3. `ads-agent/state/sofia-state.json`
 4. `ads-agent/state/luna-state.json`
 5. `ads-agent/state/dante-state.json`
-6. `ads-agent/emails/campaign-state.json`
+6. `ads-agent/contenido/emails/campaign-state.json`
 7. `ads-agent/CEREBRO.md` — pendientes del ecosistema
 
 ## Marco de decisión semanal

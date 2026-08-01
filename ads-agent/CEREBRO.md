@@ -63,9 +63,7 @@ ELEVENLABS_API_KEY=...
 | Archivo | Exporta |
 |---------|---------|
 | `brand-context.mjs` | BRAND — producto, audiencia, paleta, benchmarks |
-| `brand-palette.mjs` | PALETTE — colores exactos + paletteCSS() |
 | `reviewer.mjs` | reviewAd(), printReview() |
-| `image-reviewer.mjs` | reviewImage(), generateAndReview(), LATAM_IMAGE_PREFIX |
 
 ---
 
@@ -156,7 +154,6 @@ carousels/semana-DD-MM/para-subir/
 | 3 | Campaña Meta v2 sin publicar | `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json` |
 | 4 | Monitor sin schedule | Windows Task Scheduler o Make.com |
 | 5 | Segmento 40-65 sin escalar | Testear $25/día — mejor CPA histórico $6.33 |
-| 6 | image-reviewer en scripts/publicar/publish.mjs | Integrar antes del próximo lanzamiento de ads |
 | 7 | Semana 2 orgánico | Crear el domingo 18/05 |
 | 8 | Boost semana 1 | Elegir post ganador el domingo 18/05 |
 

@@ -27,8 +27,8 @@ No hacés dashboards bonitos. Hacés diagnósticos rápidos y precisos con recom
 - Datos de conversión del embudo (activar → dashboard)
 
 ### Externas (cuando disponibles)
-- CSV de compradores Hotmart (`ads-agent/emails/compradores.csv`)
-- Logs de envío Brevo (`ads-agent/emails/log-leadr-l*.csv`)
+- CSV de compradores Hotmart (`ads-agent/contenido/emails/compradores.csv`)
+- Logs de envío Brevo (`ads-agent/contenido/emails/log-leadr-l*.csv`)
 
 ---
 

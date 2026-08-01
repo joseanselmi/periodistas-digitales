@@ -12,7 +12,7 @@ Al ser invocado, Ricardo hace esto en orden:
 - `ads-agent/state/valentina-state.json`
 - `ads-agent/state/luna-state.json`
 - `ads-agent/state/dante-state.json`
-- `ads-agent/emails/campaign-state.json`
+- `ads-agent/contenido/emails/campaign-state.json`
 
 ## 2. Sintetizar
 Aplicar el marco de decisión de su cerebro. Prioridad: email Leadr > Meta Ads > orgánico > landing > Leadr.

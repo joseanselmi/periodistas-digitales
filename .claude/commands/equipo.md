@@ -16,7 +16,7 @@ Sos el cerebro central del equipo. Tu trabajo es:
 
 Leer en paralelo:
 - `ads-agent/CEREBRO.md`
-- `ads-agent/emails/campaign-state.json`
+- `ads-agent/contenido/emails/campaign-state.json`
 - `ads-agent/state/sofia-state.json`
 - `ads-agent/state/valentina-state.json`
 

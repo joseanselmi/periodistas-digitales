@@ -87,7 +87,7 @@ const promptBox = (title, text) => `<div class="prompt-box"><div class="ptitle">
 // ═══════════════════════ CARRUSELES ═══════════════════════════════════════════
 const CAROUSELS = [
   // ── Aug 2 (Dom) — tendencia ──────────────────────────────────────────────
-  { folder: 'carousels/agosto-s1', file: 'domingo-tendencias.html', title: '6 señales — Domingo 02/08',
+  { folder: 'contenido/carousels/agosto-s1', file: 'domingo-tendencias.html', title: '6 señales — Domingo 02/08',
     slides: [
       { label: 'Panorama', body: `<h1>6 señales<br>del periodismo<br><span class="accent">en agosto</span></h1><p class="lead">Lo que se está moviendo en LATAM este mes. Sin venderte nada — solo para que leas mejor el terreno.</p>` },
       { label: 'Señal 01', body: `<h2>Los anunciantes<br>miran distinto</h2><div class="divider"></div><p>Cada vez más negocios locales desconfían de pautar en las grandes plataformas: caro, frío, sin control. Buscan medios cercanos, de confianza, con audiencia real.</p><p><strong>Un medio chico y local tiene algo que Meta no puede ofrecer: contexto.</strong></p>` },
@@ -101,7 +101,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 3 (Lun) — educativo: prompt temas locales ────────────────────────
-  { folder: 'carousels/agosto-s2', file: 'lunes-temas-locales.html', title: 'Temas locales — Lunes 03/08',
+  { folder: 'contenido/carousels/agosto-s2', file: 'lunes-temas-locales.html', title: 'Temas locales — Lunes 03/08',
     slides: [
       { label: 'Tip de IA', body: `<h1>10 temas que<br>nadie en tu zona<br><span class="accent">está cubriendo</span></h1><p class="lead">Los huecos que dejan los medios grandes son tu oportunidad. Hoy, el prompt para encontrarlos.</p>` },
       { label: 'El problema', body: `<h2>Todos cubren<br>lo mismo</h2><div class="divider"></div><p>Los medios grandes van por las mismas noticias nacionales. Mientras tanto, en tu ciudad hay temas que la gente busca y nadie responde bien.</p><p><strong>Ahí, donde no hay oferta, está tu audiencia.</strong></p>` },
@@ -112,7 +112,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 5 (Mié) — tip: primer anunciante local ───────────────────────────
-  { folder: 'carousels/agosto-s2', file: 'miercoles-anunciante.html', title: 'Primer anunciante — Miércoles 05/08',
+  { folder: 'contenido/carousels/agosto-s2', file: 'miercoles-anunciante.html', title: 'Primer anunciante — Miércoles 05/08',
     slides: [
       { label: 'Tip práctico', body: `<h1>Tu primer<br>anunciante está<br><span class="accent">a 10 cuadras</span></h1><p class="lead">No está en internet. Está en tu barrio. Los 3 negocios que primero le pagan a un medio local — y qué decirles.</p>` },
       { label: 'Por qué ellos', body: `<h2>El negocio local<br>necesita lo<br>que tenés</h2><div class="divider"></div><p>Un comercio de barrio no puede competir en Facebook Ads con las grandes marcas. Pero sí puede aparecer en el medio que lee su propia clientela.</p><p><strong>Vos tenés exactamente eso: la atención de la gente de la zona.</strong></p>` },
@@ -124,7 +124,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 7 (Vie) — VENTA: qué incluye ($27) ───────────────────────────────
-  { folder: 'carousels/agosto-s2', file: 'viernes-sistema.html', title: 'El Sistema — Viernes 07/08',
+  { folder: 'contenido/carousels/agosto-s2', file: 'viernes-sistema.html', title: 'El Sistema — Viernes 07/08',
     slides: [
       { label: 'El sistema', color: 'amber', body: `<h1>Todo en<br>un solo<br><span class="accent">lugar</span></h1><p class="lead">El método de 4 semanas que ya usaron +3.700 personas para armar un medio propio que cobra.</p>` },
       { label: 'Las 4 semanas', body: `<h2>El camino,<br>por partes</h2><div class="divider"></div>${numlist([
@@ -144,7 +144,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 9 (Dom) — tendencia: IA y búsqueda ───────────────────────────────
-  { folder: 'carousels/agosto-s2', file: 'domingo-busqueda-ia.html', title: 'IA y búsqueda — Domingo 09/08',
+  { folder: 'contenido/carousels/agosto-s2', file: 'domingo-busqueda-ia.html', title: 'IA y búsqueda — Domingo 09/08',
     slides: [
       { label: 'Panorama', body: `<h1>La IA cambió<br>cómo te<br><span class="accent">encuentran</span></h1><p class="lead">5 cambios de 2026 en cómo la gente busca información — y qué significan para un medio chico.</p>` },
       { label: 'Cambio 01', body: `<h2>Google<br>responde solo</h2><div class="divider"></div><p>Cada vez más búsquedas se resuelven sin un clic: Google muestra la respuesta arriba. El tráfico "de paso" baja.</p><p>Lo que sube en valor: <strong>la audiencia que te busca a vos por tu nombre.</strong></p>` },
@@ -158,7 +158,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 10 (Lun) — educativo: prompt titulares ───────────────────────────
-  { folder: 'carousels/agosto-s3', file: 'lunes-titulares.html', title: 'Titulares — Lunes 10/08',
+  { folder: 'contenido/carousels/agosto-s3', file: 'lunes-titulares.html', title: 'Titulares — Lunes 10/08',
     slides: [
       { label: 'Tip de IA', body: `<h1>10 titulares<br>que la gente<br><span class="accent">sí clickea</span></h1><p class="lead">El titular decide si tu nota se lee o pasa de largo. Hoy, el prompt para no quedarte con el primero que se te ocurre.</p>` },
       { label: 'La diferencia', body: `<h2>Titular ≠<br>clickbait</h2><div class="divider"></div><p>Un buen titular no engaña. Da claridad y la curiosidad justa para querer saber más. El clickbait promete y no cumple; el buen titular promete y cumple.</p><p><strong>La misma nota, con mejor titular, puede duplicar sus lecturas.</strong></p>` },
@@ -169,7 +169,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 12 (Mié) — tip: producir el doble con IA ─────────────────────────
-  { folder: 'carousels/agosto-s3', file: 'miercoles-producir-doble.html', title: 'Producir el doble — Miércoles 12/08',
+  { folder: 'contenido/carousels/agosto-s3', file: 'miercoles-producir-doble.html', title: 'Producir el doble — Miércoles 12/08',
     slides: [
       { label: 'Tip práctico', body: `<h1>El doble de<br>contenido, sin<br><span class="accent">el doble de horas</span></h1><p class="lead">No es que la IA escriba por vos. Es que haga las partes lentas para que vos hagas lo que solo vos podés hacer.</p>` },
       { label: 'Uso 01', body: `<h2>Investigación<br>previa</h2><div class="divider"></div><p>Antes de escribir, pedile que te resuma el contexto de un tema, te liste fuentes o arme un cuestionario para una entrevista. Lo que te tomaba una hora, en 5 minutos.</p><p><strong>El criterio de qué usar sigue siendo tuyo.</strong></p>` },
@@ -180,7 +180,7 @@ const CAROUSELS = [
     ] },
 
   // ── Aug 14 (Vie) — VENTA: "¿y si no soy de tecnología?" ($27) ─────────────
-  { folder: 'carousels/agosto-s3', file: 'viernes-sin-tecnologia.html', title: 'Sin tecnología — Viernes 14/08',
+  { folder: 'contenido/carousels/agosto-s3', file: 'viernes-sin-tecnologia.html', title: 'Sin tecnología — Viernes 14/08',
     slides: [
       { label: 'Para vos', color: 'amber', body: `<h1>"¿Y si no soy<br>de <span class="accent">tecnología?"</span></h1><p class="lead">Es la duda que frena a la mayoría de los periodistas. Hoy la respondemos de frente.</p>` },
       { label: 'La verdad', body: `<h2>Está hecho<br>para<br>periodistas</h2><div class="divider"></div><p>No para programadores. El sistema asume que no sabés nada técnico y te lleva paso a paso.</p><p><strong>Si sabés escribir un mail y usar WhatsApp, tenés todo lo que hace falta para empezar.</strong></p>` },
@@ -200,7 +200,7 @@ const CAROUSELS = [
 // key = "folder|subdir"
 const CAPTIONS = {
   // ── agosto-s1 (finde) ──
-  'carousels/agosto-s1|6-SABADO': `Empieza agosto. Y con cada mes nuevo vuelve la misma frase silenciosa: "el mes que viene sí".
+  'contenido/carousels/agosto-s1|6-SABADO': `Empieza agosto. Y con cada mes nuevo vuelve la misma frase silenciosa: "el mes que viene sí".
 
 El mes que viene sí voy a armar algo propio. El mes que viene sí me pongo con eso que vengo posponiendo. El mes que viene, cuando esté menos ocupado.
 
@@ -214,7 +214,7 @@ Agosto no va a ser distinto porque el calendario cambió de número. Va a ser di
 
 #PeriodismoDigital #Reflexion #PeriodistasLatam`,
 
-  'carousels/agosto-s1|7-DOMINGO': `Arranca agosto y esto es lo que se está moviendo en el periodismo digital de LATAM, sin venderte nada.
+  'contenido/carousels/agosto-s1|7-DOMINGO': `Arranca agosto y esto es lo que se está moviendo en el periodismo digital de LATAM, sin venderte nada.
 
 Anunciantes locales que ya no quieren pautar en las grandes plataformas y buscan medios de confianza. IA que dejó de ser tabú en las redacciones. Newsletters propias que crecen mientras los grandes recortan.
 
@@ -223,7 +223,7 @@ Un resumen de 6 señales para leer el mes que empieza.
 ¿Cuál de estas ves en tu país? 👇`,
 
   // ── agosto-s2 (Lun 3 → Dom 9) ──
-  'carousels/agosto-s2|1-LUNES': `El prompt que te da 10 temas locales que nadie en tu zona está cubriendo.
+  'contenido/carousels/agosto-s2|1-LUNES': `El prompt que te da 10 temas locales que nadie en tu zona está cubriendo.
 
 Los medios grandes cubren lo mismo de siempre. Los huecos —los temas que la gente de tu ciudad busca y nadie responde— son tu oportunidad.
 
@@ -233,7 +233,7 @@ Copialo del slide 4.
 
 ¿Sobre qué tema local arrancarías? 👇`,
 
-  'carousels/agosto-s2|2-MARTES': `Te rebotaron la nota. Otra vez.
+  'contenido/carousels/agosto-s2|2-MARTES': `Te rebotaron la nota. Otra vez.
 
 No porque estuviera mal escrita. Estaba bien. La rebotaron porque "no entra en la línea", porque "ahora no es el momento", porque el que decide no la vio igual que vos.
 
@@ -249,7 +249,7 @@ No se trata de irte dando un portazo. Se trata de no tener un solo lugar donde t
 
 #PeriodismoDigital #PeriodistasLatam #MedioPropio`,
 
-  'carousels/agosto-s2|3-MIERCOLES': `Tu primer anunciante local no está en internet. Está a 10 cuadras de tu casa.
+  'contenido/carousels/agosto-s2|3-MIERCOLES': `Tu primer anunciante local no está en internet. Está a 10 cuadras de tu casa.
 
 La mayoría de los periodistas que arrancan un medio propio se traban en lo mismo: "¿y quién me va a pagar publicidad?". La respuesta es más cercana de lo que pensás.
 
@@ -257,7 +257,7 @@ En este carrusel: los 3 tipos de negocios que primero le pagan a un medio local,
 
 ¿Cuál de estos tenés cerca? 👇`,
 
-  'carousels/agosto-s2|4-JUEVES': `Tres periodistas. Tres primeros cobros en julio. Tres ciudades.
+  'contenido/carousels/agosto-s2|4-JUEVES': `Tres periodistas. Tres primeros cobros en julio. Tres ciudades.
 
 Esteban, Rosario.
 Cubría deportes para una radio AM. En julio armó un newsletter sobre el ascenso del fútbol argentino. La semana pasada una casa de indumentaria deportiva del barrio le pagó su primera pauta mensual.
@@ -276,7 +276,7 @@ Empezaron sin saber si iba a funcionar. Cobraron sin haberlo hecho nunca antes.
 
 #PeriodismoDigital #IngresosPropios #PeriodistasLatam`,
 
-  'carousels/agosto-s2|5-VIERNES': `Todo lo que necesitás para armar tu primera fuente de ingresos propia. En un solo lugar.
+  'contenido/carousels/agosto-s2|5-VIERNES': `Todo lo que necesitás para armar tu primera fuente de ingresos propia. En un solo lugar.
 
 El Sistema de Ingresos Diarios: el método de 4 semanas que ya usaron +3.700 personas para pasar de "algún día" a un medio propio que cobra.
 
@@ -286,7 +286,7 @@ Hoy, $27 USD. Acceso inmediato y 7 días de garantía. Link en bio.
 
 #PeriodismoDigital #IngresosPropios #PeriodistasLatam`,
 
-  'carousels/agosto-s2|6-SABADO': `Hay una diferencia enorme entre "saber hacer algo" y "cobrar por hacerlo".
+  'contenido/carousels/agosto-s2|6-SABADO': `Hay una diferencia enorme entre "saber hacer algo" y "cobrar por hacerlo".
 
 La mayoría de los periodistas sabe hacer un montón de cosas: escribir, investigar, editar, contar, verificar. Habilidades que tardaron años en afilar.
 
@@ -300,7 +300,7 @@ No es venderte. Es dejar de depender de que otro decida cuánto vale tu trabajo.
 
 #PeriodismoDigital #Reflexion #PeriodistasLatam`,
 
-  'carousels/agosto-s2|7-DOMINGO': `La IA cambió cómo se busca información este año. Y eso cambia dónde te encuentra tu audiencia.
+  'contenido/carousels/agosto-s2|7-DOMINGO': `La IA cambió cómo se busca información este año. Y eso cambia dónde te encuentra tu audiencia.
 
 Google mostrando respuestas sin clics. Buscadores con IA. Gente preguntándole a ChatGPT lo que antes buscaba en un diario.
 
@@ -309,7 +309,7 @@ En este carrusel: 5 cambios concretos de 2026 y qué significan para un medio di
 ¿Ya notaste alguno de estos en tus lectores? 👇`,
 
   // ── agosto-s3 (Lun 10 → Sáb 15) ──
-  'carousels/agosto-s3|1-LUNES': `El prompt para escribir 10 titulares que la gente sí quiere clickear.
+  'contenido/carousels/agosto-s3|1-LUNES': `El prompt para escribir 10 titulares que la gente sí quiere clickear.
 
 Un buen titular no es clickbait. Es claridad + curiosidad justa. La diferencia entre una nota que se lee y una que pasa de largo, muchas veces, es solo el titular.
 
@@ -319,7 +319,7 @@ Copialo del slide 4.
 
 ¿Cuál es el peor titular que pusiste alguna vez? 😅 Contanos abajo.`,
 
-  'carousels/agosto-s3|2-MARTES': `"Cuando me jubile / cuando cierre / cuando me echen, ahí veo qué hago."
+  'contenido/carousels/agosto-s3|2-MARTES': `"Cuando me jubile / cuando cierre / cuando me echen, ahí veo qué hago."
 
 Es el plan de carrera más común entre periodistas de más de 40. Y el más peligroso.
 
@@ -335,7 +335,7 @@ Nadie construye bien con el agua al cuello.
 
 #PeriodismoDigital #PeriodistasLatam #FuturoDelTrabajo`,
 
-  'carousels/agosto-s3|3-MIERCOLES': `Cómo producir el doble de contenido sin pasar el doble de horas frente a la pantalla.
+  'contenido/carousels/agosto-s3|3-MIERCOLES': `Cómo producir el doble de contenido sin pasar el doble de horas frente a la pantalla.
 
 No se trata de que la IA escriba por vos. Se trata de que haga las partes lentas —las que te comen tiempo pero no aportan tu criterio— para que vos hagas lo que solo vos podés hacer.
 
@@ -343,7 +343,7 @@ No se trata de que la IA escriba por vos. Se trata de que haga las partes lentas
 
 ¿En cuál de estas tres perdés más tiempo hoy? 👇`,
 
-  'carousels/agosto-s3|4-JUEVES': `Le pregunté a una periodista qué fue lo que más la sorprendió de armar su medio propio. Su respuesta no tuvo nada que ver con la plata.
+  'contenido/carousels/agosto-s3|4-JUEVES': `Le pregunté a una periodista qué fue lo que más la sorprendió de armar su medio propio. Su respuesta no tuvo nada que ver con la plata.
 
 Se llama Paola, tiene 47 años, y hace ocho meses abrió un espacio digital sobre educación en Bogotá después de veinte años en un diario.
 
@@ -361,7 +361,7 @@ El ingreso extra fue la consecuencia. Lo que recuperó fue algo que había perdi
 
 #PeriodismoDigital #PeriodistasLatam #IngresosPropios`,
 
-  'carousels/agosto-s3|5-VIERNES': `"¿Y si no soy de tecnología?" Es la duda que frena a la mayoría. Hoy la respondemos.
+  'contenido/carousels/agosto-s3|5-VIERNES': `"¿Y si no soy de tecnología?" Es la duda que frena a la mayoría. Hoy la respondemos.
 
 El Sistema de Ingresos Diarios está pensado para periodistas, no para programadores. Paso a paso, sin dar por sentado que sabés nada técnico. Si sabés escribir un mail, podés seguirlo.
 
@@ -371,7 +371,7 @@ Valor real $227. Hoy, $27 USD. Link en bio.
 
 #PeriodismoDigital #IngresosPropios #PeriodistasLatam`,
 
-  'carousels/agosto-s3|6-SABADO': `Pasó la mitad de agosto. Buen momento para una pregunta incómoda: ¿en qué cambió tu situación laboral en lo que va del año?
+  'contenido/carousels/agosto-s3|6-SABADO': `Pasó la mitad de agosto. Buen momento para una pregunta incómoda: ¿en qué cambió tu situación laboral en lo que va del año?
 
 No es para hacerte sentir mal. Es para medir con honestidad.
 

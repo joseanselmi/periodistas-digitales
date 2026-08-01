@@ -3,9 +3,9 @@
  * Soporta: texto puro, imagen única, carrusel (múltiples imágenes)
  *
  * Uso:
- *   node scripts/publicar/post-facebook.mjs carousels/semana-12-05/para-subir/1-LUNES
- *   node scripts/publicar/post-facebook.mjs carousels/semana-12-05/para-subir/1-LUNES --schedule "2026-05-12 08:00"
- *   node scripts/publicar/post-facebook.mjs carousels/semana-12-05/para-subir/2-MARTES --text-only
+ *   node scripts/publicar/post-facebook.mjs carousels/publicados/semana-12-05/para-subir/1-LUNES
+ *   node scripts/publicar/post-facebook.mjs carousels/publicados/semana-12-05/para-subir/1-LUNES --schedule "2026-05-12 08:00"
+ *   node scripts/publicar/post-facebook.mjs carousels/publicados/semana-12-05/para-subir/2-MARTES --text-only
  *
  * Variables: FB_PAGE_TOKEN, FB_PAGE_ID
  */

@@ -1,7 +1,7 @@
 /**
  * export-slides.mjs — Exporta cada carrusel como carpeta lista para subir a Facebook
  * Estructura: LUNES-prompt-maestro / slide-01.jpg + pie-de-foto.txt
- * Uso: node scripts/exportar/export-slides.mjs carousels/semana-12-05
+ * Uso: node scripts/exportar/export-slides.mjs carousels/publicados/semana-12-05
  */
 
 import puppeteer from 'puppeteer'
@@ -55,7 +55,7 @@ const DAY_PREFIX = {
   'domingo-google-noticias':   '7-DOMINGO',
 }
 
-const folder    = process.argv[2] || 'carousels/semana-12-05'
+const folder    = process.argv[2] || 'contenido/carousels/publicados/semana-12-05'
 const absFolder = resolve(folder)
 const outRoot   = join(absFolder, 'para-subir')
 mkdirSync(outRoot, { recursive: true })

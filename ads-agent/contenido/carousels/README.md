@@ -29,4 +29,4 @@ node ../scripts/exportar/export-slides.mjs           # HTML → slide-01.jpg, sl
 - Revisar **legibilidad** antes de publicar (contraste, tamaño de texto): es un
   problema recurrente en placas de Facebook.
 - El arco semanal y el calendario de publicación están en
-  [ESTRATEGIA-ORGANICO.md](../docs/ESTRATEGIA-ORGANICO.md).
+  [ESTRATEGIA-ORGANICO.md](../../docs/ESTRATEGIA-ORGANICO.md).

@@ -23,15 +23,15 @@ function toUnix(dateStr, hour = 8) {
 }
 
 const POSTS = [
-  { folder: 'carousels/semana-20-07/para-subir/4-JUEVES',    date: '2026-07-23', hour: 8, label: 'Jue 23/07 — Caso Marta Villalba' },
-  { folder: 'carousels/semana-20-07/para-subir/5-VIERNES',   date: '2026-07-24', hour: 8, label: 'Vie 24/07 — Garantía 7 días (venta)' },
-  { folder: 'carousels/semana-20-07/para-subir/6-SABADO',    date: '2026-07-25', hour: 8, label: 'Sáb 25/07 — Costo de no intentarlo' },
-  { folder: 'carousels/semana-20-07/para-subir/7-DOMINGO',   date: '2026-07-26', hour: 8, label: 'Dom 26/07 — Balance LATAM 2026' },
-  { folder: 'carousels/semana-27-07/para-subir/1-LUNES',     date: '2026-07-27', hour: 8, label: 'Lun 27/07 — Media kit' },
-  { folder: 'carousels/semana-27-07/para-subir/2-MARTES',    date: '2026-07-28', hour: 8, label: 'Mar 28/07 — Lo que te propusiste' },
-  { folder: 'carousels/semana-27-07/para-subir/3-MIERCOLES', date: '2026-07-29', hour: 8, label: 'Mié 29/07 — Primer precio' },
-  { folder: 'carousels/semana-27-07/para-subir/4-JUEVES',    date: '2026-07-30', hour: 8, label: 'Jue 30/07 — Mosaico 3 historias' },
-  { folder: 'carousels/semana-27-07/para-subir/5-VIERNES',   date: '2026-07-31', hour: 8, label: 'Vie 31/07 — Cierre de julio (venta)' },
+  { folder: 'contenido/carousels/publicados/semana-20-07/para-subir/4-JUEVES',    date: '2026-07-23', hour: 8, label: 'Jue 23/07 — Caso Marta Villalba' },
+  { folder: 'contenido/carousels/publicados/semana-20-07/para-subir/5-VIERNES',   date: '2026-07-24', hour: 8, label: 'Vie 24/07 — Garantía 7 días (venta)' },
+  { folder: 'contenido/carousels/publicados/semana-20-07/para-subir/6-SABADO',    date: '2026-07-25', hour: 8, label: 'Sáb 25/07 — Costo de no intentarlo' },
+  { folder: 'contenido/carousels/publicados/semana-20-07/para-subir/7-DOMINGO',   date: '2026-07-26', hour: 8, label: 'Dom 26/07 — Balance LATAM 2026' },
+  { folder: 'contenido/carousels/publicados/semana-27-07/para-subir/1-LUNES',     date: '2026-07-27', hour: 8, label: 'Lun 27/07 — Media kit' },
+  { folder: 'contenido/carousels/publicados/semana-27-07/para-subir/2-MARTES',    date: '2026-07-28', hour: 8, label: 'Mar 28/07 — Lo que te propusiste' },
+  { folder: 'contenido/carousels/publicados/semana-27-07/para-subir/3-MIERCOLES', date: '2026-07-29', hour: 8, label: 'Mié 29/07 — Primer precio' },
+  { folder: 'contenido/carousels/publicados/semana-27-07/para-subir/4-JUEVES',    date: '2026-07-30', hour: 8, label: 'Jue 30/07 — Mosaico 3 historias' },
+  { folder: 'contenido/carousels/publicados/semana-27-07/para-subir/5-VIERNES',   date: '2026-07-31', hour: 8, label: 'Vie 31/07 — Cierre de julio (venta)' },
 ]
 
 async function uploadPhoto(imagePath) {

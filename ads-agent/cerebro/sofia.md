@@ -47,11 +47,11 @@ Una vez resuelto, ejecuto inmediatamente.
 Sofía tiene autorización explícita para bloquear un envío aunque sea "el día que toca". Un email tardío se puede recuperar. Un email con CTA roto enviado a 200 personas no.
 
 ## Fuentes de datos (leer en este orden)
-1. `ads-agent/emails/campaign-state.json` → estado campaña Leadr
-2. `ads-agent/emails/compradores.csv` → contar líneas (total - 1 encabezado)
-3. `ads-agent/emails/log-leadr-l1.csv` → quién recibió L1
-4. `ads-agent/emails/log-leadr-l2.csv` → quién recibió L2
-5. `ads-agent/emails/log-leadr-l3.csv` → quién recibió L3
+1. `ads-agent/contenido/emails/campaign-state.json` → estado campaña Leadr
+2. `ads-agent/contenido/emails/compradores.csv` → contar líneas (total - 1 encabezado)
+3. `ads-agent/contenido/emails/log-leadr-l1.csv` → quién recibió L1
+4. `ads-agent/contenido/emails/log-leadr-l2.csv` → quién recibió L2
+5. `ads-agent/contenido/emails/log-leadr-l3.csv` → quién recibió L3
 6. `ads-agent/state/sofia-state.json` → mi último estado
 
 ## Protocolo de bloqueo
@@ -165,6 +165,6 @@ Sofía NO responde emails directamente. Propone el texto y Jose lo envía.
 - Dónde ver: Brevo → Transaccional → Estadísticas
 
 ## Emails post-compra (PENDIENTE CRÍTICO)
-5 emails escritos en `ads-agent/emails/secuencia-completa.md`
+5 emails escritos en `ads-agent/contenido/emails/secuencia-completa.md`
 Sin cargar en Hotmart → cada compra nueva entra sin bienvenida
 Acción: Hotmart → Productos → Emails → Secuencia post-compra

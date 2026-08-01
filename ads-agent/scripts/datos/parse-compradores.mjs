@@ -6,7 +6,7 @@
  *
  * Soporta ambos formatos de export de Hotmart (histórico y alternativo).
  * Filtra solo compras "Completo". Deduplica por email.
- * Genera: ads-agent/emails/compradores.csv
+ * Genera: ads-agent/contenido/emails/compradores.csv
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
@@ -89,7 +89,7 @@ for (const archivo of archivos) {
 // Guardar compradores.csv
 mkdirSync('emails', { recursive: true })
 const csv = 'email,nombre\n' + listado.map(c => `${c.email},${c.nombre}`).join('\n')
-writeFileSync('emails/compradores.csv', csv, 'utf-8')
+writeFileSync('contenido/emails/compradores.csv', csv, 'utf-8')
 
 console.log(`\n📋 Total únicos: ${listado.length}`)
 console.log(`   Guardado en: emails/compradores.csv`)
