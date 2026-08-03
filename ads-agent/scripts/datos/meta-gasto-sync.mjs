@@ -46,6 +46,27 @@ const DIAS = process.argv.includes('--dias') ? Number(process.argv[process.argv.
 if (!TOKEN) { console.error('❌ Falta META_ACCESS_TOKEN'); process.exit(1) }
 if (!DRY && (!SB_URL || !SB_KEY)) { console.error('❌ Faltan las claves de Supabase (o usá --dry)'); process.exit(1) }
 
+// La URL y la clave se juntan de archivos distintos: `ads-agent/.env.local` tiene la URL
+// de periodistas-marketing pero no su clave, así que el bucle de arriba sigue buscando y
+// termina tomando la de `Leadr/app/.env.local` — que es de OTRO proyecto de Supabase.
+// El resultado era un `401 Invalid API key` a mitad de camino, después de bajar todo de
+// Meta, sin ninguna pista de que el problema fuera de qué archivo salió cada mitad.
+// El JWT de Supabase lleva adentro el `ref` del proyecto: si no coincide con la URL, se
+// avisa acá y no se escribe nada. Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md.
+if (!DRY) {
+  const refUrl = SB_URL.replace(/^https?:\/\//, '').split('.')[0]
+  let refKey = null
+  try { refKey = JSON.parse(Buffer.from(SB_KEY.split('.')[1], 'base64').toString()).ref } catch { /* no es un JWT */ }
+  if (refKey && refUrl && refKey !== refUrl) {
+    console.error(`❌ La clave de Supabase no es de este proyecto.`)
+    console.error(`   URL   → ${refUrl}`)
+    console.error(`   clave → ${refKey}`)
+    console.error(`   Poné la service_role de ${refUrl} en ads-agent/.env.local como`)
+    console.error(`   MARKETING_SUPABASE_SERVICE_ROLE_KEY, o corré con --dry para solo mirar.`)
+    process.exit(1)
+  }
+}
+
 const dia = (d) => d.toISOString().slice(0, 10)
 const desde = dia(new Date(Date.now() - DIAS * 86400e3))
 const hasta = dia(new Date())

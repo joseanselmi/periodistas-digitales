@@ -39,6 +39,7 @@ const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = re
 const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
 const { runMetaDailySync } = require('./_lib/meta-daily-sync');
+const { runMetaGastoSync } = require('./_lib/meta-gasto-sync');
 const { runSyncEstados } = require('./_lib/sync-estados');
 const { runVersionesSync } = require('./_lib/versiones-sync');
 const { publicarStoryDelDia } = require('./_lib/story-diaria');
@@ -319,6 +320,15 @@ module.exports = async (req, res) => {
         console.log(JSON.stringify({ type: 'meta_daily_sync', ...metaDia }));
       } catch (e) {
         console.error('meta-daily-sync (no frena la recuperación):', e.message);
+      }
+      // Gasto de Meta POR DÍA y por CAMPAÑA → meta_gasto_diario, la cuenta ENTERA (tenga
+      // ficha o no). Es lo que muestra el panel de campañas de Leadr. Antes se corría a
+      // mano y quedaba viejo sin avisar: el 02/08 el panel decía $0,52 y eran $1,86.
+      try {
+        const metaGasto = await runMetaGastoSync();
+        console.log(JSON.stringify({ type: 'meta_gasto_sync', ...metaGasto }));
+      } catch (e) {
+        console.error('meta-gasto-sync (no frena la recuperación):', e.message);
       }
       // Estado de los agentes → agentes_estado (para que el Panel de Comando de la nube
       // los lea por MCP; la nube no puede clonar el repo). Best-effort. Tarjeta #32.

@@ -1,6 +1,6 @@
 # Trello Manager — reglas permanentes de gestión del tablero
 
-Este documento define cómo se gestiona el tablero "Roadmap Periodistas Digitales" (id `6a35bf86f4bbebc72953200f`). No es un empleado con personalidad como Mateo o Sofía — es el conjunto de reglas que **cualquier sesión de Claude debe aplicar siempre** que toque Trello, sin que Jose tenga que pedirlo cada vez. Jose no es técnico: estas reglas existen para que el tablero quede consistente sin que él tenga que supervisar la estructura.
+Este documento define cómo se gestiona el tablero "Roadmap Periodistas Digitales" (id `6a35bf86f4bbebc72953200f`). No es un empleado con personalidad como Ricardo o Sofía — es el conjunto de reglas que **cualquier sesión de Claude debe aplicar siempre** que toque Trello, sin que Jose tenga que pedirlo cada vez. Jose no es técnico: estas reglas existen para que el tablero quede consistente sin que él tenga que supervisar la estructura.
 
 ## Regla 1 — Toda tarjeta activa necesita un checklist con pasos concretos
 
@@ -22,7 +22,9 @@ No confiar ciegamente en lo que dice la tarjeta — puede estar desactualizada. 
 
 ## Regla 4 — Label por agente
 
-Cada tarjeta lleva el label del empleado/agente dueño de la tarea (Ricardo, Dante, Valentina, Mateo, Sofía, Luna, Max, Director, Bruno, Nicolás, Valeria, Miguel, Clara). Si una tarea no es claramente de un empleado (ej. infraestructura de datos cross-producto), usar el que más se acerque por función (ej. Bruno para temas de datos/analytics) en vez de dejarla sin label.
+Cada tarjeta lleva el label del agente dueño de la tarea. **Los labels que se usan hoy son nueve:** Ricardo, Dante, Sofía, Valentina, Luna, Bruno, Director, Miguel y Clara — la lista completa del equipo está en [`README.md`](README.md) de esta misma carpeta. Si una tarea no es claramente de un agente (ej. infraestructura de datos cross-producto), usar el que más se acerque por función (ej. Bruno para temas de datos/analytics) en vez de dejarla sin label.
+
+**Labels huérfanos (no usar).** Hasta el 2026-08-01 esta lista tenía trece nombres: sumaba **Mateo, Max, Nicolás y Valeria**, que ese día se dieron de baja del equipo (el detalle de por qué está en [`README.md`](README.md)). Esos cuatro labels **siguen existiendo en el tablero** porque borrarlos desde acá no se puede: hay que hacerlo a mano en Trello, y borrar un label lo saca de todas las tarjetas viejas que lo tenían, con lo cual se pierde el registro de quién hizo qué. Así que quedan ahí, huérfanos: **no asignarlos a ninguna tarjeta nueva.** Lo que era de Mateo va a Dante (números) o queda para Jose; lo que era de Nicolás, Valeria o Max ahora lo cubre la skill `revisar-codigo-leadr` y no necesita label de persona.
 
 ## Regla 5 — Tarjetas nuevas al cerrar una sesión de trabajo
 

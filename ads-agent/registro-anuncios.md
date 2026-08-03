@@ -1,8 +1,11 @@
 # 📒 Registro de Anuncios — Sistema de Ingresos Diarios (curso)
 
 Log vivo de cada anuncio: **qué probamos, por qué, cómo salió y qué decidimos.**
-Lo lee y escribe Mateo (skill `/mateo`, modo "crear anuncio"). Cada vez que se crea
-un anuncio se agrega un renglón; cuando corre, se cargan resultados y la decisión.
+Lo lee y lo escribe **Jose a mano**. Cada vez que se crea un anuncio se agrega un
+renglón; cuando corre, se cargan resultados y la decisión. (Hasta el 2026-08-01 lo
+llevaba el agente Mateo con el comando `/mateo`; se dio de baja. Las filas de abajo
+que dicen "Mateo" son de esa época y se dejan como está: son el registro de lo que
+pasó.)
 
 - Detalle técnico de tracking: `sistema-ingresos/docs/TRACKING.md`
 - Estrategia, benchmarks y árbol de decisiones: `ads-agent/docs/SISTEMA-ADS.md`
@@ -102,4 +105,8 @@ Los settings son palancas — se mueven con DATOS, no a ciegas (decisión de Jos
 - ⛔ NO pausar antes de **$20 gastados / 4 días** — dejá que junte datos primero.
 - CPA objetivo **< $12** · alerta **> $18** · CTR mínimo **1.5%**.
 - 4 días + $20 + 0 compras → pausar y revisar.
-- **Primer chequeo serio: día 3-4** → correr `/mateo` (modo monitoreo).
+- **Primer chequeo serio: día 3-4** → Jose mira las métricas en Meta y anota acá la
+  decisión. Los números del día por anuncio también están en la base
+  (`meta_insights_diario`): se los podés pedir a Dante con `/dante`.
+  (Antes este chequeo era `/mateo` en modo monitoreo; ese agente se dio de baja el
+  2026-08-01.)

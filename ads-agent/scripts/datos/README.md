@@ -6,7 +6,7 @@ Todo lo que **lee de una plataforma externa** y lo baja: Meta, GA4, Clarity,
 Hotmart, Brevo, el inbox. No deciden ni publican nada — solo traen.
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/datos/fetch-meta.mjs`
 
 - `check-inbox.mjs`

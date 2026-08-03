@@ -6,7 +6,7 @@ Convierten un HTML en el entregable final: el PDF de una guía, los JPG de un
 carrusel, las stories. Incluye el **linter de guías**, que es obligatorio.
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/exportar/lint-pdf-guide.mjs <ruta.html>`
 
 - `export-pdf.mjs`

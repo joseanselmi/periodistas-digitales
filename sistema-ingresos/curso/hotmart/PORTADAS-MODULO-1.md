@@ -53,5 +53,5 @@ Todas en **índigo**, para que se lean como familia del módulo.
   queda bien: se ve más premium.
 - Si una imagen sale con el elemento muy al centro, pedí *"corré el elemento más a la
   derecha y dejá más espacio negativo a la izquierda"* — ese aire es donde va el título.
-- Guardalas en `sistema-ingresos/portadas/modulo-1/` con nombres `modulo-1.png`,
+- Guardalas en `sistema-ingresos/curso/portadas/modulo-1/` con nombres `modulo-1.png`,
   `clase-1-1.png`, etc.

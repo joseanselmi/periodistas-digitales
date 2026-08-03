@@ -57,7 +57,7 @@ en la URL desde la que descarga su guía.
 | Campaña | `meta-leadgen-republicadores` | — |
 | Carpeta | `ads-agent/campanas/republicadores/` | — |
 | Landing | — | `/tu-medio` |
-| Guía | — | `/guias/que-te-lean-miles.pdf` |
+| Guía | — | `/api/d?file=que-te-lean-miles.pdf&src=<origen>` |
 
 Y hay un beneficio práctico además del cuidado: **se puede renombrar una campaña sin
 romper un solo link ni perder atribución**, porque el código interno y la URL no están
@@ -69,10 +69,26 @@ atados.
 - **Anuncios** → `ads-agent/campanas/<campaña>/ads/<matrícula>/ficha.md` — matrícula `adN-angulo`
 - **Landings y guías públicas** → `sistema-ingresos/` — es lo único que Vercel publica
 
-## Campañas activas
+## Qué está corriendo hoy
 
-| Campaña | Segmento | Estado |
-|---|---|---|
-| `meta-leadgen-republicadores` | El periodista que republica en su perfil noticias de otros | 🟡 En armado — [#106](https://trello.com/c/vFd9rZQ3) |
-| `meta-venta-republicadores` | El mismo, para venta directa a `/tu-medio` | 🟡 Landing lista, anuncio `ad4-perfil` sin publicar |
-| `meta-leadgen-guia-claude` | (sin definir — nombrada por el imán) | 🟢 Corriendo, 890 leads |
+**Verificado contra Meta el 2026-08-01** (`datos/meta-exports/meta-export-2026-08-01.json`).
+Esta tabla se saca de ahí, **no de memoria**: para refrescarla,
+`cd ads-agent && node scripts/datos/fetch-meta.mjs`.
+
+| Nombre en Meta | Carpeta | Estado real | Presupuesto |
+|---|---|---|---|
+| `CURSO Periodistas — LEADS — republicadores` | [`republicadores/`](republicadores/README.md) | 🟢 **Activa** desde el 31/07 · anuncio `ad5-lectores` | $1/día |
+| `Curso Sistema de ingresos diarios… VENTAS - Junio 2026` | [`venta-curso/`](venta-curso/README.md) | 🟢 **Activa** desde el 29/06 · `ad1-fomo` corriendo, `ad3-mundial` pausado | $10/día |
+| `LEADGEN \| Guía Claude Periodistas \| $1d \| 2026-06` | [`historico/`](historico/README.md) | ⏸️ **Pausada** · dejó 890 leads y el embudo de email sigue andando | — |
+| `interacción` | ⚠️ **ninguna** | 🟢 **Activa desde diciembre de 2024** · dos conjuntos prendidos (`Calentamiento 1`, `Interacción`) | $2/día |
+
+Total: **~$13/día**.
+
+> ⚠️ **`interacción` no tiene carpeta ni ficha en ningún lado.** Es de objetivo
+> "interacción" (calentar público, no vender), viene de antes de que existiera
+> esta convención, y gasta plata todos los días sin que nadie la mire. Hay que
+> decidir si se documenta o se apaga — no dejarla como está.
+>
+> Hasta el 2026-08-01 esta tabla daba a republicadores como "en armado" y a
+> guía-claude como "corriendo": exactamente al revés de la realidad, y sin
+> mencionar `venta-curso`, que es la que más gasta.

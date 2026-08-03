@@ -10,7 +10,7 @@
 ## 0. Nota sobre las fuentes (leer antes de citar)
 
 Este análisis se basa en dos capas de transcripción dentro de
-`ads-agent/hotmart-transcripts/`:
+`_material/luis-mena/` (local, fuera de git):
 
 - **`leccion-XXX.md`** → notas **editadas y resumidas** (con títulos, bullets y
   diagramas). NO son sus palabras textuales; son un resumen limpio.
@@ -66,9 +66,16 @@ inmediata.** Es motivador pero aterrizado: promete resultados grandes pero siemp
 los ancla a trabajo, constancia y largo plazo.
 
 Detalles precisos:
-- **Trato: TUTEO latino** ("tú", "vas a", "no te saltes", "prestes", "recuerda",
-  "imagínate"). Nunca "vos", nunca "usted". (Las notas `.md` a veces meten "vos/vas a
-  poder" por edición, pero **en el audio real siempre es tú**.)
+- **Trato: ÉL usa TUTEO latino** ("tú", "vas a", "no te saltes", "recuerda",
+  "imagínate"). Nunca "vos", nunca "usted".
+
+  > ⚠️ **En este punto NO lo copiamos.** Nuestro curso va en **voseo**, y no es
+  > una preferencia sino un hecho consumado: los guiones publicados usan voseo
+  > 387 veces y "tú" **cero**, y la landing 15 veces contra cero. Lo mismo pide
+  > el revisor obligatorio ([`revisor-clase-video`](../../../.claude/agents/revisor-clase-video.md)).
+  > Este documento describe **el estilo de él**; de todo lo demás se toma la
+  > estructura, no el trato. Hasta el 2026-08-01 esta línea decía "tuteo" a secas
+  > y contradecía al revisor que audita cada clase.
 - **Cercanía:** se pone de ejemplo constantemente ("en mi caso", "yo cuando empecé",
   "yo tengo alumnos que...") y habla de "nosotros" cuando cuenta lo que hace su equipo.
 - **Seguridad sin arrogancia:** afirma con autoridad ("te lo garantizo", "te

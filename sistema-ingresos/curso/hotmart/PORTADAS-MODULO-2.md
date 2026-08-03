@@ -45,5 +45,5 @@ Mismo bloque de estilo (fondo #07070f, glow cian, grilla, sin texto). Reemplazá
 - **Sin texto en la imagen** (ChatGPT deforma las letras). El título se agrega encima en Hotmart o Canva.
 - Si el elemento sale muy al centro, pedí *"corré el elemento más a la derecha y dejá más espacio negativo a
   la izquierda"* — ese aire es donde va el título.
-- Guardalas en `sistema-ingresos/portadas/modulo-2/` con nombres `modulo-2.png`, `clase-2-1.png`, etc.
+- Guardalas en `sistema-ingresos/curso/portadas/`, dentro de una subcarpeta `modulo-2/` (todavía no existe: se crea al guardar la primera) con nombres `modulo-2.png`, `clase-2-1.png`, etc.
 - **Ojo:** M2 es cyan, para diferenciarlo de M1 (índigo). Así el alumno distingue los módulos de un vistazo.

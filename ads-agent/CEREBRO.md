@@ -1,166 +1,49 @@
-# CEREBRO — Ecosistema completo Periodistas del Futuro IA
-**Última actualización: 27 junio 2026**
+# CEREBRO — dónde está cada verdad del negocio
 
----
+**Padre:** [`ads-agent/`](README.md) · Lo lee `/equipo` como paso 0 de cada sesión.
 
-## EL NEGOCIO
+> **Este archivo no guarda datos, guarda direcciones.** Hasta el 2026-08-01 era
+> una copia del negocio entero —precio, claves, campañas, calendario, pendientes—
+> y quedó congelado el 27 de junio: daba a Leadr como parte de este repo, el ICP
+> en 40-55 cuando es 30-55, seis mercados cuando son tres, y pendientes de mayo
+> como si fueran de hoy. Todo eso ya tenía dueño en otro lado. Ahora apunta a esos
+> dueños, que es lo único que no se pudre.
 
-**Producto activo:** Sistema de Ingresos Diarios para Periodistas
-**Precio:** $27 USD (valor percibido $227)
-**Checkout:** Hotmart `https://pay.hotmart.com/P106404871J`
-**Diferencial único:** Incluye 1 mes de Leadr ($97) — nadie más puede dar este bono
-**Historial Meta Ads:** $4.364 gastados → 346 compras → CPA promedio $10.19
+## La regla
 
----
+Cada dato tiene **un solo dueño**. Si lo necesitás, andá al dueño. Si lo cambiás,
+cambialo ahí. Copiarlo acá es cómo empezó el problema.
 
-## INFRAESTRUCTURA TÉCNICA
+| Qué querés saber | Dueño | Cómo se mira |
+|---|---|---|
+| **Cómo va el negocio hoy** — ventas, leads, embudo, Trello | [`ESTADO.md`](../ESTADO.md) | `node herramientas/estado.mjs` (~40 s). **Se regenera, no se edita.** |
+| **Precio, valor percibido, público, mercados, paleta, política de Meta** | [`lib/brand-context.mjs`](lib/brand-context.mjs) | Es el que leen los agentes. Fuente de verdad del copy |
+| **Qué campañas gastan plata hoy** | [`campanas/README.md`](campanas/README.md) | Verificado contra Meta. Refrescar: `node scripts/datos/fetch-meta.mjs` |
+| **Quién es cada agente y cómo se lo invoca** | [`cerebro/README.md`](cerebro/README.md) | Ahí está la lista completa. Si alguien no figura, no existe |
+| **Qué hizo cada agente** | [`state/`](state/README.md) | Un JSON por agente |
+| **Qué script hace qué** | [`scripts/README.md`](scripts/README.md) | Y un README por subcarpeta |
+| **Historial de anuncios: qué se probó y qué pasó** | [`registro-anuncios.md`](registro-anuncios.md) · [`docs/HISTORICO-ADS.md`](docs/HISTORICO-ADS.md) | El histórico avisa que sus precios son viejos |
+| **Cómo se mide todo** | [`../sistema-ingresos/docs/TRACKING.md`](../sistema-ingresos/docs/TRACKING.md) | De punta a punta |
+| **Estrategia de orgánico** | [`docs/ESTRATEGIA-ORGANICO.md`](docs/ESTRATEGIA-ORGANICO.md) · [`docs/ORGANICO-MURO.md`](docs/ORGANICO-MURO.md) | |
+| **Qué falta hacer** | Trello — tablero [Roadmap](https://trello.com/b/Bgt6wooU/roadmap-periodistas-digitales) | Sale en `ESTADO.md`. **No lleves pendientes a un `.md`**: se olvidan |
 
-### Dominios (Vercel, deploy automático con git push)
-| Dominio | Carpeta | Qué es |
-|---------|---------|--------|
-| `sistemadeingresosdiariosia.com` | `sistema-ingresos/` | Landing de ventas HTML |
-| `leadr.cloud` | `leadr/app/` | Plataforma Next.js |
+## Las claves
 
-### Variables de entorno — `leadr/app/.env.local`
-```
-ANTHROPIC_API_KEY=sk-ant-api03-bmBNCX...
-(el proveedor de imágenes es ChatGPT, manual — ver docs/CHATGPT-IMAGENES.md)
-META_PIXEL_ID=1086780383211630
-META_CAPI_TOKEN=EAASob...
-FB_PAGE_TOKEN=EAAX3KwDW0p8BReZ...  ← PERMANENTE, no vence
-FB_PAGE_ID=439763019230527
-NEXT_PUBLIC_SUPABASE_URL=https://ovwlsnnhiuoxoazyrhvt.supabase.co
-HOTMART_WEBHOOK_TOKEN=...
-ELEVENLABS_API_KEY=...
-```
+Están en `ads-agent/.env` y `ads-agent/.env.local`, **fuera de git**. La lista de
+cuáles hacen falta está en [`.env.example`](.env.example) — ahí sin valores.
 
-### Meta Ads
-- **Ad Account:** act_583636631091469
-- **Página FB:** 439763019230527 (Periodistas del Futuro IA)
-- **Token FB:** Sistema user "Claude publisher" — permanente
-- **App Meta:** "Periodistas digitales" (ID: 167913895328630)
+Acá había prefijos de esas claves y la ruta `leadr/app/.env.local`, que ya no
+existe: Leadr se separó a `../Leadr` el 2026-06-27. Se sacaron el 2026-08-01.
 
----
+## Lo que no cambia
 
-## TODOS LOS AGENTES
+Esto sí vive acá porque son identificadores fijos, no estado:
 
-### Scripts principales
-| Script | Qué hace | Cómo correr |
-|--------|---------|-------------|
-| `scripts/datos/fetch-meta.mjs` | Baja campañas + métricas Meta | `META_ACCESS_TOKEN=x META_AD_ACCOUNT_ID=act_x node scripts/datos/fetch-meta.mjs` |
-| `scripts/agentes/monitor.mjs` | Métricas diarias + alertas | Mismas vars |
-| `scripts/publicar/publish.mjs` | Publica ads en Meta (PAUSED) | `node scripts/publicar/publish.mjs campanas/historico/X/config.json` |
-| `scripts/agentes/audit-cmo.mjs` | Auditoría CMO del ecosistema | `ANTHROPIC_API_KEY=x node scripts/agentes/audit-cmo.mjs` |
-| `scripts/agentes/email-agent.mjs` | 5 emails post-compra | `ANTHROPIC_API_KEY=x node scripts/agentes/email-agent.mjs` |
-| `scripts/agentes/organic-agent.mjs` | Posts + imágenes revisadas por IA | `ANTHROPIC_API_KEY=x (el proveedor de imágenes es ChatGPT, manual — ver docs/CHATGPT-IMAGENES.md)
-| `scripts/generar/carousel-generator.mjs` | Carruseles HTML 1080x1080 | `ANTHROPIC_API_KEY=x node scripts/generar/carousel-generator.mjs` |
-| `scripts/exportar/export-slides.mjs` | JPG por carpeta para subir | `node scripts/exportar/export-slides.mjs carousels/semana-X` |
-| `scripts/publicar/post-facebook.mjs` | Publica/programa en FB | `FB_PAGE_TOKEN=x node scripts/publicar/post-facebook.mjs <carpeta> [--schedule "YYYY-MM-DD HH:MM"]` |
-| `scripts/programar/schedule-week.mjs` | Programa semana completa | `FB_PAGE_TOKEN=x FB_PAGE_ID=x node scripts/programar/schedule-week.mjs` |
-| `scripts/generar/add-nav.mjs` | Navegación slideshow a carruseles | `node scripts/generar/add-nav.mjs` |
-
-### Librerías (lib/)
-| Archivo | Exporta |
-|---------|---------|
-| `brand-context.mjs` | BRAND — producto, audiencia, paleta, benchmarks |
-| `reviewer.mjs` | reviewAd(), printReview() |
-
----
-
-## PALETA DE MARCA (aprobada por Jose, mayo 2026)
-
-| Token | Valor |
-|-------|-------|
-| Fondo | `#07070f` |
-| Indigo (principal) | `#6366f1` |
-| Cyan (secundario) | `#22d3ee` |
-| Gradiente | `linear-gradient(135deg, #6366f1, #22d3ee)` |
-| Amber (urgencia) | `#f59e0b` |
-| Green (éxito) | `#22c55e` |
-| Red (problema) | `#ef4444` |
-| Texto | `#f1f5f9` / `#94a3b8` / `#64748b` |
-| Tipografía | Inter + JetBrains Mono |
-
----
-
-## META ADS — LO QUE SABEMOS
-
-### Top performers históricos (por CPA)
-| Ad Set | Gasto | Compras | CPA | CTR |
-|--------|-------|---------|-----|-----|
-| 8.0 P1 | $1.095 | 103 | $10.63 | 2.99% |
-| 2.0 11.99 usd CP | $393 | 48 | $8.18 | 3.50% |
-| AD 3 P2 12/2 | $456 | 54 | $8.45 | 4.58% |
-| **2.0 SG 40+65** | $38 | 6 | **$6.33** | 3.54% | ← nunca escalado, oportunidad
-
-### Copy ganador (8.0 P1)
-*"¿Tus colegas están usando IA y vos todavía no sabés por dónde empezar?"*
-Título: "+3.700 alumnos satisfechos" | CTA: LEARN_MORE
-
-### Campaña v2 (lista, no publicada)
-Config: `campanas/historico/2026-05-08-v2/config.json`
-- AD 1: FOMO frío 35-60 (intereses)
-- AD 2: Prueba social María (lookalike compradores)
-- AD 3: Retargeting visitantes LP
-
----
-
-## CONTENIDO ORGÁNICO FACEBOOK
-
-### Estrategia
-- Archivo completo: `docs/ESTRATEGIA-ORGANICO.md`
-- 1 post/día, yo programo todo, Jose no toca nada
-- 5 posts fríos + 1 tibio + 1 caliente por semana
-- Boost $1/día × 7 días al mejor post orgánico cada semana
-
-### Semana 1 — "El periodismo cambió" (10-18 mayo) ✅ PROGRAMADA
-Todos los posts están en Facebook con sus IDs. Ver `organic_strategy.md` en memoria.
-
-### Arco 4 semanas
-- S1 (10-18 mayo): "El periodismo cambió" ✅
-- S2 (19-25 mayo): "La IA es tu herramienta" 🔲
-- S3 (26 mayo-1 jun): "Otros ya lo están haciendo" 🔲
-- S4 (2-8 jun): "Es tu momento" — semana de conversión 🔲
-
-### Estructura de archivos estándar
-```
-carousels/semana-DD-MM/para-subir/
-├── 0-SABADO-10/
-│   └── pie-de-foto.txt
-├── 1-LUNES/
-│   ├── slide-01.jpg ... slide-05.jpg
-│   └── pie-de-foto.txt
-└── ...
-```
-
----
-
-## LANDING (sistemadeingresosdiariosia.com)
-
-### Estado actual
-- ✅ Headline: "Tu conocimiento periodístico es un negocio. Solo falta el sistema."
-- ✅ Contador urgencia 72h evergreen (localStorage)
-- ✅ 3 slots de testimonios (placeholders — esperando capturas WhatsApp)
-- ❌ Sin testimonios reales — el problema más crítico de conversión
-
----
-
-## PENDIENTES — LOOPS ABIERTOS
-
-| # | Qué | Cómo cerrar |
-|---|-----|------------|
-| 1 | Emails sin envío | Cargar en Hotmart → Email marketing |
-| 2 | Testimonios landing vacíos | Jose sube capturas → `sistema-ingresos/img/` |
-| 3 | Campaña Meta v2 sin publicar | `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json` |
-| 4 | Monitor sin schedule | Windows Task Scheduler o Make.com |
-| 5 | Segmento 40-65 sin escalar | Testear $25/día — mejor CPA histórico $6.33 |
-| 7 | Semana 2 orgánico | Crear el domingo 18/05 |
-| 8 | Boost semana 1 | Elegir post ganador el domingo 18/05 |
-
----
-
-## EL ICP (cliente ideal)
-
-Periodista latinoamericana/o de **40-55 años**. 10+ años en medios. Siente el piso moverse. No fue despedido/a todavía pero la señal llegó. Colombia, México, Ecuador o Chile. Usa Facebook más que Instagram. $27 USD no es barrera — es una prueba de que esto es serio sin ser una apuesta.
-
-**Mercados top reales:** Ecuador, Puerto Rico, Colombia, México, EEUU hispano, Chile.
+| | |
+|---|---|
+| Checkout | Hotmart `P106404871J` |
+| Cuenta de Meta Ads | `act_583636631091469` |
+| Página de Facebook | `439763019230527` — Periodistas del Futuro IA |
+| App de Meta | `167913895328630` — "Periodistas digitales" |
+| Dominio del curso | `sistemadeingresosdiariosia.com` → [`../sistema-ingresos/`](../sistema-ingresos/README.md) |
+| Dominio de Leadr | `www.leadr.cloud` → **otro repo**, en `../Leadr`. No traer su código acá |

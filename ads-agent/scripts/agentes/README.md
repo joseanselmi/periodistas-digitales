@@ -7,7 +7,7 @@ publicar. Cada uno responde a un agente del equipo, cuya personalidad y reglas
 están en [`../../cerebro/`](../../cerebro/README.md).
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/agentes/monitor.mjs`
 
 - `audit-cmo.mjs`

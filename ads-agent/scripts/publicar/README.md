@@ -7,7 +7,7 @@ anuncio, sube un post o manda un email a la lista real. No se ejecutan "para
 probar".
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/publicar/publish.mjs`
 
 - `post-facebook.mjs`

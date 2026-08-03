@@ -53,5 +53,13 @@ de un vistazo con el Administrador de Anuncios.
 | [`republicadores/`](republicadores/) | `CURSO Periodistas — LEADS — republicadores` | El periodista que republica en su perfil noticias de otros | 🟢 Activa — [#106](https://trello.com/c/vFd9rZQ3) |
 | [`guia-claude-periodistas/`](guia-claude-periodistas/README.md) | `LEADGEN \| Guía Claude Periodistas \| $1d \| 2026-06` | (nombrada por el imán, no por la persona) | ⏸️ Pausada · 890 leads, el embudo de email sigue |
 
+Acá solo están las campañas que **necesitan algo publicado** (una landing, una
+guía). La campaña de venta del curso (`Curso Sistema de ingresos diarios…
+VENTAS`) también está activa, pero manda a `/` y a Hotmart, así que no tiene
+carpeta de este lado; vive en
+[`ads-agent/campanas/venta-curso/`](../../ads-agent/campanas/README.md).
+**La lista completa de lo que gasta hoy está en ese README**, verificada contra
+Meta.
+
 > El embudo de republicadores también se llamó **"el periodista del muro"**. Ganó
 > `republicadores`, que es como está en Meta (2026-07-31).

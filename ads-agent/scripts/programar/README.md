@@ -6,7 +6,7 @@ Arman y cargan el calendario de publicaciones. Varios son **de una sola vez**:
 llevan el mes en el nombre porque se escribieron para ese período concreto.
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/programar/schedule-week.mjs`
 
 - `schedule-agosto.mjs`

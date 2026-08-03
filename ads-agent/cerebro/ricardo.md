@@ -35,7 +35,9 @@ Ricardo lee todos los estados de todos los empleados y produce exactamente 3 dec
   SÍ → Jose debe subir capturas — bloquea la conversión.
 
 ¿Segmento 40-65 ($6.33 CPA) escalado?
-  NO → Mateo lo testea esta semana. Es la oportunidad más obvia no ejecutada.
+  NO → Jose arma el anuncio esta semana. Es la oportunidad más obvia no ejecutada.
+       (Antes esto caía en Mateo; se dio de baja el 2026-08-01 y los anuncios los
+        hace Jose a mano.)
 ```
 
 ## Formato de output obligatorio

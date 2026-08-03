@@ -13,14 +13,18 @@ Este repo contiene dos proyectos principales:
   `datos/` (fetch y syncs) · `agentes/` (analizan y deciden) · `generar/` ·
   `programar/` · `publicar/` (⚠️ salen al mundo) · `exportar/` · `curso/` ·
   `utiles/`. **Se corren parados en `ads-agent/`**, no dentro de `scripts/`:
-  varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
-  carpeta. Ej: `cd ads-agent && node scripts/datos/fetch-meta.mjs`.
+  varios buscan `.env.local` o `state/` relativos a esa carpeta.
+  Ej: `cd ads-agent && node scripts/datos/fetch-meta.mjs`.
 - `ads-agent/docs/` y `sistema-ingresos/docs/` — la documentación. En la raíz de
   cada proyecto solo quedan `README.md` y lo que tiene que estar ahí sí o sí.
-- `sistema-ingresos/guias/` — las guías-regalo (`.html` + `.pdf`). **Su URL
-  pública sigue siendo la de la raíz** (`/guia-x.pdf`), sostenida por los
-  `rewrites` de `sistema-ingresos/vercel.json`: esos links ya salieron por email
-  y WhatsApp. Guía nueva = sumar su par de rewrites ahí.
+- **Las guías-regalo van dentro de su campaña**, nunca en una carpeta suelta:
+  `sistema-ingresos/campanas/<campaña>/guias/` (`.html` + `.pdf`).
+  - Se entregan **siempre** por `/api/d?file=<archivo>.pdf&src=<origen>`, que es
+    lo único que cuenta la descarga. Un link directo al `.pdf` no deja rastro.
+  - Las 5 guías de `guia-claude-periodistas` conservan además un rewrite directo
+    (`/guia-x.pdf`) porque esos links salieron por email y WhatsApp antes de que
+    existiera `/api/d`. **Es una excepción histórica, no el modelo a copiar.**
+  - Guía nueva = su `/api/d`, y nada más.
 
 **Después de mover, renombrar o borrar archivos — y antes de deployar:**
 
@@ -28,11 +32,17 @@ Este repo contiene dos proyectos principales:
 node herramientas/verificar-repo.mjs
 ```
 
-Chequea las tres cosas que se rompen en silencio: los links y rutas escritos en
-docs/código, los anclajes de ruta de `ads-agent/scripts/` (un script puede correr
-sin error y no hacer nada si perdió su `.env.local`), y que toda URL pública en
-uso siga resolviendo contra `vercel.json`. No ejecuta ningún script — varios
-publican anuncios o mandan mails.
+Chequea las **seis** cosas que se rompen en silencio:
+
+1. los links y rutas escritos en docs y código;
+2. los anclajes de ruta de `ads-agent/scripts/` — un script puede correr sin
+   error y no hacer nada si perdió su `.env.local`;
+3. que toda URL pública en uso siga resolviendo contra `vercel.json`;
+4. que los crons declarados existan como función;
+5. que los pipelines de `.claude/` apunten a scripts que existen;
+6. que el equipo de agentes sea coherente entre cerebro, state y comandos.
+
+No ejecuta ningún script — varios publican anuncios o mandan mails.
 
 > **Leadr se separó de este repo el 2026-06-27.** Antes vivía en `leadr/app/`.
 > Ahora es un repositorio independiente (`https://github.com/joseanselmi/leadr`)
@@ -87,7 +97,10 @@ etc.) — **usalas directamente, no asumas que falta integración.**
 - Cada agente (Ricardo, Dante, Valentina, Sofía, Luna, Director,
   Bruno, Miguel, Clara) tiene su propia **label** en el
   tablero — así se le "asigna" una tarjeta (Trello free no permite agregar
-  13 miembros reales sin invitarlos por email).
+  nueve miembros reales sin invitarlos por email).
+- Quedaron labels huérfanas de **Mateo, Max, Nicolás y Valeria**, agentes dados
+  de baja el 2026-08-01. No se usan más. El detalle de por qué se fueron está en
+  [ads-agent/cerebro/README.md](ads-agent/cerebro/README.md).
 
 **Reglas obligatorias de gestión del tablero — leer
 [ads-agent/cerebro/trello-manager.md](ads-agent/cerebro/trello-manager.md)

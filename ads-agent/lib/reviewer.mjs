@@ -13,7 +13,7 @@ PRODUCTO: ${BRAND.product}
 PRECIO: $${BRAND.price} USD (valor percibido $${BRAND.perceivedValue})
 AUDIENCIA: ${BRAND.audience.description}
 MERCADOS TOP HISTÓRICOS: ${BRAND.topMarkets.join(', ')}
-IDIOMA: ${BRAND.audience.language} (usar "tú", NO "vos")
+IDIOMA: ${BRAND.audience.language} (usar "vos/tenés/podés", NO "tú")
 PROPUESTA DE VALOR: ${BRAND.valueProposition}
 ÁNGULO GANADOR HISTÓRICO: ${BRAND.winningAngle}
 ESTÉTICA: ${BRAND.aesthetic.join(', ')}

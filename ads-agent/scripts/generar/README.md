@@ -7,7 +7,7 @@ orgánico. Escriben en [`../../carousels/`](../../contenido/carousels/README.md)
 [`../../organic/`](../../contenido/organic/README.md).
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/generar/carousel-generator.mjs`
 
 - `add-nav.mjs`

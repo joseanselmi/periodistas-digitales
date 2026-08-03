@@ -69,7 +69,7 @@ El precio solo cuando todo lo demás está estable.
 
 **Objetivo:** Validar si los testimonios en la LP mejoran el CPA.
 **Variable que se testa:** URL de landing (LP con testimonios vs. LP actual).
-**Precondición:** Testimonios cargados en `sistema-ingresos/img/`.
+**Precondición:** Testimonios cargados en `sistema-ingresos/paginas/img/`.
 
 | Ad Set | Copy | Creativo | Landing | Budget/día |
 |--------|------|----------|---------|------------|

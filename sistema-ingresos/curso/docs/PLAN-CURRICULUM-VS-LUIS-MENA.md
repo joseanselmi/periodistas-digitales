@@ -5,7 +5,7 @@
 > ebooks/cursos → **periódicos digitales para periodistas**), gap analysis y
 > propuesta de currículum nuevo que espeja la profundidad de Luis.
 
-**Fuentes:** `ads-agent/hotmart-transcripts/` (109 lecciones transcritas +
+**Fuentes:** `_material/luis-mena/` (local, fuera de git; 109 lecciones transcritas +
 `modulo-8..13.md` con el índice de módulos y la tabla de progreso de 15 módulos) y
 `sistema-ingresos/` (clases de Jose en `.md`).
 
@@ -361,7 +361,7 @@ periódico-digital y la voz de Jose.
 - **Prioridad 1 (mayor impacto en conversión):** Módulo 4 (Oferta), Módulo 6 (Copy),
   Módulo 11 (Aceleradores) y Módulo 12 (VSL). Son los que hoy están casi vacíos y son
   el motor de ventas del método de Luis.
-- **Reusar lo ya hecho:** el upsell (`sistema-ingresos/upsell-periodico/`) alimenta el
+- **Reusar lo ya hecho:** el upsell (`sistema-ingresos/upsells/periodico-digital/`) alimenta el
   Módulo 11; las guías-regalo (5 pilares, agentes IA, periódico IG/FB) son insumo de
   los módulos 2, 5 y 14; la clase 12 actual ya cubre parte del Módulo 11 (modelos de
   monetización).

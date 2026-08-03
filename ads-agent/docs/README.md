@@ -21,4 +21,5 @@ No confundir con:
 - [`../cerebro/`](../cerebro/README.md) — la personalidad y las reglas de cada
   agente del equipo, que es otra cosa: **quién** decide, no **cómo** funciona.
 - `../registro-anuncios.md` — se quedó en la raíz porque no es documentación
-  sino el registro operativo que escribe Mateo.
+  sino el registro operativo de los anuncios. Lo escribe **Jose a mano** (antes lo
+  llevaba el agente Mateo, dado de baja el 2026-08-01).

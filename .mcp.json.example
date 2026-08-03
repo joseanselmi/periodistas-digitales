@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "trello": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@delorenj/mcp-server-trello"
+      ],
+      "env": {
+        "TRELLO_API_KEY": "PEGAR-ACA-LA-CLAVE",
+        "TRELLO_TOKEN": "PEGAR-ACA-LA-CLAVE",
+        "TRELLO_BOARD_ID": "6a35bf86f4bbebc72953200f",
+        "TRELLO_WORKSPACE_ID": "6a35bae170888b02cd652407"
+      }
+    }
+  }
+}

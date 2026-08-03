@@ -28,23 +28,46 @@ Porque nombra **la conducta que define al segmento**: republica en su perfil not
 de otros. No la nombramos por el imán —la guía va a cambiar— ni por el lugar. La
 persona es lo único que no cambia.
 
-⚠️ **El nombre es interno.** Lo que ve el lector es `/tu-medio` y
-`/guias/que-te-lean-miles.pdf`. Nunca aparece la palabra "republicador" en una URL
-pública: describe a la persona en nuestros términos, no en los suyos.
+⚠️ **El nombre es interno.** Lo que ve el lector es `/tu-medio` y el enlace de
+descarga `/api/d?file=que-te-lean-miles.pdf&src=<origen>`. Nunca aparece la
+palabra "republicador" en una URL pública: describe a la persona en nuestros
+términos, no en los suyos.
 
 ## Las piezas y dónde están
 
-| Pieza | Dónde | Estado |
+La campaña vive en **dos carpetas con el mismo nombre**, y no es un descuido:
+acá va lo interno, y del otro lado solo lo que Vercel publica.
+
+**Acá** (`ads-agent/campanas/republicadores/`) — lo que no sale al mundo:
+
+| Pieza | Archivo | Estado |
 |---|---|---|
-| **Guía imán (PDF)** — lo que descarga el lector | `guias/que-te-lean-miles.pdf` | ✅ 10 páginas |
-| Fuente de la guía | `guias/que-te-lean-miles.html` | ✅ |
-| **Landing de venta** | `landing/tu-medio.html` → ruta `/tu-medio` | ✅ sin publicar |
-| Copy y racional de la landing | `estrategia/COPY.md` | ✅ |
-| Mapa de problemas + secuencia de guías | `estrategia/EMBUDO-GUIAS.md` | ✅ |
-| **Anuncio de leads** (descarga de la guía) | `ads/ad5-lectores/ficha.md` | 🟡 falta creativo |
-| **Anuncio de venta** (a `/tu-medio`) | `ads/ad4-perfil/ficha.md` | 🟡 creativo casi listo |
-| Guías 2, 3 y 4 de la secuencia | `guias/` | ⬜ sin escribir |
-| Serie de posteos orgánicos | Trello [#107](https://trello.com/c/DOhEmqkI) | ⬜ |
+| Copy y racional de la landing | `COPY.md` | ✅ |
+| Mapa de problemas + secuencia de guías | `EMBUDO-GUIAS.md` | ✅ |
+| **Anuncio de leads** (descarga de la guía) | `ads/ad5-lectores/` (ficha + creativo) | 🟢 **corriendo en Meta**, $1/día |
+| **Anuncio de venta** (a `/tu-medio`) | `ads/ad4-perfil/` (ficha + creativo) | 🟡 creativo listo, sin publicar |
+| La automatización de Make | [`make/README.md`](make/README.md) | ✅ documentada |
+
+**Del otro lado** ([`sistema-ingresos/campanas/republicadores/`](../../../sistema-ingresos/campanas/republicadores/)) — lo publicado:
+
+| Pieza | Archivo | URL pública | Estado |
+|---|---|---|---|
+| **Guía imán (PDF)** | `guias/que-te-lean-miles.pdf` | `/api/d?file=que-te-lean-miles.pdf&src=<origen>` | ✅ 10 páginas |
+| Fuente de la guía | `guias/que-te-lean-miles.html` | — | ✅ |
+| **Landing de venta** | `landing/tu-medio.html` | `/tu-medio` | ✅ **publicada** |
+| Foto de la landing | `img/republicadores-telefono.webp` | — | ✅ |
+
+Todavía sin hacer:
+
+| Pieza | Estado |
+|---|---|
+| Guías 2, 3 y 4 de la secuencia | ⬜ sin escribir |
+| Serie de posteos orgánicos | ⬜ Trello [#107](https://trello.com/c/DOhEmqkI) |
+
+> Esta tabla decía que la landing estaba "sin publicar" y que a `ad5-lectores` le
+> faltaba el creativo. Las dos cosas eran falsas: `/tu-medio` responde 200 y
+> Meta tiene el anuncio activo desde el 31/07. Corregido el 2026-08-01 contra el
+> export de Meta.
 
 ## Métrica del PDF: enviados vs. abiertos
 
@@ -68,14 +91,29 @@ Vercel ni en la base.
 `src` sugeridos: `ad5-lectores` (formulario del anuncio) · `email-r1` (correo de
 entrega) · `organico` (la serie de posteos).
 
-> ⚠️ **Por eso no hay ninguna ruta pública directa al PDF.** Había dejado
-> `/guias/que-te-lean-miles.pdf` y la saqué: alcanzaba con que alguien enlazara esa
-> para que las descargas dejaran de contarse. El único camino es `/api/d`, y las rutas
-> internas bajo `/campanas/` están bloqueadas por redirección.
+> ⛔ **El rewrite `/que-te-lean-miles.pdf` de `vercel.json` NO se toca.** Parece
+> una ruta directa que se saltea el tracking, y por eso se borró el 2026-08-01
+> — pero es el destino al que `api/d.js` redirige. Sin él, `/api/d` apunta a un
+> 404: la campaña estuvo ~10 h entregando "NOT_FOUND" a los leads (26 clics, 14
+> leads nuevos) hasta que uno lo avisó por comentario en Facebook.
 >
 > `api/d.js` solo acepta un nombre de archivo suelto (sin carpetas, para que no sirva
 > de open-redirect) y redirige a la raíz, así que **cada guía nueva necesita su
-> reescritura de raíz** en `vercel.json`. Sin eso, el redirector apunta a un 404.
+> reescritura de raíz** en `vercel.json`. La reescritura no es la fuga de tracking:
+> lo que se enlaza hacia afuera es siempre `/api/d`, nunca la raíz. Lo que sí está
+> bloqueado —y ahí sí no se toca— son las rutas internas bajo `/campanas/`.
+>
+> Las 5 guías viejas conservan además su rewrite directo publicado: esos links
+> salieron por email y WhatsApp antes de que existiera `/api/d`, y romperlos
+> dejaría gente sin su regalo.
+>
+> **Verificar siguiendo el redirect hasta el archivo.** Un `302` de `/api/d` no
+> prueba nada — el redirector responde igual aunque el PDF no exista:
+>
+> ```bash
+> curl -sL -o /dev/null -w "%{http_code} %{content_type} %{size_download}\n" \
+>   "https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&src=qa"
+> ```
 
 ## Las URLs que ve el lector
 
@@ -84,7 +122,7 @@ reescrituras de `vercel.json` le muestran direcciones limpias, sin la palabra
 "republicadores". Detalle en [../README.md](../README.md). La descarga de la guía:
 
 ```
-https://sistemadeingresosdiariosia.com/guias/que-te-lean-miles.pdf
+https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&src=<origen>
 ```
 
 ## Cómo se regenera el PDF

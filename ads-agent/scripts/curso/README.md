@@ -3,10 +3,10 @@
 **Padre:** [`ads-agent/scripts/`](../) · **Abuelo:** [`ads-agent/`](../../README.md)
 
 Bajan y transcriben el curso de Luis Mena (la fuente de método para copy, VSL y
-oferta). La salida va a `../../hotmart-transcripts/`.
+oferta). La salida va a `../../../_material/luis-mena/` — fuera del repo.
 
 > Se corren **parados en `ads-agent/`**, no dentro de `scripts/`:
-> varios buscan `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa
+> varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node scripts/curso/transcribir-curso.mjs`
 
 - `compilar-memoria.mjs`
@@ -23,12 +23,17 @@ falta re-transcribir, hay que volver a bajarlo.
 
 ## ⚠️ Las transcripciones son locales, no viajan con el repo
 
-`hotmart-transcripts/` está en `.gitignore` desde el 2026-08-01. Son
-transcripciones **literales de un curso pago de un tercero** (Luis Mena) más
-capturas de la sesión de Hotmart, y este repositorio es **público**.
+El material vive en **`_material/luis-mena/`**, que está en `.gitignore` desde el
+2026-08-01. Son transcripciones **literales de un curso pago de un tercero**
+(Luis Mena) más capturas de la sesión de Hotmart, y este repositorio es
+**público**.
 
-Siguen en el disco de Jose y los scripts las usan igual. Pero **en un clon nuevo
-no van a estar**: si hacen falta, hay que volver a correr el scraper.
+Antes estaba en `ads-agent/hotmart-transcripts/`; se movió y se sacó de git el
+2026-08-01 por ese motivo legal. Si algún documento todavía nombra la ruta
+vieja, está desactualizado.
+
+Sigue en el disco de Jose y los scripts lo usan igual. Pero **en un clon nuevo
+no va a estar**: si hace falta, hay que volver a correr el scraper.
 
 Lo que sí se versiona es lo destilado: el método está en
 [`../../../sistema-ingresos/curso/docs/ESTILO-LUIS-MENA.md`](../../../sistema-ingresos/curso/docs/ESTILO-LUIS-MENA.md),

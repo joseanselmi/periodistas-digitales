@@ -681,6 +681,74 @@ Descargar los +50 prompts (PDF): https://sistemadeingresosdiariosia.com/api/d?fi
 Con esto ya tenés el primer ladrillo de tu propio medio digital armado — la parte de producción de contenido con IA. Te vamos a escribir por WhatsApp con el siguiente paso.`,
   },
 
+  // Reparación del 404 del 01/08/2026: durante ~10 h el botón de descarga de
+  // "Que te lean miles" llevó a un 404 (se había sacado de vercel.json el rewrite
+  // de raíz al que apunta /api/d). Va a los leads que entraron en esa ventana.
+  // Detalle en ads-agent/campanas/republicadores/README.md.
+  'republicadores-guia-fix': {
+    subject:     'Tu guía — ahora sí se descarga',
+    previewText: 'El link de antes daba error. Perdón por eso.',
+    html: `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07070f;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          <tr>
+            <td align="center" style="padding-bottom:32px;">
+              <span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Periodistas del Futuro <span style="color:#22d3ee;">IA</span></span>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
+              <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">Ahora sí: acá está tu guía</p>
+              <p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Pediste la guía y, si intentaste abrirla en las últimas horas, es probable que te apareciera una página de error.</p>
+              <p style="margin:0 0 24px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Fue un problema nuestro, ya está resuelto. Te pido disculpas por el rodeo.</p>
+              <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&amp;src=Email-Republicadores-fix&amp;sck=emailrepfix" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía (PDF) →</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:28px 0 0 0;font-size:15px;color:#a0a0b8;line-height:1.7;">Son siete cosas concretas para tu próxima publicación. Sin publicar nada distinto de lo que ya publicás.</p>
+              <p style="margin:20px 0 0 0;font-size:15px;color:#a0a0b8;line-height:1.7;">Si te vuelve a fallar, respondé este correo y te la mando adjunta.</p>
+              <p style="margin:24px 0 0 0;font-size:15px;color:#c0c0d8;line-height:1.7;">José</p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:28px 20px 0 20px;">
+              <p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
+    text: `PERIODISTAS DEL FUTURO IA
+
+Ahora sí: acá está tu guía
+
+Pediste la guía y, si intentaste abrirla en las últimas horas, es probable que te apareciera una página de error.
+
+Fue un problema nuestro, ya está resuelto. Te pido disculpas por el rodeo.
+
+Descargar la guía (PDF): https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&src=Email-Republicadores-fix&sck=emailrepfix
+
+Son siete cosas concretas para tu próxima publicación. Sin publicar nada distinto de lo que ya publicás.
+
+Si te vuelve a fallar, respondé este correo y te la mando adjunta.
+
+José`,
+  },
+
   'leadgen-5-agentes-ia': {
     subject:     'La guía de agentes de IA (el paso que viene después de los prompts)',
     previewText: 'De usar IA suelta a tener agentes trabajando para tu medio',
@@ -829,7 +897,11 @@ async function enviarEmail(contacto, campaign) {
 // ─── Log de resultados ────────────────────────────────────────────────────────
 
 function logResultado(campaignName, contacto, ok, detalle) {
-  const logPath = resolve(`emails/log-${campaignName}.csv`)
+  // Va a contenido/emails/, donde viven las secuencias y los demás logs. Decía
+  // `emails/` —la ruta anterior a la mudanza del 30/07— y como el script crea la
+  // carpeta si no existe, cada envío dejaba su registro en un `ads-agent/emails/`
+  // fantasma que no mira nadie. El mail salía bien; el rastro se perdía.
+  const logPath = resolve(`contenido/emails/log-${campaignName}.csv`)
   const fecha   = new Date().toISOString()
   const linea   = `${fecha},${contacto.email},${contacto.nombre},${ok ? 'OK' : 'ERROR'},${detalle}\n`
 
@@ -910,7 +982,7 @@ async function main() {
   console.log(`${'═'.repeat(60)}`)
   console.log(`✅ Enviados: ${ok}`)
   console.log(`❌ Errores:  ${errores}`)
-  console.log(`📄 Log: emails/log-${campaignArg}.csv`)
+  console.log(`📄 Log: contenido/emails/log-${campaignArg}.csv`)
 }
 
 main().catch(err => {

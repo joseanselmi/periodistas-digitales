@@ -7,8 +7,15 @@ y para poder reportar el estado del equipo.
 
 ## Archivos
 
-`clara`, `dante`, `director`, `luna`, `mateo`, `max`, `nicolas`, `ricardo`,
-`sofia`, `valentina`, `valeria` → `*-state.json`.
+Nueve, uno por agente: `bruno`, `clara`, `dante`, `director`, `luna`, `miguel`,
+`ricardo`, `sofia`, `valentina` → `<agente>-state.json`.
+
+`clara` tiene estado pero **no tiene cerebro**, y está bien: es una
+automatización, no alguien a quien se le habla. `miguel` tiene estado y cerebro
+pero **no tiene comando** — ver [`../cerebro/`](../cerebro/README.md).
+
+> Ya no están `mateo`, `max`, `nicolas` ni `valeria`: esos agentes se eliminaron
+> el 2026-08-01. Si aparece un `*-state.json` de ellos, es un archivo zombi.
 
 ## Diferencia con cerebro/
 

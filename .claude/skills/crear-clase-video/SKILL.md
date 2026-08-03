@@ -32,7 +32,7 @@ de siempre. Todo lo aprendido está acá y en los docs enlazados.
 
 ## 1. El estudio
 - **Proyecto vivo:** `C:\Users\Jose Anselmi\remotion-curso\` (fuera de OneDrive; tiene node_modules).
-- **Fuente versionada (respaldo en repo):** `sistema-ingresos/video-studio/` (kit, generadores, ejemplos).
+- **Fuente versionada (respaldo en repo):** `sistema-ingresos/curso/video-studio/` (kit, generadores, ejemplos).
 - **Kit reutilizable:** `src/lib/kit.tsx` — layouts + animaciones + SFX + motor `ClaseVideo`.
   Layouts: `Statement, Chips, Cards3, Equals, TwoUp, TaskCard, Stat` (count-up), `Quote,
   Timeline, Checklist, Split` (mockup), `JourneyMap` (mapa con cámara), `Terminal` (escribe

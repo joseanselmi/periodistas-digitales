@@ -19,7 +19,11 @@
 
 const REPO = 'joseanselmi/periodistas-digitales';
 const BRANCH = 'master';
-const DIR = 'ads-agent/carousels/muro-stories';
+// OJO: la ruta va completa y con `contenido/` adelante. Decía
+// 'ads-agent/carousels/muro-stories' (la ruta anterior a la reorganización del
+// 30/07) y esa carpeta no existe: raw.githubusercontent hubiera devuelto 404 el
+// 16/08, el primer día que toca publicar, sin ningún error visible antes.
+const DIR = 'ads-agent/contenido/carousels/muro-stories';
 const GRAPH = 'https://graph.facebook.com/v21.0';
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');

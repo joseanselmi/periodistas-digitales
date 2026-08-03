@@ -26,6 +26,12 @@ Estas dos son las que más se violan y las que más daño hacen. Si alguna falla
 **CORREGIR** aunque todo lo demás esté perfecto.
 
 **0.A · La clase no puede usar nada que el alumno todavía no tenga.**
+> **Dónde está `remotion-curso/`:** es el estudio de video **vivo**, y vive
+> **fuera del repo**, en `C:\Users\Jose Anselmi\remotion-curso\`. Todas las rutas
+> que empiezan con `remotion-curso/` en este documento cuelgan de ahí. La copia
+> versionada que sí está en el repo (`sistema-ingresos/curso/video-studio/`) es
+> un respaldo y puede estar atrasada.
+
 Roadmap canónico (`ROADMAP` en `remotion-curso/src/lib/kit.tsx`):
 `Bienvenida → Fundamentos → IA → Nicho → Tu medio → Contenido → Comunidad → Afiliados →
 Anunciantes → Producto → Anuncios → Escala`.

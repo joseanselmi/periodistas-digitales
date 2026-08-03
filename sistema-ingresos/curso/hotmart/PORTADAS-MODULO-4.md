@@ -45,5 +45,5 @@ Mismo bloque de estilo (fondo #07070f, glow rosa, grilla, sin texto). Reemplazá
 - **Sin texto en la imagen** (ChatGPT deforma las letras). El título se agrega encima en Hotmart o Canva.
 - Si el elemento sale muy al centro, pedí *"corré el elemento más a la derecha y dejá más espacio negativo a la
   izquierda"* — ese aire es donde va el título.
-- Guardalas en `sistema-ingresos/portadas/modulo-4/` con nombres `modulo-4.png`, `clase-4-1.png`, etc.
+- Guardalas en `sistema-ingresos/curso/portadas/`, dentro de una subcarpeta `modulo-4/` (todavía no existe: se crea al guardar la primera) con nombres `modulo-4.png`, `clase-4-1.png`, etc.
 - **Ojo:** M4 es rosa, para diferenciarlo de M1 (índigo), M2 (cyan), M3 (verde) y M5 (violeta). Cada módulo, su color.

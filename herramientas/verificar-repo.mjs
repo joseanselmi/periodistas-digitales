@@ -38,6 +38,33 @@ const SI = join(ROOT, 'sistema-ingresos');
 const EXCLUIR = /(^|[\\/])(node_modules|\.git|hotmart-transcripts|hotmart-chrome-profile|_material|_revisar|creatives|img|portadas|qa-guia-)/;
 const EXT_LOCAL = /\.(md|mjs|js|json|html|pdf|png|webp|csv|txt|py|sh)$/i;
 
+// Rutas de carpeta que se nombran a propósito aunque no existan: son el "antes"
+// de una mudanza, y esa frase es justamente lo que evita que alguien las reviva.
+// Si algo se agrega acá, tiene que ser porque el texto dice que ya no está.
+const RUTAS_HISTORICAS = new Set([
+  '_material/order-bumps',              // ahora sistema-ingresos/order-bumps
+  'ads-agent/ads-curso',                // ahora campanas/<campaña>/ads
+  'ads-agent/dashboards',               // ahora docs/dashboards
+  'ads-agent/playbooks',                // ahora docs/playbooks
+  'ads-agent/radar',                    // ahora datos/radar
+  'ads-agent/hotmart-transcripts',      // ahora _material/luis-mena (fuera de git)
+  'ads-agent/hotmart-chrome-profile',   // userDataDir de puppeteer, se regenera
+  'sistema-ingresos/guias',             // ahora campanas/<campaña>/guias
+  'sistema-ingresos/quizzes',           // ahora curso/quizzes
+  'sistema-ingresos/api/hotmart',       // es el endpoint /api/hotmart, no una carpeta
+  // La ruta vieja de las historias del muro. La nombran dos comentarios que
+  // explican justamente por qué NO hay que usarla (daba 404 en GitHub raw).
+  'ads-agent/carousels/muro-stories',
+  // Ídem: send-email.mjs guardaba acá el log de cada campaña y la carpeta se
+  // creaba sola, así que el rastro de los envíos se perdía. Ahora va a
+  // contenido/emails/ y el comentario deja dicho por qué.
+  'ads-agent/emails',
+]);
+
+// El `_` de _material entra a propósito: ahí vive material local que los docs
+// citan como fuente, y una ruta mal escrita ahí también rompe en silencio.
+const RE_CARPETA = /(?<![\w./-])(ads-agent|sistema-ingresos|herramientas|_material)\/[\w./-]+/g;
+
 const rojo = (s) => `\x1b[31m${s}\x1b[0m`;
 const verde = (s) => `\x1b[32m${s}\x1b[0m`;
 
@@ -73,6 +100,26 @@ function chequearRutasEnTexto() {
       if (/_X\b|_Y\b/.test(m[0])) continue;
       revisadas++;
       if (!existsSync(join(ROOT, m[0]))) rotas.push({ rel, ref: m[0], tipo: 'ruta desde la raíz' });
+    }
+
+    // Rutas de CARPETA (sin extensión). Este bloque se sumó el 2026-08-01: hasta
+    // entonces solo se validaban rutas con extensión de archivo, y por ese hueco
+    // pasaron 19 carpetas inexistentes. Una era `ads-agent/carousels/muro-stories`
+    // dentro de api/_lib/story-diaria.js — la historia diaria de Facebook habría
+    // dado 404 el 16/08 sin avisar.
+    for (const m of texto.matchAll(RE_CARPETA)) {
+      const ruta = m[0].replace(/[./]+$/, '');
+      if (EXT_LOCAL.test(ruta)) continue;              // ya lo cubre el bloque de arriba
+      if (/[<>*${}]|_X\b|_Y\b|_N\b|XXX|YYYY|DD-MM/.test(ruta)) continue;  // plantillas
+      // Un glob corta el match antes del `*` (`log-leadr-l*.csv` llega como
+      // `…/log-leadr-l`), así que hay que mirar el carácter que sigue.
+      if (/[*?]/.test(texto[m.index + m[0].length] ?? '')) continue;
+      if (ruta.split('/').length < 2) continue;
+      if (RUTAS_HISTORICAS.has(ruta)) continue;
+      revisadas++;
+      if (!existsSync(join(ROOT, ruta))) {
+        rotas.push({ rel, ref: ruta + '/', tipo: 'carpeta que ya no existe' });
+      }
     }
   }
   return { revisadas, rotas };

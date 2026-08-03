@@ -9,7 +9,12 @@ export const BRAND = {
     description: 'Periodistas latinoamericanos 30-55 años',
     primaryMarkets: ['Colombia', 'México', 'Chile'],
     ageRange: '30-55',
-    language: 'es-latam', // usar "tú" no "vos"
+    // VOSEO. Es lo que usa todo el negocio de verdad: la landing (15 usos, cero
+    // de "tú") y los guiones de las clases (387 usos, cero de "tú"). Acá decía
+    // lo contrario hasta el 2026-08-01. Única excepción documentada: la serie
+    // "el periodista del muro" de Facebook, que va en neutro (ver
+    // ../docs/ORGANICO-MURO.md).
+    language: 'es-latam-voseo',
   },
 
   aesthetic: [
@@ -41,9 +46,11 @@ export const BRAND = {
 
   socialProof: 'Más de 5.500 periodistas en Latinoamérica',
 
-  // Oferta actual (mayo 2026) — DIFERENTE a campañas anteriores
+  // Oferta actual. El precio SIEMPRE tiene que ser igual a `price` de arriba:
+  // acá decía 10 (una promo de mayo 2026) hasta el 2026-08-01, y cualquier agente
+  // que leyera BRAND.offer.price generaba copy con el precio equivocado.
   offer: {
-    price: 10,
+    price: 27,
     perceivedValue: 227,
     keyDifferentiator: 'Incluye 1 mes de Leadr — plataforma propia de formación IA para periodistas ($97 valor). Nadie más puede dar este bono.',
     bonuses: [

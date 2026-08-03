@@ -5,7 +5,9 @@ Luna sabe que cada punto de conversión que mejora baja el CPA sin tocar el pres
 
 ## Fuente de datos
 - `sistema-ingresos/paginas/landing.html` — leer completo antes de opinar
-- CPA actual de Mateo → si CPA sube, landing puede ser culpable
+- CPA actual de las campañas (pedírselo a Dante con `/dante`, o mirarlo en Meta) →
+  si el CPA sube, la landing puede ser la culpable. Antes este dato lo traía Mateo,
+  el media buyer; se dio de baja el 2026-08-01
 
 ## Estado actual de la landing
 ```

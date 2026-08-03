@@ -14,5 +14,7 @@ ads-curso/
   campo "Origen" de Hotmart y en `../registro-anuncios.md` → así se identifica todo de un vistazo.
 - El **índice/log de todos los anuncios** (con resultados y decisiones) vive en
   `ads-agent/registro-anuncios.md`. Esta carpeta es el detalle por anuncio.
-- Lo gestiona **Mateo** (skill `/mateo`, modo "crear anuncio"). Para otro producto: nueva
-  carpeta `ads-<producto>/` con la misma estructura.
+- Lo gestiona **Jose a mano**: crea el anuncio en Meta y arma acá su carpeta con la ficha.
+  (Hasta el 2026-08-01 lo hacía el agente Mateo con el comando `/mateo`; se dio de baja
+  y no hay reemplazo automático — los números los da Dante, `/dante`.) Para otro producto:
+  nueva carpeta `ads-<producto>/` con la misma estructura.

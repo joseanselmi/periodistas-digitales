@@ -148,4 +148,4 @@ así, con pausas). `🎬 PANTALLA` es lo que se muestra mientras tanto. Los
 - **Música:** cama suave y neutra, que no tape la voz.
 
 ## Fuente del método
-Estructura y reglas extraídas del curso de Luis Mena (repo `ads-agent/hotmart-transcripts/`): Mini VSL / 7 min → `leccion-074.md`; embudo upsell/downsell → `leccion-077.md`; guión John Benson fase por fase → `leccion-080.md` a `leccion-107.md`; Ecuación de Valor → `audio/leccion-014.txt`; bonos de alto impacto y súper bono → `extra/017-...bonos-de-alto-impacto.md`; anclaje de precio ×10 → `leccion-103.md`.
+Estructura y reglas extraídas del curso de Luis Mena (`_material/luis-mena/`, local, fuera de git): Mini VSL / 7 min → `leccion-074.md`; embudo upsell/downsell → `leccion-077.md`; guión John Benson fase por fase → `leccion-080.md` a `leccion-107.md`; Ecuación de Valor → `audio/leccion-014.txt`; bonos de alto impacto y súper bono → `extra/017-...bonos-de-alto-impacto.md`; anclaje de precio ×10 → `leccion-103.md`.

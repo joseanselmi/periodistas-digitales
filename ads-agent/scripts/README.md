@@ -18,7 +18,7 @@ publica, exporta.
 | [`utiles/`](utiles/README.md) | Lo que no entra en ninguno |
 
 > **Se corren parados en `ads-agent/`, no acá dentro.** Varios buscan
-> `.env.local`, `state/` o `hotmart-transcripts/` relativos a esa carpeta:
+> `.env.local` o `state/` relativos a esa carpeta:
 > `cd ads-agent && node scripts/datos/fetch-meta.mjs`.
 
 Después de mover o renombrar cualquiera de estos archivos, correr

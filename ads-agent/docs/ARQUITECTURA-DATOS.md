@@ -624,3 +624,37 @@ solo permite 2 escenarios activos** y los 2 slots están ocupados por los críti
 
 Verificado E2E 16/07: la tabla quedó con 579 subscribers (vs 363 congelado), 23.7% de apertura,
 rango 10-17/07. Detalle: memorias `project_rutina_diaria_email` y `project_salud_sitio_qa`.
+
+## Actualización (2026-08-02): `meta_gasto_diario` se sincroniza sola (los TRES syncs de Meta)
+
+Hay **tres** syncs de Meta y cada uno cubre algo distinto. Confundirlos hace mirar una
+tabla que nadie está llenando:
+
+| Sync | Escribe | Alcance |
+|---|---|---|
+| `_lib/meta-spend-sync.js` | `campanas`, `gastos_meta_mensual` | solo anuncios **con ficha** en `campanas` |
+| `_lib/meta-daily-sync.js` | `meta_insights_diario` | solo los que tienen matrícula `adN-angulo` |
+| `_lib/meta-gasto-sync.js` | `meta_gasto_diario` | **la cuenta entera**, por campaña y por día |
+
+Los tres cuelgan del cron `recuperacion` (15:00 UTC, 1×/día) y son best-effort: si uno
+falla, loguea y no frena a los otros ni a la recuperación de carritos.
+
+**Por qué se agregó el tercero al cron.** `meta_gasto_diario` es la tabla que lee el panel
+de campañas de Leadr (`/admin/campanas`) para mostrar gasto y costo por lead, y hasta ahora
+se llenaba **solo a mano** con `ads-agent/scripts/datos/meta-gasto-sync.mjs`. Nadie se
+acuerda de correr un script a mano: quedó congelada en la foto parcial del **31/07 a las
+22:55**, y el 02/08 el panel mostraba **$0,52 de gasto y $0,009 por lead** cuando lo real
+era **$1,86 y $0,032**. Un número viejo se ve igual que uno fresco — de ahí que tenga que
+correr solo.
+
+**El script `.mjs` sigue existiendo** para corridas manuales y para el histórico largo
+(`--dias 400`); la función de Vercel sincroniza los últimos 30 días (`META_GASTO_DIAS`),
+que es lo que mira el panel.
+
+⚠️ **Trampa de credenciales del script local.** `ads-agent/.env.local` tiene la URL de
+`periodistas-marketing` pero **no** su `service_role`, así que el script seguía buscando en
+las otras rutas y terminaba tomando la clave de `Leadr/app/.env.local`, que es de **otro
+proyecto** (`ovwlsnnhiuoxoazyrhvt`). Resultado: `401 Invalid API key` recién al final,
+después de bajar todo de Meta, sin ninguna pista de la causa. Ahora el script compara el
+`ref` que viene dentro del JWT contra la URL y avisa antes de escribir nada. En Vercel esto
+no pasa: ahí `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` son las dos de marketing.

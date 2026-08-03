@@ -72,3 +72,15 @@ _revisar/
 # El perfil de Chrome, además, son ~400 MB de sesión para no re-loguearse.
 /ads-agent/hotmart-transcripts/
 /ads-agent/hotmart-chrome-profile/
+
+# El .mcp.json real tiene la clave y el token de Trello. Se queda local.
+# La forma del archivo esta en .mcp.json.example
+/.mcp.json
+
+# Listas de contactos y logs de envío (2026-08-01). Son direcciones de email de
+# compradores y leads REALES, y este repositorio es PÚBLICO. Los .md de esa
+# carpeta sí se versionan: son el copy de los mails, no las personas.
+# ⚠️ Esto frena lo NUEVO. Los CSV que ya están commiteados siguen en el historial
+# y salen solo reescribiéndolo — decisión pendiente de Jose (tarjeta en Trello).
+/ads-agent/contenido/emails/*.csv
+/ads-agent/emails/

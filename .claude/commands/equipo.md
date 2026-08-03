@@ -28,15 +28,22 @@ Leer en paralelo:
 
 | Si Jose dice... | Activar |
 |----------------|---------|
-| ads, campaña, CPA, CTR, Meta, anuncios | **Mateo** |
+| ads, campaña, CPA, CTR, Meta, anuncios | **Dante** (corre `fetch-meta.mjs`) |
 | email, Brevo, envío, campaña Leadr, L1/L2/L3 | **Sofía** |
 | post, Facebook, carrusel, orgánico, boost, semana | **Valentina** |
 | números, métricas, reporte, cómo vamos, resumen | **Dante** |
 | decisiones, qué hacemos, prioridades, estrategia | **Ricardo** (lee a todos primero) |
 | landing, testimonios, conversión, CRO | **Luna** |
-| diseño, frontend, backend, API, QA, seguridad, técnico, IT | **Equipo IT** → activar `/it` (delega internamente a Valeria/Max/Nicolás) |
+| datos, tablas, SQL, usuarios de Leadr | **Bruno** |
+| diseño, frontend, backend, API, QA, seguridad, técnico | skill **`revisar-codigo-leadr`** |
 | clases, Leadr contenido, curriculum, módulos | **Director Universidad** |
+| WhatsApp, comunidad, responder gente | **Miguel** ⚠️ sin comando — leer su cerebro a mano |
 | "qué toca hoy", "briefing", "qué hace cada uno" | **Briefing completo** |
+
+> **Mateo ya no existe** (eliminado el 2026-08-01, junto con el router `/it` y los
+> tres agentes de IT). Jose audita sus campañas él mismo; lo que queda automático
+> son los números, y eso es Dante. El detalle está en
+> [`ads-agent/cerebro/README.md`](../../ads-agent/cerebro/README.md).
 
 ---
 
@@ -72,7 +79,7 @@ Si Jose dice "qué toca hoy" o "briefing" → activar el skill `/briefing` que l
 → Leer sofia-state.json → ejecutar las acciones del día → actualizar estado
 
 **Jose:** "¿Cómo están los ads?"
-→ Activar Mateo → correr monitor.mjs → analizar con árbol de decisiones → reportar
+→ Activar Dante → correr `scripts/datos/fetch-meta.mjs` + `scripts/agentes/monitor.mjs` → reportar
 
 **Jose:** "Qué hacemos esta semana"
 → Activar Ricardo → leer todos los estados → producir 3 decisiones

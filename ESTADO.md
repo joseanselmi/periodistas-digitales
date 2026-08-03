@@ -1,6 +1,6 @@
 # ESTADO — foto en vivo del negocio
 
-_Generado el 2026-07-31 12:11 UTC por `node herramientas/estado.mjs`. Si esta fecha no es de hoy, **volvé a correrlo antes de sacar conclusiones**._
+_Generado el 2026-08-03 19:31 UTC por `node herramientas/estado.mjs`. Si esta fecha no es de hoy, **volvé a correrlo antes de sacar conclusiones**._
 
 Este archivo se REGENERA, no se edita a mano. Las decisiones y el detalle técnico
 viven en las tarjetas de Trello y en los `.md` de cada proyecto; acá están sólo los
@@ -8,7 +8,7 @@ hechos frescos que hacen falta para saber en qué estamos y qué sigue.
 
 ## 🚦 Semáforo
 
-_sin datos_
+- 🟢 **Embudo** encendido — 753 envíos en cola: {"regalo3":512,"regalo4":241}
 
 ## 💰 Ventas (neto de Jose)
 
@@ -18,21 +18,23 @@ _sin datos_
 
 **919 leads** en la lista. Dónde está parado cada uno (atributo `WA_STAGE`):
 
-- etapa 0: **230** leads _(nunca recibieron el primer regalo)_
-- etapa 3: **289** leads
-- etapa 5: **400** leads
+- etapa 0: **150** leads _(nunca recibieron el primer regalo)_
+- etapa 3: **232** leads
+- etapa 4: **67** leads
+- etapa 5: **470** leads
 
 
 Cuántos recibieron cada paso **por email** (el embudo va 100% por mail desde el 29/07):
 
-- Regalo 3 → **136** · Regalo 4 → **0** · Regalo 5 → **400**
-- Oferta → **400** · reenvío de la oferta → **89**
+- Regalo 3 → **378** · Regalo 4 → **137** · Regalo 5 → **524**
+- Oferta → **470** · reenvío de la oferta → **172**
 
 _(el Regalo 3 y el 4 empezaron a salir por mail el 28/07; a quien los recibió antes por WhatsApp sólo lo registra su `WA_STAGE`, no el marcador)_
 
 ### Cola de hoy (ensayo del cron, no manda nada)
 
-_salteado por `--rapido`_
+- **753** envíos pendientes: `{"regalo3":512,"regalo4":241}`
+- Embudo encendido (`WA_FUNNEL_ENABLED`)
 
 ### Entrega de WhatsApp (últimos 7 días)
 
@@ -44,12 +46,12 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 
 | paso del embudo | enviados | entregados | aperturas únicas | clics únicos |
 |---|---|---|---|---|
-| Regalo 3 · periódico digital (día 5) | 204 | 197 | 22 (11%) | 6 (3%) |
-| Regalo 4 · los 5 pilares (día 7) | 1 | 1 | 1 (100%) | 1 (100%) |
-| Regalo 5 · agentes de IA (día 8) | 402 | 389 | 90 (23%) | 28 (7%) |
-| OFERTA (día 9) — la que vende | 401 | 386 | 44 (11%) | 9 (2%) |
-| Reenvío de la oferta (+48 h, a los que no abrieron) | 91 | 87 | 1 (1%) | 0 (0%) |
-| _todo el correo (incluye Regalos 1 y 2)_ | 2734 | 2628 | 501 (19%) | 178 (7%) |
+| Regalo 3 · periódico digital (día 5) | 446 | 430 | 43 (10%) | 11 (3%) |
+| Regalo 4 · los 5 pilares (día 7) | 138 | 131 | 11 (8%) | 1 (1%) |
+| Regalo 5 · agentes de IA (día 8) | 525 | 505 | 112 (22%) | 31 (6%) |
+| OFERTA (día 9) — la que vende | 471 | 453 | 52 (11%) | 9 (2%) |
+| Reenvío de la oferta (+48 h, a los que no abrieron) | 174 | 164 | 8 (5%) | 1 (1%) |
+| _todo el correo (incluye Regalos 1 y 2)_ | 3378 | 3235 | 567 (18%) | 185 (6%) |
 
 ### Qué hicieron los que abrieron (eventos en la landing)
 
@@ -61,77 +63,29 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 
 ## 🧭 Trello — qué falta, tarjeta por tarjeta
 
-### En progreso (9)
+### En progreso (1)
 
-**[#106 🎯 EMBUDO "el periodista del muro" — ad + landing + guías + campaña propia (por fases)](https://trello.com/c/vFd9rZQ3)** — 11/30 · Mateo (Media Buyer), Luna (CRO/Landing) · últ. 2026-07-31
-- ⬜ (JOSE) Mirar /muro en un teléfono real antes de darla por buena — el QA da ✅ igual aunque el layout esté roto
-- ⬜ Correr qa-salud-sitio.mjs incluyendo /muro (velocidad + links/botones)
-- ⬜ Deploy de /muro y verificar EN VIVO que index.html (v3) quedó igual — vercel sube el working tree, no el commit
-- ⬜ ⚠️ URGENTE (la campaña YA corre): en Make mapear este form_id → funnel='meta-leadgen-republicadores'. Con el default 'meta-leadgen-guia-claude' los leads nuevos caen mezclados con los 944 del embudo viejo y no se pueden separar
+**[#106 🎯 EMBUDO republicadores (ex "el periodista del muro") — ad + landing + guías + campaña propia (por fases)](https://trello.com/c/vFd9rZQ3)** — 18/35 · Mateo (Media Buyer), Luna (CRO/Landing) · últ. 2026-08-01
+- ⬜ (JOSE) Mirar /tu-medio en un teléfono real — ya está EN VIVO. El QA da ✅ aunque el layout esté roto, así que esto solo lo ve un ojo humano
+- ⬜ Correr qa-salud-sitio.mjs incluyendo /tu-medio y /privacidad (velocidad + links/botones). Ya están publicadas
 - ⬜ Guías 2, 3 y 4 de la secuencia (qué publicar → cómo leer tus números → del favor al presupuesto)
 - ⬜ Lectura a los 7-10 días: costo por lead, qué imagen y qué copy ganaron, y aperturas de la guía. Con promedio de 3 días, no días sueltos
 - ⬜ (JOSE) Leer la guía y validar los 7 consejos contra tu propia experiencia — son consenso de oficio, no política publicada por Meta. La guía NO cita ninguna estadística, justamente para no inventar datos ajenos
-- ⬜ Subir guia-tus-lectores.pdf a una URL pública y ponerla en el botón de la pantalla final del formulario de Lead Ads
-- _…y 11 más_
+- ⬜ Corregir en Canva el CTA del creativo: dice "GUIA" sin tilde (arriba, en la misma pieza, está bien escrito). Reexportar y reemplazar en el repo Y en Meta
+- ⬜ (JOSE) Pasar la app de Meta de "Desarrollo" a "En vivo" en developers.facebook.com (pide URL de política de privacidad → ya existe /privacidad). Sin eso el token puede LEER anuncios pero no escribir creativos, y todo cambio de formulario/creativo tiene que hacerlo Jose a mano
+- ⬜ Reintentar el mail de reparación a elizabethcotanina0@gmail.com — rebotó por buzón lleno (452-4.2.2, temporal). Probar el 02/08 con `node scripts/publicar/send-email.mjs --campaign republicadores-guia-fix --csv <csv con ese mail>`
+- _…y 9 más_
 
-**[#107 📣 Orgánico FB: convertir la guía "Que te lean miles" en serie de posts](https://trello.com/c/DOhEmqkI)** — 8/13 · Valentina (Organico) · últ. 2026-07-30
-- ⬜ Programar 29, 30 y 31/08 cuando la cola baje de 29 (re-correr schedule-muro.mjs, es idempotente) — contenido ya listo
-- ⬜ (JOSE) Leer los 3 primeros (16, 17 y 18/08) antes de que salgan y avisar si el tono no es el del muro
-- ⬜ A los 7 días de arrancar: mirar qué posteo trajo más comentarios y si aparecieron lectores nuevos (no conocidos) — es el mismo recuento C/L que enseñamos
-- ⬜ 🔴 (JOSE) Decidir el disparador diario de las stories: las de página NO se pueden programar, la API las publica al instante. Opciones: cron en Vercel, Make, o a mano
-- ⬜ Aplicar el bloque marcado de las portadas también a las 16 stories (hoy tienen el diseño anterior) — solo si Jose confirma que el diseño nuevo queda
+### Bloqueada (7)
 
-**[#102 Radar de Tendencias TikTok — bono del curso](https://trello.com/c/UbfSnBSU)** — 6/10 · Nicolas (Backend) · últ. 2026-07-29
-- ⬜ Cargar ANTHROPIC_API_KEY en ads-agent/.env y probar la capa de IA
-- ⬜ Curar cuentas del grupo 3 (virales/sucesos/calle) — es donde explota primero
-- ⬜ Programar corridas automáticas (definir cuántas por día)
-- ⬜ Publicar el resultado donde lo vea el alumno (página + email)
+**[#70 Contenido Leadr · Semana 20-26 jul → Seguridad Digital](https://trello.com/c/Ov5SPFfx)** — 3/4 · Director (Academico) · últ. 2026-07-31
+- ⬜ NOVEDAD: post comunidad "Módulo Seguridad Digital completo" + 1 tip accionable
 
-**[#101 🎬 CURSO EN VIDEO (Sistema de Ingresos) — tarjeta maestra](https://trello.com/c/m2WA7HJP)** — 8/24 · Director (Academico) · últ. 2026-07-29
-- ⬜ M4 El nombre y la marca — producido; falta voz Chris (cuota ElevenLabs, reset ~19 ago) → HANDOFF-M4.md
-- ⬜ Pegar embeds M4 (cuando salga, va ANTES que M4… ojo: M5 antes que M4 en el orden)
-- ⬜ M1 (índigo) — falta la 1.4 (escalera)
-- ⬜ M2 (cyan) — generar módulo + 5 clases
-- ⬜ M3 (verde) — generar módulo + 4 clases
-- ⬜ M4 (rosa) — generar módulo + 5 clases
-- ⬜ M5 (violeta) — generar módulo + 6 clases
-- ⬜ Cargar en Hotmart: M1, M2, M3, M5 y final (tipo Ejercicio)
-- _…y 8 más_
+**[#40 Fuga de checkout del curso (86% abandono) + motivos de cancelación Hotmart](https://trello.com/c/qM5vVbJo)** — 4/5 · Luna (CRO/Landing) · últ. 2026-07-31
+- ⬜ Exportar el CSV de cancelaciones con rango AMPLIO (30-60 días) y analizar el mix (rechazo de tarjeta vs persuasión) → define el cambio concreto del checkout
 
-**[#71 Contenido Leadr · Semana 27 jul-2 ago → Automatización](https://trello.com/c/2a3MCENA)** — 0/4 · Director (Academico) · últ. 2026-07-29
-- ⬜ CLASE: escribir + cargar las 4 clases faltantes de Automatización (grupo 18) en ../Leadr
-- ⬜ RECURSO PRO: plantilla/prompt de un flujo automatizado para periodistas (ej. resumen de fuentes con IA)
-- ⬜ NOVEDAD: post comunidad "Módulo Automatización completo" + 1 tip accionable
-- ⬜ VERIFICAR: confirmar en Supabase que grupo 18 = 8/8 clases antes de mover a Hecho
-
-**[#73 Trazabilidad por versiones — landing v3 (identificación) + checkout v3 (PayPal ON) midiendo](https://trello.com/c/sFqLzsAH)** — 16/21 · Bruno (Data Analyst), Luna (CRO/Landing) · últ. 2026-07-29
-- ⬜ ~05/08: chequeo intermedio v3 (scroll Clarity vs 31,78% + ventas/día). No tocar la landing hasta el veredicto
-- ⬜ ~05/08: chequear checkout v3 — ¿vuelve el volumen que LLEGA (0,33/día en v2 vs 1,44 en v1) y los carritos abandonados?
-- ⬜ ~12/08: veredicto landing v3 (scroll y ventas/día; clics SOLO como control) y veredicto checkout v3 vs v1 (completion 26,9%)
-- ⬜ Confirmar en la config de pagos de Hotmart si BILLET/efectivo quedó prendido (apareció 1 pago BILLET MXN en v2)
-- ⬜ Antes de dar por buena una versión: mirar el hero en un teléfono real. El QA no revisa layout, da ✅ igual
-
-**[#30 Operar y optimizar campaña ad1-fomo (primera campaña viva)](https://trello.com/c/MpM48Zc5)** — 1/5 · Mateo (Media Buyer) · últ. 2026-07-29
-- ⬜ Corregir el CTA cortado en la imagen del creativo (Canva): "HAZ CLIC SI ERES PERIODISTA" completo, sin salirse del borde — pendiente menor
-- ⬜ Verificar que el valor TOTAL con order bumps (curso + OBs) llegue a Meta en el Purchase — chequear el raw payload de la próxima venta real con OB (si manda solo $27, el ROAS se ve bajo)
-- ⬜ Hotmart (config del producto): sacar el upsell "Nutrición para Bebés", cambiar la portada del dinero por una on-brand, mejorar la UX del área del curso
-- ⬜ Crear Conversión Personalizada en Meta filtrada por content_ids=curso-sistema-ingresos (para que la campaña optimice solo compras del curso, no las de Leadr)
-
-**[#94 Embudo de las guías gratis — 100% por EMAIL (corre solo)](https://trello.com/c/DyKdwyrB)** — 5/7 · Nicolas (Backend) · últ. 2026-07-29
-- ⬜ Registro por cliente en Supabase (tabla funnel_email): fecha de cada paso enviado por email (r3/r4/r5/oferta/seguimiento), consultable — sacar el estado de los atributos escondidos de Brevo
-- ⬜ Conservar el historial de WhatsApp (conversaciones_wa/mensajes) como registro del cliente potencial — NO borrar
-
-**[#62 Upsell post-compra: "Tu Periódico Digital + Redacción IA" (página ESPERA)](https://trello.com/c/XvzdCj3l)** — 8/16 · Luna (CRO/Landing) · últ. 2026-07-16
-- ⬜ Armar la planilla plantilla ya publicada como CSV (columnas + notas de ejemplo)
-- ⬜ Grabar 3 videos cortos de los pasos que traban: publicar CSV, conectar CSV en Lovable, pegar en la planilla
-- ⬜ Plantilla de sitio de respaldo + mini-FAQ de los 5 errores comunes (anti-reembolso)
-- ⬜ Configurar el upsell de 1 clic en Hotmart (embudo post-compra)
-- ⬜ Empaquetar la entrega y definir dónde vive (acceso Hotmart / carpeta)
-- ⬜ Probar el flujo completo E2E (compra → OTO → aceptar → entrega) antes de encender
-- ⬜ Documentar la decisión técnica en un archivo del repo
-- ⬜ Grabar la Mini VSL del upsell (5-6 min, voz en off + grabación de pantalla) con el guión
-
-### Bloqueada (5)
+**[#59 Revisar Pro de Leadr — cuántos pagan de verdad vs regalados](https://trello.com/c/1xeibaWl)** — 6/7 · Bruno (Data Analyst) · últ. 2026-07-31
+- ⬜ Definir política: qué pasa cuando se vence el mes gratis del bono del curso (¿downgrade automático? ¿aviso previo?)
 
 **[#36 Capturar rechazos de tarjeta de Hotmart (hueco de recuperación)](https://trello.com/c/BvvEtt86)** — 5/13 · Nicolas (Backend) · últ. 2026-07-31
 - ⬜ Confirmar el nombre real del evento contra el raw payload en los logs de Vercel (/api/hotmart) cuando llegue un rechazo real
@@ -155,68 +109,165 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 - ⬜ (de la #33) Template Insights: verificar si Meta ya lo habilitó (daba "not available") → el reporte diario debería mostrar leídos/entregados. Si sigue sin habilitarse, montar webhook propio de estados (sent/delivered/read) en api/wa-webhook.js
 - ⬜ (de la #50, solo si vuelve a usarse WhatsApp para regalos) Plantillas con botón → /api/d ya creadas: regalo3_link_periodico (1532705275224411) y regalo4_link_pilares (2687951991599180). Al aprobarse: cambiar buildTemplatePayload en wa-funnel.js + deploy → contar aperturas en events (pdf_open, src=WhatsApp-Regalo3/4). HOY EN PAUSA: el embudo de regalos va 100% por email (#94)
 
-**[#86 🖼️ Imágenes generadas con IA (OpenAI)](https://trello.com/c/3yBAOq9M)** — 0/3 · Director (Academico) · últ. 2026-07-18
-- ⬜ Cargar OPENAI_API_KEY + crédito (~$5) en OpenAI (Jose)
-- ⬜ Generar imágenes/fondos con gpt-image-1 y tratarlos con la paleta
-- ⬜ Integrar en las clases y re-renderizar
-
 **[#84 🎙️ Voz final del curso — ElevenLabs (Creator + voz argentina)](https://trello.com/c/7on7Y0rr)** — 0/4 · Director (Academico) · últ. 2026-07-18
 - ⬜ Activar plan ElevenLabs Creator (Jose)
 - ⬜ Diseñar o elegir la voz argentina (voice_id)
 - ⬜ Regenerar los audios de todas las clases con la voz final
 - ⬜ Re-render de las clases con la voz final
 
-### En revision (12)
+### En revision (14)
 
-**[#108 Link de acceso a Leadr vencido = callejón sin salida (0 de 18 entraron)](https://trello.com/c/4EuUeUB5)** — 9/10 · Nicolas (Backend) · últ. 2026-07-31
+**[#118 Admin de Leadr: panel de agentes por evidencia + menú contraíble + CPL](https://trello.com/c/RLEJDywJ)** — 9/12 · últ. 2026-08-03
+- ⬜ PENDIENTE JOSE: mirar la página renderizada (leadr.cloud/admin/equipo)
+- ⬜ PENDIENTE: poner active=false en team_members a los 4 dados de baja (hoy el código los filtra, pero la base sigue diciendo que están activos)
+- ⬜ PENDIENTE: el gasto del panel viene ~1 día atrasado, así que el CPL sale más barato que el real. Decidir si se muestra la fecha del último gasto sincronizado
+
+**[#109 📊 Campañas en Leadr — una página por campaña con el embudo paso a paso en vivo](https://trello.com/c/McxkZs9Y)** — 9/14 · Nicolas (Backend), Luna (CRO/Landing) · últ. 2026-08-03
+- ⬜ Jose mira la página (/admin/campanas en Leadr) y da el visto bueno visual
+- ⬜ Etiquetar en Make (escenario 9474482) el Regalo 1 (módulo 3) y la guía de republicadores (módulo 30): sumar "tags":["regalo1-guia-claude"] y "tags":["rep-guia-que-te-lean"] al JSON. Es un campo más en el body, pero toca un flujo de entrega vivo → no se hizo sin avisar
+- ⬜ Decidir el Regalo 2: hoy es el paso 3 de una automatización de Brevo (plantilla 1) y las automatizaciones no dejan etiquetar. O se saca y se manda desde el cron como los Regalos 3-5, o ese paso se lee siempre del respaldo
+- ⬜ Cambiar la página para que lea SOLO la base y deje de consultar Brevo en vivo — recién después de confirmar con los envíos del cron de mañana (13:00 UTC) que el webhook no pierde ningún aviso
+- ⬜ ⚠️ El cron `recuperacion` (15:00 UTC) NO se disparó el 03/08: a las 19:12 UTC ninguna de las 5 tablas que escribe tenía dato de ese día, aunque el 02/08 sí corrió (todas con timestamp 15:11, a 300 ms una de otra). NO es el código: `/api/recuperacion?mode=stats` responde OK con el deploy nuevo. Revisar 2-3 días si el disparo se saltea seguido — en Hobby la hora del cron no está garantizada. Si se repite, evaluar disparo externo
+
+**[#116 🔑 El link de acceso a Leadr no funcionaba para nadie (19 compradores afuera)](https://trello.com/c/Jr2YYV5l)** — 8/8 · Bruno (Data Analyst) · últ. 2026-08-02
+
+**[#115 🤖 Director autónomo — que la clase semanal de Leadr se publique sola](https://trello.com/c/RHLeiYfn)** — 10/11 · Nicolas (Backend), Director (Academico) · últ. 2026-08-01
+- ⬜ CONFIRMAR mañana 01→02/08: que el cron de las 13:00 UTC corrió solo (agent_states del director con fecha nueva)
+
+**[#114 🔴 Embudo Guía Claude: el Regalo 4 no le llegó a NADIE en todo julio — completar los 2.177 mails adeudados](https://trello.com/c/p2MtUfEx)** — 15/18 · Nicolas (Backend), Sofia (Email) · últ. 2026-08-01
+- ⬜ ⏳ Que la cola llegue a 0: verificar el 07/08 que le_falta_a dé 0 en las 4 piezas
+- ⬜ ⏳ Vigilar rebotes/spam: hoy 5,1% y 0 spam sobre 355 mails. Si el rebote pasa de 8% o hay quejas, bajar PIEZAS_CAP_DIA
+- ⬜ ⏳ 01/08: confirmar que la corrida del cron (10 ART) salió sola y sin duplicados
+
+**[#71 Contenido Leadr · Semana 27 jul-2 ago → Automatización](https://trello.com/c/2a3MCENA)** — 3/4 · Director (Academico) · últ. 2026-08-01
+- ⬜ RECURSO PRO: plantilla/prompt de un flujo automatizado para periodistas (ej. resumen de fuentes con IA)
+
+**[#108 Link de acceso a Leadr vencido = callejón sin salida (0 de 18 entraron)](https://trello.com/c/4EuUeUB5)** — 9/11 · Nicolas (Backend) · últ. 2026-07-31
 - ⬜ Probar en vivo con un link vencido de verdad (que aparezca el cartel y llegue el mail nuevo)
+- ⬜ El 02/08: contar cuántos de los 17 entraron — select email, last_sign_in_at from auth.users where last_sign_in_at > '2026-07-31'. Si vuelve a dar 0, el problema no era la llave
 
-**[#93 Reorganizar estructura del repo (ads-agent + sistema-ingresos)](https://trello.com/c/D0Y45QnX)** — 5/6 · Nicolas (Backend) · últ. 2026-07-30
-- ⬜ Verificar que nada se rompió tras cada tanda: correr los scripts clave de ads-agent (fetch-meta, sync) y qa-salud-sitio.mjs en las 10 páginas; confirmar deploy de sistema-ingresos en Vercel OK
+**[#104 Ficha por cliente: todo lo que le mandamos y si lo abrió](https://trello.com/c/mvKsdYVI)** — 5/5 · Nicolas (Backend), Valeria (Frontend) · últ. 2026-07-31
+
+**[#77 Agenda diaria del tablero Trello (recordatorio + auto-cierre en el email diario)](https://trello.com/c/wphImuWx)** — 9/9 · Nicolas (Backend) · últ. 2026-07-31
+
+**[#68 Salud del sitio del curso: test velocidad + botones + optimización de carga](https://trello.com/c/cNVUfYMB)** — 8/8 · Max (QA/Performance) · últ. 2026-07-31
+
+**[#53 Desbloquear el trabajo de los agentes y que corran diarios solos](https://trello.com/c/3XHNa8oW)** — 8/9 · Nicolas (Backend) · últ. 2026-07-31
+- ⬜ EL PROBLEMA DE FONDO: que el reporte llegue a donde Jose mira. 32 recomendaciones y 4 Paneles de Salud sin abrir — uno avisa en rojo que el 100% de los WhatsApp fallan. Llevarlo a Telegram (el puente ya existe) en vez de un mail más
+
+**[#107 📣 Orgánico FB: convertir la guía "Que te lean miles" en serie de posts](https://trello.com/c/DOhEmqkI)** — 10/13 · Valentina (Organico) · últ. 2026-07-31
+- ⬜ Programar 29, 30 y 31/08 cuando la cola baje de 29 (re-correr schedule-muro.mjs, es idempotente) — contenido ya listo
+- ⬜ (JOSE) Leer los 3 primeros (16, 17 y 18/08) antes de que salgan y avisar si el tono no es el del muro
+- ⬜ A los 7 días de arrancar: mirar qué posteo trajo más comentarios y si aparecieron lectores nuevos (no conocidos) — es el mismo recuento C/L que enseñamos
 
 **[#105 Visor de datos en el admin de Leadr (/admin/datos)](https://trello.com/c/hCg9UqXJ)** — 3/4 · Nicolas (Backend), Valeria (Frontend) · últ. 2026-07-30
 - ⬜ Jose abre /admin/datos y confirma que las 18 tablas cargan bien
-
-**[#104 Ficha por cliente: todo lo que le mandamos y si lo abrió](https://trello.com/c/mvKsdYVI)** — 4/5 · Nicolas (Backend), Valeria (Frontend) · últ. 2026-07-30
-- ⬜ Confirmar mañana que la corrida diaria del panel actualizó la tabla sola
-
-**[#103 Nadie podía entrar a Leadr: el mail de acceso no llegaba](https://trello.com/c/zbBKesUE)** — 5/6 · Nicolas (Backend), Sofia (Email) · últ. 2026-07-30
-- ⬜ Verificar en 48h cuántos de los 18 crearon contraseña y entraron
-
-**[#70 Contenido Leadr · Semana 20-26 jul → Seguridad Digital](https://trello.com/c/Ov5SPFfx)** — 3/4 · Director (Academico) · últ. 2026-07-29
-- ⬜ NOVEDAD: post comunidad "Módulo Seguridad Digital completo" + 1 tip accionable
-
-**[#77 Agenda diaria del tablero Trello (recordatorio + auto-cierre en el email diario)](https://trello.com/c/wphImuWx)** — 7/9 · Nicolas (Backend) · últ. 2026-07-29
-- ⬜ Commitear los cambios a git al repo (pendiente confirmacion de Jose)
-- ⬜ Confirmar el 18/07 que la seccion Agenda aparece en el email diario del Panel de Salud
-
-**[#53 Desbloquear el trabajo de los agentes y que corran diarios solos](https://trello.com/c/3XHNa8oW)** — 6/9 · Nicolas (Backend) · últ. 2026-07-29
-- ⬜ Confirmar con Jose que Mateo aporta valor (unos días de recomendaciones) antes de clonar
-- ⬜ Clonar al próximo agente (sugerido: Sofía email → Dante analytics)
-- ⬜ (al escalar) Consolidar recomendaciones en el Panel de Comando para no inundar la casilla
 
 **[#52 Inbox de WhatsApp en Leadr (/admin/chats) — ver hilos + campaña](https://trello.com/c/ZhXVDMsn)** — 9/11 · Nicolas (Backend) · últ. 2026-07-29
 - ⬜ Confirmar con Jose que ve el panel de campaña tras el build de Leadr (05/07)
 - ⬜ ⚠️ Mantenimiento: si en el futuro se cambia el texto de una plantilla en Meta, re-sincronizar las constantes de chats-client.tsx (FUNNEL_GUIA_CLAUDE / RECUP_*). No es automático — el texto literal está hardcodeado.
 
-**[#68 Salud del sitio del curso: test velocidad + botones + optimización de carga](https://trello.com/c/cNVUfYMB)** — 7/8 · Max (QA/Performance) · últ. 2026-07-16
-- ⬜ Jose: confirmar VISUALMENTE en el celu (botón 1 línea + hero se ve bien al instante + 3D entra después)
+### Por hacer (19)
 
-**[#40 Fuga de checkout del curso (86% abandono) + motivos de cancelación Hotmart](https://trello.com/c/qM5vVbJo)** — 4/5 · Luna (CRO/Landing) · últ. 2026-07-16
-- ⬜ Exportar el CSV de cancelaciones con rango AMPLIO (30-60 días) y analizar el mix (rechazo de tarjeta vs persuasión) → define el cambio concreto del checkout
+**[#119 Gasto de Meta: separar el deliberado del que hay que mirar](https://trello.com/c/xUYhYeH7)** — 0/2 · últ. 2026-08-03
+- ⬜ Marcar "interacción" como gasto deliberado: que salga en gris bajo "Gasto fijo a propósito" y no en ámbar de alarma
+- ⬜ Decidir qué hacer con el anuncio V1 15/12/25 1USD: ~$30/mes por 1 solo clic en 30 días
 
-**[#59 Revisar Pro de Leadr — cuántos pagan de verdad vs regalados](https://trello.com/c/1xeibaWl)** — 6/7 · Bruno (Data Analyst) · últ. 2026-07-05
-- ⬜ Definir política: qué pasa cuando se vence el mes gratis del bono del curso (¿downgrade automático? ¿aviso previo?)
+**[#117 🔴 333 emails de compradores y leads están en el repo PÚBLICO de GitHub](https://trello.com/c/FtyUrMMB)** — 1/3 · últ. 2026-08-01
+- ⬜ (JOSE) Decidir si se reescribe el historial del repo para borrar los 4 CSV. Implica force push y romper cualquier clon existente. Alternativa más simple: hacer el repo privado, que resuelve la exposición sin tocar la historia
+- ⬜ Sacar los 4 CSV del índice con `git rm --cached` y commitear, para que dejen de estar en la copia actual del repo (esto NO los borra del historial ni del disco — es el paso previo, independiente de la decisión de arriba)
 
-### Por hacer (12)
+**[#72 Contenido Leadr · Semana 3-9 ago → OSINT Periodístico](https://trello.com/c/YaQyToRv)** — 0/4 · Director (Academico) · últ. 2026-08-01
+- ⬜ CLASE: crear módulo OSINT desde cero — config JSON + cargar primeras clases (hoy no existe en Supabase)
+- ⬜ RECURSO PRO: prompt-kit OSINT (búsqueda inversa de imágenes, geolocalización, verificación de cuentas)
+- ⬜ NOVEDAD: post comunidad "Nuevo módulo: OSINT Periodístico" + 1 tip accionable
+- ⬜ VERIFICAR: confirmar en Supabase que el grupo OSINT existe con clases publicadas
 
-**[#109 📊 Campañas en Leadr — una página por campaña con el embudo paso a paso en vivo](https://trello.com/c/McxkZs9Y)** — 0/6 · Nicolas (Backend), Luna (CRO/Landing) · últ. 2026-07-31
-- ⬜ Definir la fuente: el panel lee Brevo EN VIVO (decisión de Jose 31/07). comunicaciones_email queda para detalle por persona e histórico
-- ⬜ Llenar funnel_steps.slug con el mismo valor que comunicaciones_email.campana (regalo1-guia-claude, regalo2-50-prompts, regalo3-periodico, regalo4-pilares, regalo5-agentes-ia, oferta-email, oferta-reenvio) — con eso el join sale solo
-- ⬜ Cargar los funnel_steps de meta-leadgen-republicadores (hoy tiene 0): anuncio → formulario nativo → entrega de la guía → secuencia de emails → oferta
-- ⬜ Guardar el CONTENIDO de cada mensaje para poder leerlo desde la página (hoy solo está el asunto; el cuerpo vive en Brevo y en el código del embudo)
-- ⬜ Excluir del embudo los 184 correos internos (Panel de Comando, Panel de Salud, reportes de agentes): abren al 67% porque los abre Jose y distorsionan cualquier promedio
-- ⬜ Construir la página en ../Leadr (repo aparte): lista de campañas → detalle con los pasos en orden, el mensaje de cada uno y su tasa de apertura y clic
+**[#69 📚 Sistema de contenido semanal Leadr (maestra)](https://trello.com/c/of052YuP)** — 2/14 · Director (Academico) · últ. 2026-08-01
+- ⬜ F1 · OSINT Periodístico — 0/8 (crear módulo)
+- ⬜ F2 · Data Journalism — 3/8
+- ⬜ F2 · Cobertura en Tiempo Real — 4/8
+- ⬜ F2 · Especialización de Beat — 2/8
+- ⬜ F2 · Investigación Avanzada — 3/8
+- ⬜ F2 · Autoridad Editorial — 4/8
+- ⬜ F2 · Liderazgo IA en Redacción — 0/8 (crear módulo)
+- ⬜ F3 · Marca Personal + Newsletter — 1/8
+- _…y 4 más_
+
+**[#113 Verificar que Valentina publique la story sola (16/08)](https://trello.com/c/0GjViBKj)** — sin checklist ⚠️ · últ. 2026-07-31
+
+**[#112 💸 "interacción": dos conjuntos a $1/día que nadie estaba mirando](https://trello.com/c/YDVRkIcK)** — 1/3 · Mateo (Media Buyer) · últ. 2026-07-31
+- ⬜ Apagar el conjunto "V1 15/12/25 1USD": $30,66 en 30 días por UN clic. No hace falta esperar más datos
+- ⬜ Decidir el conjunto "Calentamiento 1 / Interacción": apagarlo (~$50/mes) o ponerle ?src=ad-interaccion al link y medirlo dos semanas antes de matarlo. Los 958 clics a 5 centavos podrían ser el tráfico más barato que hay — o plata tirada. Hoy no se sabe
+
+**[#111 🔴 El reenvío de la oferta no lo abre nadie — 171 envíos, 1 apertura](https://trello.com/c/jC7xNKhu)** — 0/3 · Sofia (Email) · últ. 2026-07-31
+- ⬜ Descartar lo barato primero: mandarse el reenvío a una casilla propia de Gmail y ver si cae en Promociones/Spam, y si el pixel de apertura está en el HTML
+- ⬜ Comparar en Brevo la reputación y el % de spam de `oferta-reenvio` contra `oferta-email` y `regalo5-agentes-ia`: si solo este está mal, es el envío; si están todos, es el dominio
+- ⬜ Decidir si se pausa el reenvío mientras se investiga (MAILOFERTA2_ENABLED=0): hoy sigue saliendo todos los días y sumando envíos que nadie abre, lo que empeora la reputación
+
+**[#110 🔑 Decidir si se rota la clave de Brevo (estaba escrita a mano en el repo)](https://trello.com/c/SUwX3OeJ)** — 1/3 · Nicolas (Backend) · últ. 2026-07-31
+- ⬜ Jose decide: ¿se rota la clave de Brevo o se deja?
+- ⬜ Si se rota: clave nueva en Brevo → Make 9474482 (módulos 3, 4, 30 y 40) → .env.local de Leadr → Vercel de Leadr → Vercel de sistema-ingresos → envío de prueba que confirme que sale
+
+**[#91 Producir VSL para la landing y testear](https://trello.com/c/TmOQfLNe)** — 0/8 · Luna (CRO/Landing) · últ. 2026-07-31
+- ⬜ Escribir guion VSL corto (2-3 min): problema -> mecanismo unico -> oferta -> CTA (metodo Luis Mena)
+- ⬜ Aprobar guion con Jose
+- ⬜ Producir el video (voz + visuales)
+- ⬜ Montar el VSL arriba de la landing (definir player / autoplay muteado)
+- ⬜ Definir el test: A/B o version v4-con-VSL contra v3-sin-VSL
+- ⬜ Trackear reproduccion + retencion + scroll + tasa checkout
+- ⬜ Veredicto del test (VSL sube conversion vs v3?)
+- ⬜ ⛔ NO montar el VSL en la landing antes del veredicto de v3 (~12/08, #73). Si entra antes, ensucia la medición y no se sabe qué movió la aguja. Además #91 y #99 compiten por ser v4: entra UNA sola.
+
+**[#46 Contabilidad automática — buzón de facturas (gastos@)](https://trello.com/c/Y1YEouzN)** — 6/14 · Bruno (Data Analyst) · últ. 2026-07-31
+- ⬜ Poner gastos@ como email de facturación en cada proveedor (Vercel, Supabase, Brevo, Make, higgsfield, Anthropic, dominio)
+- ⬜ Validar con la 1ª factura real que entra sola
+- ⬜ Revisar los fijos que siguen en $0 y confirmar uno por uno si son gratis de verdad o si nadie los cargó (Anthropic y Dominios son los que quedan)
+- ⬜ Confirmar el lunes 03/08 que la rutina corrió bien con la lista blanca: no debe mandar mail (Make y Brevo ya están cargados = "sin cambios") y Brevo debe seguir en €21, no en €14
+- ⬜ Make.com — Perfil → Subscription/Billing → email de facturación = gastos@leadr.cloud
+- ⬜ Dominio leadr.cloud (Hostinger) — Datos de facturación → email = gastos@leadr.cloud
+- ⬜ Dominio sistemadeingresosdiariosia.com — en su registrador → email de facturación = gastos@leadr.cloud
+- ⬜ ⚠️ Meta Ads — SOLO verificar que la factura siga llegando al Gmail. NO redirigir a gastos@ ni cargar como fijo: ya se carga solo a nivel cuenta (si se mete al buzón, el gasto se DUPLICA). Igual para WhatsApp de Meta (se estima en la tabla `mensajes`)
+
+**[#30 Operar y optimizar campaña ad1-fomo (primera campaña viva)](https://trello.com/c/MpM48Zc5)** — 1/5 · Mateo (Media Buyer) · últ. 2026-07-31
+- ⬜ Corregir el CTA cortado en la imagen del creativo (Canva): "HAZ CLIC SI ERES PERIODISTA" completo, sin salirse del borde — pendiente menor
+- ⬜ Verificar que el valor TOTAL con order bumps (curso + OBs) llegue a Meta en el Purchase — chequear el raw payload de la próxima venta real con OB (si manda solo $27, el ROAS se ve bajo)
+- ⬜ Hotmart (config del producto): sacar el upsell "Nutrición para Bebés", cambiar la portada del dinero por una on-brand, mejorar la UX del área del curso
+- ⬜ Crear Conversión Personalizada en Meta filtrada por content_ids=curso-sistema-ingresos (para que la campaña optimice solo compras del curso, no las de Leadr)
+
+**[#62 Upsell post-compra: "Tu Periódico Digital + Redacción IA" (página ESPERA)](https://trello.com/c/XvzdCj3l)** — 8/16 · Luna (CRO/Landing) · últ. 2026-07-31
+- ⬜ Armar la planilla plantilla ya publicada como CSV (columnas + notas de ejemplo)
+- ⬜ Grabar 3 videos cortos de los pasos que traban: publicar CSV, conectar CSV en Lovable, pegar en la planilla
+- ⬜ Plantilla de sitio de respaldo + mini-FAQ de los 5 errores comunes (anti-reembolso)
+- ⬜ Configurar el upsell de 1 clic en Hotmart (embudo post-compra)
+- ⬜ Empaquetar la entrega y definir dónde vive (acceso Hotmart / carpeta)
+- ⬜ Probar el flujo completo E2E (compra → OTO → aceptar → entrega) antes de encender
+- ⬜ Documentar la decisión técnica en un archivo del repo
+- ⬜ Grabar la Mini VSL del upsell (5-6 min, voz en off + grabación de pantalla) con el guión
+
+**[#73 Trazabilidad por versiones — landing v3 (identificación) + checkout v3 (PayPal ON) midiendo](https://trello.com/c/sFqLzsAH)** — 16/21 · Bruno (Data Analyst), Luna (CRO/Landing) · últ. 2026-07-31
+- ⬜ ~05/08: chequeo intermedio v3 (scroll Clarity vs 31,78% + ventas/día). No tocar la landing hasta el veredicto
+- ⬜ ~05/08: chequear checkout v3 — ¿vuelve el volumen que LLEGA (0,33/día en v2 vs 1,44 en v1) y los carritos abandonados?
+- ⬜ ~12/08: veredicto landing v3 (scroll y ventas/día; clics SOLO como control) y veredicto checkout v3 vs v1 (completion 26,9%)
+- ⬜ Confirmar en la config de pagos de Hotmart si BILLET/efectivo quedó prendido (apareció 1 pago BILLET MXN en v2)
+- ⬜ Antes de dar por buena una versión: mirar el hero en un teléfono real. El QA no revisa layout, da ✅ igual
+
+**[#101 🎬 CURSO EN VIDEO (Sistema de Ingresos) — tarjeta maestra](https://trello.com/c/m2WA7HJP)** — 10/30 · Director (Academico) · últ. 2026-07-31
+- ⬜ M4 El nombre y la marca — producido; falta voz Chris (cuota ElevenLabs, reset ~19 ago) → HANDOFF-M4.md
+- ⬜ Pegar embeds M4 (cuando salga, va ANTES que M4… ojo: M5 antes que M4 en el orden)
+- ⬜ Confirmar EN Hotmart que los 7 embeds de M1 están realmente pegados: la #92 (archivada el 31/07) decía que faltaba subirlos y acá figura hecho. Una de las dos estaba mal — mirarlo antes de darlo por cerrado.
+- ⬜ M1 (índigo) — falta la 1.4 (escalera)
+- ⬜ M2 (cyan) — generar módulo + 5 clases
+- ⬜ M3 (verde) — generar módulo + 4 clases
+- ⬜ M4 (rosa) — generar módulo + 5 clases
+- ⬜ M5 (violeta) — generar módulo + 6 clases
+- _…y 12 más_
+
+**[#102 Radar de Tendencias TikTok — bono del curso](https://trello.com/c/UbfSnBSU)** — 6/10 · Nicolas (Backend) · últ. 2026-07-31
+- ⬜ Cargar ANTHROPIC_API_KEY en ads-agent/.env y probar la capa de IA
+- ⬜ Curar cuentas del grupo 3 (virales/sucesos/calle) — es donde explota primero
+- ⬜ Programar corridas automáticas (definir cuántas por día)
+- ⬜ Publicar el resultado donde lo vea el alumno (página + email)
 
 **[#39 Publicar ad2-fomo2 · test creativo B a $10/día](https://trello.com/c/DfdLqvnD)** — 4/14 · Mateo (Media Buyer) · últ. 2026-07-30
 - ⬜ Decidir estructura: conjunto PROPIO $10/día (test limpio, recomendado) vs. mismo conjunto de ad1
@@ -229,21 +280,6 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 - ⬜ Publicar y verificar que quede "En revisión"/"Activo"; actualizar registro-anuncios.md (estado → 🟢 Activo + fecha)
 - _…y 2 más_
 
-**[#46 Contabilidad automática — buzón de facturas (gastos@)](https://trello.com/c/Y1YEouzN)** — 5/11 · Bruno (Data Analyst) · últ. 2026-07-30
-- ⬜ Poner gastos@ como email de facturación en cada proveedor (Vercel, Supabase, Brevo, Make, higgsfield, Anthropic, dominio)
-- ⬜ Validar con la 1ª factura real que entra sola
-- ⬜ Make.com — Perfil → Subscription/Billing → email de facturación = gastos@leadr.cloud
-- ⬜ Dominio leadr.cloud (Hostinger) — Datos de facturación → email = gastos@leadr.cloud
-- ⬜ Dominio sistemadeingresosdiariosia.com — en su registrador → email de facturación = gastos@leadr.cloud
-- ⬜ ⚠️ Meta Ads — SOLO verificar que la factura siga llegando al Gmail. NO redirigir a gastos@ ni cargar como fijo: ya se carga solo a nivel cuenta (si se mete al buzón, el gasto se DUPLICA). Igual para WhatsApp de Meta (se estima en la tabla `mensajes`)
-
-**[#74 Programar orgánico FB — Agosto 2026](https://trello.com/c/ksKJ4IEf)** — 8/9 · Valentina (Organico) · últ. 2026-07-30
-- ⬜ Agosto queda cubierto hasta el 28. Faltan 29, 30 y 31: rebotan por el tope de Meta (29 en cola) — re-correr schedule-muro.mjs desde el 3/08. Seguimiento en #107
-
-**[#92 🎬 Módulo 1 · Fundamentos — 7 clases en video (a Hotmart)](https://trello.com/c/LQ8ZkLHg)** — 5/7 · Director (Academico) · últ. 2026-07-29
-- ⬜ Portada 1.4 (escalera ascendente) — generar en ChatGPT y guardar
-- ⬜ Subir a Hotmart: 7 embeds + portadas (módulo nuevo que convive con el viejo)
-
 **[#75 Atribución de ventas al anuncio: fix ventas.src + upsells post-compra](https://trello.com/c/2jE9YpRt)** — 0/10 · Nicolas (Backend) · últ. 2026-07-29
 - ⬜ Ubicar el handler del webhook en sistema-ingresos/api/hotmart y ver dónde arma el insert a `ventas`
 - ⬜ Setear src = payload.data.purchase.origin.src cuando el campo directo venga vacío (fallback al payload)
@@ -254,15 +290,6 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 - ⬜ Solo atribuir si el mismo comprador tiene una venta con src real; si no → queda 'sin anuncio' genuino (orgánico)
 - ⬜ Verificar con el caso real: Mariano (Máquina + Método sin src, mismo día que su curso ad1-fomo) → deben quedar atribuidas a ad1-fomo; Juan Manuel (Sala VIP) → sigue sin anuncio
 - _…y 2 más_
-
-**[#91 Producir VSL para la landing y testear](https://trello.com/c/TmOQfLNe)** — 0/7 · Luna (CRO/Landing) · últ. 2026-07-24
-- ⬜ Escribir guion VSL corto (2-3 min): problema -> mecanismo unico -> oferta -> CTA (metodo Luis Mena)
-- ⬜ Aprobar guion con Jose
-- ⬜ Producir el video (voz + visuales)
-- ⬜ Montar el VSL arriba de la landing (definir player / autoplay muteado)
-- ⬜ Definir el test: A/B o version v4-con-VSL contra v3-sin-VSL
-- ⬜ Trackear reproduccion + retencion + scroll + tasa checkout
-- ⬜ Veredicto del test (VSL sube conversion vs v3?)
 
 **[#88 YouTube orgánico — muchos videos/día (listados) para tráfico](https://trello.com/c/GLz5iqdN)** — 0/8 · Valentina (Organico) · últ. 2026-07-19
 - ⬜ Definir formato y nicho (Shorts vertical vs largo; tema: periodismo + IA / noticias)
@@ -282,44 +309,21 @@ Lista "Leadgen - Guía Claude": **919 contactos**.
 - ⬜ Puente a Telegram: reenviar los mensajes entrantes de Messenger para que Jose lea/responda (igual que el puente de WhatsApp)
 - ⬜ Probar E2E con un mensaje real de prueba y verificar OUTCOMES (lead guardado, cadencia disparada, exclusión de compradores) antes de darlo por LIVE
 
-**[#72 Contenido Leadr · Semana 3-9 ago → OSINT Periodístico](https://trello.com/c/YaQyToRv)** — 0/4 · Director (Academico) · últ. 2026-07-16
-- ⬜ CLASE: crear módulo OSINT desde cero — config JSON + cargar primeras clases (hoy no existe en Supabase)
-- ⬜ RECURSO PRO: prompt-kit OSINT (búsqueda inversa de imágenes, geolocalización, verificación de cuentas)
-- ⬜ NOVEDAD: post comunidad "Nuevo módulo: OSINT Periodístico" + 1 tip accionable
-- ⬜ VERIFICAR: confirmar en Supabase que el grupo OSINT existe con clases publicadas
-
-**[#69 📚 Sistema de contenido semanal Leadr (maestra)](https://trello.com/c/of052YuP)** — 1/14 · Director (Academico) · últ. 2026-07-16
-- ⬜ F1 · Automatización (grupo 18) — 4/8
-- ⬜ F1 · OSINT Periodístico — 0/8 (crear módulo)
-- ⬜ F2 · Data Journalism — 3/8
-- ⬜ F2 · Cobertura en Tiempo Real — 4/8
-- ⬜ F2 · Especialización de Beat — 2/8
-- ⬜ F2 · Investigación Avanzada — 3/8
-- ⬜ F2 · Autoridad Editorial — 4/8
-- ⬜ F2 · Liderazgo IA en Redacción — 0/8 (crear módulo)
-- _…y 5 más_
-
-**[#51 Configurar ChatGPT como proveedor de imágenes](https://trello.com/c/UEPGbi2J)** — 0/7 · Valentina (Organico) · últ. 2026-07-03
-- ⬜ Confirmar la cuenta de ChatGPT a usar (plan free) y quién la opera
-- ⬜ Definir el flujo manual: prompt → generar en ChatGPT → descargar PNG → usar en carrusel/anuncio
-- ⬜ Escribir el "recipe" de prompt con la marca (paleta #07070f + indigo #6366f1 + cyan #22d3ee, texto legible en pantalla) y guardarlo en el repo (ads-agent)
-- ⬜ Generar 1 imagen de prueba (un creativo/placa) y validar calidad + texto legible antes de adoptarlo
-- ⬜ Documentar en el repo que higgsfield/fal.ai quedan fuera para imágenes (actualizar donde se mencionen)
-- ⬜ Dar de baja la suscripción de higgsfield (coordina con #48 / Contabilidad)
-- ⬜ (Futuro, opcional) Evaluar la API de OpenAI Images (pago) para automatizar cuando haya volumen
-
 ## ⏳ Esperando a Jose
 
 - [#89](https://trello.com/c/HhfWhrB9) Completar Business Verification en Meta Business Settings → Centro de seguridad (error 141010, business id 1313970406294022). Es el bloqueo principal.
 - [#89](https://trello.com/c/HhfWhrB9) Reenviar/cambiar el nombre para mostrar del número (name_status=DECLINED) en WhatsApp Manager y esperar aprobación.
 - [#84](https://trello.com/c/7on7Y0rr) Activar plan ElevenLabs Creator 
-- [#86](https://trello.com/c/3yBAOq9M) Cargar OPENAI_API_KEY + crédito (~$5) en OpenAI 
 - [#98](https://trello.com/c/vFkbcxvb) Pegar SUPABASE_SERVICE_ROLE_KEY en ads-agent/.env.local (Supabase → periodistas-marketing → Project Settings → API → service_role). Sin eso, ventas y entrega de WhatsApp quedan fuera del informe
-- [#106](https://trello.com/c/vFd9rZQ3) Mirar /muro en un teléfono real antes de darla por buena — el QA da ✅ igual aunque el layout esté roto
+- [#117](https://trello.com/c/FtyUrMMB) Decidir si se reescribe el historial del repo para borrar los 4 CSV. Implica force push y romper cualquier clon existente. Alternativa más simple: hacer el repo privado, que resuelve la exposición sin tocar la historia
+- [#106](https://trello.com/c/vFd9rZQ3) Mirar /tu-medio en un teléfono real — ya está EN VIVO. El QA da ✅ aunque el layout esté roto, así que esto solo lo ve un ojo humano
 - [#106](https://trello.com/c/vFd9rZQ3) Leer la guía y validar los 7 consejos contra tu propia experiencia — son consenso de oficio, no política publicada por Meta. La guía NO cita ninguna estadística, justamente para no inventar datos ajenos
+- [#106](https://trello.com/c/vFd9rZQ3) Pasar la app de Meta de "Desarrollo" a "En vivo" en developers.facebook.com (pide URL de política de privacidad → ya existe /privacidad). Sin eso el token puede LEER anuncios pero no escribir creativos, y todo cambio de formulario/creativo tiene que hacerlo Jose a mano
+- [#106](https://trello.com/c/vFd9rZQ3) Contestarle el comentario a Erick Agustin Sivila Flores en el anuncio de Facebook: ya está arreglado, que lo intente de nuevo (también se le reenvió por correo). Fue el que avisó del 404
 - [#107](https://trello.com/c/DOhEmqkI) Leer los 3 primeros (16, 17 y 18/08) antes de que salgan y avisar si el tono no es el del muro
-- [#107](https://trello.com/c/DOhEmqkI) 🔴 Decidir el disparador diario de las stories: las de página NO se pueden programar, la API las publica al instante. Opciones: cron en Vercel, Make, o a mano
 
 ## 📋 Tarjetas sin checklist
 
-_todas las tarjetas activas tienen checklist_
+- [#113 Verificar que Valentina publique la story sola (16/08)](https://trello.com/c/0GjViBKj) — Por hacer
+
+_Regla del tablero: toda tarjeta activa lleva checklist con pasos concretos._
