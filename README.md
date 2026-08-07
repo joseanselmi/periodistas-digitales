@@ -41,7 +41,26 @@ node herramientas/verificar-repo.mjs   # que nada quedó apuntando a un lugar qu
 **La regla: nada suelto.** Cada carpeta con contenido propio tiene su
 `README.md`, que dice qué guarda, **de qué carpeta cuelga** y cómo se usa. En la
 raíz quedan solo los archivos que tienen que estar ahí (este README, `CLAUDE.md`,
-`ESTADO.md`, `.gitignore`, `.mcp.json`, `skills-lock.json`).
+`ESTADO.md`, `.gitignore`, `.mcp.json.example`).
+
+> El `.mcp.json` de verdad **no se versiona**: tiene el token de Trello, y este
+> repositorio es público. Lo que se sube es el `.example`, con la forma del
+> archivo y sin las claves.
+
+## ⚠️ Cuatro carpetas dicen "agent" y son cosas distintas
+
+Es la confusión más fácil de este repo. `ads-agent` es **un lugar**; las otras
+tres son **gente o herramientas**:
+
+| Carpeta | Qué es | Cómo se usa |
+|---|---|---|
+| [`ads-agent/`](ads-agent/README.md) | **Todo el marketing.** Campañas, contenido, emails, scripts. El nombre quedó chico: nació solo para anuncios | Es una carpeta, no se "invoca" |
+| [`ads-agent/cerebro/`](ads-agent/cerebro/README.md) | **El equipo: 9 agentes con nombre.** Ricardo, Dante, Sofía… Cada uno tiene su rol y su criterio | Se les habla: `/dante`, `/ricardo` |
+| `.claude/agents/` | **Ayudantes de un solo trabajo.** No son del equipo y no se les habla: los llama un flujo por dentro | Ej.: el revisor que aprueba una clase antes de producirla |
+| `.agents/skills/` | **Capacidades reutilizables.** No son nadie: son un "cómo se hace" | Ej.: armar un PDF con la identidad de marca |
+
+Regla para acordarse: si tiene **nombre de persona**, es del equipo y vive en
+`cerebro/`. Si describe **una tarea**, es un ayudante o una capacidad.
 
 Empezá por el README del proyecto que te interese
 ([sistema-ingresos](sistema-ingresos/README.md) ·
