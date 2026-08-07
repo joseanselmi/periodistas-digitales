@@ -643,10 +643,16 @@ const OFERTA_REENVIO = {
   cierre: 'Está todo explicado en la página, con calma.',
 };
 
-// Molde de email de texto (sin descarga): título, párrafos, un botón. Lo usan el reenvío de la
-// oferta y el re-enganche. Recibe la config por parámetro para que agregar un mail de este tipo
-// no sea copiar 30 líneas de HTML — el diseño se toca en un solo lugar.
+// Molde de email de texto (sin descarga): título, párrafos y —si la config lo trae— un botón.
+// Lo usan el reenvío de la oferta y el re-enganche. Recibe la config por parámetro para que
+// agregar un mail de este tipo no sea copiar 30 líneas de HTML.
+// El botón es OPCIONAL a propósito: un mail que sólo pregunta no puede llevar un CTA, porque
+// cualquier botón lo convierte en un mail que pide algo.
 function armarEmailSimple(c) {
+  const boton = c.cta && c.url ? `
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:28px;"><tr><td align="center">
+            <a href="${c.url.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${c.cta}</a>
+          </td></tr></table>` : '';
   const html = `<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
 <body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
@@ -657,9 +663,7 @@ function armarEmailSimple(c) {
         <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
           <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">${c.titulo}</p>
           ${c.parrafos.map((p) => `<p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">${p}</p>`).join('\n          ')}
-          <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:28px;"><tr><td align="center">
-            <a href="${c.url.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${c.cta}</a>
-          </td></tr></table>
+${boton}
           <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">${c.cierre}</p>
         </td></tr>
         <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
@@ -672,9 +676,7 @@ function armarEmailSimple(c) {
 ${c.titulo}
 
 ${c.parrafos.join('\n\n')}
-
-${c.cta.replace(' →', '')}: ${c.url}
-
+${c.cta && c.url ? `\n${c.cta.replace(' →', '')}: ${c.url}\n` : ''}
 ${c.cierre}`;
   return { html, text };
 }
@@ -746,13 +748,15 @@ const REENGANCHE = {
   titulo: 'Una pregunta corta',
   parrafos: [
     'Te mandamos cuatro guías en las últimas semanas: el periódico digital, los prompts, los 5 pilares y los agentes de IA.',
-    'Te escribo por una sola cosa, y no es para venderte nada: quiero saber si te sirvieron. Sos periodista, tenés oficio y criterio propio — estas guías están escritas para alguien así, y lo que me cuentes cambia las que vienen.',
+    'Te escribo por una sola cosa: quiero saber si te sirvieron. Sos periodista, tenés oficio y criterio propio — están escritas para alguien así, y lo que me cuentes cambia las que vienen.',
     'Respondeme a este mail con una línea. La leo yo.',
   ],
-  cta: 'Volver a abrir la guía del periódico digital →',
-  // Sale del mismo sitio que el Regalo 3 para que renombrar el PDF no deje este link colgado.
-  // Siempre por /api/d: un link directo al .pdf no deja rastro de la descarga.
-  url: `https://sistemadeingresosdiariosia.com/api/d?file=${REGALOS_EMAIL[3].archivo}&src=Email-Reenganche&sck=email-reenganche`,
+  // SIN botón y SIN mencionar la venta, las dos por pedido de Jose (07/08):
+  //   - "no es para venderte nada" le mete la venta en la cabeza igual que si se la nombraras;
+  //   - un botón a una guía puntual convierte el mail en otro envío que pide algo, justo lo que
+  //     esta persona viene ignorando hace semanas.
+  // Consecuencia técnica: la única señal que deja este mail es la APERTURA (el pixel), no el
+  // clic. Es a propósito — la respuesta al mail la lee Jose en la casilla, no la puerta.
   cierre: 'Y si preferís que no te escriba más, con decírmelo alcanza.',
 };
 
