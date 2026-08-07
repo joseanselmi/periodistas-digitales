@@ -4,7 +4,7 @@
  * Uso:
  *   node scripts/exportar/export-pdf.mjs <ruta.html> [salida.pdf]
  *
- * Requisitos del HTML (ver skill pdf-creator en .agents/skills/pdf-creator):
+ * Requisitos del HTML (ver skill pdf-creator en .claude/skills/pdf-creator):
  * - Cada página del PDF = un <section class="page"> o <section class="cover">
  * - CSS: page-break-after:always entre secciones dentro de @media print
  * - CSS: page-break-inside:avoid en cajas/tarjetas (code-box, callout, cta-box, etc.)

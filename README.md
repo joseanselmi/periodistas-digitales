@@ -47,20 +47,31 @@ raíz quedan solo los archivos que tienen que estar ahí (este README, `CLAUDE.m
 > repositorio es público. Lo que se sube es el `.example`, con la forma del
 > archivo y sin las claves.
 
-## ⚠️ Cuatro carpetas dicen "agent" y son cosas distintas
+## ⚠️ Tres carpetas dicen "agent" y son cosas distintas
 
 Es la confusión más fácil de este repo. `ads-agent` es **un lugar**; las otras
-tres son **gente o herramientas**:
+dos son **gente**:
 
 | Carpeta | Qué es | Cómo se usa |
 |---|---|---|
 | [`ads-agent/`](ads-agent/README.md) | **Todo el marketing.** Campañas, contenido, emails, scripts. El nombre quedó chico: nació solo para anuncios | Es una carpeta, no se "invoca" |
 | [`ads-agent/cerebro/`](ads-agent/cerebro/README.md) | **El equipo: 9 agentes con nombre.** Ricardo, Dante, Sofía… Cada uno tiene su rol y su criterio | Se les habla: `/dante`, `/ricardo` |
 | `.claude/agents/` | **Ayudantes de un solo trabajo.** No son del equipo y no se les habla: los llama un flujo por dentro | Ej.: el revisor que aprueba una clase antes de producirla |
-| `.agents/skills/` | **Capacidades reutilizables.** No son nadie: son un "cómo se hace" | Ej.: armar un PDF con la identidad de marca |
 
 Regla para acordarse: si tiene **nombre de persona**, es del equipo y vive en
-`cerebro/`. Si describe **una tarea**, es un ayudante o una capacidad.
+`cerebro/`. Si describe **una tarea**, es un ayudante.
+
+### Por qué `.claude/` no se puede mudar
+
+Las tres carpetas de adentro son **direcciones fijas**: Claude Code lee los
+comandos de `.claude/commands/`, los ayudantes de `.claude/agents/` y las
+capacidades de `.claude/skills/`, y de ningún otro lado. Moverlas no las
+reordena: las hace desaparecer.
+
+> Había una cuarta, `.agents/skills/`, con dos capacidades más (armar un PDF de
+> marca y revisarlo antes de entregarlo). Se juntaron con las otras el
+> 2026-08-01. No era solo prolijidad: **ahí no se cargaban**. Existían como
+> documentación que solo funcionaba porque un script las nombraba por ruta.
 
 Empezá por el README del proyecto que te interese
 ([sistema-ingresos](sistema-ingresos/README.md) ·

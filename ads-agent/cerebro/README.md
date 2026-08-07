@@ -64,7 +64,7 @@ no se desincronice.
 
 > No confundir con `.claude/agents/`, que son otra cosa: **subagentes** que se
 > lanzan desde un flujo (`revisor-clase-video`, `alumno-periodista`), no miembros
-> del equipo. Ni con `.agents/skills/`, que son capacidades reutilizables.
+> del equipo. Ni con `.claude/skills/`, que son capacidades reutilizables.
 
 ## Editar un agente
 
