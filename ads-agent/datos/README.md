@@ -13,8 +13,15 @@ sin consecuencia**: se vuelve a generar corriendo el script otra vez.
 | `radar/` | `scripts/agentes/radar-tendencias.mjs` | Qué se está hablando hoy en las fuentes que seguimos |
 | `creatives/` | `scripts/datos/download-creatives.mjs` | Las imágenes y videos reales de los anuncios, bajados de Meta |
 
-> Los creativos de `2026-06-19/` son de anuncios que corrieron a **$11.99**, el
-> precio viejo. Sirven de archivo, no de referencia.
+> `creatives/` está vacía hoy, y es lo esperable: se llena sola la próxima vez
+> que corras `download-creatives.mjs`.
+>
+> **Lo que había y se borró el 2026-08-07:** `creatives/2026-06-19/`, 66 imágenes
+> (7,4 MB) bajadas de Meta, de anuncios que corrieron a **$11.99** — el precio
+> viejo del curso, que hoy vale $27. Ninguna las nombraba y ya no sirven de
+> referencia: los creativos actuales se bajan de vuelta cuando se los necesita.
+> No es material perdido, es material descartado a propósito; si de verdad
+> hicieran falta, están en el historial de git.
 
 Se corren siempre parados en `ads-agent/`:
 

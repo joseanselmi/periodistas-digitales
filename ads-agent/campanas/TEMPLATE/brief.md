@@ -1,5 +1,6 @@
 # BRIEF — Campaña [VERSIÓN]
-**Copiar esta carpeta completa a `campanas/historico/YYYY-MM-DD/` para cada campaña nueva.**
+**Copiar este archivo a `campanas/<segmento>/brief.md` para cada campaña nueva** —
+el nombre de la carpeta sale de la convención del [README de `campanas/`](../README.md).
 
 ---
 
@@ -87,3 +88,24 @@ _(solo una)_
 | Sin compras después de N días | 4 |
 | Gasto mínimo antes de pausar | $20 |
 | CPA máximo | $18 |
+
+---
+
+## PLAN DE SEGUIMIENTO
+
+| Semana | Acción |
+|--------|--------|
+| Semana 1 | Medir CTR + vistas de la landing. Si el CTR baja de 1% en 2 días → cambiar creativo |
+| Semana 2 | Pausar el peor. Cruzar el copy ganador con una imagen nueva |
+| Semana 3 | Escalar el ganador si el CPA baja de $12 |
+| Semana 4 | Anotar el resultado en [`../../registro-anuncios.md`](../../registro-anuncios.md) |
+
+> ⚠️ Un anuncio nuevo es un **test**: no se toca hasta ~$70 de gasto. Antes de eso
+> los números no dicen nada. Diagnosticar por escalón —impresiones → clic →
+> landing → checkout— en vez de mirar solo el CPA.
+
+---
+
+## NOTAS ADICIONALES
+
+_________________

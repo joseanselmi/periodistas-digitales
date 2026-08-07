@@ -1,6 +1,6 @@
 /**
  * publish.mjs — Publica ads reales en Meta via Marketing API
- * Uso: node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json
+ * Uso: node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2-sin-publicar/config.json
  * Variables: META_ACCESS_TOKEN, META_AD_ACCOUNT_ID
  *
  * Flujo:

@@ -17,8 +17,12 @@ Regla de oro: **1 variable por test**. Si probamos copy nuevo, usamos creativo p
 ## EL PROCESO — 6 PASOS
 
 ### Paso 1 — Brief (antes de escribir una sola línea)
-Abrir `playbooks/brief-template.md`, copiar a la carpeta de campaña, llenar los campos.
-Sin brief completo, no hay campaña.
+Copiar la carpeta [`../campanas/TEMPLATE/`](../campanas/TEMPLATE/README.md) entera
+a `campanas/<campaña>/` y llenar el `brief.md`. Sin brief completo, no hay campaña.
+
+> Este paso mandaba a `playbooks/brief-template.md`, un segundo molde casi igual
+> que se eliminó el 2026-08-07. El molde vive con las campañas, que es donde se
+> copia.
 
 ### Paso 2 — Copy
 Ir a `playbooks/copy-bank.md`, elegir el ángulo que corresponde al test.
@@ -31,8 +35,9 @@ Generar **en el chat 📣 Ads del proyecto de ChatGPT** — ver [`CHATGPT-IMAGEN
 Revisar con `node lib/image-reviewer.mjs`.
 
 ### Paso 4 — Config JSON
-Copiar `campanas/historico/TEMPLATE/config.json`, completar con datos del brief, copy y creativo.
-Naming convention: `campanas/historico/YYYY-MM-DD[-v2]/config.json`
+La plantilla `campanas/TEMPLATE/` trae el brief, no el config: el `config.json` se
+arma copiando el de la campaña anterior en `campanas/historico/` y completándolo
+con los datos del brief, el copy y el creativo.
 
 ### Paso 5 — Revisión
 Correr: `node scripts/agentes/audit-cmo.mjs` sobre el config antes de publicar.
@@ -157,9 +162,9 @@ campanas/historico/
 
 ## PRÓXIMA ACCIÓN
 
-La campaña v2 (`campanas/historico/2026-05-08-v2/config.json`) está lista.
+La campaña v2 (`campanas/historico/2026-05-08-v2-sin-publicar/config.json`) está lista.
 Antes de lanzarla, completar:
 1. ☐ Imágenes generadas y aprobadas para los 3 ad sets
-2. ☐ Brief completado en `campanas/historico/2026-05-08-v2/brief.md`
+2. ☐ Brief completado en `campanas/historico/2026-05-08-v2-sin-publicar/brief.md`
 3. ☐ Testimonios en la landing (sin testimonios, el CPA va a subir)
-4. ☐ `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2/config.json`
+4. ☐ `node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2-sin-publicar/config.json`

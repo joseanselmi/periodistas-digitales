@@ -74,7 +74,7 @@ function loadMetaExport() {
 }
 
 function loadAdCampaignConfig() {
-  const path = 'campanas/historico/2026-05-08/config.json'
+  const path = 'campanas/historico/2026-05-08-v2-sin-publicar/config.json'
   if (existsSync(path)) {
     return JSON.parse(readFileSync(path, 'utf-8'))
   }

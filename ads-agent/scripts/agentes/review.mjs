@@ -1,6 +1,6 @@
 /**
  * review.mjs — Agente de revisión de anuncios
- * Uso: node scripts/agentes/review.mjs campanas/historico/2026-05-08/config.json
+ * Uso: node scripts/agentes/review.mjs campanas/historico/2026-05-08-v2-sin-publicar/config.json
  */
 
 import { readFileSync, writeFileSync } from 'fs'

@@ -1,88 +1,79 @@
 /**
- * test-send.mjs — Manda UN email de prueba a la dirección que le pases.
- * Uso: node scripts/publicar/test-send.mjs email@ejemplo.com
+ * test-send.mjs — Manda UN email a la dirección que le pases, con el texto REAL
+ * de una campaña, para ver cómo llega antes de mandárselo a la lista entera.
  *
- * ⚠️ Manda de verdad, por Brevo, a la dirección que escribas. No hay ninguna
- *    casilla de prueba fija: si ponés la de un lead, le llega a ese lead.
+ * Uso:  cd ads-agent
+ *       node scripts/publicar/test-send.mjs vos@ejemplo.com [campaña]
+ *       node scripts/publicar/test-send.mjs --lista      ← ver las campañas
  *
- * ⚠️ El cuerpo del mail está escrito a mano acá abajo y es el del mes gratis de
- *    Leadr de mayo de 2026 — dice "tenés hasta el 31 de mayo". Sirve para probar
- *    que el envío por Brevo funciona; no sirve para previsualizar una campaña de
- *    hoy. El segundo argumento (la campaña) se lee pero no se usa para nada.
+ * ⚠️ MANDA UN MAIL DE VERDAD, por Brevo, a la dirección que escribas. No hay
+ * casilla de prueba ni modo simulación: si ponés la dirección de un cliente, le
+ * llega. Poné la tuya.
  *
- *    Para volverlo útil de nuevo habría que traer el cuerpo del mail de
- *    send-email.mjs según la campaña que se pida, en vez de tenerlo pegado acá.
+ * El texto sale de CAMPAIGNS en send-email.mjs — el mismo que se le manda a la
+ * lista. Hasta el 2026-08-01 tenía su propia copia pegada acá, congelada en
+ * mayo ("tenés hasta el 31 de mayo"), y el argumento de campaña se leía pero no
+ * se usaba: probar el envío mandaba una oferta vencida hacía meses.
  */
-import { readFileSync, existsSync } from 'fs'
-import { resolve } from 'path'
 
-// Las claves viven en el .env.local de Leadr (el único proyecto que las tiene
-// todas). Se probaron varias rutas porque Leadr se mudó a la carpeta hermana.
-for (const ruta of ['../Leadr/app/.env.local', '../../Leadr/app/.env.local', '.env.local', '../.env.local']) {
-  const p = resolve(process.cwd(), ruta)
-  if (!existsSync(p)) continue
-  for (const linea of readFileSync(p, 'utf-8').split('\n')) {
-    const m = linea.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/)
-    if (m) process.env[m[1]] ??= m[2].trim().replace(/^["']|["']$/g, '')
-  }
-}
+import { CAMPAIGNS } from './send-email.mjs'
+import { cargarEnv } from '../../lib/env.mjs'
 
-// NUNCA hardcodear la clave acá: este archivo está en un repo. La versión con la
-// clave escrita a mano hizo que GitHub bloqueara el push entero (31/07/2026).
-const API_KEY = process.env.BREVO_API_KEY
-if (!API_KEY) { console.error('❌ Falta BREVO_API_KEY (mirá ../Leadr/app/.env.local)'); process.exit(1) }
 const TO_EMAIL = process.argv[2]
 const CAMPAIGN = process.argv[3] ?? 'leadr-l3'
+const nombres = Object.keys(CAMPAIGNS)
 
-if (!TO_EMAIL) { console.error('Uso: node scripts/publicar/test-send.mjs email@ejemplo.com [campaña]'); process.exit(1) }
+// Listar no manda nada ni toca la red, así que va ANTES de pedir la clave.
+if (TO_EMAIL === '--lista') {
+  console.log('\nCampañas disponibles:\n')
+  for (const n of nombres) console.log(`  ${n.padEnd(30)} ${CAMPAIGNS[n].subject}`)
+  console.log()
+  process.exit(0)
+}
 
-// Importar campañas desde send-email.mjs dinámicamente
-// Por simplicidad, definimos solo L3 acá
-const html = `<p>Hola,</p>
+if (!TO_EMAIL || !TO_EMAIL.includes('@')) {
+  console.error('Uso: node scripts/publicar/test-send.mjs vos@ejemplo.com [campaña]')
+  console.error('     node scripts/publicar/test-send.mjs --lista')
+  process.exit(1)
+}
 
-<p>Cuando compraste el Sistema de Ingresos Diarios, tomaste una decisión que la mayoría de tus colegas no tomó.</p>
+// NUNCA escribir la clave acá: este archivo está en un repo público. La versión
+// con la clave pegada a mano hizo que GitHub bloqueara el push entero (31/07/2026).
+cargarEnv(['BREVO_API_KEY'])
+const API_KEY = process.env.BREVO_API_KEY
 
-<p>Por eso quiero darte acceso completo a Leadr, gratis, durante un mes entero.</p>
+const camp = CAMPAIGNS[CAMPAIGN]
+if (!camp) {
+  console.error(`❌ No existe la campaña "${CAMPAIGN}".`)
+  console.error(`   Hay ${nombres.length}: ${nombres.join(', ')}`)
+  process.exit(1)
+}
 
-<p>Sin tarjeta. Sin formularios largos. Sin compromiso.</p>
-
-<p style="font-size:18px;"><strong><a href="https://leadr.cloud/activar" style="color:#6366f1;">→ Activar mi acceso gratuito</a></strong></p>
-
-<p>Tenés hasta el 31 de mayo. Después de esa fecha el acceso gratuito cierra.</p>
-
-<p>Esta semana adentro hay:</p>
-
-<p>— Cómo usar NotebookLM para preparar una cobertura en la mitad del tiempo que te lleva hoy</p>
-
-<p>— El prompt exacto que convierte una entrevista de una hora en cinco formatos distintos listos para publicar</p>
-
-<p>— Por qué los medios de Ecuador están apostando a WhatsApp Channels y cómo arrancar en menos de una tarde</p>
-
-<p>Entrá, explorá, usalo. Al final del mes decidís si querés seguir. Sin presión.</p>
-
-<p>Sofía Castañon<br>
-<small style="color:#94a3b8;">Directora de Marketing — Leadr</small></p>
-
-<p><small>PD: Si ya activaste tu acceso, ignorá este email.</small></p>`
+console.log(`📧 Mandando "${CAMPAIGN}" a ${TO_EMAIL}`)
+console.log(`   Asunto real: ${camp.subject}`)
 
 const res = await fetch('https://api.brevo.com/v3/smtp/email', {
   method: 'POST',
   headers: {
-    'accept': 'application/json',
+    accept: 'application/json',
     'api-key': API_KEY,
     'content-type': 'application/json',
   },
   body: JSON.stringify({
     sender: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
-    to: [{ email: TO_EMAIL, name: 'Test' }],
-    subject: '[TEST] Tu acceso gratuito vence el 31 de mayo',
-    htmlContent: html,
+    to: [{ email: TO_EMAIL, name: 'Prueba' }],
+    // El [PRUEBA] va adelante para que se distinga en la casilla, pero el resto
+    // del asunto es el real: si se acorta o se rompe en el móvil, hay que verlo acá.
+    subject: `[PRUEBA] ${camp.subject}`,
+    htmlContent: camp.html,
   }),
 })
 
 const data = await res.json()
 if (res.ok) {
-  console.log(`✅ Enviado a ${TO_EMAIL} — messageId: ${data.messageId}`)
+  console.log(`✅ Enviado — messageId: ${data.messageId}`)
+  console.log('   Si no llega en 2 minutos, mirá spam y después los eventos en Brevo.')
 } else {
-  console.error(`❌ Error: ${JSON.stringify(data)}`)
+  console.error(`❌ Brevo lo rechazó: ${JSON.stringify(data)}`)
+  process.exit(1)
 }

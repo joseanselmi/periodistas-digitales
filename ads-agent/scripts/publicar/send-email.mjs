@@ -25,13 +25,19 @@ import { resolve } from 'path'
 const BREVO_API_KEY = process.env.BREVO_API_KEY
 const BREVO_URL     = 'https://api.brevo.com/v3/smtp/email'
 
-if (!BREVO_API_KEY) {
+// ¿Se está EJECUTANDO este archivo, o alguien lo está importando para leer sus
+// campañas? Los controles de abajo cortan el proceso, así que sin esta distinción
+// `import { CAMPAIGNS } from './send-email.mjs'` mataba al que importaba antes de
+// llegar a su primera línea. Es lo que le pasaba a test-send.mjs.
+const ES_EJECUCION_DIRECTA = process.argv[1]?.replace(/\\/g, '/').endsWith('send-email.mjs')
+
+if (ES_EJECUCION_DIRECTA && !BREVO_API_KEY) {
   console.error('❌ Falta BREVO_API_KEY')
   process.exit(1)
 }
 
 const campaignArg = process.argv.find((a, i) => process.argv[i - 1] === '--campaign')
-if (!campaignArg) {
+if (ES_EJECUCION_DIRECTA && !campaignArg) {
   console.error('❌ Uso: node scripts/publicar/send-email.mjs --campaign [leadr-l1|leadr-l2|leadr-l3] [--limit 100] [--offset 0]')
   process.exit(1)
 }
@@ -51,8 +57,13 @@ const SENDER = {
 }
 
 // ─── Campañas disponibles ─────────────────────────────────────────────────────
+//
+// Se exporta para que `test-send.mjs` mande EL TEXTO REAL de una campaña y no
+// una copia pegada aparte. Antes tenía el suyo propio, congelado en mayo de 2026
+// —decía "tenés hasta el 31 de mayo"—, así que probar el envío mandaba a una
+// persona de verdad una oferta vencida hacía meses.
 
-const CAMPAIGNS = {
+export const CAMPAIGNS = {
 
   'leadr-l1': {
     subject:     'Lo que ningún editor te va a decir',
@@ -985,7 +996,11 @@ async function main() {
   console.log(`📄 Log: contenido/emails/log-${campaignArg}.csv`)
 }
 
-main().catch(err => {
-  console.error('\n❌ Error fatal:', err.message)
-  process.exit(1)
-})
+// Solo se manda cuando se ejecuta este archivo. Si alguien lo importa —para leer
+// CAMPAIGNS, como hace test-send.mjs— no tiene que salir ni un mail.
+if (ES_EJECUCION_DIRECTA) {
+  main().catch(err => {
+    console.error('\n❌ Error fatal:', err.message)
+    process.exit(1)
+  })
+}

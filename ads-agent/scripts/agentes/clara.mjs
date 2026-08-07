@@ -42,8 +42,18 @@ const FUENTES = [
   { nombre: 'Press Gazette',     url: 'https://pressgazette.co.uk/feed/' },
   { nombre: 'Periodismo de Barrio', url: 'https://www.periodismodebarrio.org/feed/' },
   { nombre: 'Chequeado',         url: 'https://chequeado.com/feed/' },
-  { nombre: 'FNPI',              url: 'https://fundacion.fnpi.org/feed/' },
+  { nombre: 'LatAm Journalism Review', url: 'https://latamjournalismreview.org/es/feed/' },
 ]
+
+// Acá estaba la FNPI (`fundacion.fnpi.org`), que se cayó entera: ni siquiera
+// resuelve el dominio. Pasó a llamarse Fundación Gabo y su sitio nuevo no
+// publica RSS. Clara avisaba "⚠️ FNPI: no se pudo leer el feed" todos los días
+// y nadie lo leía, así que estuvo tirando 1 de sus 8 fuentes durante meses.
+// La reemplaza LatAm Journalism Review, del Knight Center: mismo perfil
+// —periodismo latinoamericano— y encima en castellano.
+//
+// Si alguna vez este log vuelve a mostrar una fuente fallando varios días
+// seguidos, es una fuente muerta, no un problema de red.
 
 // ── Parser RSS simple (sin dependencias extra) ───────────────────────────────
 

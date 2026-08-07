@@ -44,6 +44,12 @@ campanas/<campaña>/
 > Ahora la carpeta lo dice. Misma regla que las imágenes: cada cosa con lo que la
 > usa, nada en un cajón compartido.
 
+Para arrancar una campaña nueva se copia [`TEMPLATE/`](TEMPLATE/README.md): es el
+molde vigente del brief —básicos, hipótesis del test, ad sets, estado del creativo
+y reglas de pausa—. Hasta el 2026-08-07 estaba guardado dentro de `historico/`,
+o sea entre las campañas muertas, que es el último lugar donde uno busca la
+plantilla que sí se usa.
+
 Y `historico/` guarda las campañas viejas por fecha, del esquema anterior.
 
 ## El nombre interno NO se filtra a las URLs públicas
@@ -80,24 +86,14 @@ Esta tabla se saca de ahí, **no de memoria**: para refrescarla,
 | `CURSO Periodistas — LEADS — republicadores` | [`republicadores/`](republicadores/README.md) | 🟢 **Activa** desde el 31/07 · anuncio `ad5-lectores` | $1/día |
 | `Curso Sistema de ingresos diarios… VENTAS - Junio 2026` | [`venta-curso/`](venta-curso/README.md) | 🟢 **Activa** desde el 29/06 · `ad1-fomo` corriendo, `ad3-mundial` pausado | $10/día |
 | `LEADGEN \| Guía Claude Periodistas \| $1d \| 2026-06` | [`historico/`](historico/README.md) | ⏸️ **Pausada** · dejó 890 leads y el embudo de email sigue andando | — |
-| `interacción` | ⚠️ **ninguna** | 🟢 **Activa desde diciembre de 2024, a propósito** · dos conjuntos prendidos (`Calentamiento 1`, `Interacción`) | $2/día |
+| `interacción` | [`interaccion/`](interaccion/README.md) | 🟢 **Activa desde diciembre de 2024, a propósito** · dos conjuntos prendidos (`Calentamiento 1`, `Interacción`) | $2/día |
 
 Total: **~$13/día**.
 
-> ⛔ **`interacción` está prendida a propósito. NO proponer apagarla.** No vende
-> ni junta leads: hace crecer la página de a poco y le muestra a Meta una cuenta
-> con actividad sostenida. Es un **costo fijo de marca**, del mismo tipo que el
-> hosting — no se juzga contra las ventas de la semana.
->
-> Ya se marcó como "fuga de plata" tres veces en tres sesiones distintas, y las
-> tres veces la respuesta fue la misma. Lo que falta no es una decisión: es
-> **darle su carpeta con su ficha**, para que deje de aparecer como sorpresa cada
-> vez que alguien mira el gasto. Una alarma que salta por algo ya decidido se
-> vuelve ruido que nadie lee.
->
-> Lo único abierto de esa campaña es su anuncio `V1 15/12/25 1USD`: ~$30 por mes
-> para **1 clic** en 30 días. Ese sí es candidato a apagar, y es independiente de
-> mantener viva la campaña.
+> ⛔ **`interacción` está prendida a propósito. NO proponer apagarla.** Se marcó
+> como "fuga de plata" tres veces en tres sesiones distintas. Por eso ahora tiene
+> su ficha: [`interaccion/README.md`](interaccion/README.md). Leerla antes de
+> opinar sobre ese gasto.
 >
 > Hasta el 2026-08-01 esta tabla daba a republicadores como "en armado" y a
 > guía-claude como "corriendo": exactamente al revés de la realidad, y sin

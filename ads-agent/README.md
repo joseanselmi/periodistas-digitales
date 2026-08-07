@@ -53,10 +53,10 @@ o cerrar tareas sin pasar por la CLI.
 
 ```bash
 # Revisar ads de una campaña (imagen + copy con Claude Vision)
-node scripts/agentes/review.mjs campanas/historico/2026-05-08/config.json
+node scripts/agentes/review.mjs campanas/historico/2026-05-08-v2-sin-publicar/config.json
 
 # Publicar a Meta
-node scripts/publicar/publish.mjs campanas/historico/2026-05-08/config.json
+node scripts/publicar/publish.mjs campanas/historico/2026-05-08-v2-sin-publicar/config.json
 
 # Traer métricas frescas de Meta
 node scripts/datos/fetch-meta.mjs
@@ -90,7 +90,8 @@ campanas/    ← las campañas, por segmento (la convención del 30/07):
              ├── README.md    ← cómo se nombra una campaña y dónde va cada pieza
              ├── <segmento>/  ← su estrategia y su copy (lo público está en sistema-ingresos)
              ├── <campaña>/ads/ ← los anuncios de esa campaña (ficha + creativo)
-             └── historico/   ← las campañas viejas por fecha + el TEMPLATE
+             ├── TEMPLATE/    ← el molde del brief: se copia para cada campaña nueva
+             └── historico/   ← las campañas viejas por fecha
 datos/       ← ⚙️ lo que ESCRIBEN los scripts (regenerable, no se edita a mano):
              ├── meta-exports/ ← los dumps de la API de Meta (fetch-meta)
              ├── reports/      ← los informes de monitor

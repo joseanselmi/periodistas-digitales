@@ -11,8 +11,7 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/.vercel": true,
-    "_material": true,
-    "ads-agent/hotmart-transcripts": true
+    "_material": true
   },
 
   // Los reportes del QA se regeneran en cada corrida: se muestran anidados bajo

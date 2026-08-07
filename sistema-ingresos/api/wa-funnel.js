@@ -649,6 +649,13 @@ const OFERTA_REENVIO = {
 // El botón es OPCIONAL a propósito: un mail que sólo pregunta no puede llevar un CTA, porque
 // cualquier botón lo convierte en un mail que pide algo.
 function armarEmailSimple(c) {
+  // Lista de guías: links de texto, NO botones. Un botón grande convierte el mail en un pedido;
+  // una lista deja elegir. Cada uno con su `src` para saber qué tema tira.
+  const enlaceUrl = (e) => `https://sistemadeingresosdiariosia.com/api/d?file=${e.archivo}&src=${e.src}&sck=${e.src.toLowerCase()}`;
+  const lista = (c.enlaces || []).length ? `
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:4px;">
+            ${c.enlaces.map((e) => `<tr><td style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);"><a href="${enlaceUrl(e).replace(/&/g, '&amp;')}" style="color:#22d3ee;font-size:15px;text-decoration:none;">${e.texto}</a></td></tr>`).join('\n            ')}
+          </table>` : '';
   const boton = c.cta && c.url ? `
           <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:28px;"><tr><td align="center">
             <a href="${c.url.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${c.cta}</a>
@@ -663,7 +670,7 @@ function armarEmailSimple(c) {
         <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
           <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">${c.titulo}</p>
           ${c.parrafos.map((p) => `<p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">${p}</p>`).join('\n          ')}
-${boton}
+${lista}${boton}
           <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">${c.cierre}</p>
         </td></tr>
         <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
@@ -676,6 +683,7 @@ ${boton}
 ${c.titulo}
 
 ${c.parrafos.join('\n\n')}
+${(c.enlaces || []).map((e) => `- ${e.texto}: ${enlaceUrl(e)}`).join('\n')}
 ${c.cta && c.url ? `\n${c.cta.replace(' →', '')}: ${c.url}\n` : ''}
 ${c.cierre}`;
   return { html, text };
@@ -750,6 +758,16 @@ const REENGANCHE = {
     'Te mandamos cuatro guías en las últimas semanas: el periódico digital, los prompts, los 5 pilares y los agentes de IA.',
     'Te escribo por una sola cosa: quiero saber si te sirvieron. Sos periodista, tenés oficio y criterio propio — están escritas para alguien así, y lo que me cuentes cambia las que vienen.',
     'Respondeme a este mail con una línea. La leo yo.',
+    'Y si las querés volver a abrir, están todas acá:',
+  ],
+  // Las CUATRO, no una. Un botón a una sola guía empuja esa; la lista completa deja elegir y de
+  // paso dice qué tema le interesa a cada uno (cada link tiene su propio `src`). Mismo orden en
+  // que las nombra el párrafo de arriba. Siempre por /api/d: el link directo al .pdf no se cuenta.
+  enlaces: [
+    { texto: 'Tu periódico digital en Instagram y Facebook', archivo: 'guia-periodico-digital-ig-fb.pdf', src: 'Email-Reenganche-Periodico' },
+    { texto: '+50 prompts para periodistas', archivo: 'guia-completa-50-prompts.pdf', src: 'Email-Reenganche-Prompts' },
+    { texto: 'Las 5 piezas que sostienen el ingreso', archivo: 'guia-5-pilares-ingresos-periodico-digital.pdf', src: 'Email-Reenganche-Pilares' },
+    { texto: 'Los agentes de IA', archivo: 'guia-agentes-ia-periodistas.pdf', src: 'Email-Reenganche-Agentes' },
   ],
   // SIN botón y SIN mencionar la venta, las dos por pedido de Jose (07/08):
   //   - "no es para venderte nada" le mete la venta en la cabeza igual que si se la nombraras;
