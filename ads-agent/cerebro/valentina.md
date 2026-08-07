@@ -42,7 +42,7 @@ LUNES (Martes a las máximo):
   → Crear los 7 posts de la semana siguiente
   → Generar carruseles HTML
   → Exportar slides
-  → Programar todo via scripts/programar/schedule-week.mjs
+  → Programar todo via scripts/programar/schedule-muro.mjs
 
 CUALQUIER DÍA:
   → Verificar que el post del día se publicó correctamente
@@ -76,8 +76,19 @@ node scripts/generar/carousel-generator.mjs
 node scripts/exportar/export-slides.mjs carousels/semana-[DD-MM]
 
 # Programar semana
-node scripts/programar/schedule-week.mjs
+node scripts/programar/schedule-muro.mjs
 ```
+
+> ⚠️ **Acá decía `schedule-week.mjs`, y era una trampa.** Ese script tenía las
+> carpetas del 10 al 18 de **mayo** escritas adentro, y como publica al instante
+> todo lo que tiene fecha pasada, correrlo un domingo cualquiera hubiera subido
+> 9 posteos viejos de golpe a la fanpage. Se eliminó el 2026-08-01.
+>
+> El que se usa es `schedule-muro.mjs`, que **lee primero la cola de Facebook y
+> saltea lo que ya está programado**. Se puede volver a correr sin miedo — hace
+> falta, porque Meta topea en 29 posts en cola y los que rebotan hay que
+> reintentarlos. Cualquier script nuevo que programe posteos se copia de ese, no
+> del otro.
 
 ## CHECKLIST DE LEGIBILIDAD (obligatorio antes de publicar)
 - Párrafos máx 3-4 líneas

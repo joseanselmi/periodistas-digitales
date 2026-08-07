@@ -167,6 +167,18 @@ function chequearAnclajes() {
     }
   }
 
+  // `lib/` también entra. Se sumó el 2026-08-01, cuando la carga de claves se
+  // centralizó en lib/env.mjs: al sacar esas rutas de los scripts, quedaron
+  // fuera de este control sin que nada lo dijera. Justo la ruta más cara de
+  // romper —la del archivo de claves— pasó a estar en la única carpeta que no
+  // se miraba.
+  const baseLib = join(ROOT, 'ads-agent', 'lib');
+  if (existsSync(baseLib)) {
+    for (const f of readdirSync(baseLib)) {
+      if (f.endsWith('.mjs')) scripts.push(join(baseLib, f));
+    }
+  }
+
   for (const abs of scripts) {
     const rel = abs.replace(ROOT + '\\', '').replace(/\\/g, '/');
     const dir = dirname(abs);

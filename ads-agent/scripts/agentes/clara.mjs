@@ -1,7 +1,8 @@
 /**
  * Clara — Curadora de Noticias de Periodismo
  * Corre cada día. Scrapea RSS verificados, filtra con Claude,
- * genera imagen editorial con fal.ai y guarda drafts en Supabase.
+ * y las publica en Supabase. La imagen sale del RSS si la trae; si no, queda
+ * pendiente de hacerse a mano (ver ../../docs/CHATGPT-IMAGENES.md).
  *
  * Uso: node ads-agent/scripts/agentes/clara.mjs
  */
@@ -11,23 +12,21 @@ import { createClient } from '@supabase/supabase-js'
 
 // ── Config ───────────────────────────────────────────────────────────────────
 
-// Cargar .env.local si existe (para correr localmente sin setear vars de entorno)
-import { existsSync, readFileSync, writeFileSync } from 'fs'
+// Las claves salen de ads-agent/.env.local. Un solo lugar decide de dónde se
+// leen y avisa claro si falta alguna: ../../lib/env.mjs
+//
+// Antes esto estaba resuelto acá adentro y leía SOLO `../../Leadr/app/.env.local`,
+// o sea que Clara —que corre todos los días— dependía en silencio de tener el
+// repo hermano al lado y con ese nombre exacto.
+import { writeFileSync } from 'fs'
 import { resolve as resolvePath } from 'path'
-const envPath = resolvePath(process.cwd(), '../../Leadr/app/.env.local')
-if (existsSync(envPath)) {
-  readFileSync(envPath, 'utf-8').split('\n').forEach(line => {
-    const [key, ...val] = line.split('=')
-    if (key && val.length && !process.env[key.trim()]) {
-      process.env[key.trim()] = val.join('=').trim()
-    }
-  })
-}
+import { cargarEnv } from '../../lib/env.mjs'
+
+cargarEnv(['ANTHROPIC_API_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'])
 
 const SUPABASE_URL         = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const ANTHROPIC_KEY        = process.env.ANTHROPIC_API_KEY
-const FAL_KEY              = process.env.FAL_API_KEY
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY, maxRetries: 5 })
@@ -158,30 +157,17 @@ Respondé SOLO con JSON válido, sin markdown, sin explicaciones:
   }
 }
 
-// ── Generar imagen con fal.ai ─────────────────────────────────────────────────
-
-async function generarImagen(prompt) {
-  try {
-    const res = await fetch('https://fal.run/fal-ai/flux/schnell', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Key ${FAL_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: `Editorial photography style. ${prompt}. No people, no faces, no text, no logos. Professional journalism aesthetic, clean composition.`,
-        image_size: 'landscape_4_3',
-        num_images: 1,
-        num_inference_steps: 4,
-      }),
-    })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data?.images?.[0]?.url ?? null
-  } catch {
-    return null
-  }
-}
+// ── Las imágenes ──────────────────────────────────────────────────────────────
+//
+// Acá vivía `generarImagen()`, que le pedía la imagen a fal.ai. Ese proveedor se
+// dio de baja el 2026-08-01 (commit 60e1978) y la función quedó devolviendo
+// siempre `null` — pero el log seguía diciendo "🎨 Imagen generada", así que
+// parecía andar. Se eliminó.
+//
+// Hoy: si la noticia trae imagen en su RSS, se usa esa. Si no, la fila queda con
+// `imagen_url: null` y con su `imagen_prompt` guardado, que es lo que se pega en
+// ChatGPT para hacerla a mano (ver ../../docs/CHATGPT-IMAGENES.md). Clara avisa
+// al final cuántas quedaron sin imagen, para que no sea una sorpresa.
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
@@ -232,19 +218,20 @@ async function main() {
   const seleccionados = await filtrarYResumirConClaude(itemsNuevos)
   console.log(`   ${seleccionados.length} noticias seleccionadas`)
 
-  // 4. Generar imágenes y guardar en Supabase
-  console.log('🖼️  Generando imágenes con fal.ai...')
+  // 4. Guardar en Supabase, con la imagen del RSS si la trae
+  console.log('🖼️  Buscando la imagen de cada noticia en su RSS...')
+  let sinImagen = 0
+
   for (const item of seleccionados) {
     // Buscar imagen original del feed primero
     const itemOriginal = itemsNuevos.find(
       i => i.link === item.fuente_url || i.titulo === item.titulo
     )
-    let imagenUrl = itemOriginal?.imagen ?? null
+    const imagenUrl = itemOriginal?.imagen ?? null
 
-    // Si no tiene imagen del RSS, generar con fal.ai
-    if (!imagenUrl && item.imagen_prompt) {
-      imagenUrl = await generarImagen(item.imagen_prompt)
-      console.log(`   🎨 Imagen generada para: ${item.titulo.slice(0, 50)}...`)
+    if (!imagenUrl) {
+      sinImagen++
+      console.log(`   🎨 Sin imagen, hay que hacerla a mano: ${item.titulo.slice(0, 50)}...`)
     }
 
     const { error } = await supabase.from('news').insert({
@@ -268,6 +255,12 @@ async function main() {
   }
 
   console.log('\n✨ Clara terminó. Las noticias ya están en vivo en /noticias')
+  if (sinImagen) {
+    console.log(`\n🎨 ${sinImagen} de ${seleccionados.length} salieron SIN imagen.`)
+    console.log('   Su RSS no traía ninguna. El texto para pedírsela a ChatGPT está')
+    console.log('   guardado en la columna `imagen_prompt` de cada fila de `news`.')
+    console.log('   Cómo se hacen: ads-agent/docs/CHATGPT-IMAGENES.md')
+  }
 
   // Actualizar state
   const statePath = resolvePath(process.cwd(), 'state/clara-state.json')
@@ -275,6 +268,9 @@ async function main() {
   writeFileSync(statePath, JSON.stringify({
     ultima_ejecucion: hoy,
     noticias_hoy: seleccionados.length,
+    // Cuántas quedaron esperando una imagen hecha a mano. Si este número es
+    // igual a `noticias_hoy` varios días seguidos, algo pasa con los feeds.
+    sin_imagen: sinImagen,
     status: 'ok',
     proxima_ejecucion: mañana.toISOString().slice(0, 10),
     responsable: 'Dante',

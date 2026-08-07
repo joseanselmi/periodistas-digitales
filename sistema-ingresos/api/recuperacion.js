@@ -37,9 +37,9 @@
 
 const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
-const { runMetaSpendSync } = require('./_lib/meta-spend-sync');
-const { runMetaDailySync } = require('./_lib/meta-daily-sync');
-const { runMetaGastoSync } = require('./_lib/meta-gasto-sync');
+const { runMetaGastoTotalPorAnuncio } = require('./_lib/meta-gasto-total-por-anuncio');
+const { runMetaEmbudoDiarioPorAnuncio } = require('./_lib/meta-embudo-diario-por-anuncio');
+const { runMetaGastoDiarioTodaLaCuenta } = require('./_lib/meta-gasto-diario-toda-la-cuenta');
 const { runSyncEstados } = require('./_lib/sync-estados');
 const { runVersionesSync } = require('./_lib/versiones-sync');
 const { publicarStoryDelDia } = require('./_lib/story-diaria');
@@ -307,28 +307,29 @@ module.exports = async (req, res) => {
       } catch (e) {
         console.error('hotmart-sync (no frena la recuperación):', e.message);
       }
-      // Gasto de Meta → campanas (para CPA/ROAS por anuncio). Best-effort, misma corrida.
+      // Gasto ACUMULADO por anuncio → campanas (para CPA/ROAS por anuncio) + gasto mensual
+      // de la cuenta → gastos_meta_mensual (P&L). Best-effort, misma corrida.
       try {
-        const meta = await runMetaSpendSync();
-        console.log(JSON.stringify({ type: 'meta_spend_sync', ...meta }));
+        const meta = await runMetaGastoTotalPorAnuncio();
+        console.log(JSON.stringify({ type: 'meta_gasto_total_por_anuncio', ...meta }));
       } catch (e) {
-        console.error('meta-spend-sync (no frena la recuperación):', e.message);
+        console.error('meta-gasto-total-por-anuncio (no frena la recuperación):', e.message);
       }
-      // Métricas de Meta POR DÍA → meta_insights_diario (las lee la rutina autónoma de Mateo).
+      // Embudo de cada anuncio POR DÍA → meta_insights_diario (lo lee la rutina autónoma de Mateo).
       try {
-        const metaDia = await runMetaDailySync();
-        console.log(JSON.stringify({ type: 'meta_daily_sync', ...metaDia }));
+        const metaDia = await runMetaEmbudoDiarioPorAnuncio();
+        console.log(JSON.stringify({ type: 'meta_embudo_diario_por_anuncio', ...metaDia }));
       } catch (e) {
-        console.error('meta-daily-sync (no frena la recuperación):', e.message);
+        console.error('meta-embudo-diario-por-anuncio (no frena la recuperación):', e.message);
       }
       // Gasto de Meta POR DÍA y por CAMPAÑA → meta_gasto_diario, la cuenta ENTERA (tenga
       // ficha o no). Es lo que muestra el panel de campañas de Leadr. Antes se corría a
       // mano y quedaba viejo sin avisar: el 02/08 el panel decía $0,52 y eran $1,86.
       try {
-        const metaGasto = await runMetaGastoSync();
-        console.log(JSON.stringify({ type: 'meta_gasto_sync', ...metaGasto }));
+        const metaGasto = await runMetaGastoDiarioTodaLaCuenta();
+        console.log(JSON.stringify({ type: 'meta_gasto_diario_toda_la_cuenta', ...metaGasto }));
       } catch (e) {
-        console.error('meta-gasto-sync (no frena la recuperación):', e.message);
+        console.error('meta-gasto-diario-toda-la-cuenta (no frena la recuperación):', e.message);
       }
       // Estado de los agentes → agentes_estado (para que el Panel de Comando de la nube
       // los lea por MCP; la nube no puede clonar el repo). Best-effort. Tarjeta #32.

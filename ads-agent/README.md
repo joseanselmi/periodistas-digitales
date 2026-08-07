@@ -65,7 +65,8 @@ node scripts/datos/fetch-meta.mjs
 Otros scripts útiles: `scripts/agentes/organic-agent.mjs` (orgánico), `scripts/agentes/email-agent.mjs`
 / `scripts/publicar/send-email.mjs` (email), `scripts/generar/carousel-generator.mjs` + `scripts/exportar/export-slides.mjs`
 (carruseles), `scripts/agentes/monitor.mjs` / `scripts/agentes/audit-cmo.mjs` (monitoreo y auditoría),
-`scripts/datos/hotmart-sync.mjs` / `scripts/datos/meta-spend-sync.mjs` (syncs de datos).
+`scripts/datos/hotmart-sync.mjs` / `scripts/datos/meta-gasto-total-por-anuncio.mjs` (syncs de datos —
+los tres syncs de Meta y cuándo usar cada uno están en [`scripts/datos/README.md`](scripts/datos/README.md)).
 
 > **Todos los scripts se corren parados en `ads-agent/`**, no dentro de
 > `scripts/`. Varios buscan el `.env.local` o `state/`

@@ -1,10 +1,15 @@
-// Sync de métricas de Meta Ads POR DÍA y por anuncio → tabla `meta_insights_diario`
-// (Supabase periodistas-marketing). Equivalente serverless de ads-agent/scripts/datos/meta-daily-sync.mjs.
-// Lo llama api/recuperacion.js en su corrida diaria, junto a runMetaSpendSync.
+// Embudo de cada anuncio DÍA POR DÍA → tabla `meta_insights_diario`
+// (Supabase periodistas-marketing). Equivalente serverless de
+// ads-agent/scripts/datos/meta-embudo-diario-por-anuncio.mjs.
+// Lo llama api/recuperacion.js en su corrida diaria, junto a runMetaGastoTotalPorAnuncio.
 // Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md y ads-agent/docs/AGENTES-AUTONOMOS.md.
 //
+// (Se llamaba meta-daily-sync.js. Renombrado el 07/08/2026 — historial de nombres en
+// ads-agent/scripts/datos/README.md.)
+//
 // PARA QUÉ: la rutina autónoma de Mateo (nube, sin egress) no puede pegarle a Meta; lee las
-// métricas por día de esta tabla. Es el complemento "por día" de meta-spend-sync (acumulado).
+// métricas por día de esta tabla. Es el complemento "por día" de
+// meta-gasto-total-por-anuncio (el acumulado de toda la vida del anuncio).
 // TIMEZONE: Meta reporta en el timezone de la cuenta (ARG) → `fecha` = día argentino.
 // MÉTRICAS (las que pidió Jose): gasto, CTR de enlace (link_clicks/impresiones), pagos
 // iniciados (initiate checkout), ventas (purchase). Guarda crudos para calcular % en el reporte.
@@ -90,12 +95,12 @@ async function upsert(filas) {
     },
     body: JSON.stringify(filas.map(f => ({ ...f, actualizado_en: new Date().toISOString() }))),
   });
-  if (!r.ok) { console.error(`[meta-daily] upsert ${r.status} ${await r.text().catch(() => '')}`); return 0; }
+  if (!r.ok) { console.error(`[meta-embudo-diario] upsert ${r.status} ${await r.text().catch(() => '')}`); return 0; }
   return filas.length;
 }
 
 // Best-effort (no lanza fuera de fetch/parse; el cron loguea el resumen).
-async function runMetaDailySync() {
+async function runMetaEmbudoDiarioPorAnuncio() {
   if (!TOKEN || !ACCOUNT) return { skipped: 'faltan META_ACCESS_TOKEN / META_AD_ACCOUNT_ID' };
   if (!SUPABASE_URL || !SUPABASE_KEY) return { skipped: 'falta Supabase' };
   const filas = agrupar(await fetchDaily());
@@ -103,4 +108,4 @@ async function runMetaDailySync() {
   return { filas: filas.length, upsert: n };
 }
 
-module.exports = { runMetaDailySync };
+module.exports = { runMetaEmbudoDiarioPorAnuncio };

@@ -1,7 +1,15 @@
-// Sync del GASTO de Meta Ads → tabla `campanas` (Supabase periodistas-marketing).
-// Equivalente serverless de ads-agent/scripts/datos/meta-spend-sync.mjs, para correr desde el cron
+// Gasto ACUMULADO (toda la vida del anuncio, un número por anuncio) → tabla `campanas`
+// (Supabase periodistas-marketing). Equivalente serverless de
+// ads-agent/scripts/datos/meta-gasto-total-por-anuncio.mjs, para correr desde el cron
 // (api/recuperacion.js lo llama al inicio de su corrida diaria, junto a runHotmartSync).
 // Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md.
+//
+// (Se llamaba meta-spend-sync.js. Renombrado el 07/08/2026: "spend" y "gasto" son la misma
+// palabra en dos idiomas y había un meta-gasto-sync.js al lado — historial de nombres en
+// ads-agent/scripts/datos/README.md.)
+//
+// Además del gasto por anuncio, carga el gasto de la cuenta POR MES calendario en
+// `gastos_meta_mensual`, que es la línea "Meta Ads" del P&L (ver fetchGastoMensual abajo).
 //
 // Trae los insights por anuncio (Marketing API), extrae la matrícula `src` (adN-angulo)
 // del nombre del conjunto/anuncio, agrega por src y hace PATCH del gasto/CTR en la ficha
@@ -10,6 +18,8 @@
 //
 // Env: META_ACCESS_TOKEN (con ads_read), META_AD_ACCOUNT_ID (con o sin "act_"),
 //      SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY. Opcional: META_SPEND_PRESET (default maximum).
+//      (La variable sigue llamándose META_SPEND_PRESET a propósito: está cargada así en
+//       Vercel y renombrarla la dejaría sin efecto sin que nadie se entere.)
 
 const API = 'https://graph.facebook.com/v21.0';
 const TOKEN   = (process.env.META_ACCESS_TOKEN || '').trim();
@@ -74,7 +84,7 @@ async function patchCampana(src, campos) {
     body: JSON.stringify(campos),
   });
   const rows = await r.json().catch(() => []);
-  if (!r.ok) { console.error(`[meta-spend] ${src} PATCH ${r.status} ${JSON.stringify(rows)}`); return 0; }
+  if (!r.ok) { console.error(`[meta-gasto-total] ${src} PATCH ${r.status} ${JSON.stringify(rows)}`); return 0; }
   return Array.isArray(rows) ? rows.length : 0;
 }
 
@@ -111,12 +121,12 @@ async function upsertGastoMensual(filas) {
     },
     body: JSON.stringify(filas.map(f => ({ ...f, updated_at: new Date().toISOString() }))),
   });
-  if (!r.ok) { console.error(`[meta-spend] gastos_meta_mensual upsert ${r.status} ${await r.text().catch(() => '')}`); return 0; }
+  if (!r.ok) { console.error(`[meta-gasto-total] gastos_meta_mensual upsert ${r.status} ${await r.text().catch(() => '')}`); return 0; }
   return filas.length;
 }
 
 // Devuelve un resumen (no lanza: best-effort). El cron lo loguea.
-async function runMetaSpendSync() {
+async function runMetaGastoTotalPorAnuncio() {
   if (!TOKEN || !ACCOUNT) return { skipped: 'faltan META_ACCESS_TOKEN / META_AD_ACCOUNT_ID' };
   if (!SUPABASE_URL || !SUPABASE_KEY) return { skipped: 'falta Supabase' };
 
@@ -136,9 +146,9 @@ async function runMetaSpendSync() {
   // Gasto mensual a nivel cuenta (para el P&L). No pisa lo de campanas (que sigue para CPA/ROAS).
   let mesesMensual = 0;
   try { mesesMensual = await upsertGastoMensual(await fetchGastoMensual()); }
-  catch (e) { console.error('[meta-spend] mensual:', e.message); }
+  catch (e) { console.error('[meta-gasto-total] mensual:', e.message); }
 
   return { anuncios: grupos.length, actualizadas, sin_ficha: sinFicha, meses_mensual: mesesMensual };
 }
 
-module.exports = { runMetaSpendSync };
+module.exports = { runMetaGastoTotalPorAnuncio };

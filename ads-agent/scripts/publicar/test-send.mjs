@@ -1,3 +1,18 @@
+/**
+ * test-send.mjs — Manda UN email de prueba a la dirección que le pases.
+ * Uso: node scripts/publicar/test-send.mjs email@ejemplo.com
+ *
+ * ⚠️ Manda de verdad, por Brevo, a la dirección que escribas. No hay ninguna
+ *    casilla de prueba fija: si ponés la de un lead, le llega a ese lead.
+ *
+ * ⚠️ El cuerpo del mail está escrito a mano acá abajo y es el del mes gratis de
+ *    Leadr de mayo de 2026 — dice "tenés hasta el 31 de mayo". Sirve para probar
+ *    que el envío por Brevo funciona; no sirve para previsualizar una campaña de
+ *    hoy. El segundo argumento (la campaña) se lee pero no se usa para nada.
+ *
+ *    Para volverlo útil de nuevo habría que traer el cuerpo del mail de
+ *    send-email.mjs según la campaña que se pida, en vez de tenerlo pegado acá.
+ */
 import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 

@@ -1,11 +1,20 @@
 /**
- * meta-daily-sync.mjs — Baja las métricas de Meta Ads POR DÍA y por anuncio (matrícula src)
- * a la tabla `meta_insights_diario` (Supabase periodistas-marketing).
+ * meta-embudo-diario-por-anuncio.mjs — Baja el EMBUDO de cada anuncio DÍA POR DÍA
+ * (gasto, clics, vistas de la landing, pagos iniciados y compras) a la tabla
+ * `meta_insights_diario` (Supabase periodistas-marketing).
+ *
+ * Solo mira los anuncios que llevan matrícula `adN-angulo` en el nombre del conjunto o
+ * del anuncio. Lo que no tiene matrícula queda afuera — para ver la cuenta entera está
+ * `meta-gasto-diario-toda-la-cuenta.mjs`.
+ *
+ * (Se llamaba `meta-daily-sync.mjs`. Renombrado el 07/08/2026 — ver el "historial de
+ * nombres" en scripts/datos/README.md.)
  *
  * PARA QUÉ: la rutina autónoma de Mateo corre en la nube SIN salida a internet, así que no
  * puede pegarle a la API de Meta. Este sync corre donde SÍ hay internet (local o el cron de
  * Vercel) y deja los datos diarios en la base; Mateo los lee por MCP de Supabase. Es el
- * complemento "por día" de meta-spend-sync.mjs (que trae el acumulado a `campanas`).
+ * complemento "por día" de `meta-gasto-total-por-anuncio.mjs` (que trae el acumulado de
+ * toda la vida del anuncio a `campanas`).
  *
  * OJO TIMEZONE: Meta reporta en el timezone de la CUENTA publicitaria (ARG). `time_increment=1`
  * devuelve un `date_start` por día ARG → la columna `fecha` ya queda en día argentino (que es
@@ -18,10 +27,10 @@
  * CREDENCIALES (ads-agent/.env.local): META_ACCESS_TOKEN (ads_read), META_AD_ACCOUNT_ID,
  * SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
  *
- * USO:
- *   node scripts/datos/meta-daily-sync.mjs                 → sincroniza los últimos 30 días
- *   node scripts/datos/meta-daily-sync.mjs --preset last_7d
- *   node scripts/datos/meta-daily-sync.mjs --dry-run       → solo reporta, no escribe
+ * USO (parado en ads-agent/):
+ *   node scripts/datos/meta-embudo-diario-por-anuncio.mjs                 → últimos 30 días
+ *   node scripts/datos/meta-embudo-diario-por-anuncio.mjs --preset last_7d
+ *   node scripts/datos/meta-embudo-diario-por-anuncio.mjs --dry-run       → solo reporta
  */
 
 import dotenv from 'dotenv'
@@ -115,7 +124,7 @@ async function upsert(filas) {
 }
 
 // ─── Main ───────────────────────────────────────────────────────────────────
-console.log(`\n📅 META DAILY SYNC → meta_insights_diario  (act_${ACCOUNT}, ${PRESET})${DRY ? '  [DRY-RUN]' : ''}\n`)
+console.log(`\n📅 EMBUDO DIARIO POR ANUNCIO → meta_insights_diario  (act_${ACCOUNT}, ${PRESET})${DRY ? '  [DRY-RUN]' : ''}\n`)
 const rows = await fetchDaily()
 const filas = agrupar(rows).sort((a, b) => (a.fecha < b.fecha ? 1 : -1) || (a.src < b.src ? -1 : 1))
 if (!filas.length) { console.log('  No se encontró ninguna matrícula adN-angulo en Meta.'); process.exit(0) }

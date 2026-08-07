@@ -2,9 +2,11 @@ import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 
-dotenv.config({ path: '../leadr/app/.env.local' });
+// Las claves salen de ads-agent/.env.local. Un solo lugar decide de donde se
+// leen y avisa claro si falta alguna: ../../lib/env.mjs
+import { cargarEnv } from '../../lib/env.mjs';
+cargarEnv(['ANTHROPIC_API_KEY']);
 
 // Este script vive en scripts/curso/; las transcripciones estan en la raiz de ads-agent.
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');

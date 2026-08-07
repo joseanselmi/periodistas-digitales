@@ -97,8 +97,8 @@ FROM agentes_bitacora WHERE estado = 'pendiente' ORDER BY fecha DESC, prioridad;
 > tanto sigue escribiendo en `agentes_bitacora` y mandando el mail diario.
 >
 > Lo que sigue queda como **registro histórico** — de acá salió el molde para el
-> próximo agente autónomo, y el `meta-daily-sync` que armamos para él **sigue vivo
-> y en uso**.
+> próximo agente autónomo, y el sync que armamos para él (hoy
+> `meta-embudo-diario-por-anuncio`, antes `meta-daily-sync`) **sigue vivo y en uso**.
 
 - **Rutina:** `trig_015hDyKE66YQP1sqQWV8bCMp` "Mateo autonomo diario - Media Buyer
   (recomienda, Jose aprueba)". Cron `0 16 * * *` (16:00 UTC / 13:00 ART).
@@ -116,7 +116,7 @@ FROM agentes_bitacora WHERE estado = 'pendiente' ORDER BY fecha DESC, prioridad;
   costo bajo para una rutina diaria).
 - **Fuente de datos (05/07):** lee **`meta_insights_diario`** — métricas de Meta POR
   DÍA y por anuncio, ya en **horario ARG** (Meta reporta en el timezone de la cuenta).
-  La llena el sync `meta-daily-sync` (ver abajo). Con eso Mateo manda un **resumen del
+  La llena el sync `meta-embudo-diario-por-anuncio` (ver abajo). Con eso Mateo manda un **resumen del
   día** con las métricas que pidió Jose: **gasto, CTR de enlace** (link_clicks/impresiones,
   NO el CTR total), **pagos iniciados** (initiate checkout), **ventas**, **% pago iniciado**
   (pagos_iniciados/link_clicks) y **% conversión a compra** (compras/pagos_iniciados) —
@@ -131,7 +131,10 @@ FROM agentes_bitacora WHERE estado = 'pendiente' ORDER BY fecha DESC, prioridad;
 - **Probado E2E 2026-07-05:** `RemoteTrigger run` → fila en `agentes_bitacora` +
   email por el Cartero (verificado leyendo el mail en Gmail).
 
-## Sync de datos: `meta-daily-sync` (métricas de Meta por día → Supabase)
+## Sync de datos: `meta-embudo-diario-por-anuncio` (el embudo de cada anuncio, día por día → Supabase)
+
+> Se llamaba `meta-daily-sync` hasta el 07/08/2026. El porqué del cambio está en
+> [`../scripts/datos/README.md`](../scripts/datos/README.md).
 
 **Sigue vivo y en uso** aunque Mateo ya no esté: es la única fuente de las métricas
 de Meta por día dentro de la base, y de ahí las lee Dante y cualquier consulta que
@@ -143,12 +146,12 @@ en la base:
 - **Tabla `meta_insights_diario`** (migración `crear_tabla_meta_insights_diario`): grain
   `(fecha, src)`. Columnas: `spend_usd`, `impresiones`, `link_clicks`, `landing_views`,
   `pagos_iniciados`, `compras`. `fecha` = día **ARG** (Meta reporta en el TZ de la cuenta).
-- **Código:** `ads-agent/scripts/datos/meta-daily-sync.mjs` (local/manual) + `sistema-ingresos/api/_lib/
-  meta-daily-sync.js` (`runMetaDailySync`, serverless). Trae `insights` con
+- **Código:** `ads-agent/scripts/datos/meta-embudo-diario-por-anuncio.mjs` (local/manual) + `sistema-ingresos/api/_lib/
+  meta-embudo-diario-por-anuncio.js` (`runMetaEmbudoDiarioPorAnuncio`, serverless). Trae `insights` con
   `time_increment=1` + `actions` (initiate_checkout, purchase, landing_page_view), agrega
   por `(fecha, src)` y hace upsert. Best-effort.
 - **Automatizado:** `api/recuperacion.js` lo llama en su cron diario (15:00 UTC), junto a
-  `runHotmartSync` / `runMetaSpendSync` / `runSyncEstados` (tope Hobby = sin cron propio).
+  `runHotmartSync` / `runMetaGastoTotalPorAnuncio` / `runSyncEstados` (tope Hobby = sin cron propio).
   Deploy 2026-07-05. Backfill inicial hecho a mano (29/06→04/07).
 
 ### El criterio de Mateo (embebido en el prompt, no en el repo)

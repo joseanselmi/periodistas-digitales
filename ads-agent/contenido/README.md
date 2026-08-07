@@ -25,7 +25,7 @@ carrusel publicado.
 cd ads-agent
 node scripts/generar/carousel-generator.mjs   # arma un carrusel
 node scripts/agentes/organic-agent.mjs        # arma el calendario
-node scripts/programar/schedule-week.mjs      # lo programa en Facebook
+node scripts/programar/schedule-muro.mjs      # lo programa en Facebook
 ```
 
 ⚠️ Los de [`scripts/publicar/`](../scripts/publicar/README.md) **salen al mundo**:

@@ -1,7 +1,18 @@
 /**
- * meta-spend-sync.mjs — Sincroniza el GASTO y métricas de Meta Ads hacia la tabla
- * `campanas` (Supabase periodistas-marketing). Es el complemento de hotmart-sync.mjs:
+ * meta-gasto-total-por-anuncio.mjs — Trae el gasto ACUMULADO (toda la vida del anuncio,
+ * un solo número por anuncio, sin abrir por día) hacia la tabla `campanas`
+ * (Supabase periodistas-marketing). Es el complemento de hotmart-sync.mjs:
  * ese trae las VENTAS, este trae el GASTO — juntos permiten CPA/ROAS reales por anuncio.
+ *
+ * (Se llamaba `meta-spend-sync.mjs`. Renombrado el 07/08/2026 porque "spend" y "gasto"
+ * son la misma palabra en dos idiomas y convivían en esta misma carpeta — ver el
+ * "historial de nombres" en scripts/datos/README.md.)
+ *
+ * NO confundir con:
+ *   · `meta-embudo-diario-por-anuncio.mjs`   → mismos anuncios, pero DÍA POR DÍA y con
+ *                                              el embudo completo → `meta_insights_diario`
+ *   · `meta-gasto-diario-toda-la-cuenta.mjs` → la cuenta ENTERA, tenga ficha o no
+ *                                              → `meta_gasto_diario`
  *
  * PARA QUÉ:
  *  - La tabla `campanas` guarda el gasto y métricas de Meta (no salen de la base). Este
@@ -23,10 +34,10 @@
  *   SUPABASE_URL=https://wxyimqkjlwfncvzozpjy.supabase.co
  *   SUPABASE_SERVICE_ROLE_KEY=...   (service_role; escribe saltando RLS)
  *
- * USO:
- *   node scripts/datos/meta-spend-sync.mjs                 → actualiza el gasto de todas las fichas
- *   node scripts/datos/meta-spend-sync.mjs --dry-run       → solo reporta lo que haría, no escribe
- *   node scripts/datos/meta-spend-sync.mjs --preset last_30d   → ventana (default maximum = lifetime)
+ * USO (parado en ads-agent/):
+ *   node scripts/datos/meta-gasto-total-por-anuncio.mjs                   → actualiza todas las fichas
+ *   node scripts/datos/meta-gasto-total-por-anuncio.mjs --dry-run         → solo reporta, no escribe
+ *   node scripts/datos/meta-gasto-total-por-anuncio.mjs --preset last_30d → ventana (default maximum = lifetime)
  *
  * NOTA: construido contra la Marketing API v21.0 (mismo patrón que fetch-meta.mjs).
  * La primera corrida con credenciales reales confirma el matcheo de nombres.
@@ -111,7 +122,7 @@ async function patchCampana(src, campos) {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────
-console.log(`\n📡 META SPEND SYNC → campanas  (cuenta act_${ACCOUNT}, ventana ${PRESET})${DRY ? '  [DRY-RUN]' : ''}\n`)
+console.log(`\n📡 GASTO TOTAL POR ANUNCIO → campanas  (cuenta act_${ACCOUNT}, ventana ${PRESET})${DRY ? '  [DRY-RUN]' : ''}\n`)
 
 const rows = await fetchInsights()
 const grupos = agruparPorSrc(rows)

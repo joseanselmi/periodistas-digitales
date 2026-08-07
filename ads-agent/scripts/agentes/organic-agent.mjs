@@ -2,7 +2,8 @@
  * organic-agent.mjs — Genera calendario de contenido orgánico
  * Crea 7 días de posts para Instagram y Facebook con copy + imagen revisada por IA.
  * Uso: node scripts/agentes/organic-agent.mjs [--days=7] [--platform=instagram|facebook|both] [--images]
- * Variables: ANTHROPIC_API_KEY, FAL_API_KEY (para imágenes)
+ * Variables: ANTHROPIC_API_KEY. Las imágenes NO se generan por API: se hacen
+ *            a mano en ChatGPT (ver ../../docs/CHATGPT-IMAGENES.md).
  */
 
 import Anthropic from '@anthropic-ai/sdk'

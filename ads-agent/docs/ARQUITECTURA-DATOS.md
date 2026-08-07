@@ -407,7 +407,8 @@ Las dos piezas que quedaban como "pendiente de construir".
 - Wireado en `index.html` y `gracias.html` (script antes de `</body>`).
 
 ### `campanas.gasto_usd` — sync automático desde Meta (✅ LIVE 2026-07-03)
-- **Script** `ads-agent/scripts/datos/meta-spend-sync.mjs` — complemento de `scripts/datos/hotmart-sync.mjs`: ese trae las
+- **Script** `ads-agent/scripts/datos/meta-gasto-total-por-anuncio.mjs` (hasta el 07/08/2026 se llamaba
+  `meta-spend-sync.mjs`) — complemento de `scripts/datos/hotmart-sync.mjs`: ese trae las
   VENTAS, éste el GASTO. Trae los insights por anuncio (Marketing API v21.0), extrae la matrícula
   `src` (`adN-angulo`) del nombre del **conjunto o anuncio** en Meta, agrega por `src` y hace PATCH
   de `gasto_usd`/`impresiones`/`clics`/`ctr`/`frecuencia`/`ultimo_chequeo_en` en la ficha de
@@ -423,8 +424,8 @@ Las dos piezas que quedaban como "pendiente de construir".
   (c) Además de generar el token con `ads_read`, hay que **asignarle la cuenta publicitaria** al
   System User (Agregar activos), o Meta da error #200. El anuncio matchea aunque su `ad_name` en
   Meta sea genérico ("Nuevo anuncio de Ventas"): la matrícula vive en el nombre del **conjunto**.
-- **✅ AUTOMATIZADO (cron diario):** módulo serverless `sistema-ingresos/api/_lib/meta-spend-sync.js`
-  (`runMetaSpendSync()`), lo llama `api/recuperacion.js` en su corrida de las 15:00 UTC justo después
+- **✅ AUTOMATIZADO (cron diario):** módulo serverless `sistema-ingresos/api/_lib/meta-gasto-total-por-anuncio.js`
+  (`runMetaGastoTotalPorAnuncio()`), lo llama `api/recuperacion.js` en su corrida de las 15:00 UTC justo después
   de `runHotmartSync` (Hobby solo permite 2 crons → va pegado). Best-effort. 1ª corrida verificada:
   `ad1-fomo` → gasto $33.49 / 390 clics / CTR 7.99% en `campanas`; el cruce con `ventas` da
   **CPA curso $11.16 · ROAS 3.08** en vivo. El `.mjs` sigue para correr a mano (`--dry-run`/`--preset`);
@@ -460,7 +461,7 @@ Leadr**. Modelo que pidió: él **configura los gastos FIJOS** (se repiten cada 
     era del mes. Ahora tabla **`gastos_meta_mensual(mes, spend_usd)`** poblada a **nivel
     cuenta** (Meta `insights level=account time_increment=monthly` = TODAS las campañas, mes
     calendario; backfill dic-2024→jul-2026); `v_gastos_variables_mes` lee de ahí. Sync
-    continuo: `fetchGastoMensual`/`upsertGastoMensual` en `_lib/meta-spend-sync.js` (cron
+    continuo: `fetchGastoMensual`/`upsertGastoMensual` en `_lib/meta-gasto-total-por-anuncio.js` (cron
     recuperación). `campanas` se queda para CPA/ROAS por anuncio. Efecto: julio Meta
     $33.49 → **$36.27** (real). Ciclo Meta = mes calendario (Make, en cambio, factura 6→6).
 - **Página en Leadr (`/admin/costos`, ahora "Contabilidad"):** ya existía como CRUD de
@@ -541,7 +542,7 @@ camino que la sección Ventas, que sí funciona en la nube).
 - **Cómo se llena:** `sistema-ingresos/api/_lib/sync-estados.js` (`runSyncEstados`) lista los
   `*-state.json` del **GitHub público** (contents API, con fallback a lista fija), baja cada
   uno por `raw.githubusercontent` y hace UPSERT por `agente`. Corre **1×/día colgado del cron
-  `recuperacion`** (15:00 UTC), igual que `runHotmartSync`/`runMetaSpendSync` — sin cron
+  `recuperacion`** (15:00 UTC), igual que `runHotmartSync`/`runMetaGastoTotalPorAnuncio` — sin cron
   propio (tope del plan Hobby). Endpoint manual: `GET /api/sync-estados?key=<CRON_SECRET>`.
 - **Freshness:** el mail muestra el **último push** del repo. El detalle en vivo sigue en el
   `/rutina` **local**. `bruno`/`miguel` aún no se pushean → el sync trae 11 de 13; esos dos
@@ -632,16 +633,23 @@ tabla que nadie está llenando:
 
 | Sync | Escribe | Alcance |
 |---|---|---|
-| `_lib/meta-spend-sync.js` | `campanas`, `gastos_meta_mensual` | solo anuncios **con ficha** en `campanas` |
-| `_lib/meta-daily-sync.js` | `meta_insights_diario` | solo los que tienen matrícula `adN-angulo` |
-| `_lib/meta-gasto-sync.js` | `meta_gasto_diario` | **la cuenta entera**, por campaña y por día |
+| `_lib/meta-gasto-total-por-anuncio.js` | `campanas`, `gastos_meta_mensual` | solo anuncios **con ficha** en `campanas`, gasto acumulado (sin abrir por día) |
+| `_lib/meta-embudo-diario-por-anuncio.js` | `meta_insights_diario` | solo los que tienen matrícula `adN-angulo`, día por día y con el embudo completo |
+| `_lib/meta-gasto-diario-toda-la-cuenta.js` | `meta_gasto_diario` | **la cuenta entera**, por campaña y por día |
+
+> **Se renombraron el 07/08/2026.** Antes eran `meta-spend-sync`, `meta-daily-sync` y
+> `meta-gasto-sync` — "spend" y "gasto" son la misma palabra en dos idiomas, y estaban
+> uno al lado del otro haciendo cosas distintas. El nombre viejo de cada uno y el motivo
+> del cambio están en
+> [`ads-agent/scripts/datos/README.md`](../scripts/datos/README.md). Los `.mjs` locales
+> llevan exactamente los mismos nombres que estos `.js` de la nube.
 
 Los tres cuelgan del cron `recuperacion` (15:00 UTC, 1×/día) y son best-effort: si uno
 falla, loguea y no frena a los otros ni a la recuperación de carritos.
 
 **Por qué se agregó el tercero al cron.** `meta_gasto_diario` es la tabla que lee el panel
 de campañas de Leadr (`/admin/campanas`) para mostrar gasto y costo por lead, y hasta ahora
-se llenaba **solo a mano** con `ads-agent/scripts/datos/meta-gasto-sync.mjs`. Nadie se
+se llenaba **solo a mano** con `ads-agent/scripts/datos/meta-gasto-diario-toda-la-cuenta.mjs`. Nadie se
 acuerda de correr un script a mano: quedó congelada en la foto parcial del **31/07 a las
 22:55**, y el 02/08 el panel mostraba **$0,52 de gasto y $0,009 por lead** cuando lo real
 era **$1,86 y $0,032**. Un número viejo se ve igual que uno fresco — de ahí que tenga que

@@ -1,16 +1,32 @@
-# lib/ — Módulos compartidos
+# lib — lo que comparten todos los scripts
 
-Código reutilizable que importan los scripts de `ads-agent/`. No se corre solo:
-son piezas que usan `scripts/agentes/review.mjs`, `scripts/agentes/organic-agent.mjs`, `scripts/publicar/publish.mjs`, etc.
+**Padre:** [`ads-agent/`](../README.md)
+
+Piezas que importan los scripts. **Ninguna se corre sola.** La idea es que cada
+cosa tenga un solo dueño: si el precio, el trato o la forma de leer las claves
+estuvieran copiados en cada script, alcanzaría con olvidarse de uno para que el
+sistema empiece a decir dos cosas distintas.
 
 | Archivo | Qué hace |
 |---|---|
-| `brand-context.mjs` | La identidad de marca en un solo lugar: producto, **precio ($27)**, valor percibido, URLs (landing + checkout Hotmart), audiencia (periodistas LatAm 30-55, español latino con "tú"), política de Meta. Fuente de verdad para todos los agentes. |
-| `reviewer.mjs` | Revisión de un anuncio (imagen + copy) con Claude Vision: puntúa y sugiere mejoras según la marca. |
+| `env.mjs` | **De dónde salen las claves.** Lee `.env.local` y `.env`, y corta con un mensaje claro si falta alguna que el script necesita |
+| `brand-context.mjs` | **La identidad de marca.** Producto, precio (**$27**), valor percibido, URLs, público (periodistas de LatAm, 30-55) y política de Meta |
+| `reviewer.mjs` | Revisa un anuncio —imagen y texto— con Claude Vision: le pone nota y sugiere mejoras según la marca |
+| `trello.mjs` | El cliente del tablero. Es el más usado de los cuatro, y el fallback cuando el MCP de Trello no está: `crear`, `listar`, `mover`, `completar` |
 
-> generación de imágenes migró a ChatGPT (manual, web). fal.ai/higgsfield ya no
-> se usan como flujo por defecto — ver la memoria del proyecto antes de rutear
-> generación automática de imágenes.
+## Dos cosas que se corrigieron acá el 2026-08-01
 
-También puede existir `trello.mjs` (cliente del tablero por agente) — ver el
-[README de ads-agent](../README.md).
+**El trato es voseo.** Esta tabla decía *"español latino con «tú»"* y era falso:
+los guiones publicados del curso usan voseo 387 veces y "tú" ninguna, y la
+landing 15 contra cero. `brand-context.mjs` decía lo mismo en un comentario y
+`reviewer.mjs` se lo pedía a Claude en cada revisión de anuncio.
+
+**`trello.mjs` no es hipotético.** Acá decía *"también puede existir"*. Existe, y
+`CLAUDE.md` depende de él: es el camino que queda cuando las herramientas
+`mcp__trello__*` no cargan en la sesión.
+
+## Las imágenes no se generan por código
+
+Se hacen a mano en ChatGPT — ver [`../docs/CHATGPT-IMAGENES.md`](../docs/CHATGPT-IMAGENES.md).
+Los proveedores por API (fal.ai, higgsfield) se dieron de baja el 2026-08-01 y su
+código se eliminó. Si algún script vuelve a nombrarlos, está viejo.

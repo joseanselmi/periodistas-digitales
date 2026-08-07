@@ -9,7 +9,7 @@ import { join } from 'path'
 import dotenv from 'dotenv'
 
 // Anclado al archivo, no al cwd: si no, el script corre sin error y no trae nada.
-// Mismo patrón que meta-daily-sync.mjs y meta-spend-sync.mjs.
+// Mismo patrón que meta-embudo-diario-por-anuncio.mjs y meta-gasto-total-por-anuncio.mjs.
 dotenv.config({ path: new URL('../../.env.local', import.meta.url) })
 
 const TOKEN = process.env.META_ACCESS_TOKEN

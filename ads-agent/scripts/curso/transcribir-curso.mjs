@@ -5,9 +5,11 @@ import path from 'path';
 import { execSync, exec } from 'child_process';
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 
-dotenv.config({ path: '../leadr/app/.env.local' });
+// Las claves salen de ads-agent/.env.local. Un solo lugar decide de donde se
+// leen y avisa claro si falta alguna: ../../lib/env.mjs
+import { cargarEnv } from '../../lib/env.mjs';
+cargarEnv(['ANTHROPIC_API_KEY']);
 
 const execAsync = promisify(exec);
 // Dos anclas distintas: transcribe_helper.py viaja al lado de este script

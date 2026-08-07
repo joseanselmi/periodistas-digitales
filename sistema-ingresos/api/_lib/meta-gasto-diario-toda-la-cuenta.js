@@ -1,14 +1,17 @@
-// Sync del gasto de Meta POR DÍA y por CAMPAÑA → tabla `meta_gasto_diario`
+// Gasto de Meta POR DÍA y por CAMPAÑA, la cuenta ENTERA → tabla `meta_gasto_diario`
 // (Supabase periodistas-marketing). Equivalente serverless de
-// ads-agent/scripts/datos/meta-gasto-sync.mjs. Lo llama api/recuperacion.js en su
-// corrida diaria, junto a runMetaSpendSync y runMetaDailySync.
+// ads-agent/scripts/datos/meta-gasto-diario-toda-la-cuenta.mjs. Lo llama
+// api/recuperacion.js en su corrida diaria, junto a los otros dos syncs de Meta.
+//
+// (Se llamaba meta-gasto-sync.js. Renombrado el 07/08/2026 — historial de nombres en
+// ads-agent/scripts/datos/README.md.)
 //
 // POR QUÉ EXISTE (02/08/2026)
 //
 // Es el tercer sync de Meta, y cubre lo que los otros dos no ven:
-//   · meta-spend-sync  → `campanas` + `gastos_meta_mensual`, solo anuncios con ficha
-//   · meta-daily-sync  → `meta_insights_diario`, solo los que tienen matrícula adN-angulo
-//   · este             → `meta_gasto_diario`, la CUENTA ENTERA, tenga ficha o no
+//   · meta-gasto-total-por-anuncio   → `campanas` + `gastos_meta_mensual`, solo anuncios con ficha
+//   · meta-embudo-diario-por-anuncio → `meta_insights_diario`, solo los que tienen matrícula adN-angulo
+//   · este                           → `meta_gasto_diario`, la CUENTA ENTERA, tenga ficha o no
 //
 // Sin él, el gasto que muestra el panel de campañas de Leadr depende de que alguien
 // se acuerde de correr el script a mano. Nadie se acuerda: quedó congelado en la foto
@@ -86,7 +89,7 @@ async function upsert(filas) {
       body: JSON.stringify(lote),
     });
     if (!r.ok) {
-      console.error(`[meta-gasto] upsert ${r.status} ${await r.text().catch(() => '')}`);
+      console.error(`[meta-gasto-diario] upsert ${r.status} ${await r.text().catch(() => '')}`);
       return n;
     }
     n += lote.length;
@@ -94,7 +97,7 @@ async function upsert(filas) {
   return n;
 }
 
-async function runMetaGastoSync() {
+async function runMetaGastoDiarioTodaLaCuenta() {
   if (!TOKEN || !ACCOUNT) return { skipped: 'faltan META_ACCESS_TOKEN / META_AD_ACCOUNT_ID' };
   if (!SUPABASE_URL || !SUPABASE_KEY) return { skipped: 'falta Supabase' };
 
@@ -106,9 +109,9 @@ async function runMetaGastoSync() {
   // Las campañas que Meta ya no lista (borradas) igual dejaron gasto: quedan avisadas
   // en el log, que es donde alguien las puede ver sin tener que salir a buscarlas.
   const huerfanas = [...new Set(filas.filter(f => !porId.has(f.meta_campana_id)).map(f => f.meta_campana))];
-  if (huerfanas.length) console.warn(`[meta-gasto] gastaron pero Meta ya no las lista: ${huerfanas.join(', ')}`);
+  if (huerfanas.length) console.warn(`[meta-gasto-diario] gastaron pero Meta ya no las lista: ${huerfanas.join(', ')}`);
 
   return { dias: DIAS, filas: filas.length, upsert: n, gasto_usd: +total.toFixed(2), huerfanas: huerfanas.length };
 }
 
-module.exports = { runMetaGastoSync };
+module.exports = { runMetaGastoDiarioTodaLaCuenta };

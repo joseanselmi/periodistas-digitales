@@ -11,7 +11,7 @@
 // CÓMO: lista los *-state.json del repo (GitHub contents API; si falla, usa una lista
 // fija de respaldo), baja cada uno por raw.githubusercontent (repo público, sin token) y
 // hace UPSERT por `agente` en una sola llamada a PostgREST. Best-effort, igual que
-// meta-spend-sync: lo llama api/recuperacion.js en su corrida diaria y, si falla, no
+// los syncs de Meta: lo llama api/recuperacion.js en su corrida diaria y, si falla, no
 // tumba nada. Freshness = último push del repo (el detalle en vivo está en /rutina local).
 //
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ya presentes en Vercel).

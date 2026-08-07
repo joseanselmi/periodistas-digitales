@@ -1,9 +1,13 @@
 /**
- * meta-gasto-sync.mjs — baja el gasto de TODAS las campañas de Meta, día por día.
+ * meta-gasto-diario-toda-la-cuenta.mjs — baja el gasto de TODAS las campañas de Meta,
+ * día por día. No filtra nada: entra la cuenta entera, tenga ficha o no.
+ *
+ * (Se llamaba `meta-gasto-sync.mjs`. Renombrado el 07/08/2026 — ver el "historial de
+ * nombres" en scripts/datos/README.md.)
  *
  * POR QUÉ EXISTE (31/07/2026)
  *
- * `meta-spend-sync.mjs` solo actualiza anuncios que ya tienen ficha en `campanas`
+ * `meta-gasto-total-por-anuncio.mjs` solo actualiza anuncios que ya tienen ficha en `campanas`
  * y cuyo nombre lleva la matrícula adN-angulo. Está bien para medir los anuncios
  * que Mateo lanza con método — pero deja ciego todo lo demás.
  *
@@ -17,9 +21,9 @@
  * aparte — que es exactamente lo que hay que poder mirar.
  *
  * Correr desde ads-agent/:
- *   node scripts/datos/meta-gasto-sync.mjs                 # últimos 90 días
- *   node scripts/datos/meta-gasto-sync.mjs --dias 400      # para el histórico
- *   node scripts/datos/meta-gasto-sync.mjs --dry           # muestra, no escribe
+ *   node scripts/datos/meta-gasto-diario-toda-la-cuenta.mjs              # últimos 90 días
+ *   node scripts/datos/meta-gasto-diario-toda-la-cuenta.mjs --dias 400   # para el histórico
+ *   node scripts/datos/meta-gasto-diario-toda-la-cuenta.mjs --dry        # muestra, no escribe
  */
 
 import { readFileSync, existsSync } from 'fs'
