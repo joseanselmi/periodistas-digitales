@@ -43,6 +43,9 @@
 //   setup    — crea los atributos WA_STAGE y MAIL5_AT en Brevo (correr una sola vez).
 //   mail5test— manda el email del Regalo 5 a ?to=<email> (default Jose) para previsualizarlo. No toca Brevo.
 //   regalotest— manda el Regalo 3 o 4 por email: ?nivel=3|4&to=<email>. No toca Brevo.
+//   reenganchetest— manda el mail de re-enganche a ?to=<email>. No toca Brevo.
+//   puerta   — qué separa la puerta de enganche (a cuántos se les está mandando la oferta sin
+//              que hayan abierto nunca nada). No manda nada. Correrlo ANTES de encender el flag.
 //   wasalud  — qué dice Meta del número (can_send_message). No manda nada.
 //   live     — manda de verdad y actualiza WA_STAGE. Requiere ADEMÁS WA_FUNNEL_ENABLED=1.
 //   (el cron llama sin mode → equivale a live, pero si WA_FUNNEL_ENABLED != 1 se degrada a dry)
@@ -70,13 +73,24 @@
 //     registro de por qué canal salieron.
 //   - Probar primero con mode=regalotest&nivel=3&to=... y correr mode=setup una vez.
 //
+// PUERTA DE ENGANCHE — la oferta no sale a quien nunca abrió nada (07/08/2026, tarjeta #123):
+//   - Medido: de los 517 que recibieron la oferta, 363 (70%) nunca habían abierto un mail. Esa
+//     cohorte la abre al 3,6%; la que venía abriendo 3+, al 61,5%. El clic-sobre-apertura es
+//     15-23% en las tres, así que el copy no era el problema: el destinatario sí.
+//   - La oferta espera (sin marcador) hasta que la persona dé señal de vida. En su lugar sale
+//     UNA vez el mail de re-enganche, si REENGANCHE_ENABLED=1.
+//   - Con REENGANCHE_ENABLED=0 la puerta igual retiene la oferta, pero no manda nada en su lugar.
+//   - La puerta nace ENCENDIDA. PUERTA_ENGANCHE=0 la apaga sin redeployar (botón de vuelta).
+//   - Ver el efecto sin mandar nada: mode=puerta. Correr una vez mode=setup (crea REENGANCHE_AT).
+//
 // VOLUMEN: PIEZAS_CAP_DIA (default 500) es el tope de mails del embudo POR DÍA, contado sobre
 // los contactos ya tocados hoy — no por corrida. La función se re-dispara a sí misma hasta 12
 // veces (Vercel Hobby sólo permite un cron diario) y se frena sola cuando agota el cupo.
 //
 // Variables de entorno (proyecto Vercel sistema-ingresos-landing):
 //   BREVO_API_KEY, WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, CRON_SECRET,
-//   WA_FUNNEL_ENABLED, MAIL5_ENABLED, MAILOFERTA_ENABLED, MAILREGALOS_ENABLED, WA_SEND_FORCE
+//   WA_FUNNEL_ENABLED, MAIL5_ENABLED, MAILOFERTA_ENABLED, MAILREGALOS_ENABLED, WA_SEND_FORCE,
+//   REENGANCHE_ENABLED, PUERTA_ENGANCHE (=0 apaga la puerta; ausente = encendida)
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
 const BREVO = 'https://api.brevo.com/v3';
@@ -629,8 +643,10 @@ const OFERTA_REENVIO = {
   cierre: 'Está todo explicado en la página, con calma.',
 };
 
-function armarEmailReenvio() {
-  const c = OFERTA_REENVIO;
+// Molde de email de texto (sin descarga): título, párrafos, un botón. Lo usan el reenvío de la
+// oferta y el re-enganche. Recibe la config por parámetro para que agregar un mail de este tipo
+// no sea copiar 30 líneas de HTML — el diseño se toca en un solo lugar.
+function armarEmailSimple(c) {
   const html = `<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
 <body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
@@ -664,7 +680,7 @@ ${c.cierre}`;
 }
 
 async function enviarReenvioOferta(email, nombre) {
-  const { html, text } = armarEmailReenvio();
+  const { html, text } = armarEmailSimple(OFERTA_REENVIO);
   const r = await fetch(`${BREVO}/smtp/email`, {
     method: 'POST',
     headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
@@ -702,6 +718,92 @@ async function abrieronOfertaSet() {
     }
   }
   return abrieron;
+}
+
+// ─── PUERTA DE ENGANCHE + RE-ENGANCHE (07/08/2026, tarjeta #123) ─────────────────────────
+//
+// EL DATO QUE LO MOTIVA. De los 517 que recibieron el mail de la oferta, 363 —el 70%— nunca
+// habían abierto un solo mail nuestro. Esa cohorte abre la oferta al 3,6%; la que ya venía
+// abriendo 3 o más, al 61,5%. Y el clic-sobre-apertura es 15-23% en las TRES cohortes: el mail
+// de la oferta convierte igual de bien en todo el mundo. Así que el 2,75% de clic nunca fue el
+// asunto ni el copy — era mandarle la que vende a gente que hace semanas que no abre nada.
+//
+// QUÉ HACE. La oferta sale sólo si la persona abrió o clicó ALGO nuestro alguna vez. Al que no,
+// le sale UNA sola vez este mail —corto, sin oferta y sin precio— para ver quién sigue vivo.
+// El que lo abre entra a la cohorte viva y recibe la oferta en la corrida siguiente; el que no,
+// se queda afuera en vez de seguir gastando envíos y reputación.
+const REENGANCHE = {
+  marcador: 'REENGANCHE_AT',
+  tag: 'reenganche',
+  // Días desde el último toque. Evita que al que acaba de recibir la oferta le caiga el
+  // re-enganche encima al día siguiente: si no abrió, no es que no le llegó, es que no lo vio.
+  minDiasDesdeUltimoToque: 2,
+  from: { name: 'José — Periodistas del Futuro IA', email: 'jose@sistemadeingresosdiariosia.com' },
+  // Asunto deliberadamente distinto a todo lo anterior: los regalos empiezan con "Tu guía…" /
+  // "Tu Regalo N…" y la oferta describe dónde está parado el lector. Este pregunta y no promete
+  // nada — es la única forma de que el que ignoró siete asuntos declarativos abra el octavo.
+  subject: '¿Te sirvieron las guías?',
+  titulo: 'Una pregunta corta',
+  parrafos: [
+    'Te mandamos cuatro guías en las últimas semanas: el periódico digital, los prompts, los 5 pilares y los agentes de IA.',
+    'Te escribo por una sola cosa, y no es para venderte nada: quiero saber si te sirvieron. Sos periodista, tenés oficio y criterio propio — estas guías están escritas para alguien así, y lo que me cuentes cambia las que vienen.',
+    'Respondeme a este mail con una línea. La leo yo.',
+  ],
+  cta: 'Volver a abrir la guía del periódico digital →',
+  // Sale del mismo sitio que el Regalo 3 para que renombrar el PDF no deje este link colgado.
+  // Siempre por /api/d: un link directo al .pdf no deja rastro de la descarga.
+  url: `https://sistemadeingresosdiariosia.com/api/d?file=${REGALOS_EMAIL[3].archivo}&src=Email-Reenganche&sck=email-reenganche`,
+  cierre: 'Y si preferís que no te escriba más, con decírmelo alcanza.',
+};
+
+async function enviarReenganche(email, nombre) {
+  const { html, text } = armarEmailSimple(REENGANCHE);
+  const r = await fetch(`${BREVO}/smtp/email`, {
+    method: 'POST',
+    headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      sender: REENGANCHE.from,
+      to: [{ email, name: nombre || 'Periodista' }],
+      subject: REENGANCHE.subject,
+      htmlContent: html,
+      textContent: text,
+      tags: [REENGANCHE.tag],
+    }),
+  });
+  return { ok: r.ok, status: r.status, body: await r.json().catch(() => null) };
+}
+
+// Quién dio SEÑAL DE VIDA alguna vez: abrió o clicó cualquier mail nuestro en los últimos 90 días.
+//
+// ⚠️ SIN filtro de tag, y es a propósito. Los Regalos 1 y 2 los manda Make —no esta función— y
+// son justo los que más se abren. Filtrando por los tags del embudo el set daba 182 emails en
+// vez de 479: la puerta habría dado por muertos a 297 personas que sí abrieron, sólo porque lo
+// que abrieron no lo mandó este archivo.
+//
+// FALLA RUIDOSA, NO MUDA: si Brevo devuelve error, o si devuelve CERO eventos (que con ~1.900
+// aperturas en 90 días sólo puede significar que la consulta se rompió), devuelve null. Con null
+// la puerta no se aplica y el embudo se comporta como antes — un set truncado sería peor que no
+// tener puerta: mandaría re-enganche a gente viva y le negaría la oferta.
+const ENGANCHE_DIAS = 90;
+async function abrieronAlgoSet() {
+  const key = process.env.BREVO_API_KEY;
+  const vivos = new Set();
+  let totalEventos = 0;
+  for (const evento of ['opened', 'clicks']) {
+    let offset = 0;
+    for (;;) {
+      const u = `${BREVO}/smtp/statistics/events?limit=2500&offset=${offset}&days=${ENGANCHE_DIAS}&event=${evento}`;
+      const r = await fetch(u, { headers: { 'api-key': key } });
+      if (!r.ok) throw new Error(`Brevo events ${evento} ${r.status}: ${(await r.text()).slice(0, 120)}`);
+      const lote = (await r.json()).events || [];
+      totalEventos += lote.length;
+      for (const e of lote) vivos.add(String(e.email || '').toLowerCase().trim());
+      if (lote.length < 2500) break;
+      offset += 2500;
+    }
+  }
+  if (totalEventos === 0) return null; // consulta rota: mejor sin puerta que con una puerta ciega
+  return vivos;
 }
 
 // Regalos 3 y 4 por email. El tag propio deja medir cada uno por separado en Brevo,
@@ -1012,7 +1114,9 @@ const PIEZAS = [
 // —faltaba el 28%— y los que faltaban eran justo los candidatos a repetirse.
 async function enviadosSegunRegistro() {
   if (!SB_URL || !SB_KEY) return null;
-  const tags = PIEZAS.map((p) => p.tag).join(',');
+  // El re-enganche va acá aunque no sea una PIEZA: se manda una sola vez en la vida, así que
+  // necesita el mismo respaldo que las piezas por si el marcador no llega a escribirse.
+  const tags = [...PIEZAS.map((p) => p.tag), REENGANCHE.tag].join(',');
   const PAGINA = 1000;
   const set = new Set();
   try {
@@ -1081,6 +1185,7 @@ function prioridad(p) {
   if (p.send === 'mailoferta') return 0;      // la que VENDE
   if (p.send === 'ofertareenvio') return 1;   // la segunda oportunidad de la que vende
   if (p.send === 'regalo3' || p.send === 'regalo4') return 2; // la ENTRADA: sin esto no hay a quién venderle
+  if (p.send === 'reenganche') return 6;      // rescate de fríos: barato, pero cede el turno a todo lo demás
   if (p.channel === 'wa') {                   // sólo existen con WA_SEND_FORCE=1
     if (p.send === 5) return 3;
     if (p.send === 4) return 4;
@@ -1125,7 +1230,8 @@ export default async function handler(req, res) {
       const m3 = await brevoCrearAtributoTexto('MAIL3_AT');
       const m4 = await brevoCrearAtributoTexto('MAIL4_AT');
       const m2 = await brevoCrearAtributoTexto(OFERTA_REENVIO.marcador);
-      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof, MAIL3_AT_attribute: m3, MAIL4_AT_attribute: m4, OFERTA_MAIL2_AT_attribute: m2 });
+      const rg = await brevoCrearAtributoTexto(REENGANCHE.marcador);
+      res.status(200).json({ mode, WA_STAGE_attribute: wa, MAIL5_AT_attribute: m5, SEG_AT_attribute: seg, OFERTA_MAIL_AT_attribute: mof, MAIL3_AT_attribute: m3, MAIL4_AT_attribute: m4, OFERTA_MAIL2_AT_attribute: m2, REENGANCHE_AT_attribute: rg });
       return;
     }
 
@@ -1134,6 +1240,52 @@ export default async function handler(req, res) {
       const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
       const sent = await enviarReenvioOferta(to, searchParams.get('nombre') || 'Jose');
       res.status(200).json({ mode, to, asunto: OFERTA_REENVIO.subject, sent });
+      return;
+    }
+
+    // Previsualizar el re-enganche: ?mode=reenganchetest&to=...
+    if (mode === 'reenganchetest') {
+      const to = searchParams.get('to') || 'joseanselmi27@gmail.com';
+      const sent = await enviarReenganche(to, searchParams.get('nombre') || 'Jose');
+      res.status(200).json({ mode, to, asunto: REENGANCHE.subject, sent });
+      return;
+    }
+
+    // Qué separa la puerta de enganche, sin mandar nada: ?mode=puerta
+    // Contesta la única pregunta que importa antes de encenderla: de los que hoy recibirían la
+    // oferta, ¿a cuántos se la estamos mandando sabiendo que nunca abrieron nada?
+    if (mode === 'puerta') {
+      const vivos = await abrieronAlgoSet();
+      const todos = await brevoGetContacts();
+      const compradores = await ventasEmailsSet();
+      const activos = todos.filter((c) => !c.emailBlacklisted && !compradores.has(String(c.email || '').toLowerCase().trim()));
+      const conSenal = (c) => vivos && vivos.has(String(c.email || '').toLowerCase().trim());
+      const yaRecibieronOferta = activos.filter((c) => (c.attributes || {}).OFERTA_MAIL_AT);
+      const enCola = activos.filter((c) => {
+        const a = c.attributes || {};
+        return !a.OFERTA_MAIL_AT && Math.floor((Date.now() - new Date(c.createdAt).getTime()) / DAY) >= 9;
+      });
+      res.status(200).json({
+        mode,
+        puerta: vivos ? 'operativa' : 'SIN DATOS (Brevo devolvió 0 eventos) — no se aplicaría',
+        ventana_dias: ENGANCHE_DIAS,
+        contactos_activos: activos.length,
+        con_senal_de_vida: vivos ? activos.filter(conSenal).length : null,
+        ya_recibieron_la_oferta: {
+          total: yaRecibieronOferta.length,
+          con_senal: vivos ? yaRecibieronOferta.filter(conSenal).length : null,
+          sin_senal_se_la_mandamos_a_ciegas: vivos ? yaRecibieronOferta.filter((c) => !conSenal(c)).length : null,
+        },
+        en_cola_para_la_oferta: {
+          total: enCola.length,
+          pasarian_la_puerta: vivos ? enCola.filter(conSenal).length : null,
+        },
+        // Los dos caminos al re-enganche, que es lo que de verdad se va a enviar.
+        reenganche_pendiente: vivos ? {
+          frenados_por_la_puerta: enCola.filter((c) => !conSenal(c) && !(c.attributes || {})[REENGANCHE.marcador]).length,
+          ya_gastados_antes_de_la_puerta: yaRecibieronOferta.filter((c) => !conSenal(c) && !(c.attributes || {})[REENGANCHE.marcador]).length,
+        } : null,
+      });
       return;
     }
 
@@ -1212,6 +1364,9 @@ export default async function handler(req, res) {
 
     const regalosEmailEnabled = process.env.MAILREGALOS_ENABLED === '1';
     const reenvioEnabled = process.env.MAILOFERTA2_ENABLED === '1';
+    // El re-enganche se puede apagar solo: si está OFF, la puerta igual retiene la oferta (que es
+    // lo que evita el gasto) pero no manda nada en su lugar.
+    const reenganicheEnabled = process.env.REENGANCHE_ENABLED === '1';
 
     // Quiénes ya abrieron la oferta: no se les reenvía. Si Brevo no contesta, `null` → esta
     // corrida no encola ningún reenvío (mejor perder un día que insistirle a quien ya la vio).
@@ -1219,6 +1374,25 @@ export default async function handler(req, res) {
     if (reenvioEnabled) {
       try { abrieronOferta = await abrieronOfertaSet(); }
       catch (e) { console.error('[wa-funnel] aperturas de la oferta:', e && e.message || e); }
+    }
+
+    // La puerta de enganche: quién dio señal de vida alguna vez (ver REENGANCHE más arriba).
+    // Si queda en null la puerta NO se aplica y la oferta sale como antes — se avisa en el
+    // resultado de la corrida (`puerta_enganche`) para que no falle en silencio.
+    // Nace encendida (es el arreglo, no un experimento). PUERTA_ENGANCHE=0 en Vercel la apaga
+    // sin redeployar: si algún día el set de aperturas viniera raro, ese es el botón de vuelta.
+    let enganchados = null;
+    let enganchePorQue = 'ok';
+    if (process.env.PUERTA_ENGANCHE === '0') {
+      enganchePorQue = 'apagada a mano (PUERTA_ENGANCHE=0)';
+    } else {
+      try {
+        enganchados = await abrieronAlgoSet();
+        if (!enganchados) enganchePorQue = 'Brevo devolvió 0 eventos — puerta desactivada esta corrida';
+      } catch (e) {
+        enganchePorQue = 'falló la consulta de aperturas: ' + (e && e.message || e);
+        console.error('[wa-funnel] puerta de enganche:', enganchePorQue);
+      }
     }
 
     // Se le pregunta a Meta UNA vez por corrida si el número puede enviar. De esto depende
@@ -1259,15 +1433,45 @@ export default async function handler(req, res) {
       const daysSinceLast = lastAt ? Math.floor((now - lastAt) / DAY) : 999;
 
       // Lo que le falta por EMAIL: Regalo 3 → 4 → 5 → oferta, uno por día y en orden.
-      const pieza = piezaFaltante(attrs, daysOld, hoy, piezasHabilitadas, emailLc, registroEnvios);
+      let pieza = piezaFaltante(attrs, daysOld, hoy, piezasHabilitadas, emailLc, registroEnvios);
+
+      // LA PUERTA. Si lo que le toca es la OFERTA y nunca dio señal de vida, no se le manda: la
+      // oferta queda esperando (sin marcador, así que le sale sola en cuanto abra algo) y en su
+      // lugar se encola el re-enganche, una única vez. Las demás piezas no se tocan — los regalos
+      // son los que crean el enganche, cortarlos sería cerrar la puerta desde adentro.
+      let frenadoPorPuerta = false;
+      if (pieza && pieza.send === 'mailoferta' && enganchados && !enganchados.has(emailLc)) {
+        frenadoPorPuerta = true;
+        pieza = null;
+      }
       if (pieza) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: pieza.send, pieza });
+      }
+
+      // Re-enganche. Va a los que no dan señal de vida, en los DOS casos que existen:
+      //   a) los que la puerta acaba de frenar (todavía no recibieron la oferta), y
+      //   b) los 336 que YA la recibieron a ciegas antes de que la puerta existiera — que son
+      //      justamente la cohorte que motivó todo esto. Sin este segundo caso, el arreglo sólo
+      //      valdría para los leads futuros y dejaría afuera a los que ya pagamos por traer.
+      const sinSenal = !!enganchados && !enganchados.has(emailLc);
+      const yaRecibioLaOferta = !!attrs.OFERTA_MAIL_AT;
+      const tocaReenganche = reenganicheEnabled && sinSenal && (frenadoPorPuerta || yaRecibioLaOferta)
+        && !pieza                                    // si hoy le toca una pieza del embudo, esa manda
+        && !mismoDia(attrs.WA_SENT_AT, hoy)          // uno por persona por día
+        && daysSinceLast >= REENGANCHE.minDiasDesdeUltimoToque
+        && !attrs[REENGANCHE.marcador]
+        && !(registroEnvios && registroEnvios.has(`${emailLc}|${REENGANCHE.tag}`));
+      if (tocaReenganche) {
+        plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'reenganche' });
       }
 
       // Reenvío de la oferta: pasaron 48 h desde que se la mandamos, no la abrió, y todavía no
       // se le reenvió. (Los compradores ya quedaron afuera arriba.) No es una pieza del embudo
       // sino un empujón, así que cede el turno: si hoy le toca una pieza, el reenvío espera.
-      if (abrieronOferta && attrs.OFERTA_MAIL_AT && !attrs[OFERTA_REENVIO.marcador] && !pieza && !mismoDia(attrs.WA_SENT_AT, hoy)) {
+      // ⚠️ `!tocaReenganche` los vuelve excluyentes: al que no da NINGUNA señal de vida no se le
+      // insiste con la oferta por segunda vez —es la misma venta al mismo buzón muerto—, se le
+      // manda el re-enganche. El reenvío queda para quien sí abre cosas pero no abrió ésta.
+      if (abrieronOferta && attrs.OFERTA_MAIL_AT && !attrs[OFERTA_REENVIO.marcador] && !pieza && !tocaReenganche && !mismoDia(attrs.WA_SENT_AT, hoy)) {
         const horas = (now - new Date(attrs.OFERTA_MAIL_AT).getTime()) / 3600000;
         if (horas >= OFERTA_REENVIO.minHoras && !abrieronOferta.has(emailLc)) {
           plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'ofertareenvio' });
@@ -1321,18 +1525,37 @@ export default async function handler(req, res) {
           // forma de saber si el embudo terminó de completarse o si se frenó.
           if (c.emailBlacklisted) return false;
           if (compradores.has(e)) return false;
+          // Y desde el 07/08, el mismo descarte por la puerta: al que no da señal de vida la
+          // oferta NO le falta, se le está reteniendo a propósito. Sin esto `total_faltante`
+          // quedaría clavado en ~200 para siempre y parecería un embudo frenado.
+          if (pz.send === 'mailoferta' && enganchados && !enganchados.has(e)) return false;
           return Math.floor((now - new Date(c.createdAt).getTime()) / DAY) >= pz.minDays;
         }).length;
       }
+      // Los que la puerta retiene, contados aparte: no son deuda del embudo, son la decisión.
+      const retenidosPorPuerta = enganchados ? contacts.filter((c) => {
+        const a = c.attributes || {};
+        const e = String(c.email || '').toLowerCase().trim();
+        if (a.OFERTA_MAIL_AT || c.emailBlacklisted || compradores.has(e)) return false;
+        if (enganchados.has(e)) return false;
+        return Math.floor((now - new Date(c.createdAt).getTime()) / DAY) >= 9;
+      }).length : null;
       res.status(200).json({
         mode, live: false, enabled, whatsapp: waEstado,
         piezas_habilitadas: [...piezasHabilitadas],
         // Si esto dice "NO DISPONIBLE", el cruce contra el registro de envíos no está actuando y
         // volvemos a depender sólo del marcador — que es como salieron 67 mails repetidos.
         registro_envios: registroEnvios ? `${registroEnvios.size} envíos conocidos` : 'NO DISPONIBLE (sólo marcadores)',
+        // Si esto no dice "operativa", la oferta está saliendo sin filtro — como antes del 07/08.
+        // Se muestra siempre para que la puerta no se caiga en silencio.
+        puerta_enganche: enganchados
+          ? `operativa — ${enganchados.size} con señal de vida en ${ENGANCHE_DIAS} días`
+          : `INACTIVA (${enganchePorQue})`,
         contactos: contacts.length,
         le_falta_a: faltantes,
         total_faltante: Object.values(faltantes).reduce((a, b) => a + b, 0),
+        // Esperando señal de vida para que les salga la oferta. NO cuenta como faltante.
+        retenidos_por_la_puerta: retenidosPorPuerta,
         ya_tocados_hoy: contacts.filter((c) => mismoDia((c.attributes || {}).WA_SENT_AT, hoy)).length,
         would_send: plan.length, desglose, plan: plan.slice(0, 100),
       });
@@ -1400,6 +1623,20 @@ export default async function handler(req, res) {
             results.push({ email: p.email, send: 'ofertareenvio', error: sent.status });
           }
           console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'ofertareenvio', ok: sent.ok }));
+          continue;
+        }
+        // Re-enganche: tampoco toca la etapa. El lead sigue debiendo la oferta a propósito —
+        // sin marcador OFERTA_MAIL_AT, así que en cuanto abra algo la oferta le sale sola.
+        if (p.send === 'reenganche') {
+          const sent = await enviarReenganche(p.email, p.nombre);
+          if (sent.ok) {
+            try { await brevoMarcarPieza(p.email, { marcador: REENGANCHE.marcador, stage: null }, p.stageSent); }
+            catch (e) { results.push({ email: p.email, sent: 'reenganche', warn: 'enviado pero falló marcarlo: ' + e.message }); continue; }
+            results.push({ email: p.email, sent: 'reenganche' });
+          } else {
+            results.push({ email: p.email, send: 'reenganche', error: sent.status });
+          }
+          console.log(JSON.stringify({ type: 'wa_funnel', email: p.email, stage: 'reenganche', ok: sent.ok }));
           continue;
         }
         // La pieza que le faltaba. Se manda y se marca en una sola llamada: el marcador propio
@@ -1508,7 +1745,11 @@ export default async function handler(req, res) {
       } catch (_) { /* esperado: abort tras disparar, o red → best-effort */ }
     }
 
-    res.status(200).json({ mode, chain, live: true, due_total: plan.length, attempted, remaining, encadenada: live && remaining > 0 && chain < MAX_CHAINS, report: report ? report.ok : null, results });
+    res.status(200).json({
+      mode, chain, live: true, due_total: plan.length, attempted, remaining,
+      puerta_enganche: enganchados ? `operativa — ${enganchados.size} con señal de vida` : `INACTIVA (${enganchePorQue})`,
+      encadenada: live && remaining > 0 && chain < MAX_CHAINS, report: report ? report.ok : null, results,
+    });
   } catch (e) {
     console.error('wa-funnel error', e);
     res.status(500).json({ error: String(e && e.message || e) });
@@ -1564,8 +1805,14 @@ export function contenidoEmbudo() {
      {
       tag: OFERTA_REENVIO.tag,
       subject: OFERTA_REENVIO.subject,
-      ...armarEmailReenvio(),
+      ...armarEmailSimple(OFERTA_REENVIO),
       fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#OFERTA_REENVIO',
+    },
+    {
+      tag: REENGANCHE.tag,
+      subject: REENGANCHE.subject,
+      ...armarEmailSimple(REENGANCHE),
+      fuente: 'codigo:sistema-ingresos/api/wa-funnel.js#REENGANCHE',
     },
   ];
 }
