@@ -80,6 +80,8 @@
 //   - La oferta espera (sin marcador) hasta que la persona dé señal de vida. En su lugar sale
 //     UNA vez el mail de re-enganche, si REENGANCHE_ENABLED=1.
 //   - Con REENGANCHE_ENABLED=0 la puerta igual retiene la oferta, pero no manda nada en su lugar.
+//   - El re-enganche además NO sale antes de REENGANCHE.desde y tiene tope propio por día
+//     (REENGANCHE.capDia): son ~575 personas y no hay apuro en que salgan el mismo día.
 //   - La puerta nace ENCENDIDA. PUERTA_ENGANCHE=0 la apaga sin redeployar (botón de vuelta).
 //   - Ver el efecto sin mandar nada: mode=puerta. Correr una vez mode=setup (crea REENGANCHE_AT).
 //
@@ -754,6 +756,15 @@ async function abrieronOfertaSet() {
 const REENGANCHE = {
   marcador: 'REENGANCHE_AT',
   tag: 'reenganche',
+  // NO SALE ANTES DE ESTA FECHA (inclusive). El 07/08 se fueron 1.906 mails en el día —1.200 de
+  // ellos repetidos por cadenas en paralelo— y quedaban 6.257 créditos del período que cierra el
+  // 24/08. Soltar 575 más ese mismo día era apilar sobre un incidente.
+  desde: '2026-08-08',
+  // Y aunque esté habilitado, no más de esto por día: son 575 personas y no hay ningún apuro en
+  // que salgan juntas. Repartido son ~4 días, sin competirle el cupo a las piezas del embudo
+  // (que van primero por `prioridad`). El tope se cuenta sobre el marcador, no sobre la corrida,
+  // así que las 12 corridas encadenadas comparten el mismo tope en vez de repartirlo cada una.
+  capDia: 150,
   // Días desde el último toque. Evita que al que acaba de recibir la oferta le caiga el
   // re-enganche encima al día siguiente: si no abrió, no es que no le llegó, es que no lo vio.
   minDiasDesdeUltimoToque: 2,
@@ -1409,7 +1420,10 @@ export default async function handler(req, res) {
     const reenvioEnabled = process.env.MAILOFERTA2_ENABLED === '1';
     // El re-enganche se puede apagar solo: si está OFF, la puerta igual retiene la oferta (que es
     // lo que evita el gasto) pero no manda nada en su lugar.
-    const reenganicheEnabled = process.env.REENGANCHE_ENABLED === '1';
+    // Además de la flag, tiene fecha de arranque y tope diario propio (ver REENGANCHE).
+    const hoyISO = todayISO();
+    const reengancheEnFecha = hoyISO >= REENGANCHE.desde;
+    const reenganicheEnabled = process.env.REENGANCHE_ENABLED === '1' && reengancheEnFecha;
 
     // Quiénes ya abrieron la oferta: no se les reenvía. Si Brevo no contesta, `null` → esta
     // corrida no encola ningún reenvío (mejor perder un día que insistirle a quien ya la vio).
@@ -1459,6 +1473,12 @@ export default async function handler(req, res) {
       ...(mailOfertaEnabled ? ['oferta'] : []),
     ]);
 
+    // Cupo de re-enganche que queda HOY. Se cuenta sobre el marcador ya escrito en Brevo —no sobre
+    // lo que lleve esta corrida— para que las corridas encadenadas compartan un solo tope en vez
+    // de gastarse `capDia` cada una.
+    const reenganchesHoy = contacts.filter((c) => mismoDia((c.attributes || {})[REENGANCHE.marcador], hoy)).length;
+    let cupoReenganche = Math.max(0, REENGANCHE.capDia - reenganchesHoy);
+
     const plan = [];
     for (const c of contacts) {
       const emailLc = String(c.email || '').toLowerCase().trim();
@@ -1504,8 +1524,9 @@ export default async function handler(req, res) {
         && daysSinceLast >= REENGANCHE.minDiasDesdeUltimoToque
         && !attrs[REENGANCHE.marcador]
         && !(registroEnvios && registroEnvios.has(`${emailLc}|${REENGANCHE.tag}`));
-      if (tocaReenganche) {
+      if (tocaReenganche && cupoReenganche > 0) {
         plan.push({ channel: 'email', email: c.email, nombre: pickName(attrs), daysOld, stageSent, send: 'reenganche' });
+        cupoReenganche--;
       }
 
       // Reenvío de la oferta: pasaron 48 h desde que se la mandamos, no la abrió, y todavía no
@@ -1599,6 +1620,14 @@ export default async function handler(req, res) {
         total_faltante: Object.values(faltantes).reduce((a, b) => a + b, 0),
         // Esperando señal de vida para que les salga la oferta. NO cuenta como faltante.
         retenidos_por_la_puerta: retenidosPorPuerta,
+        reenganche: {
+          estado: process.env.REENGANCHE_ENABLED !== '1' ? 'apagado (REENGANCHE_ENABLED!=1)'
+            : !reengancheEnFecha ? `programado: no sale antes del ${REENGANCHE.desde}`
+            : 'activo',
+          enviados_hoy: reenganchesHoy,
+          cupo_del_dia: REENGANCHE.capDia,
+          cupo_restante: cupoReenganche,
+        },
         ya_tocados_hoy: contacts.filter((c) => mismoDia((c.attributes || {}).WA_SENT_AT, hoy)).length,
         would_send: plan.length, desglose, plan: plan.slice(0, 100),
       });
