@@ -386,13 +386,13 @@ const bigIcons: Record<string, React.ReactNode> = {
   target: (<><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4.6" /><circle cx="12" cy="12" r="1.3" /></>),
 };
 const artColor: Record<string, string> = { coins: GOLD, growth: GOLD, people: VIOLET, news: VIOLET };
-export const SideArt: React.FC<{ name: keyof typeof bigIcons | string; color?: string; size?: number }> = ({ name, color, size = 360 }) => {
+export const SideArt: React.FC<{ name: keyof typeof bigIcons | string; color?: string; size?: number; side?: "left" | "right"; offset?: number; maxOp?: number }> = ({ name, color, size = 360, side = "right", offset = 170, maxOp = 0.5 }) => {
   const f = useCurrentFrame();
   const c = color ?? artColor[name] ?? CYAN;
   const float = Math.sin(f / 22) * 10;
-  const op = interpolate(f, [8, 30], [0, 0.5], clamp);
+  const op = interpolate(f, [8, 30], [0, maxOp], clamp);
   return (
-    <div style={{ position: "absolute", right: 170, top: "50%", transform: `translateY(-50%) translateY(${float}px)`, opacity: op }}>
+    <div style={{ position: "absolute", [side]: offset, top: "50%", transform: `translateY(-50%) translateY(${float}px)`, opacity: op } as React.CSSProperties}>
       <div style={{ position: "absolute", inset: -70, borderRadius: "50%", background: `radial-gradient(closest-side, ${c}33, transparent)`, filter: "blur(24px)" }} />
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={1.1} strokeLinecap="round" strokeLinejoin="round" style={{ filter: `drop-shadow(0 0 26px ${c}66)`, position: "relative" }}>{bigIcons[name] ?? bigIcons.news}</svg>
     </div>
@@ -400,7 +400,7 @@ export const SideArt: React.FC<{ name: keyof typeof bigIcons | string; color?: s
 };
 
 // ---- FIRMA: línea de tiempo de progreso (cierre fijo de cada clase) ----
-export const ProgressMap: React.FC<{ dur: number; kicker: string; stops: string[]; current: number; next?: number }> = ({ dur, kicker, stops, current, next }) => {
+export const ProgressMap: React.FC<{ dur: number; kicker: string; stops: string[]; current: number; next?: number; proxima?: string }> = ({ dur, kicker, stops, current, next, proxima }) => {
   const f = useCurrentFrame();
   const rise = useRise();
   const n = stops.length;
@@ -411,10 +411,11 @@ export const ProgressMap: React.FC<{ dur: number; kicker: string; stops: string[
   const fill = interpolate(f, [24, dur - 24], [0, fillTo], clamp);
   const pulse = 1 + 0.1 * Math.sin(f / 6);
   return (
-    <Scene dur={dur} justify="flex-start">
-      <div style={{ marginTop: 20 }}><Kicker text={kicker} /></div>
-      <div style={{ ...rise(14), fontSize: 70, fontWeight: 800, letterSpacing: -1.5 }}>Tu recorrido</div>
-      <div style={{ position: "relative", marginTop: 130, height: 210, marginLeft: 30, marginRight: 30 }}>
+    <Scene dur={dur} justify="center">
+      <div><Kicker text={kicker} /></div>
+      <div style={{ ...rise(14), fontSize: 78, fontWeight: 800, letterSpacing: -1.5 }}>Tu recorrido</div>
+      {/* el riel iba anclado arriba y dejaba media pantalla vacía: ahora el bloque se centra en el cuadro */}
+      <div style={{ position: "relative", marginTop: 120, height: 230, marginLeft: 90, marginRight: 90 }}>
         <div style={{ position: "absolute", top: 40, left: 0, right: 0, height: 5, background: "rgba(255,255,255,.1)", borderRadius: 5 }} />
         <div style={{ position: "absolute", top: 40, left: 0, width: `${fill * 100}%`, height: 5, background: "linear-gradient(90deg,#6366f1,#22d3ee)", borderRadius: 5, boxShadow: "0 0 14px #22d3ee" }} />
         {stops.map((s, i) => {
@@ -427,19 +428,32 @@ export const ProgressMap: React.FC<{ dur: number; kicker: string; stops: string[
           return (
             <div key={i} style={{ position: "absolute", left: `${x}%`, top: 0, transform: "translateX(-50%)", textAlign: "center", opacity: on, width: cw }}>
               {isCur && <Snd at={30} s="ding.wav" v={0.38} />}
-              <div style={{ margin: "22px auto 0", width: nodeSz, height: nodeSz, borderRadius: 999, transform: `scale(${sc})`, background: done ? "linear-gradient(135deg,#6366f1,#22d3ee)" : isNext ? "rgba(99,102,241,.25)" : "rgba(255,255,255,.06)", border: done ? "none" : isNext ? "2px solid #6366f1" : "2px solid rgba(255,255,255,.15)", boxShadow: done || isCur ? "0 0 22px rgba(34,211,238,.6)" : isNext ? "0 0 16px rgba(99,102,241,.5)" : "none", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: nodeSz > 36 ? 20 : 15 }}>{done ? "✓" : i + 1}</div>
-              <div style={{ marginTop: 14, fontSize: fs, fontWeight: 700, lineHeight: 1.1, color: isCur ? "#22d3ee" : isNext ? "#a9b0ff" : done ? "#f5f5fa" : "#7a7a90" }}>{s}</div>
+              <div style={{ margin: "22px auto 0", width: nodeSz, height: nodeSz, borderRadius: 999, transform: `scale(${sc})`, background: done && !isCur ? "linear-gradient(135deg,#6366f1,#22d3ee)" : isCur ? "rgba(34,211,238,.28)" : isNext ? "rgba(99,102,241,.25)" : "rgba(255,255,255,.06)", border: done && !isCur ? "none" : isCur ? "3px solid #22d3ee" : isNext ? "2px solid #6366f1" : "2px solid rgba(255,255,255,.15)", boxShadow: done || isCur ? "0 0 22px rgba(34,211,238,.6)" : isNext ? "0 0 16px rgba(99,102,241,.5)" : "none", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: nodeSz > 36 ? 20 : 15 }}>{done && !isCur ? "✓" : i + 1}</div>
+              <div style={{ marginTop: 14, fontSize: fs, fontWeight: 700, lineHeight: 1.1, color: isCur ? "#22d3ee" : isNext ? "#a9b0ff" : done ? "#f5f5fa" : "#9a9ab2" }}>{s}</div>
               {isCur && <div style={{ marginTop: 8, fontSize: 15, color: "#22d3ee", fontWeight: 700, letterSpacing: 1 }}>ACÁ ESTÁS</div>}
             </div>
           );
         })}
       </div>
+      {/* El riel dejaba el tercio inferior vacío. En vez de estirar elementos para tapar el hueco,
+          va ahí el puente a la clase que sigue: llena el cuadro y además cumple una función. */}
+      {proxima && (
+        <div style={{ ...rise(46), marginTop: 96, display: "flex", alignItems: "center", gap: 22 }}>
+          <div style={{ width: 58, height: 2, background: "#22d3ee", boxShadow: "0 0 12px #22d3ee" }} />
+          <span style={{ fontSize: 21, letterSpacing: 7, color: "#22d3ee", fontWeight: 800 }}>LO QUE SIGUE</span>
+          <span style={{ fontSize: 40, fontWeight: 700, color: "#e8e8f0", letterSpacing: -1 }}>{proxima}</span>
+        </div>
+      )}
     </Scene>
   );
 };
 
 // ---- SUBTÍTULOS sincronizados a la voz ----
-export const Caption: React.FC<{ lines: { s: number; e: number; t: string }[] }> = ({ lines }) => {
+// Subtítulos con TIPOGRAFÍA CINÉTICA: la palabra que se está diciendo se enciende (karaoke).
+// Si el .caps.json no trae palabras (`w`), cae al texto plano (compatibilidad).
+type CapWord = { s: number; e: number; t: string };
+type CapLine = { s: number; e: number; t: string; w?: CapWord[] };
+export const Caption: React.FC<{ lines: CapLine[] }> = ({ lines }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
@@ -447,9 +461,27 @@ export const Caption: React.FC<{ lines: { s: number; e: number; t: string }[] }>
   if (!line) return null;
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 62, display: "flex", justifyContent: "center", pointerEvents: "none", padding: "0 130px" }}>
-      <div style={{ maxWidth: 1500, padding: "14px 32px", borderRadius: 14, background: "rgba(7,7,15,.74)", color: "#fff", fontSize: 40, fontWeight: 600, textAlign: "center", lineHeight: 1.25, border: "1px solid rgba(255,255,255,.08)", boxShadow: "0 8px 30px rgba(0,0,0,.45)" }}>{line.t}</div>
+      <div style={{ maxWidth: 1500, padding: "14px 32px", borderRadius: 14, background: "rgba(7,7,15,.74)", color: "#fff", fontSize: 40, fontWeight: 600, textAlign: "center", lineHeight: 1.25, border: "1px solid rgba(255,255,255,.08)", boxShadow: "0 8px 30px rgba(0,0,0,.45)" }}>
+        {line.w && line.w.length
+          ? line.w.map((w, i) => {
+              const on = t >= w.s - 0.02 && t <= w.e + 0.06;
+              return (
+                <span key={i} style={{ color: on ? "#ffffff" : "rgba(255,255,255,.48)" }}>
+                  {w.t}{i < line.w!.length - 1 ? " " : ""}
+                </span>
+              );
+            })
+          : line.t}
+      </div>
     </div>
   );
+};
+
+// DERIVA DE CÁMARA: zoom/paneo lentísimo por escena para que nada quede estático.
+const Drift: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, children }) => {
+  const f = useCurrentFrame();
+  const p = dur > 0 ? Math.min(1, f / dur) : 0;
+  return <AbsoluteFill style={{ transform: `scale(${1 + 0.035 * p}) translateY(${-7 * p}px)` }}>{children}</AbsoluteFill>;
 };
 
 // ================= MOTOR =================
@@ -466,7 +498,7 @@ export const ClaseVideo: React.FC<{ scenes: SceneDef[]; audioDir?: string; narra
       <Sequence key={i} from={from} durationInFrames={dur}>
         {!narration && audioDir && <Audio src={staticFile(`${audioDir}/${s.audio}`)} />}
         {s.whoosh !== false && <Snd at={0} s="whoosh.wav" v={0.38} />}
-        {s.render(dur)}
+        <Drift dur={dur}>{s.render(dur)}</Drift>
       </Sequence>
     );
     from += dur;

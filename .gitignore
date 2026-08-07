@@ -79,3 +79,9 @@ _revisar/
 # y salen solo reescribiéndolo — decisión pendiente de Jose (tarjeta en Trello).
 /ads-agent/contenido/emails/*.csv
 /ads-agent/emails/
+
+# Credenciales de Google del canal de YouTube. Se copian al sincronizar el
+# respaldo del estudio de video y GitHub bloquea el push si entran (pasó el
+# 2026-08-07). El manifest.json SI se versiona: es el registro de qué se subió.
+/sistema-ingresos/curso/video-studio/yt/client_secret.json
+/sistema-ingresos/curso/video-studio/yt/token.json
