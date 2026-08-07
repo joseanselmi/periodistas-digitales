@@ -32,3 +32,23 @@ porque el nombre y la marca salen del nicho ya definido.
 Toda la carpeta `/curso/` está bloqueada en la web por un redirect en
 [`../../vercel.json`](../../vercel.json). El alumno recibe estas clases por
 Hotmart, nunca por una dirección del sitio.
+
+## De cada clase a su animación
+
+El guion está acá; **el video se arma en otra carpeta**, con un archivo por
+clase. Esta tabla los une — sirve para abrir la animación de la clase anterior
+antes de encarar la próxima, que es como se van mejorando.
+
+| Guion | De qué trata | Su animación |
+|---|---|---|
+| [`clase_4_1_guion.md`](clase_4_1_guion.md) | Guion — Clase 4.1 · La teoría del nombre: qué  | `ClaseMarca1.tsx` |
+| [`clase_4_2_guion.md`](clase_4_2_guion.md) | Guion — Clase 4.2 · Creá tu nombre con IA (y c | `ClaseMarca2.tsx` |
+| [`clase_4_3_guion.md`](clase_4_3_guion.md) | Guion — Clase 4.3 · Tu color: qué transmite y  | `ClaseMarca3.tsx` |
+| [`clase_4_4_guion.md`](clase_4_4_guion.md) | Guion — Clase 4.4 · Tipografía y logo sin dise | `ClaseMarca4.tsx` |
+| [`clase_4_5_guion.md`](clase_4_5_guion.md) | Guion — Clase 4.5 · El sistema de marca: coher | `ClaseMarca5.tsx` |
+
+Las animaciones viven en [`../video-studio/src/`](../video-studio/README.md).
+**Ojo:** esa carpeta es el **respaldo**; el proyecto donde se trabaja de verdad
+está fuera del repo, en `remotion-curso`. No están junto al guion porque cada
+animación importa el kit, los subtítulos y las duraciones por ruta relativa
+dentro de `src/`, y separarlas rompería el proyecto entero.

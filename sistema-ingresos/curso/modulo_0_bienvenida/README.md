@@ -34,3 +34,24 @@ vez de `clase_0_1_guion.md`), y es el único módulo sin su `ESTRUCTURA-M0.md`.
 Toda la carpeta `/curso/` está bloqueada en la web por un redirect en
 [`../../vercel.json`](../../vercel.json). El alumno recibe estas clases por
 Hotmart, nunca por una dirección del sitio.
+
+## De cada clase a su animación
+
+El guion está acá; **el video se arma en otra carpeta**, con un archivo por
+clase. Esta tabla los une — sirve para abrir la animación de la clase anterior
+antes de encarar la próxima, que es como se van mejorando.
+
+| Guion | De qué trata | Su animación |
+|---|---|---|
+| [`clase_01.md`](clase_01.md) | Clase 0.1 — Bienvenida: tu medio, tu voz, tus  | `ClaseBienvenida.tsx` |
+| [`clase_02.md`](clase_02.md) | Clase 0.2 — De periodista a emprendedor (la tr | `ClaseTransformacion.tsx` |
+| [`clase_03.md`](clase_03.md) | Clase 0.3 — Cómo aprovechar el curso | `ClaseAprovechar.tsx` |
+| [`clase_04.md`](clase_04.md) | Clase 0.4 — Sumate a la comunidad | `ClaseComunidad.tsx` |
+| [`clase_06_leadr.md`](clase_06_leadr.md) | Clase 0.6 — Tu regalo: Leadr Pro (cómo entrar  | `ClaseLeadr.tsx` |
+| [`clase_07.md`](clase_07.md) | Clase 0.7 — Lo que hace falta para lograrlo | `ClaseLograr.tsx` |
+
+Las animaciones viven en [`../video-studio/src/`](../video-studio/README.md).
+**Ojo:** esa carpeta es el **respaldo**; el proyecto donde se trabaja de verdad
+está fuera del repo, en `remotion-curso`. No están junto al guion porque cada
+animación importa el kit, los subtítulos y las duraciones por ruta relativa
+dentro de `src/`, y separarlas rompería el proyecto entero.

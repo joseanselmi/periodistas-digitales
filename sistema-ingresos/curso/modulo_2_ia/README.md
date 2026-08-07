@@ -24,3 +24,23 @@ cada clase, y la regla de que ninguna repite el esqueleto de otra.
 Toda la carpeta `/curso/` está bloqueada en la web por un redirect en
 [`../../vercel.json`](../../vercel.json). El alumno recibe estas clases por
 Hotmart, nunca por una dirección del sitio.
+
+## De cada clase a su animación
+
+El guion está acá; **el video se arma en otra carpeta**, con un archivo por
+clase. Esta tabla los une — sirve para abrir la animación de la clase anterior
+antes de encarar la próxima, que es como se van mejorando.
+
+| Guion | De qué trata | Su animación |
+|---|---|---|
+| [`clase_2_1_guion.md`](clase_2_1_guion.md) | Guion — Clase 2.1 · Qué es la IA y cómo "piens | `ClaseIA1.tsx` |
+| [`clase_2_2_guion.md`](clase_2_2_guion.md) | Guion — Clase 2.2 · La anatomía de un buen pro | `ClaseIA2.tsx` |
+| [`clase_2_3_guion.md`](clase_2_3_guion.md) | Guion — Clase 2.3 · Hablarle a la IA como a tu | `ClaseIA3.tsx` |
+| [`clase_2_4_guion.md`](clase_2_4_guion.md) | Guion — Clase 2.4 · Los roles de IA de tu reda | `ClaseIA4.tsx` |
+| [`clase_2_5_guion.md`](clase_2_5_guion.md) | Guion — Clase 2.5 · Construí tu biblioteca de  | `ClaseIA5.tsx` |
+
+Las animaciones viven en [`../video-studio/src/`](../video-studio/README.md).
+**Ojo:** esa carpeta es el **respaldo**; el proyecto donde se trabaja de verdad
+está fuera del repo, en `remotion-curso`. No están junto al guion porque cada
+animación importa el kit, los subtítulos y las duraciones por ruta relativa
+dentro de `src/`, y separarlas rompería el proyecto entero.
