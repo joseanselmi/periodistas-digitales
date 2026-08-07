@@ -8,7 +8,9 @@ Las reglas para hacer las clases. No se sube nada de acá: es el manual interno.
 
 - [`PLAN-CURRICULUM-DEFINITIVO.md`](PLAN-CURRICULUM-DEFINITIVO.md) — **el vigente.**
   Qué módulo, qué clase, en qué orden y con qué arco.
-- [`INDICE-CURSO.md`](INDICE-CURSO.md) — el roadmap completo.
+- [`INDICE-CURSO.md`](INDICE-CURSO.md) — ⛔ **archivo, no leer como índice.** Es un
+  plan de 12 módulos que se abandonó; el curso salió con 6 y otros temas. Lo que
+  está hecho se ve en el README de cada módulo.
 - [`PLAN-CURRICULUM-V2.md`](PLAN-CURRICULUM-V2.md) y
   [`PLAN-CURRICULUM-VS-LUIS-MENA.md`](PLAN-CURRICULUM-VS-LUIS-MENA.md) — las
   versiones de trabajo y el contraste con el método de Luis Mena.

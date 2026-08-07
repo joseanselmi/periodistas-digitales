@@ -1,8 +1,32 @@
-# Índice del curso — Sistema de Ingresos Diarios para Periodistas
+# El plan de 12 módulos que NO se hizo (archivo)
 
-Roadmap completo (12 módulos + cierre). Coincide con el mapa que se ve en los videos
-(`ROADMAP` en el kit) y con el [PLAN-CURRICULUM-DEFINITIVO.md](PLAN-CURRICULUM-DEFINITIVO.md).
-Estado: ✅ hecho · ⬜ pendiente. **Acá vamos: Módulo 1.**
+> ## ⛔ Esto no es el curso. Es un plan viejo.
+>
+> **El curso real tiene 6 módulos (M0 a M5) y 33 clases escritas, 28 publicadas.**
+> Este documento planeaba 12 módulos y ~55 clases, con **otros temas**: acá el M3
+> era "Nicho e identidad" y en el curso real es **Verificación**; acá el M5 era
+> "Contenido que se reenvía" y en el real es **Nicho**. No es una versión
+> desactualizada del mismo índice: es un currículum distinto que se abandonó.
+>
+> Decía *"Hechas: 4 clases"*. Hay **33**.
+>
+> ### Dónde está el curso de verdad
+>
+> En el README de cada módulo, que sí se mantiene:
+> [M0](../modulo_0_bienvenida/README.md) · [M1](../modulo_1_fundamentos/README.md) ·
+> [M2](../modulo_2_ia/README.md) · [M3](../modulo_3_verificacion/README.md) ·
+> [M4](../modulo_4_marca/README.md) · [M5](../modulo_5_nicho/README.md).
+> El plan vigente es [PLAN-CURRICULUM-DEFINITIVO.md](PLAN-CURRICULUM-DEFINITIVO.md).
+>
+> ### Por qué no se borra
+>
+> Los módulos 6 a 11 de más abajo (comunidad, afiliados, anunciantes, producto
+> propio, Meta Ads, escala) **nunca se produjeron** y siguen siendo material
+> aprovechable si algún día se amplía el curso o se arma un curso 2. Eso es lo
+> único que vale de este archivo — los estados ✅/⬜ de acá abajo son de mayo y
+> no significan nada.
+
+*(Lo que sigue es el documento original, sin tocar, del 2026-05.)*
 
 ## M0 · Bienvenida
 - ✅ 0.1 — Tu medio, tu voz, tus ingresos (bienvenida)

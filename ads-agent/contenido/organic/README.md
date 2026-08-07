@@ -1,30 +1,43 @@
-# organic/ — Posts orgánicos diarios (calendario)
+# organic — posts sueltos por día
 
-Contenido orgánico armado por día, agrupado por semana (`YYYY-MM-DD/`). A
-diferencia de [`carousels/`](../../carousels/) (que son piezas de varias placas),
-acá viven los **posts sueltos** con su calendario, texto e imagen.
+**Padre:** [`ads-agent/contenido/`](../README.md)
+
+Posts de un solo texto y una sola imagen, agrupados por semana en carpetas
+`YYYY-MM-DD/`. Se diferencian de [`../carousels/`](../carousels/README.md), que
+son piezas de varias placas.
+
+## ⚠️ Este sistema está dormido
+
+**Existe una sola semana: `2026-05-09/`**, y es de mayo. Desde entonces todo el
+orgánico se hace con carruseles y con las historias diarias del muro. La carpeta
+se conserva porque los siete textos siguen sirviendo de referencia de tono, no
+porque el flujo esté andando.
+
+Si se retoma, conviene revisar antes qué público le toca: desde el 16/08 la serie
+del muro va en registro neutro, distinto al de estos posts. Ver
+[ESTRATEGIA-ORGANICO.md](../../docs/ESTRATEGIA-ORGANICO.md) y
+[ORGANICO-MURO.md](../../docs/ORGANICO-MURO.md).
 
 ## Qué hay en cada semana
 
-- `calendario.json` — el plan de la semana: qué se publica cada día y de qué tipo
-  (educativo, inspiracional, prueba social, problema consciente, venta suave,
-  mito/verdad, etc.).
-- `dia-0N-<tipo>.md` — el texto/copy de ese día.
-- `dia-0N-imagen.jpg` — la imagen que acompaña ese día.
+| Archivo | Qué es |
+|---|---|
+| `calendario.json` | El plan: qué se publica cada día y de qué tipo (educativo, inspiracional, prueba social, problema consciente, venta suave, mito/verdad) |
+| `dia-0N-<tipo>.md` | El texto de ese día |
+| `dia-0N-imagen.jpg` | La imagen que lo acompaña |
 
-## Cómo se genera
+## Quién lo produce
 
-Lo produce el agente de orgánico (Luna):
+**Valentina** (`/valentina`), que es la de contenido orgánico de Facebook.
 
 ```bash
-node ../scripts/agentes/organic-agent.mjs
+cd ads-agent
+node scripts/agentes/organic-agent.mjs
 ```
 
-Las imágenes pasan por el revisor ([`../lib/image-reviewer.mjs`](../../lib/README.md))
-antes de quedar aprobadas (sin texto encima, persona latinoamericana, score ≥ 7).
+> Este README decía que lo producía **Luna**. Luna es CRO/landing y no toca
+> orgánico. También citaba un `lib/image-reviewer.mjs` que no existe: el revisor
+> real es [`../../lib/reviewer.mjs`](../../lib/README.md). Corregido el
+> 2026-08-01.
 
-## Relación con el resto
-
-- Estrategia y arco semanal: [ESTRATEGIA-ORGANICO.md](../../docs/ESTRATEGIA-ORGANICO.md).
-- Carruseles (multi-placa): [`../carousels/`](../../carousels/).
-- Precio del curso en los textos = **$27**.
+El precio del curso en cualquier texto de acá es **$27**.

@@ -86,12 +86,26 @@ function chequearRutasEnTexto() {
     try { texto = readFileSync(join(ROOT, rel), 'utf8'); } catch { continue; }
     const dir = dirname(join(ROOT, rel));
 
-    for (const m of texto.matchAll(/\]\(([^)\s]+)\)/g)) {
+    // Solo en .md: en un .js la forma `](...)` aparece dentro de expresiones
+    // regulares (`[^"']+(...)`) y las tomaba por links rotos. Trece falsos
+    // positivos de una — y un chequeo que grita en vano se empieza a ignorar,
+    // que es peor que no tenerlo.
+    for (const m of (rel.endsWith('.md') ? texto.matchAll(/\]\(([^)\s]+)\)/g) : [])) {
       const raw = m[1].split('#')[0];
-      if (!raw || /^(https?:|mailto:|tel:|#|\/\/)/.test(raw) || !EXT_LOCAL.test(raw)) continue;
+      if (!raw || /^(https?:|mailto:|tel:|#|\/\/)/.test(raw)) continue;
+      if (/^\[?[A-Z_]{4,}\]?$/.test(raw)) continue;   // marcadores tipo [URL_ACCESO_CURSO]
+
+      // Un link puede apuntar a un archivo o a una CARPETA. Los de carpeta no
+      // tienen extensión, y hasta el 2026-08-01 se salteaban: por ahí pasó
+      // `organic/README.md` linkeando `../../carousels/`, que no existe desde la
+      // mudanza. Un link relativo roto en un README es de los que nadie prueba.
+      const esCarpeta = !EXT_LOCAL.test(raw);
+      if (esCarpeta && /[<>*${}]|_X\b|_Y\b|_N\b/.test(raw)) continue;   // plantillas
       revisadas++;
       const destino = raw.startsWith('/') ? join(ROOT, raw) : resolve(dir, raw);
-      if (!existsSync(destino)) rotas.push({ rel, ref: raw, tipo: 'link markdown' });
+      if (!existsSync(destino)) {
+        rotas.push({ rel, ref: raw, tipo: esCarpeta ? 'link markdown a una carpeta que no existe' : 'link markdown' });
+      }
     }
 
     for (const m of texto.matchAll(/(?<![\w./-])(ads-agent|sistema-ingresos)\/[\w./-]+/g)) {
@@ -382,6 +396,58 @@ function chequearAgentes() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 7. La regla "nada suelto": carpeta con contenido propio → su README
+// ─────────────────────────────────────────────────────────────────────────────
+// EL CHEQUEO AL REVÉS. Los seis de arriba preguntan "lo que está nombrado,
+// ¿existe?". Este pregunta lo contrario: "lo que existe, ¿está explicado?".
+//
+// Por qué hacía falta: una carpeta puede estar ahí, no romper nada, no aparecer
+// en ningún chequeo y aun así ser un problema. Pasó dos veces el 2026-08-01 —
+// `ads-agent/emails/` la creaba un script sin que nadie la nombrara, y
+// `.agents/skills/` tenía dos capacidades que en ese lugar ni se cargaban.
+// Ninguno de los seis controles anteriores podía verlas.
+//
+// Solo se miran carpetas con contenido PROPIO de texto. Las de assets
+// (imágenes, PDF, JPG de un carrusel) las explica su README padre — pedirles uno
+// a cada `para-subir/3-MIERCOLES` sería ruido, y un chequeo ruidoso se ignora.
+const SIN_README_A_PROPOSITO = [
+  /\/para-subir(\/|$)/,                       // los JPG listos de un carrusel
+  /\/ads\/[\w-]+$/,                           // un anuncio: su `ficha.md` ES la documentación
+  /\/\d{4}-\d{2}-\d{2}$/,                     // carpeta fechada de contenido: la explica el padre
+  /^ads-agent\/campanas\/historico\//,        // archivo: lo explica el padre
+  /^ads-agent\/contenido\/carousels\/publicados\//,
+  /^ads-agent\/contenido\/carousels\/(muro|agosto)-s\d/,
+  /^ads-agent\/contenido\/carousels\/muro-stories$/,
+  /^ads-agent\/datos\//,                      // lo generan los scripts, es borrable
+  /^sistema-ingresos\/curso\/video-studio\//, // respaldo del estudio, no se edita acá
+  /^\.claude(\/|$)/, /^\.vscode(\/|$)/, /node_modules/,
+];
+
+function chequearCarpetasDocumentadas() {
+  const rotas = [];
+  const carpetas = new Set();
+  const archivosPorDir = {};
+
+  for (const rel of archivosDelRepo(/\.(md|mjs|js|json|html|ts|tsx)$/)) {
+    const dir = dirname(rel);
+    if (dir === '.') continue;
+    carpetas.add(dir);
+    (archivosPorDir[dir] ||= []).push(rel);
+  }
+
+  for (const dir of carpetas) {
+    if (SIN_README_A_PROPOSITO.some((re) => re.test(dir))) continue;
+    // Solo cuentan las que tienen contenido de texto propio, no solo config.
+    const propios = archivosPorDir[dir].filter((f) => !/package(-lock)?\.json$/.test(f));
+    if (!propios.length) continue;
+    if (!existsSync(join(ROOT, dir, 'README.md'))) {
+      rotas.push({ rel: dir + '/', ref: `${propios.length} archivos`, tipo: 'carpeta con contenido y sin README' });
+    }
+  }
+  return { revisadas: carpetas.size, rotas };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const pasos = [
   ['Rutas escritas en docs y código', chequearRutasEnTexto],
@@ -390,6 +456,7 @@ const pasos = [
   ['Contrato con Vercel (api/ y crons)', chequearContratoVercel],
   ['Pipelines de .claude/ (contexto vivo)', chequearPipelines],
   ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
+  ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
 ];
 
 let totalRotas = 0;
