@@ -656,6 +656,14 @@ function armarEmailSimple(c) {
           <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:4px;">
             ${c.enlaces.map((e) => `<tr><td style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);"><a href="${enlaceUrl(e).replace(/&/g, '&amp;')}" style="color:#22d3ee;font-size:15px;text-decoration:none;">${e.texto}</a></td></tr>`).join('\n            ')}
           </table>` : '';
+  // Caja de "buscalas en tu correo". El término va en monoespaciada y seleccionable — la gracia
+  // es que se pueda copiar y pegar sin pensar.
+  const buscador = c.buscador ? `
+          <p style="margin:28px 0 12px 0;font-size:15px;color:#a0a0b8;line-height:1.7;">${c.buscador.intro}</p>
+          <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="background:#07070f;border:1px solid rgba(99,102,241,.35);border-radius:10px;padding:16px 18px;">
+            <span style="font-family:'SF Mono',Menlo,Consolas,monospace;font-size:16px;color:#22d3ee;font-weight:700;letter-spacing:.3px;">${c.buscador.termino}</span>
+          </td></tr></table>
+          <p style="margin:12px 0 0 0;font-size:13px;color:#606080;line-height:1.6;">${c.buscador.nota}</p>` : '';
   const boton = c.cta && c.url ? `
           <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:28px;"><tr><td align="center">
             <a href="${c.url.replace(/&/g, '&amp;')}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">${c.cta}</a>
@@ -670,7 +678,7 @@ function armarEmailSimple(c) {
         <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
           <p style="margin:0 0 24px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">${c.titulo}</p>
           ${c.parrafos.map((p) => `<p style="margin:0 0 16px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">${p}</p>`).join('\n          ')}
-${lista}${boton}
+${lista}${buscador}${boton}
           <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">${c.cierre}</p>
         </td></tr>
         <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">Recibís este email porque pediste la guía gratis en nuestro anuncio de Facebook.</p></td></tr>
@@ -684,6 +692,7 @@ ${c.titulo}
 
 ${c.parrafos.join('\n\n')}
 ${(c.enlaces || []).map((e) => `- ${e.texto}: ${enlaceUrl(e)}`).join('\n')}
+${c.buscador ? `\n${c.buscador.intro}\n\n    ${c.buscador.termino}\n\n${c.buscador.nota.replace(/<\/?b>/g, '')}\n` : ''}
 ${c.cta && c.url ? `\n${c.cta.replace(' →', '')}: ${c.url}\n` : ''}
 ${c.cierre}`;
   return { html, text };
@@ -775,6 +784,18 @@ const REENGANCHE = {
   //     esta persona viene ignorando hace semanas.
   // Consecuencia técnica: la única señal que deja este mail es la APERTURA (el pixel), no el
   // clic. Es a propósito — la respuesta al mail la lee Jose en la casilla, no la puerta.
+  //
+  // BUSCADOR. Buena parte de los que "nunca abrieron nada" probablemente las tengan en Spam o en
+  // Promociones. El término está verificado: "Periodistas del Futuro IA" está en el cuerpo de LAS
+  // SEIS piezas del embudo, incluido el Regalo 1 que manda Make (ver sync-embudo-contenido.mjs).
+  // Buscar por el remitente NO servía: el Regalo 2 salió desde el Gmail hasta el 07/08.
+  buscador: {
+    intro: '¿No las ves en tu bandeja? Puede que hayan caído en Spam o en Promociones. Copiá esto en el buscador de tu correo y aparecen todas:',
+    termino: 'Periodistas del Futuro IA',
+    // Gmail NO busca dentro de Spam salvo que se lo pidas. Sin esta línea, el que la tiene ahí
+    // busca, no encuentra nada, y se confirma a sí mismo que nunca le llegó.
+    nota: 'En Gmail, para que busque también adentro de Spam, escribí <b>in:anywhere</b> delante. Y si las encontrás ahí, marcalas como “No es spam”: así las próximas te llegan bien.',
+  },
   cierre: 'Y si preferís que no te escriba más, con decírmelo alcanza.',
 };
 
