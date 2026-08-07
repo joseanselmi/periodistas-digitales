@@ -46,6 +46,42 @@ El punto medio: 2-4 líneas con el hecho o la decisión concreta, y el "por qué
 - Si el PDF se actualiza (se corrige y se vuelve a deployar), no hace falta repetir el comentario si la URL no cambió — pero si hay un cambio de fondo (ej. se corrigió un bug visual importante), sí conviene un comentario nuevo aclarando "versión corregida" con la misma URL.
 - Aplica también a futuros PDFs de otros proyectos (Leadr, cursos, etc.), no solo a esta campaña.
 
+## Regla 8 — UNA tarjeta por tema. Antes de crear, buscar (2026-08-07)
+
+**Antes de crear cualquier tarjeta, buscar si ya existe una de ese tema.** Si existe, lo nuevo
+entra ahí **como ítem de checklist**, no como tarjeta aparte. Vale para hallazgos, incidentes,
+sub-tareas y mejoras: todo lo de Brevo va a la tarjeta de Brevo, todo lo del admin de Leadr a la
+del admin, todo lo de secretos filtrados a la de seguridad.
+
+El orden y la prioridad se expresan con **checklists separados dentro de la misma tarjeta**:
+
+```
+🔥 1 · AHORA — en este orden
+2 · DESPUÉS — …
+3 · A MANO — sólo Jose
+(el checklist original queda abajo como registro de lo cerrado)
+```
+
+Cada ítem arranca diciendo **quién lo hace** (`CLAUDE:` / `JOSE:`).
+
+**Por qué.** El 2026-08-07 el trabajo de Brevo terminó partido en tres tarjetas (#123 análisis,
+#125 un incidente, #126 los arreglos) con ítems duplicados en dos de ellas a la vez. Jose lo
+cortó: *"siento que hay 3 tarjetas para lo mismo… que no tenga 80 por ahí"*. Esa misma auditoría
+encontró **ocho grupos** de tarjetas que eran el mismo tema. Dos tarjetas dueñas del mismo
+trabajo garantizan que una quede desactualizada — es [[feedback_un_solo_dueno_por_dato]]
+aplicado al tablero.
+
+**Nunca crear tarjetas con fecha o semana en el título** («Contenido semana 20-26 jul»). Se
+pudren en días y nadie las cierra. Eso va como ítem con fecha dentro de la tarjeta del tema.
+
+**Al consolidar: primero absorber, después archivar.** La descripción de la que sobrevive tiene
+que quedarse con los hallazgos verificados de las otras. Archivar sin mover el contenido pierde
+el registro, que es justo lo que la tarjeta servía para conservar.
+
+**Si una tarjeta ya no se entiende, no se deja ahí:** o se actualiza con el estado real
+(Regla 3, verificar contra el sistema) o se archiva. Una tarjeta que nadie sabe qué es hace más
+daño que no tenerla.
+
 ## Cómo interactuar con Trello
 
 - Tools MCP nativas `mcp__trello__*` si están cargadas en la sesión (preferir siempre esto).
