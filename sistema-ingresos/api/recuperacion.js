@@ -31,11 +31,17 @@
 // live+report, pero si RECUP_ENABLED != 1 se degrada a dry (no manda nada).
 // SEGURIDAD: CRON_SECRET (header Authorization: Bearer <secret> o ?key=<secret>).
 //
-// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY (reporte a Jose + emails
-//      de recuperación cuando no hay teléfono), WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID,
-//      CRON_SECRET, RECUP_ENABLED.
+// CANAL: EMAIL, y sólo email (09/08/2026, decisión de Jose). Antes esto salía por WhatsApp y
+// el email era la excepción para quien no había dejado teléfono. Se dio vuelta porque el
+// número está capado en Meta desde el 13/07 —la verificación del negocio no pasó y el nombre
+// quedó rechazado—, así que la rama de WhatsApp no entregaba nada. Y era la rama PRINCIPAL:
+// justamente el que SÍ dejaba teléfono era el que no recibía nada, mientras el que no lo
+// dejaba sí recibía su mail. El canal peor era el premio por dar más datos.
+//
+// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, BREVO_API_KEY (reporte a Jose + los emails
+//      de recuperación), CRON_SECRET, RECUP_ENABLED.
 
-const { LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate } = require('./_lib/wa');
+const { LINKS, primerNombre } = require('./_lib/wa');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaGastoTotalPorAnuncio } = require('./_lib/meta-gasto-total-por-anuncio');
 const { runMetaEmbudoDiarioPorAnuncio } = require('./_lib/meta-embudo-diario-por-anuncio');
@@ -148,8 +154,8 @@ function construirPlan(potenciales, ventas, now) {
     const due = proximoPaso(seq, pasoEnviado, horasOld, horasDesdeUltimo);
     if (due) {
       plan.push({
-        id: row.id, email, tipo: row.tipo, nombre: row.nombre, telefono: row.telefono,
-        paso: due.paso, horasOld: Math.round(horasOld), tmpl: TEMPLATES[row.tipo][due.paso],
+        id: row.id, email, tipo: row.tipo, nombre: row.nombre,
+        paso: due.paso, horasOld: Math.round(horasOld),
       });
       continue;
     }
@@ -198,85 +204,9 @@ async function mandarReporte(res) {
   return { ok: r.ok, status: r.status };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Fallback por EMAIL (Brevo) cuando el cliente potencial NO dejó teléfono.
-// Hotmart no siempre captura el número en un abandono/rechazo; para no perder a esa
-// persona se le manda el MISMO mensaje por email, con el link de atribución (?src=recup-…)
-// para que la venta recuperada quede medida en `ventas`. No necesita aprobación de Meta.
-// ─────────────────────────────────────────────────────────────────────────────
-const EMAIL_COPY = {
-  carrito_abandonado: {
-    subject: (p) => (p >= 2 ? 'Tu lugar sigue reservado — últimas horas' : 'Te guardamos tu lugar en el Sistema de Ingresos Diarios'),
-    titulo: 'Te quedó tu lugar reservado 🎯',
-    cuerpo: 'Empezaste a sumarte al <b>Sistema de Ingresos Diarios para Periodistas</b> pero no llegaste a completar la compra. Tu lugar sigue guardado, con la <b>garantía de 7 días</b>: si no es para vos, te devolvemos el 100%.',
-    cta: 'Retomar mi lugar',
-  },
-  pago_rechazado: {
-    subject: (p) => (p >= 2 ? 'Tu pago quedó pendiente — completalo en 1 clic' : 'Tu pago no se procesó — probá de nuevo'),
-    titulo: 'Tu pago no llegó a procesarse 💳',
-    cuerpo: 'Intentaste sumarte al <b>Sistema de Ingresos Diarios para Periodistas</b> pero el pago no se completó — suele pasar con tarjetas que bloquean cobros internacionales, no es un error tuyo. Podés reintentar con <b>otra tarjeta</b> o pagar con <b>PayPal</b>. Tu lugar sigue reservado, con <b>garantía de 7 días</b>.',
-    cta: 'Completar mi pago',
-  },
-};
-
-function emailRecupHtml({ nombre, titulo, cuerpo, cta, link }) {
-  return `<div style="margin:0;padding:0;background:#f4f4f7;">
-  <div style="max-width:520px;margin:0 auto;padding:28px 20px;font-family:Arial,Helvetica,sans-serif;">
-    <div style="background:#07070f;border-radius:14px 14px 0 0;padding:20px;text-align:center;">
-      <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:.3px;">Periodistas Digitales</span>
-    </div>
-    <div style="background:#ffffff;border-radius:0 0 14px 14px;padding:28px 24px;">
-      <p style="font-size:16px;margin:0 0 6px;color:#1a1a2e;">Hola ${nombre},</p>
-      <h1 style="font-size:20px;line-height:1.3;margin:8px 0 14px;color:#07070f;">${titulo}</h1>
-      <p style="font-size:15px;line-height:1.6;margin:0 0 22px;color:#333333;">${cuerpo}</p>
-      <div style="text-align:center;margin:26px 0;">
-        <a href="${link}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:15px 38px;border-radius:10px;">${cta} &rarr;</a>
-      </div>
-      <p style="font-size:12px;line-height:1.5;color:#999999;margin:18px 0 0;text-align:center;">Si ya completaste tu compra, ignorá este mensaje. · Garantía de 7 días.</p>
-    </div>
-  </div>
-</div>`;
-}
-
-// Registra el email en `mensajes` (canal=email, costo 0) para el historial. Best-effort.
-async function logEmailRecup(email, tipo, paso, ok) {
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/mensajes`, {
-      method: 'POST',
-      headers: sbHeaders({ Prefer: 'return=minimal' }),
-      body: JSON.stringify({
-        automatizacion: 'recuperacion', canal: 'email', tipo: `recup_${tipo}_${paso}`,
-        categoria_meta: null, costo_estimado_usd: 0, ok: !!ok,
-      }),
-    });
-  } catch (e) { /* best-effort: el log no frena la recuperación */ }
-}
-
-async function sendRecupEmail({ to, tipo, paso, nombre }) {
-  const c = EMAIL_COPY[tipo];
-  if (!c) return { ok: false, status: 0, error: `sin copy para tipo ${tipo}` };
-  if (!process.env.BREVO_API_KEY) return { ok: false, status: 0, error: 'BREVO_API_KEY sin configurar' };
-  // Directo al checkout de Hotmart; utm_medium=email para distinguir el canal en `ventas`.
-  const link = `${LINKS[tipo]}&utm_source=recuperacion&utm_medium=email`;
-  const html = emailRecupHtml({ nombre: primerNombre(nombre), titulo: c.titulo, cuerpo: c.cuerpo, cta: c.cta, link });
-  let r;
-  try {
-    r = await fetch(`${BREVO}/smtp/email`, {
-      method: 'POST',
-      headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        sender: { name: 'Periodistas Digitales', email: SENDER_EMAIL },
-        to: [{ email: to, name: nombre || undefined }],
-        subject: c.subject(paso),
-        htmlContent: html,
-      }),
-    });
-  } catch (e) {
-    return { ok: false, status: 0, error: e.message };
-  }
-  await logEmailRecup(to, tipo, paso, r.ok);
-  return { ok: r.ok, status: r.status };
-}
+// El mail de recuperación vive en `_lib/recup-email.js`: lo comparten este cron y el webhook
+// de Hotmart (que manda el primero al instante), así el copy tiene un solo dueño.
+const { sendRecupEmail } = require('./_lib/recup-email');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Handler
@@ -396,16 +326,12 @@ module.exports = async (req, res) => {
         would_send: plan.length,
         recuperados_detectados: marcarRecuperado.length,
         perdidos_detectados: marcarPerdido.length,
-        plan: plan.map(p => {
-          const to = normalizePhone(p.telefono);
-          const porEmail = !to || to.length < 8;
-          return {
-            tipo: p.tipo, paso: p.paso, horasOld: p.horasOld, nombre: primerNombre(p.nombre),
-            canal: porEmail ? 'email' : 'whatsapp',
-            destino: porEmail ? `EMAIL → ${p.email}` : '…' + String(p.telefono).slice(-4),
-            envio: porEmail ? `email_recup_${p.tipo}` : p.tmpl,
-          };
-        }),
+        plan: plan.map(p => ({
+          tipo: p.tipo, paso: p.paso, horasOld: p.horasOld, nombre: primerNombre(p.nombre),
+          canal: 'email',
+          destino: `EMAIL → ${p.email}`,
+          envio: `email_recup_${p.tipo}`,
+        })),
       });
     }
 
@@ -421,14 +347,9 @@ module.exports = async (req, res) => {
     const batch = plan.slice(0, LIMIT);
     const results = [];
     for (const p of batch) {
-      const to = normalizePhone(p.telefono);
-      // Excepción: sin teléfono válido → la recuperación sale por EMAIL (Brevo). Así ningún
-      // abandono/rechazo sin teléfono queda sin contactar. Mismo estado, misma atribución.
-      const porEmail = !to || to.length < 8;
-      const canal = porEmail ? 'email' : 'whatsapp';
-      const sent = porEmail
-        ? await sendRecupEmail({ to: p.email, tipo: p.tipo, paso: p.paso, nombre: p.nombre })
-        : await sendRecupTemplate({ to, tmpl: p.tmpl, nombre: p.nombre });
+      // Un solo canal: email. Ya no se mira el teléfono para decidir por dónde sale.
+      const canal = 'email';
+      const sent = await sendRecupEmail({ to: p.email, tipo: p.tipo, paso: p.paso, nombre: p.nombre });
       if (sent.ok) {
         try {
           await sbUpdate(p.id, {
@@ -436,15 +357,12 @@ module.exports = async (req, res) => {
             paso_recuperacion: p.paso,
             ultimo_contacto_en: new Date(now).toISOString(),
           });
-          results.push({ email: p.email, tipo: p.tipo, paso: p.paso, canal, wamid: sent.wamid || null });
+          results.push({ email: p.email, tipo: p.tipo, paso: p.paso, canal });
         } catch (e) {
           results.push({ email: p.email, paso: p.paso, canal, warn: 'enviado pero falló update: ' + e.message });
         }
       } else {
-        const errMsg = porEmail
-          ? (sent.error || sent.status)
-          : ((sent.body && sent.body.error && sent.body.error.message) || sent.status);
-        results.push({ email: p.email, paso: p.paso, canal, error: errMsg });
+        results.push({ email: p.email, paso: p.paso, canal, error: sent.error || sent.status });
       }
       console.log(JSON.stringify({ type: 'recuperacion', email: p.email, tipo: p.tipo, paso: p.paso, canal, ok: sent.ok }));
     }

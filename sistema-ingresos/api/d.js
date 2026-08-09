@@ -13,6 +13,14 @@
 //
 // `file` está restringido a un patrón seguro (sin protocolo/dominio/"..") para
 // que esto no se pueda usar como open-redirect hacia un sitio externo.
+//
+// ⚠️ ADEMÁS ATIENDE LAS BAJAS: `/api/d?baja=<email>&t=<firma>` (ver _lib/baja.js).
+// No es que pinte acá — es que `sistema-ingresos/api/` está exactamente en 12
+// funciones, el tope del plan Hobby de Vercel, y crear `/api/baja` rompería el
+// deploy entero. Esta función ya es pública y ya recibe clics desde los mails,
+// así que es el lugar menos malo. La baja se resuelve ANTES de mirar `file`.
+
+const baja = require('./_lib/baja');
 
 const SAFE_FILENAME = /^[a-z0-9][a-z0-9-]*\.pdf$/i;
 
@@ -57,6 +65,30 @@ export default async function handler(req, res) {
   const file = searchParams.get('file');
   const src = searchParams.get('src');
   const sck = searchParams.get('sck');
+
+  // ── BAJA ──────────────────────────────────────────────────────────────────
+  // Dos formas de llegar acá, y las dos tienen que funcionar:
+  //   - GET  → la persona hizo clic en "Darte de baja" al pie del mail. Ve una página.
+  //   - POST → el cliente de correo (Gmail, Outlook) apretó el botón de baja de su propia
+  //            interfaz, por la cabecera List-Unsubscribe-Post. Nadie ve nada, sólo el 200.
+  // Si el POST no funcionara, Gmail deja de ofrecer su botón y volvemos a que la única salida
+  // sea "Denunciar como spam" — que es justo lo que esto viene a evitar.
+  const email = searchParams.get('baja');
+  if (email) {
+    const unClic = req.method === 'POST';
+    if (!baja.firmaValida(email, searchParams.get('t'))) {
+      // Firma mala = alguien armó el link a mano para dar de baja a otro. No se procesa.
+      console.log(JSON.stringify({ type: 'baja_firma_invalida', ts: new Date().toISOString() }));
+      res.status(400).send(baja.paginaHtml({ ok: false, email }));
+      return;
+    }
+    const r = await baja.darDeBaja(email, unClic ? 'list-unsubscribe' : 'link-pie');
+    console.log(JSON.stringify({ type: 'baja_email', ok: r.ok, origen: unClic ? 'one-click' : 'link', ts: new Date().toISOString() }));
+    if (unClic) { res.status(200).send('OK'); return; }
+    res.setHeader('content-type', 'text/html; charset=utf-8');
+    res.status(r.ok ? 200 : 500).send(baja.paginaHtml({ ok: r.ok, email }));
+    return;
+  }
 
   if (!file || !SAFE_FILENAME.test(file)) {
     res.status(400).send('Falta o es inválido el parámetro "file".');

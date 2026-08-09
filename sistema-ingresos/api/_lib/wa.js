@@ -146,31 +146,14 @@ async function marcarEntrega({ wamid, estado, ts }) {
   }
 }
 
-// Texto legible del hilo (inbox) para cada plantilla de recuperación (el body real lo
-// renderiza Meta; acá guardamos una descripción para que Jose entienda qué se envió).
-const RECUP_TEXTO = {
-  recup_abandono_1: '🟡 Recuperación de carrito — 1er mensaje',
-  recup_abandono_2: '🟡 Recuperación de carrito — recordatorio',
-  recup_rechazo_1: '🟠 Pago rechazado — 1er mensaje',
-  recup_rechazo_2: '🟠 Pago rechazado — recordatorio',
-};
-
 // Link del botón de recuperación por tipo. Va DIRECTO al checkout de Hotmart (no a la
 // landing): quien ya abandonó/rechazó conoce la oferta, lo que necesita es volver a pagar.
 // El ?src= alimenta el campo "Origen" de Hotmart → atribuye la venta recuperada en `ventas`.
-// ⚠️ Las plantillas de WhatsApp aprobadas por Meta tienen su URL de botón FIJA en la
-// plantilla; para que esas también vayan al checkout hay que re-enviarlas a aprobación.
+// Lo usa el mail de recuperación (_lib/recup-email.js).
 const CHECKOUT = 'https://pay.hotmart.com/P106404871J?checkoutMode=10';
 const LINKS = {
   carrito_abandonado: `${CHECKOUT}&src=recup-abandono`,
   pago_rechazado: `${CHECKOUT}&src=recup-rechazo`,
-};
-
-// Plantilla aprobada por tipo y paso. El paso 1 lo manda el webhook al instante;
-// el paso 2 lo manda el cron al día siguiente.
-const TEMPLATES = {
-  carrito_abandonado: { 1: 'recup_abandono_1', 2: 'recup_abandono_2' },
-  pago_rechazado: { 1: 'recup_rechazo_1', 2: 'recup_rechazo_2' },
 };
 
 // Normaliza a E.164 sin "+". Corrige el bug del "9" faltante en móviles argentinos
@@ -187,33 +170,11 @@ function primerNombre(nombre) {
   return n || 'Hola';
 }
 
-// Manda una plantilla de recuperación. Devuelve { ok, status, body, wamid }.
-async function sendRecupTemplate({ to, tmpl, nombre }) {
-  const token = process.env.WHATSAPP_TOKEN;
-  const pn = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const payload = {
-    messaging_product: 'whatsapp',
-    to,
-    type: 'template',
-    template: {
-      name: tmpl,
-      language: { code: 'es' },
-      components: [
-        { type: 'body', parameters: [{ type: 'text', text: primerNombre(nombre) }] },
-      ],
-    },
-  };
-  const r = await fetch(`${GRAPH}/${pn}/messages`, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const j = await r.json().catch(() => ({}));
-  const wamid = j && j.messages && j.messages[0] && j.messages[0].id;
-  await logMensaje({ automatizacion: 'recuperacion', to, tipo: tmpl, categoria_meta: 'utility', ok: r.ok, wamid });
-  if (r.ok) await logConversacion({ telefono: to, direccion: 'out', origen: 'sistema', texto: RECUP_TEXTO[tmpl] || `📨 Plantilla ${tmpl}`, tipo: 'plantilla', wamid, intent: 'recuperacion' });
-  return { ok: r.ok, status: r.status, body: j, wamid };
-}
+// ⚠️ Acá vivía `sendRecupTemplate`, que mandaba las plantillas de recuperación de carrito por
+// WhatsApp. Se fue el 09/08/2026 junto con el resto del envío automático por ese canal (el
+// número está capado en Meta y no entregaba). La recuperación ahora sale por email desde
+// `_lib/recup-email.js`. Lo que queda en este archivo es para RECIBIR y CONTESTAR a mano:
+// sendText y sendButtons los usan el puente de Telegram y el asistente del inbox.
 
 // Manda un mensaje de TEXTO LIBRE (no plantilla). Solo funciona dentro de la ventana
 // de 24 h de atención al cliente (o sea, si la persona nos escribió en las últimas 24 h)
@@ -290,4 +251,4 @@ async function getMedia(mediaId) {
   }
 }
 
-module.exports = { GRAPH, BASE, LINKS, TEMPLATES, normalizePhone, primerNombre, sendRecupTemplate, sendText, sendButtons, logMensaje, logConversacion, marcarEntrega, getMedia };
+module.exports = { GRAPH, BASE, LINKS, normalizePhone, primerNombre, sendText, sendButtons, logMensaje, logConversacion, marcarEntrega, getMedia };

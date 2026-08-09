@@ -4,8 +4,14 @@
 
 Cada archivo `.js` de esta carpeta (menos `_lib/`) es un **endpoint** que Vercel
 publica como `/api/<archivo>`. Son el backend propio del curso: procesan la
-compra, trackean, recuperan carritos, corren el embudo de WhatsApp y vigilan la
+compra, trackean, recuperan carritos, corren el embudo de email y vigilan la
 salud de todo.
+
+> ⛔ **`wa-funnel.js` es el embudo de EMAIL, no de WhatsApp.** Conserva el nombre por
+> historia: renombrarlo cambiaría la ruta del cron y de los paneles que lo consultan. Desde
+> el 09/08/2026 **nada sale por WhatsApp**; lo único vivo de ese canal es *recibir* mensajes
+> (`wa-inbox.js`) y contestarlos a mano desde Telegram (`tg-webhook.js`). Ver el
+> [CLAUDE.md](../../CLAUDE.md) de la raíz.
 
 ## 🔒 Esta carpeta no se mueve ni se renombra
 
@@ -48,9 +54,9 @@ guardar helpers con lógica sensible sin quedar expuesta.
 | `hotmart-sync.js` | Dispara a mano el sync de Hotmart → Supabase (reconcilia ventas + captura rechazos). La lógica vive en `_lib/hotmart-sync.js`. |
 | `event.js` | Ingesta de eventos de tracking (`events`). Lo llama el beacon `track.js` del navegador en cada pageview/clic de checkout. Público y best-effort (responde 204, nunca frena la navegación). |
 | `lead.js` | Ingesta de leads de Facebook Lead Ads → tabla `leads`. Lo llama el escenario de Make (id 9474482) con un secreto compartido, para no meter la key de Supabase dentro de Make. Idempotente. |
-| `recuperacion.js` | **Motor diario de recuperación** (carritos abandonados + pagos rechazados) por WhatsApp con fallback a email. Corre por Vercel Cron y, de paso, dispara los otros syncs del día (piggyback, porque Hobby solo permite 2 crons). |
-| `wa-funnel.js` | Embudo de WhatsApp de la campaña "Guía Claude" (Regalos 3, 4 y Oferta). Corre 1 vez/día, calcula quién está en el día 5/7/9 y manda la plantilla que corresponde. |
-| `wa-inbox.js` | **Puente WhatsApp → Telegram + asistente.** Recibe las respuestas de los clientes, el asistente decide qué contestar (`_lib/asistente.js`) y escala a Jose por Telegram cuando hace falta. |
+| `recuperacion.js` | **Motor diario de recuperación** (carritos abandonados + pagos rechazados) **por email** — desde el 09/08/2026 no usa WhatsApp; antes el mail era sólo el respaldo. El 1er mensaje lo dispara el webhook al instante, esto manda el recordatorio. Corre por Vercel Cron y, de paso, dispara los otros syncs del día (piggyback, porque Hobby solo permite 2 crons). |
+| `wa-funnel.js` | **Embudo de EMAIL** de la campaña "Guía Claude" (Regalos 3, 4, 5, Oferta, reenvío y re-enganche). Corre 1 vez/día y busca la primera pieza que le FALTA a cada lead. ⛔ El nombre es historia: no manda WhatsApp. |
+| `wa-inbox.js` | ✅ **Lo único de WhatsApp que sigue vivo: RECIBIR.** Puente WhatsApp → Telegram + asistente. Recibe las respuestas de los clientes, el asistente decide qué contestar (`_lib/asistente.js`) y escala a Jose por Telegram cuando hace falta. |
 | `salud.js` | **Panel de Salud:** un email diario que mira el estado real de cada flujo (Supabase + Brevo), lo interpreta (✅/🟡/🔴 + por qué) y lo resume. |
 | `sync-estados.js` | Copia el estado de los agentes (`ads-agent/state/*.json`) a la tabla `agentes_estado` para que el Panel de Comando (nube) los pueda leer. |
 

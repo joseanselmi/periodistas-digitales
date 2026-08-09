@@ -3,8 +3,12 @@
 Código: [`api/wa-funnel.js`](../api/wa-funnel.js) · Cron diario 13:00 UTC (10 ART), ver
 [`vercel.json`](../vercel.json) · Campaña `meta-leadgen-guia-claude` (lista Brevo #5).
 
-Las plantillas de WhatsApp están en [PLANTILLAS-WHATSAPP.md](PLANTILLAS-WHATSAPP.md);
-acá está la **lógica de quién recibe qué**, que es distinta y cambió el 2026-08-01.
+⚠️ **Todo este embudo va por EMAIL.** El archivo se llama `wa-funnel.js` por historia —nació
+como embudo de WhatsApp— pero desde el 09/08/2026 no manda un solo mensaje por ese canal, y
+el código que lo hacía ya no existe. Las plantillas de WhatsApp quedaron como archivo
+histórico en [PLANTILLAS-WHATSAPP.md](PLANTILLAS-WHATSAPP.md): **no describen nada vigente**.
+
+Acá está la **lógica de quién recibe qué**, que cambió el 2026-08-01.
 
 ## El recorrido
 

@@ -5,7 +5,15 @@ cualquier sesión futura.
 
 ## Qué es
 
-Automatización que **recupera por WhatsApp** a los clientes potenciales que se guardan
+> ⚠️ **Cambió de canal el 09/08/2026: ahora recupera por EMAIL, para todos.** Antes salía por
+> WhatsApp y el email era la excepción para quien no había dejado teléfono. Se dio vuelta
+> porque el número está capado en Meta y esa rama no entregaba — y era la principal, así que
+> **el que sí dejaba su teléfono era justamente el que no recibía nada**. El copy de los dos
+> mails vive en [`api/_lib/recup-email.js`](../api/_lib/recup-email.js), compartido por el
+> webhook (1er mensaje, al instante) y el cron (recordatorio del día siguiente).
+> Donde este doc diga "WhatsApp" o "plantilla", leer "email".
+
+Automatización que **recupera** a los clientes potenciales que se guardan
 solos en Supabase (tabla `clientes_potenciales` de `periodistas-marketing`, la llena el
 webhook de Hotmart — ver [ARQUITECTURA-DATOS.md](../../ads-agent/docs/ARQUITECTURA-DATOS.md) y
 tarjeta #25). Dos flujos según la columna `tipo`:

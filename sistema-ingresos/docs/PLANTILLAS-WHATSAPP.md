@@ -1,8 +1,21 @@
-# Plantillas de WhatsApp (Meta) — referencia viva
+# Plantillas de WhatsApp (Meta) — ARCHIVO HISTÓRICO
 
-Doc vivo. Copia local del **cuerpo real** de las plantillas aprobadas por Meta, para no
-tener que consultarlas a la API cada vez y para usarlas de fuente cuando las editemos.
-Jose no es técnico → acá va todo el contexto.
+> ## ⛔ NINGUNA DE ESTAS PLANTILLAS SE USA. NADA SALE POR WHATSAPP.
+>
+> Desde el **09/08/2026** no existe envío automático por WhatsApp: el código que las
+> disparaba se borró (embudo, seguimiento y recuperación). Este documento queda **sólo como
+> registro** de qué se aprobó en Meta y qué decía cada mensaje, por si algún día se
+> reconstruye el canal.
+>
+> **Nada de acá describe cómo funciona el sistema hoy.** El embudo real va por email:
+> ver [EMBUDO-REGALOS.md](EMBUDO-REGALOS.md). La regla completa está en el
+> [CLAUDE.md](../../CLAUDE.md) de la raíz.
+>
+> Lo único de WhatsApp que sigue vivo es **recibir** mensajes y contestarlos a mano desde
+> Telegram: [PUENTE-WHATSAPP-TELEGRAM.md](PUENTE-WHATSAPP-TELEGRAM.md).
+
+Copia local del **cuerpo real** de las plantillas que Meta aprobó en su momento. Se
+conserva porque volver a redactarlas y hacerlas aprobar cuesta días, no porque estén en uso.
 
 - **WABA (WhatsApp Business Account):** `3355115811326692`
 - **Phone number ID:** `1250736061447802` (número que envía; token en Vercel = `WHATSAPP_TOKEN`)

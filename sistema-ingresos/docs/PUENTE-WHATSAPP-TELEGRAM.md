@@ -3,6 +3,11 @@
 Doc vivo. Jose no es técnico — acá va todo el contexto para cualquier sesión futura.
 **Estado: ✅ LIVE y probado (2026-07-03).**
 
+> ✅ **Esto es lo ÚNICO de WhatsApp que sigue funcionando, y no se toca.** El 09/08/2026 se
+> borró todo el envío automático por WhatsApp (embudo, seguimiento, recuperación), pero
+> **recibir y contestar a mano no**: es lo que Jose usa todos los días y pidió conservar.
+> Recibir ≠ enviar. La regla completa está en el [CLAUDE.md](../../CLAUDE.md) de la raíz.
+
 ## Qué es y para qué
 
 Deja a Jose **leer y responder las respuestas de los clientes de WhatsApp desde Telegram**,

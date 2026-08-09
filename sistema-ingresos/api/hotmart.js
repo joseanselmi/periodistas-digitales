@@ -42,7 +42,7 @@ const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim(
 // Recuperación instantánea por WhatsApp (tarjeta #34). Gateada por RECUP_ENABLED:
 // mientras no sea "1", el webhook solo guarda el cliente potencial (no manda nada).
 const RECUP_ENABLED = (process.env.RECUP_ENABLED || '').trim()
-const { normalizePhone, sendRecupTemplate, TEMPLATES } = require('./_lib/wa')
+const { sendRecupEmail, COPY } = require('./_lib/recup-email')
 
 // Eventos de Hotmart que NUNCA son "cliente potencial" (esa gente SÍ compró):
 // reembolsos, contracargos y las propias compras aprobadas. Se excluyen explícito
@@ -224,15 +224,15 @@ function classifyPotencial(event, purchase) {
   return null
 }
 
-// Recuperación INSTANTÁNEA: manda el 1er WhatsApp apenas entra el cliente potencial.
+// Recuperación INSTANTÁNEA: manda el 1er mail apenas entra el cliente potencial — que es
+// cuando de verdad sirve, no al día siguiente. Salía por WhatsApp hasta el 09/08/2026; ahora
+// por email, porque el número está capado en Meta y ese mensaje no llegaba a nadie.
 // Gateada por RECUP_ENABLED (apagada = no manda). Idempotente: "reserva" el envío con
 // un PATCH condicional (solo si paso_recuperacion sigue en 0), así un reintento del
 // webhook no duplica el mensaje. Si el envío falla, revierte para que el cron reintente.
-async function instantRecup({ tipo, dedupKey, telefono, nombre }) {
+async function instantRecup({ tipo, dedupKey, email, nombre }) {
   if (RECUP_ENABLED !== '1') return false
-  const to = normalizePhone(telefono)
-  const tmpl = TEMPLATES[tipo] && TEMPLATES[tipo][1]
-  if (!to || to.length < 8 || !tmpl) return false
+  if (!email || !COPY[tipo]) return false
 
   const sbHead = (extra) => ({
     apikey: SUPABASE_SERVICE_KEY,
@@ -250,7 +250,7 @@ async function instantRecup({ tipo, dedupKey, telefono, nombre }) {
     const claimed = await claim.json().catch(() => [])
     if (!Array.isArray(claimed) || claimed.length === 0) return false // ya estaba contactado
 
-    const sent = await sendRecupTemplate({ to, tmpl, nombre })
+    const sent = await sendRecupEmail({ to: email, tipo, paso: 1, nombre })
     if (sent.ok) return true
 
     // Envío falló → revertir para que el cron reintente el paso 1 más tarde.
@@ -259,7 +259,7 @@ async function instantRecup({ tipo, dedupKey, telefono, nombre }) {
       headers: sbHead({ Prefer: 'return=minimal' }),
       body: JSON.stringify({ estado_recuperacion: 'pendiente', paso_recuperacion: 0, ultimo_contacto_en: null }),
     }).catch(() => {})
-    console.error('[curso webhook] WA instant fallo', sent.status, JSON.stringify(sent.body))
+    console.error('[curso webhook] recuperación instantánea falló', sent.status, sent.error || '')
     return false
   } catch (e) {
     console.error('[curso webhook] error en recuperación instantánea:', e)
@@ -336,8 +336,8 @@ async function savePotencial({ tipo, event, email, buyerRaw, data, purchase, bod
       console.error('[curso webhook] Supabase insert HTTP', res.status, await res.text())
       return { saved: false, waSent: false }
     }
-    // Guardado OK → intentar la recuperación instantánea por WhatsApp (best-effort).
-    const waSent = await instantRecup({ tipo, dedupKey, telefono: record.telefono, nombre: record.nombre })
+    // Guardado OK → intentar la recuperación instantánea por email (best-effort).
+    const waSent = await instantRecup({ tipo, dedupKey, email: record.email, nombre: record.nombre })
     return { saved: true, waSent }
   } catch (e) {
     console.error('[curso webhook] error guardando cliente potencial:', e)

@@ -7,6 +7,28 @@ Este repo contiene dos proyectos principales:
   `sistema-ingresos-landing`, dominio `sistemadeingresosdiariosia.com`).
 - `ads-agent/` — agentes de marketing (Meta Ads, email, contenido orgánico, etc.)
 
+## ⛔ WhatsApp NO manda nada automático — todo lo automático va por EMAIL (09/08/2026)
+
+**Ninguna campaña, embudo, recordatorio ni recuperación sale por WhatsApp.** No está
+"apagado por un flag": el código de envío se borró. No existe `WA_SEND_FORCE`, no hay
+plantillas de Meta que disparar, no hay una rama que reactivar.
+
+- **Lo que SÍ sigue vivo y no se toca:** RECIBIR los mensajes de la gente y contestarlos
+  **a mano** desde Telegram — [`api/wa-inbox.js`](sistema-ingresos/api/wa-inbox.js) y
+  [`api/tg-webhook.js`](sistema-ingresos/api/tg-webhook.js). Jose los usa todos los días.
+  Recibir ≠ enviar: la distinción es toda la regla.
+- **Por qué se fue:** no es un problema de código y no se arregla desde acá. El número está
+  capado en Meta — la verificación del negocio no pasó (error 141010) y el nombre para
+  mostrar quedó `DECLINED`. Estado y pasos en la tarjeta **#89**.
+- **⚠️ Los nombres con prefijo `WA_` son historia, no canal.** `api/wa-funnel.js` es el
+  embudo de EMAIL; `WA_SENT_AT` y `WA_STAGE` los escriben los envíos por email. Se
+  conservan porque renombrarlos rompería la ruta del cron, los paneles que la consultan y
+  ~900 contactos ya escritos en Brevo. **Ver un `WA_` no significa que algo mande WhatsApp.**
+
+Antes de proponer "reactivemos WhatsApp para este envío": no. Si Jose lo pide, primero se
+destraba Meta (#89) y recién después se reescribe el envío, que no está en ningún lado más
+que en el historial de git.
+
 ### Dónde vive cada cosa (reorganizado el 2026-07-30)
 
 - `ads-agent/scripts/<grupo>/` — todos los ejecutables, agrupados por función:

@@ -16,10 +16,12 @@ curso — eso está en [`../curso/docs/`](../curso/docs/README.md).
 
 ## Canales
 
-- [`PLANTILLAS-WHATSAPP.md`](PLANTILLAS-WHATSAPP.md) — el cuerpo real de las
-  plantillas aprobadas por Meta. Doc vivo.
-- [`PUENTE-WHATSAPP-TELEGRAM.md`](PUENTE-WHATSAPP-TELEGRAM.md) — cómo Jose lee y
-  responde WhatsApp desde Telegram.
+- ⛔ [`PLANTILLAS-WHATSAPP.md`](PLANTILLAS-WHATSAPP.md) — **ARCHIVO HISTÓRICO, no está en
+  uso.** Desde el 09/08/2026 nada sale por WhatsApp. Se conserva el cuerpo real de las
+  plantillas aprobadas por Meta, por si algún día se reconstruye el canal.
+- ✅ [`PUENTE-WHATSAPP-TELEGRAM.md`](PUENTE-WHATSAPP-TELEGRAM.md) — cómo Jose lee y
+  responde WhatsApp desde Telegram. **Lo único de WhatsApp que sigue vivo**: recibir y
+  contestar a mano. Recibir ≠ enviar.
 
 ## Medición
 
