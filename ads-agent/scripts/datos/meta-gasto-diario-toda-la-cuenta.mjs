@@ -72,8 +72,38 @@ if (!DRY) {
 }
 
 const dia = (d) => d.toISOString().slice(0, 10)
+
+// SOLO DÍAS CERRADOS (09/08/2026)
+//
+// Este script corría una vez por día al mediodía y guardaba también el día en
+// curso, con lo gastado hasta ese momento. Esa fila parcial no se distingue de
+// una completa: el 08/08 quedó en $5,80 cuando el día terminó en ~$12, y el
+// panel lo mostraba con la misma cara de seguridad que un día cerrado. Peor,
+// cualquier costo por lead calculado sobre ese día sale a mitad de precio.
+//
+// Decisión de Jose: si el día no cerró, no se registra. Se pide hasta AYER y,
+// por si Meta devuelve el día en curso igual, se filtra después.
+//
+// "Ayer" es el de la cuenta de Meta, no el de España: la cuenta lleva sus días
+// en su propia zona (hoy America/Argentina/Salta), así que el día cierra a las
+// 21:00 de España. Se pregunta la zona en vez de hardcodearla — si Jose la
+// cambia en Meta, esto sigue estando bien.
+async function zonaDeLaCuenta() {
+  try {
+    const j = await (await fetch(`${API}/act_${ACCOUNT}?fields=timezone_name&access_token=${TOKEN}`)).json()
+    if (j.timezone_name) return j.timezone_name
+  } catch { /* sin red o token justo: se usa el default */ }
+  return 'America/Argentina/Salta'
+}
+
+const enZona = (d, zona) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: zona, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+
+const ZONA  = await zonaDeLaCuenta()
+const HOY   = enZona(new Date(), ZONA)                              // el "hoy" de la cuenta
+const AYER  = dia(new Date(Date.parse(`${HOY}T12:00:00Z`) - 86400e3)) // último día cerrado
 const desde = dia(new Date(Date.now() - DIAS * 86400e3))
-const hasta = dia(new Date())
+const hasta = AYER
 
 // El estado REAL de cada campaña. `status` dice lo que configuraste; el que
 // manda es `effective_status`, que además mira si el conjunto o la cuenta la
@@ -110,7 +140,13 @@ async function gastoDiario() {
   return filas
 }
 
-const [porId, filas] = await Promise.all([estados(), gastoDiario()])
+const [porId, crudas] = await Promise.all([estados(), gastoDiario()])
+
+// Red de seguridad: si Meta devuelve el día en curso, se descarta y se dice.
+const filas = crudas.filter((f) => f.fecha <= AYER)
+const abiertas = crudas.length - filas.length
+if (abiertas) console.log(`⏳ ${abiertas} filas del día en curso (${HOY} en ${ZONA}) descartadas: todavía no cerró\n`)
+
 for (const f of filas) {
   const e = porId.get(f.meta_campana_id)
   f.estado = e?.estado || null
@@ -125,7 +161,7 @@ for (const f of filas) {
   resumen.set(f.meta_campana_id, r)
 }
 
-console.log(`📊 GASTO DE META — del ${desde} al ${hasta}\n`)
+console.log(`📊 GASTO DE META — del ${desde} al ${hasta} (días cerrados; hoy ${HOY} en ${ZONA} no entra)\n`)
 for (const [, r] of [...resumen].sort((a, b) => b[1].gasto - a[1].gasto)) {
   const marca = r.estado === 'ACTIVE' ? '●' : '○'
   console.log(`  ${marca} $${r.gasto.toFixed(2).padStart(9)}  ${String(r.dias).padStart(3)} días con gasto  · último ${r.ultimo || '—'}  · ${r.nombre}`)

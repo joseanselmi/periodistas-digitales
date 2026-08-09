@@ -37,6 +37,29 @@ const SUPABASE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
 const dia = (d) => d.toISOString().slice(0, 10);
 
+// SOLO DÍAS CERRADOS (09/08/2026) — decisión de Jose.
+//
+// Esto corre una vez por día a las 15:00 UTC, o sea al mediodía en la zona de la
+// cuenta de Meta. Guardaba también el día en curso con lo gastado hasta ese
+// momento, y una fila a medias no se ve distinta de una completa: el 08/08 quedó
+// registrado en $5,80 cuando cerró en ~$12. Cualquier costo por lead sobre ese
+// día sale a mitad de precio, y el panel no tenía forma de avisarlo.
+//
+// Ahora se pide hasta AYER y se filtra por si Meta devuelve el día abierto igual.
+// "Ayer" es el de la cuenta (lleva sus días en su propia zona, hoy
+// America/Argentina/Salta → el día cierra a las 21:00 de España), y la zona se
+// pregunta en vez de hardcodearse.
+const enZona = (d, zona) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: zona, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+
+async function zonaDeLaCuenta() {
+  try {
+    const j = await (await fetch(`${API}/act_${ACCOUNT}?fields=timezone_name&access_token=${TOKEN}`)).json();
+    if (j && j.timezone_name) return j.timezone_name;
+  } catch (e) { /* se usa el default */ }
+  return 'America/Argentina/Salta';
+}
+
 // El estado REAL de cada campaña. `status` dice lo que configuraste; el que manda es
 // `effective_status`, que además mira si el conjunto o la cuenta la frenaron. Leer el
 // equivocado hace decir "activo" de algo apagado.
@@ -47,9 +70,8 @@ async function estados() {
   return new Map((j.data || []).map((c) => [c.id, c.effective_status]));
 }
 
-async function gastoDiario() {
+async function gastoDiario(hasta) {
   const desde = dia(new Date(Date.now() - DIAS * 86400e3));
-  const hasta = dia(new Date());
   const filas = [];
   let url = `${API}/act_${ACCOUNT}/insights?level=campaign&time_increment=1`
     + `&time_range=${encodeURIComponent(JSON.stringify({ since: desde, until: hasta }))}`
@@ -101,7 +123,17 @@ async function runMetaGastoDiarioTodaLaCuenta() {
   if (!TOKEN || !ACCOUNT) return { skipped: 'faltan META_ACCESS_TOKEN / META_AD_ACCOUNT_ID' };
   if (!SUPABASE_URL || !SUPABASE_KEY) return { skipped: 'falta Supabase' };
 
-  const [porId, filas] = await Promise.all([estados(), gastoDiario()]);
+  const zona = await zonaDeLaCuenta();
+  const hoy  = enZona(new Date(), zona);
+  const ayer = dia(new Date(Date.parse(`${hoy}T12:00:00Z`) - 86400e3));
+
+  const [porId, crudas] = await Promise.all([estados(), gastoDiario(ayer)]);
+
+  // Si Meta devuelve el día en curso igual, se descarta — y queda dicho en el log.
+  const filas = crudas.filter((f) => f.fecha <= ayer);
+  const abiertas = crudas.length - filas.length;
+  if (abiertas) console.log(`[meta-gasto-diario] ${abiertas} filas de ${hoy} (${zona}) descartadas: el día no cerró`);
+
   for (const f of filas) f.estado = porId.get(f.meta_campana_id) || null;
 
   const n = await upsert(filas);
@@ -111,7 +143,12 @@ async function runMetaGastoDiarioTodaLaCuenta() {
   const huerfanas = [...new Set(filas.filter(f => !porId.has(f.meta_campana_id)).map(f => f.meta_campana))];
   if (huerfanas.length) console.warn(`[meta-gasto-diario] gastaron pero Meta ya no las lista: ${huerfanas.join(', ')}`);
 
-  return { dias: DIAS, filas: filas.length, upsert: n, gasto_usd: +total.toFixed(2), huerfanas: huerfanas.length };
+  return {
+    dias: DIAS, filas: filas.length, upsert: n, gasto_usd: +total.toFixed(2),
+    huerfanas: huerfanas.length,
+    // Hasta qué día llega el dato, para que quien lo lea no lo confunda con "hoy".
+    hasta: ayer, dia_abierto_descartado: hoy,
+  };
 }
 
 module.exports = { runMetaGastoDiarioTodaLaCuenta };
