@@ -65,6 +65,22 @@ if (!cfg) {
 const corre = (cmd, args, cwd, capturar = true) =>
   spawnSync(cmd, args, { cwd, encoding: 'utf8', shell: false, stdio: capturar ? 'pipe' : 'inherit' })
 
+// El CLI de Vercel se llama aparte y CON shell.
+//
+// En Windows `npx` es un `.cmd`, y sin shell no se puede lanzar: `npx` da ENOENT
+// y `npx.cmd` da EINVAL (Node ≥ 20 lo bloquea a propósito). Con `stdio: inherit`
+// eso no imprime nada y `status` viene en null, así que el deploy terminaba en
+// "🚀 Publicando…" y exit 1, sin una sola línea de por qué. Pasó el 09/08/2026:
+// parecía publicado y en Vercel no había ningún deploy nuevo.
+//
+// Va como UN string (no comando + args) para no disparar el DEP0190 de Node:
+// son literales fijos, acá no entra nada de afuera.
+function publicar(cwd) {
+  const r = spawnSync('npx vercel --prod --yes', { cwd, shell: true, stdio: 'inherit' })
+  if (r.error) throw new Error(`no pude ejecutar el CLI de Vercel: ${r.error.code || ''} ${r.error.message}`)
+  return r.status ?? 1
+}
+
 const git = (args, cwd = cfg.repo) => corre('git', args, cwd).stdout?.trim() ?? ''
 
 if (!existsSync(cfg.repo)) {
@@ -119,8 +135,7 @@ try {
     salida = 0
   } else {
     console.log(`🚀 Publicando…\n`)
-    const r = corre('npx', ['vercel', '--prod', '--yes'], cwd, false)
-    salida = r.status ?? 1
+    salida = publicar(cwd)
   }
 } catch (e) {
   console.error(`\n❌ ${e.message}`)
@@ -142,6 +157,14 @@ if (salida === 0 && !DRY) {
     console.log(`\n⚠️  No pude verificar ${cfg.url}: ${e.message}`)
   }
   console.log(`   En producción: commit ${sha}\n`)
+}
+
+// Un deploy que falla no puede terminar en silencio: si lo último que se ve es
+// "Publicando…", cualquiera asume que salió.
+if (salida !== 0 && !DRY) {
+  console.error(`\n❌ El deploy NO salió (exit ${salida}). Producción sigue en la versión anterior.`)
+  console.error(`   Revisá el error de arriba. Si no hay ninguno, corré a mano dentro de la copia:`)
+  console.error(`   npx vercel --prod --yes\n`)
 }
 
 process.exit(salida)
