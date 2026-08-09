@@ -48,6 +48,26 @@ que en el historial de git.
     existiera `/api/d`. **Es una excepción histórica, no el modelo a copiar.**
   - Guía nueva = su `/api/d`, y nada más.
 
+## 🚀 Deploy — SIEMPRE con `herramientas/deploy.mjs`, nunca `vercel --prod` a mano
+
+```bash
+node herramientas/deploy.mjs sistema-ingresos     # el curso
+node herramientas/deploy.mjs leadr                # la plataforma
+node herramientas/deploy.mjs sistema-ingresos --dry
+```
+
+**Por qué.** `vercel --prod` sube el DIRECTORIO tal como está, no el commit. Con
+varias sesiones de Claude trabajando sobre el mismo repo a la vez, publicar
+arrastra el trabajo a medio escribir de otra. Ya pasó dos veces el 09/08/2026: un
+cambio grande llegó a producción sin estar commiteado (el código que corría
+existía solo en el disco de Jose), y hubo que frenar otro deploy porque
+`api/hotmart.js` estaba siendo editado en ese momento.
+
+El script crea una copia limpia del último commit en una carpeta temporal, deploya
+desde ahí y la borra. **Lo que no está commiteado, no se publica** — deja de
+depender de que alguien mire `git status`. Avisa qué quedó sin commitear, deploya
+igual sin eso, y verifica el dominio real (no el alias que imprime el CLI).
+
 **Después de mover, renombrar o borrar archivos — y antes de deployar:**
 
 ```bash
