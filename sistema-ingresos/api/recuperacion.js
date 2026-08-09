@@ -183,8 +183,7 @@ function resumen(potenciales, ventas) {
 async function mandarReporte(res) {
   const html = `<h2>📊 Recuperación de carritos — reporte diario</h2>
     <ul>
-      <li><b>Mensajes enviados hoy:</b> ${res.enviados}
-        (WhatsApp: ${res.enviados_wa != null ? res.enviados_wa : res.enviados}, Email sin teléfono: ${res.enviados_email || 0})</li>
+      <li><b>Mails enviados hoy:</b> ${res.enviados}</li>
       <li><b>Recuperados (compraron):</b> ${res.recuperados_hoy} nuevos hoy</li>
       <li><b>En seguimiento ahora:</b> ${res.en_seguimiento}
         (carrito abandonado: ${res.abandonados}, pago rechazado: ${res.rechazados})</li>
@@ -372,12 +371,11 @@ module.exports = async (req, res) => {
       // Reporte individual de recuperación: APAGADO por default (lo cubre el Panel de Salud).
       if (process.env.REPORTE_RECUP_INDIVIDUAL === '1') {
         const r = resumen(potenciales, ventas);
-        const enviadosWA = results.filter(x => x.canal === 'whatsapp' && !x.error).length;
-        const enviadosEmail = results.filter(x => x.canal === 'email' && !x.error).length;
+        // Un solo canal. Contar por 'whatsapp' daba SIEMPRE 0 y el reporte decía
+        // "WhatsApp: 0, Email sin teléfono: 0" aunque hubiera salido todo bien.
+        const enviados = results.filter(x => !x.error).length;
         reporte = await mandarReporte({
-          enviados: enviadosWA + enviadosEmail,
-          enviados_wa: enviadosWA,
-          enviados_email: enviadosEmail,
+          enviados,
           recuperados_hoy: marcarRecuperado.length,
           perdidos_hoy: marcarPerdido.length,
           en_seguimiento: r.total,
