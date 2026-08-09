@@ -143,7 +143,17 @@ try {
 } finally {
   // Siempre limpiar: un worktree colgado hace fallar el próximo deploy.
   corre('git', ['worktree', 'remove', '--force', tmp], cfg.repo)
-  if (existsSync(tmp)) rmSync(tmp, { recursive: true, force: true })
+  // En Windows este borrado da EPERM cada tanto (OneDrive o el antivirus todavía
+  // con un handle abierto sobre la copia). Antes eso tiraba una excepción DENTRO
+  // del finally: el deploy ya había salido y aliaseado, y el script igual moría
+  // con exit 1 y sin decir que había funcionado. Un deploy exitoso no puede
+  // reportarse como fallado porque sobró una carpeta en Temp.
+  try {
+    if (existsSync(tmp)) rmSync(tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 })
+  } catch (e) {
+    console.log(`\n⚠️  Quedó sin borrar la copia temporal (${e.code}) — se puede borrar a mano:`)
+    console.log(`      ${tmp}`)
+  }
   corre('git', ['worktree', 'prune'], cfg.repo)
 }
 
