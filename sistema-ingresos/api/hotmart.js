@@ -362,6 +362,16 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
 
   const afiliado = pick(data.affiliate, purchase.affiliate)
 
+  // ⚠️ Sin esta línea, el webhook devolvía 500 en TODAS las compras aprobadas (28/07 → 09/08).
+  // El fix del 30/07 que empezó a guardar el origen agregó `origin.src` acá y en saveCustomer,
+  // pero sólo declaró `origin` en saveCustomer. Acá quedó una variable inexistente → en Node eso
+  // es un ReferenceError, no un `undefined`. Y como está FUERA del try de abajo, la excepción se
+  // escapaba de una función que dice ser best-effort y tumbaba el webhook entero.
+  // Resultado: 8 compras sin registrar, sin bono de Leadr y sin aviso, con las ventas entrando
+  // sólo por el sync diario. Falla sólo en compras aprobadas porque saveVenta sólo corre ahí:
+  // los abandonos y las cancelaciones seguían dando 200, y por eso parecía que el webhook andaba.
+  const origin = purchase.origin || data.origin || {}
+
   const record = {
     email,
     nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
@@ -575,28 +585,44 @@ module.exports = async (req, res) => {
   const currency = pick(purchase.price && purchase.price.currency_value, 'USD')
   const eventId = pick(purchase.transaction, purchase.order_date && `${email}-${purchase.order_date}`)
 
-  await sendPurchaseToMeta({
-    userData: buildUserData(buyer, addr, fb),
-    value,
-    currency,
-    eventId,
-  })
-  const bonoOk = await grantLeadrAccess(email)
+  // Cada paso va aislado: si uno se cae, los demás siguen. Antes no era así —
+  // un ReferenceError dentro de saveVenta (una función que dice ser "best-effort")
+  // tumbaba el webhook entero y Hotmart recibía un 500. Ninguno de estos cuatro pasos
+  // debe poder impedir que los otros tres ocurran.
+  const paso = async (nombre, fn) => {
+    try { return await fn() } catch (e) {
+      console.error(`[curso webhook] falló ${nombre}:`, e && e.stack || e)
+      return false
+    }
+  }
 
-  // Registrar la venta en la base de marketing (para conteo de ventas,
-  // facturación y atribución por anuncio). Best-effort: no bloquea la respuesta.
-  const ventaGuardada = await saveVenta({
+  await paso('Meta CAPI', () => sendPurchaseToMeta({
+    userData: buildUserData(buyer, addr, fb), value, currency, eventId,
+  }))
+  const bonoOk = await paso('bono Leadr', () => grantLeadrAccess(email))
+
+  // Registrar la venta en la base de marketing (conteo, facturación, atribución).
+  const ventaGuardada = await paso('guardar venta', () => saveVenta({
     event, email, buyerRaw, address, data, purchase,
     tracking, fb, value, currency,
     transaction: purchase.transaction,
     bonoOk, body,
-  })
+  }))
 
-  // Alta del comprador como `customer` (identidad + flujos post-compra). Best-effort.
+  // Alta del comprador como `customer` (identidad + flujos post-compra).
   const ocurrido = toIso(pick(purchase.approved_date, purchase.order_date, purchase.date, body.creation_date))
-  const customerGuardado = await saveCustomer({
+  const customerGuardado = await paso('alta de customer', () => saveCustomer({
     email, buyerRaw, address, data, purchase, tracking, ocurrido, bonoOk, body,
-  })
+  }))
+
+  // Si la VENTA no se pudo guardar, se responde 500 A PROPÓSITO: Hotmart reintenta
+  // hasta 5 veces y el intento queda en su historial 60 días. Es lo que permitió
+  // descubrir esto — un 200 alegre habría borrado el rastro. Que el bono o Meta
+  // fallen no justifica un reintento: eso se arregla aparte, sin reprocesar la venta.
+  if (!ventaGuardada) {
+    console.error('[curso webhook] la venta NO se guardó — se devuelve 500 para que Hotmart reintente', { email })
+    return res.status(500).json({ ok: false, action: 'venta_no_guardada', email })
+  }
 
   return res.status(200).json({
     ok: true,
