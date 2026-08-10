@@ -26,8 +26,11 @@
  *
  * Después se fueron sumando, cada uno por una rotura real: el contrato con Vercel
  * (api/ y crons), los pipelines de .claude/, la coherencia del equipo de agentes,
- * que toda carpeta con contenido tenga README, y —desde el 2026-08-10— que toda
- * campaña tenga su FICHA DE FLUJO registrada en sistema-ingresos/docs/FLUJOS.md.
+ * que toda carpeta con contenido tenga README, y —desde el 2026-08-10— los FLUJOS
+ * DE MAILS: que toda campaña de CAPTACIÓN tenga su ficha en
+ * sistema-ingresos/docs/FLUJOS.md y que los motores que esa ficha nombra existan.
+ * (Las campañas de META no llevan ficha de mails: muchas no mandan ninguno. Un
+ * flujo de mails y una campaña de anuncios son cosas distintas y no van una a una.)
  * La lista viva de los pasos es el array `pasos` del final; ahí manda el código,
  * no este comentario.
  */
@@ -481,37 +484,49 @@ function chequearCarpetasDocumentadas() {
 //
 // No valida el contenido de la ficha (eso lo lee una persona) — sólo que la campaña exista
 // en el inventario. Es el mínimo que se puede verificar sin adivinar.
+// ⚠️ UN FLUJO DE MAILS NO ES UNA CAMPAÑA DE META. La primera versión de este chequeo (10/08)
+// exigía que TODA carpeta de campaña apareciera en el inventario de flujos, incluidas las de
+// `ads-agent/campanas/` — que son campañas de ANUNCIOS. Eso obligaba a `interaccion` (gasto de
+// marca, no captura nada) a tener una ficha de mails que decía "ninguna pieza": ruido, y una
+// ficha que nadie iba a mantener. Se corrige el mismo día: sólo se exige ficha a las campañas
+// de CAPTACIÓN, que son las de `sistema-ingresos/campanas/` — las que piden un email y por
+// tanto deben tener una secuencia detrás. Las de Meta declaran el vínculo en su `brief.md`.
 const FICHAS = 'sistema-ingresos/docs/FLUJOS.md';
-function chequearFichasDeCampana() {
+function chequearFichasDeFlujo() {
   const rotas = [];
-  const dirsCampanas = ['ads-agent/campanas', 'sistema-ingresos/campanas'];
   const ignorar = new Set(['TEMPLATE', 'historico']);
 
   if (!existsSync(join(ROOT, FICHAS))) {
-    return { revisadas: 0, rotas: [{ rel: FICHAS, ref: 'el inventario de flujos', tipo: 'no existe' }] };
+    return { revisadas: 0, rotas: [{ rel: FICHAS, ref: 'el inventario de flujos de mails', tipo: 'no existe' }] };
   }
   const inventario = readFileSync(join(ROOT, FICHAS), 'utf8');
+  let revisadas = 0;
 
-  const campanas = new Set();
-  for (const base of dirsCampanas) {
-    const abs = join(ROOT, base);
-    if (!existsSync(abs)) continue;
-    for (const nombre of readdirSync(abs, { withFileTypes: true })) {
-      if (!nombre.isDirectory() || ignorar.has(nombre.name)) continue;
-      campanas.add(nombre.name);
+  // 1) Toda campaña de CAPTACIÓN tiene su ficha. Si pide un email, algo tiene que pasar después.
+  const baseCaptacion = join(ROOT, 'sistema-ingresos/campanas');
+  if (existsSync(baseCaptacion)) {
+    for (const e of readdirSync(baseCaptacion, { withFileTypes: true })) {
+      if (!e.isDirectory() || ignorar.has(e.name)) continue;
+      revisadas++;
+      // Alcanza con que el nombre esté mencionado: no coincide entre capas (la carpeta
+      // `guia-claude-periodistas` es el flujo `guias-claude`), así que exigir igualdad
+      // daría falsos positivos.
+      const alias = [e.name, e.name.replace(/-periodistas$/, '').replace(/^guia-/, 'guias-')];
+      if (!alias.some((a) => inventario.includes(a))) {
+        rotas.push({ rel: FICHAS, ref: `falta la ficha del flujo de "${e.name}"`, tipo: 'campaña de captación sin ficha' });
+      }
     }
   }
 
-  for (const c of campanas) {
-    // Se busca el nombre de la carpeta en el inventario. Alcanza con que esté mencionado:
-    // los nombres no coinciden entre capas (la carpeta `guia-claude-periodistas` es el flujo
-    // `guias-claude`), así que exigir igualdad daría falsos positivos.
-    const alias = [c, c.replace(/-periodistas$/, '').replace(/^guia-/, 'guias-')];
-    if (!alias.some((a) => inventario.includes(a))) {
-      rotas.push({ rel: FICHAS, ref: `falta la ficha de la campaña "${c}"`, tipo: 'campaña sin ficha de flujo' });
+  // 2) Todo motor que la ficha nombra existe de verdad. Una ficha que apunta a un archivo
+  // borrado es peor que no tener ficha: se lee como si el flujo estuviera vivo.
+  for (const m of inventario.matchAll(/`((?:sistema-ingresos|ads-agent)\/[\w./-]+\.(?:js|mjs|ts))`/g)) {
+    revisadas++;
+    if (!existsSync(join(ROOT, m[1]))) {
+      rotas.push({ rel: FICHAS, ref: `nombra el motor ${m[1]}, que no existe`, tipo: 'ficha apunta a un archivo borrado' });
     }
   }
-  return { revisadas: campanas.size, rotas };
+  return { revisadas, rotas };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -524,7 +539,7 @@ const pasos = [
   ['Pipelines de .claude/ (contexto vivo)', chequearPipelines],
   ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
   ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
-  ['Toda campaña con su ficha de flujo', chequearFichasDeCampana],
+  ["Flujos de mails: ficha por campaña de captación + motores vivos", chequearFichasDeFlujo],
 ];
 
 let totalRotas = 0;

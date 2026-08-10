@@ -18,29 +18,28 @@ el nombre de la carpeta sale de la convención del [README de `campanas/`](../RE
 
 ---
 
-## FICHA DEL FLUJO — qué mails recibe esta gente
+## ¿ESTA CAMPAÑA ALIMENTA UN FLUJO DE MAILS?
 
-**Obligatoria, aunque la campaña no mande ni un mail** (si no manda, se escribe "ninguna" y por
-qué). Es el estándar desde el 2026-08-10 y hay que **registrarla también en
-[`sistema-ingresos/docs/FLUJOS.md`](../../../sistema-ingresos/docs/FLUJOS.md)**, que es el
-inventario único de todos los flujos. `node herramientas/verificar-repo.mjs` falla si una campaña
-no aparece ahí.
+Una sola pregunta, obligatoria. **Este brief es de la campaña de Meta** —anuncios, presupuesto,
+creativos—; los mails son otra cosa y viven en su propio inventario. Acá sólo se declara el
+vínculo, no se copia la secuencia.
 
-| Pregunta | Respuesta |
+| | |
 |---|---|
-| **¿Quiénes?** | De dónde salen las personas (lista de Brevo #?, tabla, formulario) y cuántas |
-| **¿Día 0?** | Desde qué momento se cuentan los días |
-| **¿Qué piezas y cuándo?** | La secuencia: día 0 → …. Poner quién manda cada una (Make / Brevo / código) |
-| **¿Quién NO?** | A quién saltear: ya compró · se dio de baja · ya recibió algo hoy |
-| **¿Tope y condiciones?** | Cuántos por día, y si algo retiene un envío (ej. no ofertar a quien nunca abrió) |
-| **¿Qué motor la ejecuta?** | El archivo concreto. **Si la respuesta es "ninguno", la campaña captura y se detiene** |
+| **¿Captura emails?** | sí / no |
+| **Si sí, ¿qué flujo?** | El nombre del flujo, tal como figura en [`sistema-ingresos/docs/FLUJOS.md`](../../../sistema-ingresos/docs/FLUJOS.md) |
+| **Si no, ¿por qué?** | Ej: "va directo al checkout, no pide el email" |
 
-> **Por qué esta ficha existe.** El 10/08/2026 se escribió el inventario y aparecieron dos huecos
-> que llevaban semanas: `republicadores` capturaba leads y no les mandaba nada después de la guía
+**Si captura emails, el flujo tiene que estar escrito en FLUJOS.md** con sus seis preguntas
+(¿quiénes? · ¿día 0? · ¿qué piezas y cuándo? · ¿quién NO? · ¿tope y condiciones? · **¿qué motor
+la ejecuta?**). `node herramientas/verificar-repo.mjs` lo chequea.
+
+> **Por qué esta pregunta está acá.** El 10/08/2026, al escribir el inventario, aparecieron dos
+> huecos de semanas: `republicadores` capturaba leads y no les mandaba nada después de la guía
 > —196 personas, con el anuncio activo y gastando— y el post-compra no existía. No se veían
-> mirando el código: cada pieza por separado funcionaba y devolvía 200. **Lo que faltaba era el
-> paso siguiente, que no estaba en ningún lado y por eso no fallaba.** La última fila es la que
-> más atrapa: una campaña sin motor entrega su regalo y ahí termina.
+> mirando el código: cada pieza funcionaba y devolvía 200. **Lo que faltaba era el paso siguiente,
+> que no estaba en ningún lado y por eso no fallaba.** Un anuncio de captación sin flujo detrás es
+> plata que entra a un balde sin fondo, y esta pregunta lo hace visible antes de gastar.
 
 ---
 
