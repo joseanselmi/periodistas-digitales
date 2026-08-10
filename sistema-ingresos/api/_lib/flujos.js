@@ -64,16 +64,16 @@ const FLUJOS = {
     // El orden de este array ES el orden de prioridad de la cola. No reordenar sin querer:
     // `wa-funnel.js` despacha por el índice, y la oferta tiene que ir antes que los regalos.
     piezas: [
-      { clave: 'regalo3',    dia: 5, tag: 'regalo3-periodico',   marcador: 'MAIL3_AT',       stage: 3,    flag: 'regalos', plataforma: PLATAFORMA.CODIGO },
-      { clave: 'regalo4',    dia: 7, tag: 'regalo4-pilares',     marcador: 'MAIL4_AT',       stage: 4,    flag: 'regalos', plataforma: PLATAFORMA.CODIGO },
-      { clave: 'mail5',      dia: 8, tag: 'regalo5-agentes-ia',  marcador: 'MAIL5_AT',       stage: null, flag: 'mail5',   plataforma: PLATAFORMA.CODIGO },
-      { clave: 'mailoferta', dia: 9, tag: 'oferta-email',        marcador: 'OFERTA_MAIL_AT', stage: 5,    flag: 'oferta',  plataforma: PLATAFORMA.CODIGO },
+      { clave: 'regalo3',    horas: 120, tag: 'regalo3-periodico',   marcador: 'MAIL3_AT',       stage: 3,    flag: 'regalos', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'regalo4',    horas: 168, tag: 'regalo4-pilares',     marcador: 'MAIL4_AT',       stage: 4,    flag: 'regalos', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'mail5',      horas: 192, tag: 'regalo5-agentes-ia',  marcador: 'MAIL5_AT',       stage: null, flag: 'mail5',   plataforma: PLATAFORMA.CODIGO },
+      { clave: 'mailoferta', horas: 216, tag: 'oferta-email',        marcador: 'OFERTA_MAIL_AT', stage: 5,    flag: 'oferta',  plataforma: PLATAFORMA.CODIGO },
     ],
     // Piezas que NO las manda nuestro motor. Se declaran igual: son parte del flujo y si una
     // falla, la persona queda a medio camino. Que no las ejecutemos no las hace invisibles.
     piezasAjenas: [
-      { clave: 'regalo1', dia: 0, tag: 'regalo1-guia-claude', plataforma: PLATAFORMA.MAKE, detalle: 'escenario 9474482' },
-      { clave: 'regalo2', dia: 2, tag: 'regalo2-50-prompts', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'plantilla #1 · ⚠️ sin link de baja' },
+      { clave: 'regalo1', horas: 0, tag: 'regalo1-guia-claude', plataforma: PLATAFORMA.MAKE, detalle: 'escenario 9474482' },
+      { clave: 'regalo2', horas: 48, tag: 'regalo2-50-prompts', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'plantilla #1 · ⚠️ sin link de baja' },
     ],
 
     excluye: ['ya compró (cruce con `ventas`)', 'de baja en Brevo (`emailBlacklisted`)', 'ya recibió algo hoy'],
@@ -103,7 +103,7 @@ const FLUJOS = {
 
     piezas: [],
     piezasAjenas: [
-      { clave: 'guia', dia: 0, tag: 'republicadores-r1', plataforma: PLATAFORMA.MAKE, detalle: 'escenario 9602489' },
+      { clave: 'guia', horas: 0, tag: 'republicadores-r1', plataforma: PLATAFORMA.MAKE, detalle: 'escenario 9602489' },
     ],
 
     excluye: [],
@@ -130,13 +130,15 @@ const FLUJOS = {
     dia0: 'ocurrido_en — cuándo abandonó',
 
     piezas: [
-      { clave: 'paso1', dia: 0, tag: 'recup-carrito-1', marcador: 'paso_recuperacion=1', plataforma: PLATAFORMA.CODIGO },
-      { clave: 'paso2', dia: 1, tag: 'recup-carrito-2', marcador: 'paso_recuperacion=2', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'paso1', horas: 0, tag: 'recup-carrito-1', marcador: 'paso_recuperacion=1', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'paso2', horas: 24, tag: 'recup-carrito-2', marcador: 'paso_recuperacion=2', plataforma: PLATAFORMA.CODIGO },
     ],
     piezasAjenas: [],
 
     excluye: ['ya compró (pasa a `recuperado`)', 'ya marcado `perdido`', 'menos de 12 h desde el último mensaje'],
     topes: { porCorrida: 80 },
+    gapMinimoHoras: 12,
+    perdidoTrasHoras: 120, // tras el paso 2, ~4 días sin compra → perdido
     condiciones: ['se da por perdido ~5 días después del paso 2 sin compra'],
 
     metrica: 'recuperados / contactados. Hoy: 0 de 30.',
@@ -159,13 +161,15 @@ const FLUJOS = {
     dia0: 'ocurrido_en — cuándo se cayó el pago',
 
     piezas: [
-      { clave: 'paso1', dia: 0, tag: 'recup-rechazo-1', marcador: 'paso_recuperacion=1', plataforma: PLATAFORMA.CODIGO },
-      { clave: 'paso2', dia: 1, tag: 'recup-rechazo-2', marcador: 'paso_recuperacion=2', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'paso1', horas: 0, tag: 'recup-rechazo-1', marcador: 'paso_recuperacion=1', plataforma: PLATAFORMA.CODIGO },
+      { clave: 'paso2', horas: 24, tag: 'recup-rechazo-2', marcador: 'paso_recuperacion=2', plataforma: PLATAFORMA.CODIGO },
     ],
     piezasAjenas: [],
 
     excluye: ['ya compró (pasa a `recuperado`)', 'ya marcado `perdido`', 'menos de 12 h desde el último mensaje'],
     topes: { porCorrida: 80 },
+    gapMinimoHoras: 12,
+    perdidoTrasHoras: 96, // más corto que el carrito: una tarjeta rechazada se enfría antes
     condiciones: ['⚠️ es el grupo MÁS cercano a comprar: escribieron todo y pusieron la tarjeta'],
 
     metrica: 'recuperados / contactados. Hoy: 0.',
@@ -263,14 +267,47 @@ function validarTodos({ silencioso = false } = {}) {
 
 validarTodos({ silencioso: true });
 
-// Las piezas de un flujo en el formato que consume wa-funnel.js. Traducir acá —y no copiar la
-// lista allá— es lo que hace que esta ficha sea la fuente y no un espejo que se desincroniza.
+// ── TRADUCTORES A CADA MOTOR ─────────────────────────────────────────────────
+// La ficha guarda el tiempo en HORAS, una sola unidad para todos los flujos. Antes cada motor
+// tenía la suya —el embudo en días, la recuperación en horas— y eso era la mitad del problema:
+// para tocar algo había que averiguar primero en qué idioma estaba escrito. Cada motor recibe
+// acá lo suyo, ya convertido. Traducir en un solo lugar es lo que hace que la ficha sea la
+// fuente y no un espejo que se desincroniza.
+
+// Para wa-funnel.js (el embudo de guías): piensa en días.
 function piezasParaMotor(clave) {
   const f = FLUJOS[clave];
   if (!f) throw new Error(`flujo desconocido: ${clave}`);
   return f.piezas.map((p) => ({
-    send: p.clave, marcador: p.marcador, tag: p.tag, minDays: p.dia, stage: p.stage ?? null, flag: p.flag,
+    send: p.clave, marcador: p.marcador, tag: p.tag, minDays: p.horas / 24, stage: p.stage ?? null, flag: p.flag,
   }));
 }
 
-module.exports = { FLUJOS, PLATAFORMA, TRIGGER, validarFlujo, validarTodos, piezasParaMotor };
+// Para recuperacion.js: piensa en horas y en "pasos" numerados. El número de paso sale del orden
+// de las piezas (1, 2, …) y se guarda en `paso_recuperacion` — por eso el orden del array importa.
+function secuenciaParaRecuperacion(clave) {
+  const f = FLUJOS[clave];
+  if (!f) throw new Error(`flujo desconocido: ${clave}`);
+  return {
+    perdidoTrasHoras: f.perdidoTrasHoras,
+    pasos: f.piezas.map((p, i) => ({ paso: i + 1, minHoras: p.horas })),
+  };
+}
+
+// El motor de recuperación atiende dos flujos que comparten todo menos el copy y los plazos.
+// Se arma acá el mapa `tipo → secuencia` que ese motor espera, para que no tenga que saber
+// cuáles de los flujos de la ficha le tocan.
+const RECUPERACION_POR_TIPO = {
+  carrito_abandonado: 'recup-carrito',
+  pago_rechazado: 'recup-rechazo',
+};
+function secuenciasDeRecuperacion() {
+  const out = {};
+  for (const [tipo, clave] of Object.entries(RECUPERACION_POR_TIPO)) out[tipo] = secuenciaParaRecuperacion(clave);
+  return out;
+}
+
+module.exports = {
+  FLUJOS, PLATAFORMA, TRIGGER, validarFlujo, validarTodos,
+  piezasParaMotor, secuenciaParaRecuperacion, secuenciasDeRecuperacion, RECUPERACION_POR_TIPO,
+};

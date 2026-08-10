@@ -1,7 +1,10 @@
 // Motor de recuperación de clientes potenciales (carritos abandonados + pagos
-// rechazados). Tarjeta Trello #34. Canal: WhatsApp, con FALLBACK A EMAIL cuando el
-// cliente potencial no dejó teléfono (así ninguno queda sin contactar — p. ej. un
-// abandono de Hotmart que no capturó el número).
+// rechazados). Tarjeta Trello #34. **Canal: EMAIL, y sólo email** (ver más abajo).
+//
+// 📋 Los dos flujos que ejecuta están descritos en `_lib/flujos.js`: `recup-carrito` y
+// `recup-rechazo`. Ahí viven los plazos, los topes y cuándo se da por perdido — este archivo
+// los ejecuta, no los define. Antes tenía su propia lista en horas mientras el embudo de guías
+// tenía otra en días: dos idiomas para el mismo concepto.
 //
 // ARQUITECTURA (decisión base de la #34, revisada 2026-07-02):
 //   · 1er mensaje = INSTANTÁNEO, lo dispara el webhook de Hotmart (api/hotmart.js)
@@ -12,9 +15,10 @@
 //     envío instantáneo del webhook falló o la persona no tenía teléfono cuando entró,
 //     el cron reintenta el paso 1.
 //
-// POR QUÉ WHATSAPP CON PLANTILLA: Meta exige plantilla aprobada para escribirle primero
-// a alguien que no nos escribió (da igual que el texto sea fijo). Las 4 plantillas
-// (recup_abandono_1/2, recup_rechazo_1/2) están en la WABA. El envío usa api/_lib/wa.js.
+// EL COPY de los dos mails vive en api/_lib/recup-email.js, compartido con el webhook de
+// Hotmart que manda el primero al instante. Cada pieza lleva su etiqueta en Brevo
+// (recup-carrito-1/2, recup-rechazo-1/2) — sin etiqueta no se puede saber si llegó, y eso es
+// lo que dejó al Panel de Salud en verde un mes entero.
 //
 // FUENTE: tabla clientes_potenciales (Supabase periodistas-marketing), la llena el
 // webhook de Hotmart. Estado por persona:
@@ -42,6 +46,8 @@
 //      de recuperación), CRON_SECRET, RECUP_ENABLED.
 
 const { LINKS, primerNombre } = require('./_lib/wa');
+// La FICHA de los dos flujos de recuperación: quién entra, los plazos, cuándo se da por perdido.
+const { secuenciasDeRecuperacion, FLUJOS, RECUPERACION_POR_TIPO } = require('./_lib/flujos');
 const { runHotmartSync } = require('./_lib/hotmart-sync');
 const { runMetaGastoTotalPorAnuncio } = require('./_lib/meta-gasto-total-por-anuncio');
 const { runMetaEmbudoDiarioPorAnuncio } = require('./_lib/meta-embudo-diario-por-anuncio');
@@ -60,29 +66,30 @@ const SUPABASE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 const SENDER_EMAIL = 'jose@sistemadeingresosdiariosia.com';
 const REPORTE_A = 'joseanselmi27@gmail.com';
 
-// Espera mínima entre un mensaje y el siguiente (robustez ante corridas seguidas).
-const MIN_GAP_HORAS = 12;
+// Espera mínima entre un mensaje y el siguiente (robustez ante corridas seguidas). Sale de la
+// ficha, no de acá: tenerlo escrito en los dos lados es la duplicación que este cambio saca.
+// `proximoPaso` es una sola función para los dos flujos, así que se exige que coincidan — si
+// algún día uno necesita otro gap, esto revienta y obliga a hacer la función por flujo en vez
+// de que uno de los dos empiece a usar en silencio el número del otro.
+const MIN_GAP_HORAS = (() => {
+  const gaps = Object.values(RECUPERACION_POR_TIPO).map((c) => FLUJOS[c].gapMinimoHoras);
+  if (new Set(gaps).size !== 1) {
+    throw new Error(`[recuperacion] los flujos tienen gaps distintos (${gaps.join(' vs ')}): proximoPaso() los comparte y hay que separarla antes.`);
+  }
+  return gaps[0];
+})();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECUENCIAS por tipo. paso 1: minHoras 0 → el cron lo manda solo como fallback
 // (normalmente ya lo mandó el webhook al instante). paso 2: al día siguiente.
 // ─────────────────────────────────────────────────────────────────────────────
-const SECUENCIAS = {
-  carrito_abandonado: {
-    perdidoTrasHoras: 24 + 96, // tras el paso 2, ~4 días sin compra → perdido
-    pasos: [
-      { paso: 1, minHoras: 0 },
-      { paso: 2, minHoras: 24 },
-    ],
-  },
-  pago_rechazado: {
-    perdidoTrasHoras: 24 + 72,
-    pasos: [
-      { paso: 1, minHoras: 0 },
-      { paso: 2, minHoras: 24 },
-    ],
-  },
-};
+// ⚠️ YA NO SE DECLARAN ACÁ: salen de la FICHA de cada flujo (`_lib/flujos.js`), igual que las
+// del embudo de guías. Hasta el 10/08/2026 este archivo tenía su propia lista, en horas y
+// marcando en Supabase, mientras wa-funnel.js tenía otra, en días y marcando en atributos de
+// Brevo — dos idiomas para el mismo concepto. Para tocar cualquiera de los dos había que
+// averiguar primero en cuál estaba escrito, y un tercer flujo iba a inventar un tercero.
+// La ficha guarda todo en HORAS y traduce a lo que cada motor espera.
+const SECUENCIAS = secuenciasDeRecuperacion();
 
 function proximoPaso(seq, pasoEnviado, horasOld, horasDesdeUltimo) {
   for (const p of seq.pasos) {
