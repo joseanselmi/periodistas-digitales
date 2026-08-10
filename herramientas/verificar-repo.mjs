@@ -513,7 +513,7 @@ function chequearFichasDeFlujo() {
       // daría falsos positivos.
       const alias = [e.name, e.name.replace(/-periodistas$/, '').replace(/^guia-/, 'guias-')];
       if (!alias.some((a) => inventario.includes(a))) {
-        rotas.push({ rel: FICHAS, ref: `falta la ficha del flujo de "${e.name}"`, tipo: 'campaña de captación sin ficha' });
+        rotas.push({ rel: FICHAS, ref: `falta la ficha del flujo de "${e.name}"`, tipo: 'campaña que capta emails y no tiene flujo registrado' });
       }
     }
   }
@@ -539,7 +539,7 @@ const pasos = [
   ['Pipelines de .claude/ (contexto vivo)', chequearPipelines],
   ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
   ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
-  ["Flujos de mails: ficha por campaña de captación + motores vivos", chequearFichasDeFlujo],
+  ["Flujos de mails: cada uno con su ficha y su motor vivo", chequearFichasDeFlujo],
 ];
 
 let totalRotas = 0;

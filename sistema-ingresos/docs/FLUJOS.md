@@ -28,8 +28,9 @@ que nadie las busque acá y crea que falta algo.
 
 ## Cómo se lee una ficha
 
-Todo flujo, sea una campaña de captación o la recuperación de un carrito, contesta las **mismas
-cinco preguntas**. Si una campaña nueva no las puede contestar, no está lista para funcionar:
+Todo flujo —el de una campaña de captación, el de una recuperación de carrito, el de un
+post-compra— contesta las **mismas seis preguntas**. Si un flujo nuevo no las puede contestar,
+no está listo para funcionar:
 
 | Pregunta | Qué significa |
 |---|---|
@@ -43,7 +44,7 @@ cinco preguntas**. Si una campaña nueva no las puede contestar, no está lista 
 "a quién le toca" y su propio conteo. Son dos motores haciendo lo mismo (`wa-funnel.js` y
 `recuperacion.js`) y un tercero pendiente para el post-compra. Cuando las cinco respuestas están
 escritas igual para todos, se puede pasar a **un solo motor que lea estas fichas** — y una
-campaña nueva pasa a ser escribir sus mails y su ficha, sin tocar el motor.
+flujo nuevo pasa a ser escribir sus mails y su ficha, sin tocar el motor.
 
 > ⚠️ **No confundir con `funnels` / `funnel_steps` de Supabase.** Esas tablas son el mapa
 > **dibujado a mano** que alimenta el panel de Campañas, y describen la intención. Ejemplo real:
@@ -89,7 +90,7 @@ para el detalle de cómo decide qué mandarle a quién.
 
 **Lo que este flujo tiene y los otros no:** candado contra corridas simultáneas, reserva del
 marcador antes de enviar, link de baja en las 6 piezas propias, alarma de volumen y tope diario.
-Todo eso vive en el motor, no en la campaña — por eso conviene que los demás flujos pasen por él.
+Todo eso vive en el motor, no en el flujo — por eso conviene que los demás flujos pasen por él.
 
 ---
 
@@ -194,8 +195,8 @@ No tienen ficha porque no mandan mails. Se listan sólo para que nadie las busqu
 
 **Chequeado automáticamente** por `node herramientas/verificar-repo.mjs`:
 
-- toda carpeta de `sistema-ingresos/campanas/` (las campañas de captación, que sí tienen
-  secuencia de mails) aparece en este archivo;
+- toda campaña que CAPTURA emails (las de `sistema-ingresos/campanas/`) tiene su flujo
+  registrado en este archivo — si pide un email, algo tiene que pasar después;
 - todo motor que se nombra acá existe de verdad en el disco.
 
 No es burocracia: así aparecieron los dos huecos de arriba —republicadores sin secuencia y el
