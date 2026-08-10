@@ -1571,7 +1571,18 @@ export default async function handler(req, res) {
       .sort((a, b) => ordenPieza(b) - ordenPieza(a))
       .slice(0, Math.max(0, CAP_PIEZAS_DIA - yaTocadosHoy));
     const reenvioQueue = plan.filter((p) => p.send === 'ofertareenvio').slice(0, Math.max(0, REENVIO_CAP - yaReenviadosHoy));
-    const queue = [...piezasQueue, ...reenvioQueue];
+    // ⚠️ EL RE-ENGANCHE TIENE QUE ESTAR ACÁ. Desde que se encendió (08/08) hasta el 10/08 se
+    // planificaba y no se despachaba NUNCA: 575 personas esperando y cero enviados. La cola
+    // eran sólo las dos de arriba, y una entrada de re-enganche no entra en ninguna — no tiene
+    // `pieza` (así que se cae de piezasQueue) y su `send` es 'reenganche', no 'ofertareenvio'.
+    // El bug era invisible leyendo el bucle: ahí abajo SÍ existe la rama `send === 'reenganche'`,
+    // completa y correcta, sólo que nada llegaba hasta ella. Código muerto con aspecto de vivo.
+    // LECCIÓN: al agregar un tipo de envío nuevo, la rama que lo manda no alcanza — hay que
+    // sumarlo a `queue`, que es la única puerta de salida. Si no aparece acá, no existe.
+    // El tope diario ya está aplicado arriba (cupoReenganche, contado sobre el marcador ya
+    // escrito en Brevo), así que no se vuelve a recortar. Va último, igual que dice prioridad().
+    const reengancheQueue = plan.filter((p) => p.send === 'reenganche');
+    const queue = [...piezasQueue, ...reenvioQueue, ...reengancheQueue];
     for (const p of queue) {
       if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
       if (MAX_MANUAL && attempted >= MAX_MANUAL) break;
