@@ -16,6 +16,10 @@ curso — eso está en [`../curso/docs/`](../curso/docs/README.md).
 
 ## Canales
 
+- ⭐ [`FLUJOS.md`](FLUJOS.md) — **el inventario: una ficha por campaña.** Qué mails
+  automáticos existen, a quién le llegan, quién los manda y qué los frena. **Empezar por
+  acá** antes de tocar cualquier envío. Manda sobre las tablas `funnels`/`funnel_steps`
+  de Supabase, que describen la intención y pueden estar desactualizadas.
 - ⛔ [`PLANTILLAS-WHATSAPP.md`](PLANTILLAS-WHATSAPP.md) — **ARCHIVO HISTÓRICO, no está en
   uso.** Desde el 09/08/2026 nada sale por WhatsApp. Se conserva el cuerpo real de las
   plantillas aprobadas por Meta, por si algún día se reconstruye el canal.
