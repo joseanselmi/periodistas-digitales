@@ -38,6 +38,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 
 // Este script vive en herramientas/; el repo que audita es el nivel de arriba.
@@ -524,6 +525,35 @@ function chequearFichasDeFlujo() {
     revisadas++;
     if (!existsSync(join(ROOT, m[1]))) {
       rotas.push({ rel: FICHAS, ref: `nombra el motor ${m[1]}, que no existe`, tipo: 'ficha apunta a un archivo borrado' });
+    }
+  }
+
+  // 3) LAS FICHAS DE CÓDIGO se validan solas. Desde el 10/08/2026 la definición de cada flujo
+  // es un dato en `_lib/flujos.js`, no prosa: acá se corre SU PROPIO validador, así que este
+  // paso deja de chequear texto y pasa a chequear el modelo. Si una ficha está mal escrita
+  // (falta un campo, una pieza sin etiqueta), revienta y se reporta con nombre y apellido.
+  const FLUJOS_JS = 'sistema-ingresos/api/_lib/flujos.js';
+  if (existsSync(join(ROOT, FLUJOS_JS))) {
+    revisadas++;
+    try {
+      const req = createRequire(import.meta.url);
+      const mod = req(join(ROOT, FLUJOS_JS));
+      const problemas = mod.validarTodos({ silencioso: true });
+      revisadas += Object.keys(mod.FLUJOS).length;
+      // Los AVISOS no se reportan como roturas: una ficha que dice "este flujo no tiene motor"
+      // está bien escrita y describe algo roto en la REALIDAD, que no se arregla editando texto.
+      for (const p of problemas.filter((x) => x.nivel === 'error')) {
+        rotas.push({ rel: FLUJOS_JS, ref: `${p.clave}: ${p.texto}`, tipo: 'ficha de flujo mal escrita' });
+      }
+    } catch (e) {
+      // El módulo se valida al cargar, así que una ficha mal escrita hace que el `require`
+      // reviente — y el detalle de QUÉ falta viene en las líneas siguientes del mensaje.
+      // Reportar sólo la primera diría "mal escritas" sin decir cuál campo: un chequeo que no
+      // dice qué arreglar hace perder el mismo tiempo que no tenerlo.
+      const lineas = String(e && e.message || e).split('\n').map((l) => l.trim()).filter(Boolean);
+      for (const l of lineas.slice(1).length ? lineas.slice(1) : lineas) {
+        rotas.push({ rel: FLUJOS_JS, ref: l.replace(/^·\s*/, ''), tipo: 'ficha de flujo mal escrita' });
+      }
     }
   }
   return { revisadas, rotas };
