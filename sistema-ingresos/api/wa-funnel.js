@@ -121,6 +121,9 @@ const tg = require('./_lib/tg');
 const baja = require('./_lib/baja');
 // Candado: una sola corrida enviando a la vez (ver _lib/candado.js).
 const candado = require('./_lib/candado');
+// La FICHA de este flujo: quién entra, qué piezas, qué lo dispara, cómo se mide (_lib/flujos.js).
+// Las piezas salen de ahí, no de una lista escrita en este archivo.
+const { piezasParaMotor } = require('./_lib/flujos');
 
 // PIE LEGAL DE TODAS LAS PIEZAS. El `%%BAJA%%` lo reemplaza `personalizar()` por el link firmado
 // de CADA destinatario, justo antes de enviar — la baja no puede vivir en una constante porque
@@ -959,12 +962,25 @@ async function sendReport(stats, runInfo, snapAyer) {
 // Se completa en orden, UNA pieza por persona por día (WA_SENT_AT hace de "último
 // toque") y respetando el día del embudo que le corresponde — un lead de ayer no
 // recibe hoy el Regalo 3.
-const PIEZAS = [
-  { send: 'regalo3',    marcador: 'MAIL3_AT',       tag: REGALOS_EMAIL[3].tag, minDays: 5, stage: 3,    flag: 'regalos' },
-  { send: 'regalo4',    marcador: 'MAIL4_AT',       tag: REGALOS_EMAIL[4].tag, minDays: 7, stage: 4,    flag: 'regalos' },
-  { send: 'mail5',      marcador: 'MAIL5_AT',       tag: MAIL5_TAG,            minDays: 8, stage: null, flag: 'mail5'   },
-  { send: 'mailoferta', marcador: 'OFERTA_MAIL_AT', tag: MAILOFERTA_TAG,       minDays: 9, stage: 5,    flag: 'oferta'  },
-];
+// ⚠️ LAS PIEZAS YA NO SE DECLARAN ACÁ: salen de la FICHA del flujo, en `_lib/flujos.js`.
+// Antes esta lista era la única definición, y la recuperación tenía otra lista con otra forma
+// (en horas, marcando en Supabase) para el mismo concepto. Dos idiomas para lo mismo es lo que
+// hacía caro probar cualquier cosa. Ahora la ficha es la fuente y esto la consume.
+// El orden del array es el orden de prioridad de la cola — lo define la ficha.
+const PIEZAS = piezasParaMotor('guias-claude');
+
+// Las etiquetas y los textos de los mails viven en dos lugares distintos por razones distintas:
+// la ficha las declara (para poder medir), y las constantes de este archivo las usan al armar el
+// mail. Si algún día se cambia una y no la otra, los envíos saldrían con una etiqueta y el panel
+// buscaría otra — y "no entregó" sería mentira. Esto lo hace imposible: revienta al arrancar.
+{
+  const esperado = { regalo3: REGALOS_EMAIL[3].tag, regalo4: REGALOS_EMAIL[4].tag, mail5: MAIL5_TAG, mailoferta: MAILOFERTA_TAG };
+  for (const p of PIEZAS) {
+    if (esperado[p.send] !== p.tag) {
+      throw new Error(`[wa-funnel] la etiqueta de "${p.send}" no coincide: la ficha dice "${p.tag}" y este archivo usa "${esperado[p.send]}". Alinear _lib/flujos.js con las constantes de acá.`);
+    }
+  }
+}
 
 // SEGUNDA PRUEBA DE QUE ALGO YA SALIÓ: el registro de envíos por persona.
 // El marcador de Brevo se escribe DESPUÉS del envío, en otra llamada. Si esa llamada falla
