@@ -114,6 +114,25 @@ if (sinPushear.length) {
   console.log(`\n📌 ${sinPushear.length} commit(s) sin pushear a GitHub (el deploy sí los incluye).`)
 }
 
+// ── EL PORTERO ───────────────────────────────────────────────────────────────
+// Antes el verificador existía pero sólo corría si alguien se acordaba de correrlo, así que
+// "es imprescindible" era un acuerdo, no una regla. Ahora es la puerta: si el repo tiene una
+// ruta rota o una FICHA DE FLUJO mal escrita, no se publica. Una ficha incompleta no es un
+// detalle de prolijidad — es un flujo del que no se sabe quién lo dispara, qué manda ni cómo
+// se mide, y esta semana dos de esos estuvieron rotos semanas sin que nadie lo viera.
+//
+// Sólo para el repo principal: ahí vive el verificador. Leadr tiene su propio proyecto.
+// Se puede saltear con --sin-chequeo para una urgencia, pero hay que escribirlo a propósito.
+if (nombre === 'sistema-ingresos' && !process.argv.includes('--sin-chequeo')) {
+  console.log(`\n🔎 Chequeando el repo antes de publicar…`)
+  const chk = spawnSync(process.execPath, [join(RAIZ, 'herramientas', 'verificar-repo.mjs')], { cwd: RAIZ, stdio: 'inherit' })
+  if (chk.status !== 0) {
+    console.error(`\n❌ El repo tiene algo roto (mirá arriba). NO se publica.`)
+    console.error(`   Arreglalo, o corré con --sin-chequeo si de verdad hace falta salir así.\n`)
+    process.exit(1)
+  }
+}
+
 const tmp = mkdtempSync(join(tmpdir(), `deploy-${nombre}-`))
 let salida = 1
 
