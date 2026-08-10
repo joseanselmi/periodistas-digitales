@@ -141,12 +141,36 @@ mirar qué ve hoy un comprador, para no sumar un cuarto mail a algo que quizá s
 
 ---
 
-## 5. `meta-ads-directo` — sin mails
+## 5. `venta-curso` / `meta-ads-directo` — sin mails
 
 No es un flujo de email: anuncio → landing → checkout → gracias. Se documenta acá para que quede
 claro que **no tiene piezas** y no hay nada que buscar.
 
+| | |
+|---|---|
+| **¿Quiénes?** | Quien hace clic en el anuncio y cae en la landing. No se captura el email antes de comprar. |
+| **¿Qué piezas?** | **Ninguna.** Lo que recibe un comprador después está en la ficha 4 (`post-compra`), que no existe. |
+| **Carpeta** | `ads-agent/campanas/venta-curso/` · anuncio `ad1-fomo` |
+
 Vale anotarlo por una razón: **26 de las 27 ventas vinieron por acá**, sin pasar por ninguna guía.
+
+---
+
+## 6. `interaccion` — gasto de marca, a propósito
+
+⛔ **Esta campaña no vende y no tiene que vender. No proponer apagarla.**
+
+| | |
+|---|---|
+| **¿Quiénes?** | Público general de Meta, objetivo interacción. |
+| **¿Qué piezas?** | **Ninguna.** No captura emails ni manda nada. |
+| **¿Tope?** | ~$2,50/día. Lleva **$212,94** gastados desde el 15/11/2025. Está **ACTIVA**. |
+| **Carpeta** | `ads-agent/campanas/interaccion/` |
+
+**Por qué está en este inventario aunque no mande mails.** Porque en los números crudos de Meta
+una campaña de marca es **indistinguible de una fuga**: aparece con gasto y cero ventas. Ya se
+propuso apagarla en cuatro sesiones distintas, y es gasto querido. Queda escrita acá para que la
+próxima vez que alguien vea "$212 sin ventas" encuentre el motivo antes de proponer nada.
 
 ---
 
@@ -159,4 +183,20 @@ Vale anotarlo por una razón: **26 de las 27 ventas vinieron por acá**, sin pas
 | `recuperacion-carrito` | ~9 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `recuperacion-rechazo` | ~21 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `post-compra` | — | **0** | — | 🔴 no existe |
-| `meta-ads-directo` | — | 0 | — | sin mails · 26 de 27 ventas |
+| `venta-curso` / `meta-ads-directo` | — | 0 | — | sin mails · 26 de 27 ventas |
+| `interaccion` | — | 0 | — | ⛔ gasto de marca a propósito · no apagar |
+
+---
+
+## Cómo se agrega una campaña nueva
+
+1. Copiar el molde: `ads-agent/campanas/TEMPLATE/brief.md` → `campanas/<nombre>/brief.md`.
+2. Completar la **ficha de flujo** que está en ese molde (las cinco preguntas).
+3. **Registrarla acá**, con su propia sección y una línea en la tabla de arriba.
+
+El paso 3 está **chequeado automáticamente**: `node herramientas/verificar-repo.mjs` falla si
+existe una carpeta de campaña que no aparece en este archivo. No es burocracia — así aparecieron
+los dos huecos de arriba (republicadores sin secuencia y el post-compra inexistente), que llevaban
+semanas sin que nadie los viera.
+
+El chequeo verifica que la ficha **exista**, no que esté bien: eso lo lee una persona.

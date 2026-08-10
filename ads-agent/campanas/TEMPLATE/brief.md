@@ -18,6 +18,32 @@ el nombre de la carpeta sale de la convención del [README de `campanas/`](../RE
 
 ---
 
+## FICHA DEL FLUJO — qué mails recibe esta gente
+
+**Obligatoria, aunque la campaña no mande ni un mail** (si no manda, se escribe "ninguna" y por
+qué). Es el estándar desde el 2026-08-10 y hay que **registrarla también en
+[`sistema-ingresos/docs/FLUJOS.md`](../../../sistema-ingresos/docs/FLUJOS.md)**, que es el
+inventario único de todos los flujos. `node herramientas/verificar-repo.mjs` falla si una campaña
+no aparece ahí.
+
+| Pregunta | Respuesta |
+|---|---|
+| **¿Quiénes?** | De dónde salen las personas (lista de Brevo #?, tabla, formulario) y cuántas |
+| **¿Día 0?** | Desde qué momento se cuentan los días |
+| **¿Qué piezas y cuándo?** | La secuencia: día 0 → …. Poner quién manda cada una (Make / Brevo / código) |
+| **¿Quién NO?** | A quién saltear: ya compró · se dio de baja · ya recibió algo hoy |
+| **¿Tope y condiciones?** | Cuántos por día, y si algo retiene un envío (ej. no ofertar a quien nunca abrió) |
+| **¿Qué motor la ejecuta?** | El archivo concreto. **Si la respuesta es "ninguno", la campaña captura y se detiene** |
+
+> **Por qué esta ficha existe.** El 10/08/2026 se escribió el inventario y aparecieron dos huecos
+> que llevaban semanas: `republicadores` capturaba leads y no les mandaba nada después de la guía
+> —196 personas, con el anuncio activo y gastando— y el post-compra no existía. No se veían
+> mirando el código: cada pieza por separado funcionaba y devolvía 200. **Lo que faltaba era el
+> paso siguiente, que no estaba en ningún lado y por eso no fallaba.** La última fila es la que
+> más atrapa: una campaña sin motor entrega su regalo y ahí termina.
+
+---
+
 ## LA HIPÓTESIS DE ESTE TEST
 
 **Hipótesis:** ___________________________________________

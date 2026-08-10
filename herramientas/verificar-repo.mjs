@@ -23,6 +23,13 @@
  *    WhatsApp y los emails. Atrapa: agregar una guía en guias/ y olvidarse el
  *    rewrite que mantiene viva su URL de la raíz (esos links ya salieron por
  *    mail y WhatsApp — no se pueden cambiar).
+ *
+ * Después se fueron sumando, cada uno por una rotura real: el contrato con Vercel
+ * (api/ y crons), los pipelines de .claude/, la coherencia del equipo de agentes,
+ * que toda carpeta con contenido tenga README, y —desde el 2026-08-10— que toda
+ * campaña tenga su FICHA DE FLUJO registrada en sistema-ingresos/docs/FLUJOS.md.
+ * La lista viva de los pasos es el array `pasos` del final; ahí manda el código,
+ * no este comentario.
  */
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
@@ -459,6 +466,54 @@ function chequearCarpetasDocumentadas() {
   return { revisadas: carpetas.size, rotas };
 }
 
+// ── 8) Toda campaña con su ficha de flujo ────────────────────────────────────
+//
+// POR QUÉ. El 10/08/2026, al escribir el inventario de flujos, aparecieron dos huecos que
+// nadie había visto: `republicadores` captura leads y no les manda nada después de la guía
+// (196 personas, con el anuncio activo y gastando), y el post-compra no existe. Los dos
+// llevaban semanas así. No se ven mirando el código: cada flujo por separado parece completo
+// —el de republicadores entrega su guía y devuelve 200—, y lo que falta es el paso siguiente,
+// que no está en ningún lado y por eso no falla.
+//
+// La ficha los hace visibles porque obliga a contestar "¿qué piezas y cuándo?" para cada
+// campaña. Este chequeo existe para que una campaña nueva no pueda nacer sin esa respuesta:
+// si no está registrada en FLUJOS.md, salta acá.
+//
+// No valida el contenido de la ficha (eso lo lee una persona) — sólo que la campaña exista
+// en el inventario. Es el mínimo que se puede verificar sin adivinar.
+const FICHAS = 'sistema-ingresos/docs/FLUJOS.md';
+function chequearFichasDeCampana() {
+  const rotas = [];
+  const dirsCampanas = ['ads-agent/campanas', 'sistema-ingresos/campanas'];
+  const ignorar = new Set(['TEMPLATE', 'historico']);
+
+  if (!existsSync(join(ROOT, FICHAS))) {
+    return { revisadas: 0, rotas: [{ rel: FICHAS, ref: 'el inventario de flujos', tipo: 'no existe' }] };
+  }
+  const inventario = readFileSync(join(ROOT, FICHAS), 'utf8');
+
+  const campanas = new Set();
+  for (const base of dirsCampanas) {
+    const abs = join(ROOT, base);
+    if (!existsSync(abs)) continue;
+    for (const nombre of readdirSync(abs, { withFileTypes: true })) {
+      if (!nombre.isDirectory() || ignorar.has(nombre.name)) continue;
+      campanas.add(nombre.name);
+    }
+  }
+
+  for (const c of campanas) {
+    // Se busca el nombre de la carpeta en el inventario. Alcanza con que esté mencionado:
+    // los nombres no coinciden entre capas (la carpeta `guia-claude-periodistas` es el flujo
+    // `guias-claude`), así que exigir igualdad daría falsos positivos.
+    const alias = [c, c.replace(/-periodistas$/, '').replace(/^guia-/, 'guias-')];
+    if (!alias.some((a) => inventario.includes(a))) {
+      rotas.push({ rel: FICHAS, ref: `falta la ficha de la campaña "${c}"`, tipo: 'campaña sin ficha de flujo' });
+    }
+  }
+  return { revisadas: campanas.size, rotas };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const pasos = [
@@ -469,6 +524,7 @@ const pasos = [
   ['Pipelines de .claude/ (contexto vivo)', chequearPipelines],
   ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
   ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
+  ['Toda campaña con su ficha de flujo', chequearFichasDeCampana],
 ];
 
 let totalRotas = 0;

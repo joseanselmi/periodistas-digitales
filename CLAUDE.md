@@ -48,6 +48,28 @@ que en el historial de git.
     existiera `/api/d`. **Es una excepción histórica, no el modelo a copiar.**
   - Guía nueva = su `/api/d`, y nada más.
 
+## 📋 Toda campaña lleva su FICHA DE FLUJO (estándar desde el 10/08/2026)
+
+El inventario único de qué mails automáticos existen es
+[`sistema-ingresos/docs/FLUJOS.md`](sistema-ingresos/docs/FLUJOS.md). **Antes de tocar
+cualquier envío, leerlo.** Manda sobre las tablas `funnels`/`funnel_steps` de Supabase, que
+son el mapa dibujado a mano del panel y describen la intención, no lo que pasa.
+
+Cada campaña —y cada flujo, aunque no sea una campaña— contesta las **mismas cinco preguntas**:
+¿quiénes? · ¿día 0? · ¿qué piezas y cuándo? · ¿quién NO? · ¿tope y condiciones?, más **¿qué
+motor la ejecuta?**. El molde está en `ads-agent/campanas/TEMPLATE/brief.md`.
+
+**Campaña nueva = copiar el molde + completar la ficha + registrarla en FLUJOS.md.** El último
+paso está chequeado: `node herramientas/verificar-repo.mjs` falla si hay una carpeta de campaña
+que no aparece en el inventario.
+
+**Por qué.** Escribir el inventario destapó dos huecos de semanas: `republicadores` capturaba
+leads y no les mandaba nada después de la guía (196 personas, con el anuncio activo y gastando),
+y el post-compra no existía. Ninguno se veía leyendo el código — cada pieza funcionaba y
+devolvía 200. Lo que faltaba era el paso siguiente, que no estaba en ningún lado y por eso no
+fallaba. **La pregunta que más atrapa es la del motor: si no hay motor, la campaña entrega su
+regalo y ahí termina.**
+
 ## 🚀 Deploy — SIEMPRE con `herramientas/deploy.mjs`, nunca `vercel --prod` a mano
 
 ```bash
@@ -74,7 +96,7 @@ igual sin eso, y verifica el dominio real (no el alias que imprime el CLI).
 node herramientas/verificar-repo.mjs
 ```
 
-Chequea las **seis** cosas que se rompen en silencio:
+Chequea las **ocho** cosas que se rompen en silencio:
 
 1. los links y rutas escritos en docs y código;
 2. los anclajes de ruta de `ads-agent/scripts/` — un script puede correr sin
@@ -82,7 +104,10 @@ Chequea las **seis** cosas que se rompen en silencio:
 3. que toda URL pública en uso siga resolviendo contra `vercel.json`;
 4. que los crons declarados existan como función;
 5. que los pipelines de `.claude/` apunten a scripts que existen;
-6. que el equipo de agentes sea coherente entre cerebro, state y comandos.
+6. que el equipo de agentes sea coherente entre cerebro, state y comandos;
+7. que toda carpeta con contenido tenga su README;
+8. que toda campaña tenga su ficha registrada en `sistema-ingresos/docs/FLUJOS.md`
+   (ver la sección de la ficha de flujo más arriba).
 
 No ejecuta ningún script — varios publican anuncios o mandan mails.
 
