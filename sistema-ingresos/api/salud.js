@@ -45,6 +45,12 @@ function horas(iso) {
 }
 
 const PEOR = { ok: 0, alerta: 1, critico: 2 };
+
+// Las etiquetas de los mails de recuperación, para poder cruzar "contactado" contra la entrega
+// real. Se importan de donde se generan (`_lib/recup-email.js`) en vez de repetirlas acá: una
+// lista copiada se desincroniza el día que se agrega un paso, y el cruce empezaría a decir
+// "sin entrega" sobre mails que sí llegaron.
+const { TODAS_LAS_TAGS: TAGS_RECUP } = require('./_lib/recup-email');
 function peor(a, b) { return PEOR[b] > PEOR[a] ? b : a; }
 
 // Foto de stats de email de Brevo → Supabase (tabla brevo_stats). El Panel de Comando corre en un
@@ -170,19 +176,65 @@ async function saludFunnel() {
 // ─────────────────────────────────────────────────────────────────────────────
 // FLUJO 2 — Recuperación de carritos/rechazos. Objetivo: recontactar y recuperar ventas.
 // ─────────────────────────────────────────────────────────────────────────────
+// ⚠️ "CONTACTADO" NO SIGNIFICA QUE LLEGÓ. Sólo significa que el sistema lo INTENTÓ y guardó la
+// fila. Este panel mira ese estado desde que existe, y por eso estuvo en VERDE un mes entero
+// mientras WhatsApp no entregaba nada: la tabla decía "contactado" 30 veces y no había ni un
+// mensaje recibido. El estado de una fila propia nunca es prueba de entrega — la prueba la tiene
+// el proveedor. Así que desde el 10/08/2026 esto cruza contra `comunicaciones_email`, que la
+// llena el sync de eventos de Brevo con el `entregado_en` real de cada destinatario.
+//
+// El caso que dispara ROJO es "contactado sin entrega": la fila dice que se le escribió y Brevo
+// no tiene una entrega para esa persona. Es el fallo silencioso de este flujo.
 async function saludRecuperacion() {
   const met = {}; const puntos = []; let nivel = 'ok';
-  const rows = await sb('clientes_potenciales?select=estado_recuperacion,tipo');
-  if (rows == null) { return { flujo: '🛒 Recuperación de carritos', que_mira: 'Recontactar a quien no completó la compra.', nivel: 'alerta', puntos: ['No se pudo leer la base de recuperación.'], met }; }
+  const flujo = '🛒 Recuperación de carritos';
+  const que_mira = 'Recontactar a quien no completó la compra — y que el mensaje LLEGUE.';
+  const rows = await sb('clientes_potenciales?select=email,estado_recuperacion,tipo,ultimo_contacto_en');
+  if (rows == null) { return { flujo, que_mira, nivel: 'alerta', puntos: ['No se pudo leer la base de recuperación.'], met }; }
   const est = {}; const tipo = {};
   for (const r of rows) { est[r.estado_recuperacion] = (est[r.estado_recuperacion] || 0) + 1; tipo[r.tipo] = (tipo[r.tipo] || 0) + 1; }
   Object.assign(met, { pendientes: est.pendiente || 0, contactados: est.contactado || 0, recuperados: est.recuperado || 0, perdidos: est.perdido || 0, total: rows.length });
-  if ((est.pendiente || 0) > 0) {
+
+  // Entregas reales según Brevo, por destinatario. Se piden sólo las de este flujo (por etiqueta)
+  // y se exige `entregado_en` no nulo: "enviado" tampoco es "entregado".
+  const tags = TAGS_RECUP.join(',');
+  const entregas = await sb(`comunicaciones_email?select=email,entregado_en&campana=in.(${tags})&entregado_en=not.is.null`);
+  const conEntrega = new Set((entregas || []).map((e) => String(e.email || '').toLowerCase().trim()));
+
+  // ⚠️ SÓLO SE JUZGA LO QUE SE PUEDE JUZGAR. Las etiquetas se agregaron el 2026-08-10; los mails
+  // anteriores salieron sin etiqueta, así que de ellos no se puede saber si entregaron. Sin este
+  // corte, los 30 contactados históricos aparecerían "sin entrega" y el panel quedaría en ROJO
+  // permanente desde el primer día — y un chequeo que grita en vano se empieza a ignorar, que es
+  // peor que no tenerlo. De los viejos no se opina: se dicen cuántos son y que no son medibles.
+  const DESDE_TAGS = '2026-08-10';
+  const escritos = rows.filter((r) => r.ultimo_contacto_en && ['contactado', 'recuperado', 'perdido'].includes(r.estado_recuperacion));
+  const medibles = escritos.filter((r) => String(r.ultimo_contacto_en).slice(0, 10) >= DESDE_TAGS);
+  const sinEntrega = medibles.filter((r) => !conEntrega.has(String(r.email || '').toLowerCase().trim()));
+  met.contactados_medibles = medibles.length;
+  met.sin_entrega = sinEntrega.length;
+  met.contactados_sin_medir = escritos.length - medibles.length;
+
+  if (entregas == null) {
     nivel = 'alerta';
+    puntos.push('No se pudo consultar la entrega real en Brevo, así que este flujo va sin verificar: lo de abajo dice qué se INTENTÓ, no qué llegó.');
+  } else if (!medibles.length) {
+    puntos.push(`Todavía no salió ningún mensaje etiquetado (las etiquetas son del ${DESDE_TAGS}), así que no hay entrega que verificar. Los ${escritos.length} contactados anteriores no se pueden medir: salieron sin etiqueta.`);
+  } else if (sinEntrega.length) {
+    nivel = 'critico';
+    puntos.push(`🔴 ${sinEntrega.length} de ${medibles.length} figuran contactados y Brevo NO tiene una entrega para ellos. "Contactado" sólo significa que el sistema lo intentó — esto es el fallo silencioso de este flujo, el que lo dejó en verde un mes mientras no llegaba nada.`);
+  } else {
+    puntos.push(`✅ Los ${medibles.length} contactados desde el ${DESDE_TAGS} tienen entrega confirmada en Brevo.`);
+  }
+  if (met.contactados_sin_medir > 0 && medibles.length) {
+    puntos.push(`(${met.contactados_sin_medir} contactados más son anteriores a las etiquetas y quedan fuera del cruce.)`);
+  }
+
+  if ((est.pendiente || 0) > 0) {
+    if (nivel === 'ok') nivel = 'alerta';
     puntos.push(`Hay ${est.pendiente} sin contactar todavía — deberían recibir el 1er mensaje en la próxima corrida. Si no baja, algo frena el envío.`);
   }
   puntos.push(`En seguimiento: ${(est.contactado || 0)} · recuperados (compraron): ${(est.recuperado || 0)} · perdidos: ${(est.perdido || 0)}.`);
-  return { flujo: '🛒 Recuperación de carritos', que_mira: 'Recontactar a quien no completó la compra.', nivel, puntos, met };
+  return { flujo, que_mira, nivel, puntos, met };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

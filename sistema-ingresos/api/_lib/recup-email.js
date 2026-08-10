@@ -51,6 +51,16 @@ function html({ nombre, titulo, cuerpo, cta, link }) {
 </div>`;
 }
 
+// Etiqueta de cada pieza, para poder medirla en Brevo por separado. Se exporta porque el Panel
+// de Salud las necesita para cruzar "contactado" contra la entrega real (ver api/salud.js).
+// Formato igual al del resto del embudo: `recup-<tipo>-<paso>`.
+const TAGS = {
+  carrito_abandonado: { 1: 'recup-carrito-1', 2: 'recup-carrito-2' },
+  pago_rechazado: { 1: 'recup-rechazo-1', 2: 'recup-rechazo-2' },
+};
+const tagDe = (tipo, paso) => (TAGS[tipo] && TAGS[tipo][paso]) || `recup-${tipo}-${paso}`;
+const TODAS_LAS_TAGS = Object.values(TAGS).flatMap((t) => Object.values(t));
+
 // Registra el envío en `mensajes` (canal=email, costo 0) para el historial y el P&L.
 // Best-effort: el log no puede frenar una recuperación.
 async function registrar(tipo, paso, ok) {
@@ -86,6 +96,12 @@ async function sendRecupEmail({ to, tipo, paso, nombre }) {
         to: [{ email: to, name: nombre || undefined }],
         subject: c.subject(paso),
         htmlContent: html({ nombre: primerNombre(nombre), titulo: c.titulo, cuerpo: c.cuerpo, cta: c.cta, link }),
+        // La etiqueta es lo que hace MEDIBLE este envío. Sin ella el mail sale igual, pero en
+        // Brevo queda sin identificar: `comunicaciones_email.campana` viene vacío y no hay forma
+        // de preguntar "¿a los contactados les llegó?". Eso es lo que dejó al Panel de Salud en
+        // verde un mes entero mientras WhatsApp no entregaba nada: la tabla decía "contactado"
+        // —que sólo significa que el sistema lo INTENTÓ— y no había con qué contrastarlo.
+        tags: [tagDe(tipo, paso)],
       }),
     });
   } catch (e) {
@@ -95,4 +111,4 @@ async function sendRecupEmail({ to, tipo, paso, nombre }) {
   return { ok: r.ok, status: r.status };
 }
 
-module.exports = { sendRecupEmail, COPY };
+module.exports = { sendRecupEmail, COPY, TAGS, tagDe, TODAS_LAS_TAGS };
