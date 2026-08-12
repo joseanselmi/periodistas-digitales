@@ -1149,7 +1149,104 @@ async function avisarSiVolumenAlto(mailsHoy, hoy) {
   return r && r.ok ? `⚠️ VOLUMEN ALTO (${mailsHoy}) — avisado por Telegram` : `⚠️ volumen alto (${mailsHoy}) — falló el aviso por Telegram`;
 }
 
+// ─── EL LOG DE CORRIDAS (12/08/2026) ─────────────────────────────────────────────────────
+//
+// POR QUÉ. El 11 y el 12/08 el embudo mandó 63 y 77 mails con 237 planificados, y para saber
+// qué había pasado hubo que contar mails uno por uno en Brevo: no existía NINGÚN registro de
+// qué hizo cada corrida. La tabla que ya había (`funnel_reporte_diario`) no sirve para esto y
+// no es cuestión de encenderla: guarda UNA FILA POR DÍA con upsert por fecha —trece corridas
+// dejan una sola fila, la última que escriba— y además sólo la escribe la madre (`mode=cron`),
+// que es justo la que nunca falla. Las 12 encadenadas, que son las que hacen el trabajo y las
+// que se mueren, no escribían nada.
+//
+// CÓMO FUNCIONA. Una fila POR CORRIDA, que no se pisa nunca. Se abre al arrancar y se cierra
+// al terminar. **Una fila que queda abierta para siempre ES el dato**: significa que esa
+// corrida murió sin llegar al final. Es la única forma de ver un timeout de Vercel, que mata
+// la función sin ejecutar ningún `catch` y sin dejar ni un rastro.
+//
+// BEST-EFFORT DE PUNTA A PUNTA: si Supabase no contesta, el embudo manda igual. Un log que
+// puede frenar los envíos es peor que no tener log.
+async function abrirCorrida(fecha, eslabon, modo, cand) {
+  if (!SB_URL || !SB_KEY) return null;
+  try {
+    const r = await sbRest('funnel_corridas', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ fecha, eslabon, modo, estado: 'arranco', candado: cand }),
+    });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return (rows && rows[0] && rows[0].id) || null;
+  } catch (e) { console.error('[wa-funnel] abrir corrida:', e && e.message || e); return null; }
+}
+
+async function cerrarCorrida(id, campos) {
+  if (!id || !SB_URL || !SB_KEY) return;
+  try {
+    await sbRest(`funnel_corridas?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({ cerro_en: new Date().toISOString(), ...campos }),
+    });
+  } catch (e) { console.error('[wa-funnel] cerrar corrida:', e && e.message || e); }
+}
+
+// Cuántos hay de cada tipo de envío. Se usa para las tres columnas del log (planificado,
+// enviado, sin_intentar) — que son la misma pregunta hecha en tres momentos.
+const contarPorTipo = (arr) => arr.reduce((acc, p) => {
+  const k = String((p && (p.send || p.sent || p.channel)) || 'otro');
+  acc[k] = (acc[k] || 0) + 1;
+  return acc;
+}, {});
+
+// El nombre de cada envío EN CASTELLANO. La alarma la lee Jose, no un programador: "reenganche"
+// no le dice nada, «Una pregunta corta» sí.
+const NOMBRE_ENVIO = {
+  regalo3: 'Regalo 3 · el periódico digital',
+  regalo4: 'Regalo 4 · los 5 pilares',
+  mail5: 'Regalo 5 · los agentes de IA',
+  mailoferta: 'la OFERTA',
+  ofertareenvio: 'el reenvío de la oferta',
+  reenganche: 'el re-enganche («Una pregunta corta»)',
+};
+
+// ─── ALARMA DE SUB-ENVÍO (12/08/2026) ────────────────────────────────────────────────────
+//
+// El espejo de `avisarSiVolumenAlto`. Hasta hoy TODA la vigilancia de este archivo miraba para
+// un solo lado: avisaba si salían de MÁS, nunca si salían de MENOS. Está calibrada contra el
+// incidente del 07/08 —1.200 mails repetidos—, que era el error de ayer.
+//
+// El error de hoy es el contrario y salió más caro: piezas que se planifican, no se despachan
+// y devuelven 200. El Regalo 4 no salió en TODO julio. El re-enganche lleva tres días con 150
+// planificados y 0 enviados. Ninguno de los dos disparó nada, porque no había nada que
+// disparar: la única alarma viva se activa a partir de 400 mails y estos fallan por defecto.
+//
+// Sólo avisa en el ÚLTIMO eslabón de la cadena —cuando ya no va a haber otra corrida que
+// despache lo que quedó— y una vez por día, con el mismo candado que usa la de volumen.
+//
+// ⚠️ LO QUE ESTA ALARMA NO CUBRE: si la cadena se muere de golpe (timeout de Vercel), no hay
+// último eslabón y por lo tanto no hay aviso. Ese caso lo tapa el log de corridas: la fila
+// queda abierta. Que el Panel de Salud lo lea es el paso siguiente, todavía sin hacer.
+async function avisarSiFaltoMandar(pendientes, hoy) {
+  const total = Object.values(pendientes).reduce((a, b) => a + b, 0);
+  if (!total) return 'ok — el día cerró sin cola pendiente';
+  const primero = await candado.tomar(`alarma_faltante_${hoy}`, 24 * 3600);
+  if (!primero.ok) return `⚠️ quedaron ${total} sin mandar — ya avisado hoy`;
+  const detalle = Object.entries(pendientes)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => `• ${NOMBRE_ENVIO[k] || k}: ${v}`).join('\n');
+  const texto = `⚠️ EL EMBUDO CERRÓ EL DÍA CON COLA SIN MANDAR\n\n${detalle}\n\nTotal: ${total} mails planificados que NO salieron (${hoy}).\n\nLa cadena de corridas terminó y esto quedó pendiente. Mañana se reintenta solo — pero si el número se repite todos los días, hay algo trabado y no se está vaciando.\n\nQué pasó, corrida por corrida: tabla \`funnel_corridas\` en Supabase.`;
+  if (!tg.CHAT && !tg.GROUP) return `⚠️ quedaron ${total} sin mandar — sin Telegram configurado, no se pudo avisar`;
+  const r = await tg.enviar({ chat_id: tg.CHAT || tg.GROUP, text: texto });
+  return r && r.ok ? `⚠️ QUEDARON ${total} SIN MANDAR — avisado por Telegram` : `⚠️ quedaron ${total} sin mandar — falló el aviso por Telegram`;
+}
+
 export default async function handler(req, res) {
+  // MOMENTO CERO DE LA FUNCIÓN. Vercel la mata a los 60 s cuente lo que cuente, así que los
+  // presupuestos de tiempo se miden desde ACÁ y no desde que empieza el envío: el arranque
+  // —leer ~900 contactos de Brevo, 3.100 eventos de la puerta, 4.500 envíos del registro—
+  // tarda entre 5 y 35 s y era completamente invisible para el presupuesto del bucle.
+  const T_INICIO = Date.now();
   const { searchParams } = new URL(req.url, 'http://localhost');
   const mode = searchParams.get('mode') || 'cron';
   // Nº de eslabón del auto-encadenado (ver más abajo). 0 = corrida inicial (el cron); 1,2… = las
@@ -1168,6 +1265,9 @@ export default async function handler(req, res) {
   const LOCK = 'embudo_envio';
   const LOCK_TTL = 240; // segundos: un eslabón tarda ~40-60 s, así que sobra margen
   let lockToken = '';
+  // Id de la fila del log de ESTA corrida. Fuera del `try` para que el `catch` pueda cerrarla:
+  // una corrida que revienta tiene que quedar registrada como 'error', no como abierta.
+  let corridaId = null;
   const soltarCandado = async () => {
     if (!lockToken) return;
     const t = lockToken;
@@ -1208,6 +1308,10 @@ export default async function handler(req, res) {
       if (!r.ok) {
         // NO se manda nada. Y se dice por qué, que es la mitad del arreglo: el 07/08 las
         // corridas en paralelo devolvían todas un 200 alegre y nadie podía saber cuál sobraba.
+        // Queda en el log: una hija bloqueada es una de las formas conocidas de que la cadena
+        // muera devolviendo 200, y sin fila era indistinguible de una hija que nunca arrancó.
+        const idBloq = await abrirCorrida(todayISO(), chain, mode, `bloqueado: ${r.motivo || 'candado tomado'}`);
+        await cerrarCorrida(idBloq, { estado: 'bloqueado', motivo_corte: r.motivo || 'el candado está tomado por otra corrida' });
         res.status(200).json({
           mode, chain, bloqueado: true, enviados: 0,
           motivo: r.motivo || 'el candado está tomado por otra corrida',
@@ -1217,6 +1321,10 @@ export default async function handler(req, res) {
       }
       lockToken = tokenHeredado || r.token || '';
       candadoInfo = r.sinRed ? `⚠️ SIN CANDADO — ${r.motivo}` : (tokenHeredado ? `renovado (eslabón ${chain})` : 'tomado');
+      // La fila se abre ACÁ: con el candado ya en la mano y ANTES de leer nada de Brevo. Si la
+      // corrida se muere durante el arranque —la hipótesis del 11/08, cuando el arranque tardó
+      // ~32 s y Vercel la mató en el segundo 60— la fila queda abierta, y eso es el diagnóstico.
+      corridaId = await abrirCorrida(todayISO(), chain, mode, candadoInfo);
     }
 
     if (mode === 'setup') {
@@ -1556,6 +1664,20 @@ export default async function handler(req, res) {
     // y MORÍA ANTES de disparar la corrida siguiente. El encadenado sólo funcionaba cuando no
     // hacía falta. Con 30 s sobra margen y la cadena avanza siempre.
     const BUDGET_MS = 30000;
+    // TOPE DURO MEDIDO DESDE EL ARRANQUE DE LA FUNCIÓN (12/08/2026). Vercel corta a los 60 s sin
+    // ejecutar ningún `catch`: la corrida muere muda, no suelta el candado y —lo más caro— NO
+    // llega a la línea que dispara la corrida siguiente, así que se corta la cadena entera.
+    //
+    // Pasó el 11/08: primer mail a las 15:00:47, último a las 15:01:15. El bucle usó sus 30 s
+    // completos y el arranque se había comido los otros ~32. Total: 60 s justos. Salieron 63
+    // mails de 237 y no hubo segunda corrida.
+    //
+    // `BUDGET_MS` no podía verlo venir porque se mide desde que empieza el envío. Esta línea sí:
+    // pase lo que pase, el bucle suelta el turno a los 46 s de haber arrancado la función y deja
+    // 14 s para encadenar, cerrar el log y contestar. Es el arreglo de fondo del comentario de
+    // acá arriba, que bajó el presupuesto de 45 a 30 s por este mismo problema: eso compró
+    // margen sin eliminar la falla, y el margen se volvió a consumir solo.
+    const DEADLINE = T_INICIO + 46000;
     const HARD_MAX = 220;
     // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
     // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
@@ -1598,10 +1720,35 @@ export default async function handler(req, res) {
     // El tope diario ya está aplicado arriba (cupoReenganche, contado sobre el marcador ya
     // escrito en Brevo), así que no se vuelve a recortar. Va último, igual que dice prioridad().
     const reengancheQueue = plan.filter((p) => p.send === 'reenganche');
-    const queue = [...piezasQueue, ...reenvioQueue, ...reengancheQueue];
+
+    // ⚠️ CUPO GARANTIZADO POR TIPO (12/08/2026). Estar en `queue` no alcanza: hay que llegar a
+    // tiempo. El re-enganche entró a la cola el 10/08 y aun así salió 0 el 10, el 11 y el 12 —
+    // 150 planificados cada día— porque va último y el bucle se corta antes de llegar a él.
+    //
+    // El orden por prioridad NO está mal: la oferta tiene que ir primero, está más cerca de la
+    // compra. Lo que está mal es que el último de la fila dependa de que sobre tiempo, porque no
+    // sobra nunca. Es exactamente lo que dejó al Regalo 4 sin salir en todo julio, y lo que la
+    // nota de la cola única de acá arriba creyó haber arreglado.
+    //
+    // Cada tipo entra con CUPO_GARANTIZADO lugares AL FRENTE; el resto sigue por prioridad. A
+    // ~2,5 mails por segundo (medido: 77 mails en 30 s el 12/08), la cabeza completa —3 tipos ×
+    // 15— sale en ~18 s y entra cómoda en cualquier corrida, incluso en una sola.
+    // LECCIÓN, la misma de siempre en este archivo: una pieza que sólo sale si sobra tiempo es
+    // una pieza que no sale.
+    const CUPO_GARANTIZADO = 15;
+    const grupos = [piezasQueue, reenvioQueue, reengancheQueue];
+    const queue = [
+      ...grupos.flatMap((g) => g.slice(0, CUPO_GARANTIZADO)),
+      ...grupos.flatMap((g) => g.slice(CUPO_GARANTIZADO)),
+    ];
+    // Por qué dejó de mandar. Sin esto, "se vació la cola" y "se acabó el tiempo" se ven igual
+    // desde afuera, que es la mitad del problema de los últimos dos meses.
+    let motivoCorte = '';
     for (const p of queue) {
-      if (attempted >= HARD_MAX || Date.now() - t0 > BUDGET_MS) break;
-      if (MAX_MANUAL && attempted >= MAX_MANUAL) break;
+      if (attempted >= HARD_MAX) { motivoCorte = `tope de seguridad (${HARD_MAX} por corrida)`; break; }
+      if (Date.now() - t0 > BUDGET_MS) { motivoCorte = `presupuesto del bucle (${BUDGET_MS / 1000} s)`; break; }
+      if (Date.now() > DEADLINE) { motivoCorte = 'límite de 60 s de Vercel: el arranque se comió el tiempo'; break; }
+      if (MAX_MANUAL && attempted >= MAX_MANUAL) { motivoCorte = `tope manual ?max=${MAX_MANUAL}`; break; }
       attempted++;
       {
         // Reenvío de la oferta: no toca la etapa (el lead ya terminó el recorrido), sólo su marcador.
@@ -1640,6 +1787,21 @@ export default async function handler(req, res) {
         continue;
       }
     }
+    if (!motivoCorte) motivoCorte = 'cola vacía: se despachó todo lo que había';
+
+    // LAS TRES COLUMNAS DEL LOG. Es la misma pregunta en tres momentos: qué había que mandar,
+    // qué salió, y qué quedó. `sin_mandar` se calcula como la resta y no como "lo que sobró en
+    // la cola" a propósito: así incluye tanto lo que el bucle no alcanzó a intentar como lo que
+    // los topes diarios sacaron antes de encolar. Lo que importa es que no salió, no por dónde
+    // se cayó.
+    const planificadoPorTipo = contarPorTipo(plan);
+    const enviadoPorTipo = contarPorTipo(results.filter((x) => x.sent !== undefined));
+    const sinMandarPorTipo = {};
+    for (const [k, v] of Object.entries(planificadoPorTipo)) {
+      const falta = v - (enviadoPorTipo[k] || 0);
+      if (falta > 0) sinMandarPorTipo[k] = falta;
+    }
+
     // En la corrida automática del cron, mandar además el reporte diario por email.
     let report = null;
     // Reporte individual del funnel: APAGADO por default (lo cubre el Panel de Salud unificado).
@@ -1690,7 +1852,13 @@ export default async function handler(req, res) {
     // de volumen ya no lo pone esto sino CAP_PIEZAS_DIA — la cadena se frena sola al agotarlo.
     const MAX_CHAINS = 12;
     const remaining = plan.length - attempted;
-    const encadena = live && remaining > 0 && chain < MAX_CHAINS;
+    // ENCADENA SEGÚN LO QUE QUEDÓ EN LA COLA, no según el plan entero (12/08/2026). `plan`
+    // incluye lo que los topes del día ya descartaron, y eso no lo va a mandar ninguna corrida
+    // siguiente: el tope vuelve a cortarlo igual. Comparando contra `plan.length`, la cadena
+    // disparaba sus 12 eslabones aunque no quedara nada por hacer, y cada uno paga el arranque
+    // completo —Brevo, la puerta, el registro— para no mandar nada.
+    const enCola = Math.max(0, queue.length - attempted);
+    const encadena = live && enCola > 0 && chain < MAX_CHAINS;
     if (encadena) {
       const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
       // El `max` se arrastra a la hija. Sin esto, una corrida de prueba con tope disparaba una
@@ -1717,9 +1885,40 @@ export default async function handler(req, res) {
     try { alarma = await avisarSiVolumenAlto(yaTocadosHoy + enviadosOk, hoy); }
     catch (e) { alarma = `no se pudo evaluar (${e && e.message || e})`; }
 
+    // El aviso por lo que FALTÓ, no por lo que sobró. Sólo en el último eslabón: en los del
+    // medio que quede cola es lo normal y esperado —para eso encadena—, avisar ahí sería ruido
+    // trece veces por día, que es la forma más rápida de que Jose empiece a ignorar los avisos.
+    let alarmaFaltante = null;
+    if (!encadena) {
+      try { alarmaFaltante = await avisarSiFaltoMandar(sinMandarPorTipo, hoy); }
+      catch (e) { alarmaFaltante = `no se pudo evaluar (${e && e.message || e})`; }
+    }
+
+    // Cerrar la fila del log. Va acá, después de encadenar y de las alarmas, para que quede
+    // registrado si disparó la corrida siguiente — el dato que faltaba para saber en qué
+    // eslabón se corta la cadena.
+    await cerrarCorrida(corridaId, {
+      estado: 'termino',
+      arranque_ms: t0 - T_INICIO,
+      bucle_ms: Date.now() - t0,
+      motivo_corte: motivoCorte,
+      planificado: planificadoPorTipo,
+      enviado: enviadoPorTipo,
+      sin_intentar: sinMandarPorTipo,
+      encadena,
+      candado: candadoInfo,
+    });
+
     res.status(200).json({
       mode, chain, live: true, due_total: plan.length, attempted, remaining,
       candado: candadoInfo,
+      // Qué cortó el envío y qué quedó sin salir. Antes esto no existía en ningún lado: una
+      // corrida que despachaba 63 de 237 devolvía exactamente el mismo 200 que una que
+      // despachaba todo.
+      motivo_corte: motivoCorte,
+      arranque_ms: t0 - T_INICIO, bucle_ms: Date.now() - t0,
+      planificado: planificadoPorTipo, enviado: enviadoPorTipo, sin_mandar: sinMandarPorTipo,
+      alarma_faltante: alarmaFaltante,
       puerta_enganche: enganchados ? `operativa — ${enganchados.size} con señal de vida` : `INACTIVA (${enganchePorQue})`,
       mails_del_embudo_hoy: yaTocadosHoy + enviadosOk,
       alarma_volumen: alarma,
@@ -1727,6 +1926,9 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('wa-funnel error', e);
+    // Cerrar la fila ANTES de soltar el candado: si esto quedara abierto, una corrida que
+    // reventó se vería igual que una que murió por timeout, y son dos problemas distintos.
+    try { await cerrarCorrida(corridaId, { estado: 'error', error: String(e && e.message || e) }); } catch (_) { /* best-effort */ }
     try { await soltarCandado(); } catch (_) { /* ya se hizo lo que se podía */ }
     res.status(500).json({ error: String(e && e.message || e) });
   }
