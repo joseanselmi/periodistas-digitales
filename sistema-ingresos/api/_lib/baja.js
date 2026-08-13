@@ -41,12 +41,23 @@ function firmar(email) {
   return createHmac('sha256', s).update(normalizar(email)).digest('hex').slice(0, 20);
 }
 
+// Vale la firma hecha con CUALQUIERA de los dos secretos, y es a propósito (14/08/2026).
+// `BAJA_SECRET` nació el 14/08 para que Make pueda firmar los Regalo 1 sin llevarse una copia de
+// `CRON_SECRET` —que dispara el embudo entero— a otro sistema. Pero los ~2.000 mails que ya
+// salieron esta semana llevan links firmados con el viejo, y un link de baja roto empuja a la
+// persona al único botón que queda: "spam". Así que se aceptan los dos.
+// 🔁 CUÁNDO SACAR EL VIEJO: cuando ya no queden en circulación mails firmados con CRON_SECRET —
+// en la práctica, unos meses después de que BAJA_SECRET esté en producción.
 function firmaValida(email, token) {
-  const esperado = firmar(email);
-  if (!esperado || !token) return false;
-  const a = Buffer.from(String(token));
-  const b = Buffer.from(esperado);
-  return a.length === b.length && timingSafeEqual(a, b);
+  if (!token) return false;
+  const secretos = [process.env.BAJA_SECRET, process.env.CRON_SECRET]
+    .map((s) => String(s || '').trim()).filter(Boolean);
+  return secretos.some((s) => {
+    const esperado = createHmac('sha256', s).update(normalizar(email)).digest('hex').slice(0, 20);
+    const a = Buffer.from(String(token));
+    const b = Buffer.from(esperado);
+    return a.length === b.length && timingSafeEqual(a, b);
+  });
 }
 
 // El link que va en cada mail. Si no hay secreto configurado devuelve cadena vacía y quien llama
@@ -124,6 +135,43 @@ function paginaHtml({ ok, email }) {
 </body></html>`;
 }
 
+// LA RED DE SEGURIDAD (14/08/2026). Si la firma no valida, hasta hoy la persona veía un 400 y
+// listo: quería irse, hizo clic, y el sistema le dijo que no. El siguiente botón que aprieta es
+// "spam", que es lo que este archivo entero existe para evitar.
+//
+// Hace falta ahora porque los Regalo 1 los manda Make, que tiene que calcular la firma por su
+// cuenta: si esa cuenta sale mal, TODOS esos links quedarían muertos y nos enteraríamos por la
+// tasa de quejas. Con esto, un link mal firmado sigue funcionando — sólo pide un paso más.
+//
+// POR QUÉ ESTO NO ANULA LA FIRMA. El riesgo que la firma evita es que alguien cambie el email en
+// la barra del navegador y dé de baja a otro de un clic, sin querer o de pasada. Acá hay que
+// escribir la dirección a mano y confirmar: nadie lo hace sin querer, y quien lo hiciera a
+// propósito ya tenía que conocer el email. Es el mismo trato que usa cualquier "gestionar
+// suscripción". La firma sigue siendo el camino normal; esto es la puerta de atrás, no el hall.
+function paginaConfirmar(email) {
+  return `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darte de baja</title></head>
+<body style="margin:0;padding:0;background:#07070f;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#07070f;min-height:100vh;"><tr>
+    <td align="center" style="padding:60px 20px;">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr><td align="center" style="padding-bottom:32px;"><span style="font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Periodistas del Futuro <span style="color:#22d3ee;">IA</span></span></td></tr>
+        <tr><td style="background:#0f0f1a;border-radius:16px;padding:40px 36px;">
+          <p style="margin:0 0 18px 0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">Confirmá tu baja</p>
+          <p style="margin:0 0 24px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">Escribí tu dirección de correo y no te escribimos nunca más.</p>
+          <form method="POST" action="/api/d">
+            <input type="hidden" name="confirmar" value="1">
+            <input type="email" name="baja" required value="${escapar(email)}" placeholder="tu@correo.com" style="width:100%;box-sizing:border-box;padding:14px 16px;font-size:16px;border-radius:10px;border:1px solid #2a2a3e;background:#07070f;color:#ffffff;margin:0 0 16px 0;">
+            <button type="submit" style="width:100%;padding:15px;font-size:16px;font-weight:700;color:#ffffff;background:linear-gradient(135deg,#6366f1,#22d3ee);border:0;border-radius:10px;cursor:pointer;">Darme de baja</button>
+          </form>
+        </td></tr>
+      </table>
+    </td>
+  </tr></table>
+</body></html>`;
+}
+
 const escapar = (s) => String(s || '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 
-module.exports = { urlBaja, firmar, firmaValida, darDeBaja, paginaHtml, normalizar };
+module.exports = { urlBaja, firmar, firmaValida, darDeBaja, paginaHtml, paginaConfirmar, normalizar };

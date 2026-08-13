@@ -60,6 +60,19 @@ async function logApertura({ file, src, sck, ip, ua }) {
   finally { clearTimeout(t); }
 }
 
+// Lee un cuerpo `application/x-www-form-urlencoded` a mano. Sólo se usa como respaldo cuando el
+// runtime no dejó `req.body` armado. Best-effort: ante cualquier problema devuelve {} y el
+// llamador sigue por el camino de la firma, que es el normal.
+async function leerCuerpo(req) {
+  try {
+    let crudo = '';
+    for await (const trozo of req) crudo += trozo;
+    if (!crudo) return {};
+    if (crudo.trim().startsWith('{')) return JSON.parse(crudo);
+    return Object.fromEntries(new URLSearchParams(crudo));
+  } catch { return {}; }
+}
+
 export default async function handler(req, res) {
   const { searchParams } = new URL(req.url, 'http://localhost');
   const file = searchParams.get('file');
@@ -73,16 +86,31 @@ export default async function handler(req, res) {
   //            interfaz, por la cabecera List-Unsubscribe-Post. Nadie ve nada, sólo el 200.
   // Si el POST no funcionara, Gmail deja de ofrecer su botón y volvemos a que la única salida
   // sea "Denunciar como spam" — que es justo lo que esto viene a evitar.
-  const email = searchParams.get('baja');
+  // El formulario de la red de seguridad manda el email en el CUERPO, no en la URL.
+  // Vercel suele dejar `req.body` ya parseado, pero no siempre según el content-type — y si no
+  // llegara, el formulario fallaría en silencio y la persona volvería a quedarse sin salida.
+  // Así que se lee el crudo como respaldo. No toca el camino del one-click, que no mira el cuerpo.
+  const cuerpo = req.method === 'POST' ? (req.body || await leerCuerpo(req)) : {};
+  const confirmado = String(cuerpo.confirmar || '') === '1';
+  const email = searchParams.get('baja') || (confirmado ? cuerpo.baja : '');
   if (email) {
-    const unClic = req.method === 'POST';
-    if (!baja.firmaValida(email, searchParams.get('t'))) {
-      // Firma mala = alguien armó el link a mano para dar de baja a otro. No se procesa.
+    // one-click = el botón de baja del propio Gmail/Outlook (cabecera List-Unsubscribe-Post).
+    // El envío del formulario también es POST, así que hay que distinguirlos: `confirmar=1`.
+    const unClic = req.method === 'POST' && !confirmado;
+    if (!confirmado && !baja.firmaValida(email, searchParams.get('t'))) {
       console.log(JSON.stringify({ type: 'baja_firma_invalida', ts: new Date().toISOString() }));
-      res.status(400).send(baja.paginaHtml({ ok: false, email }));
+      // ⚠️ NO se procesa la baja, pero TAMPOCO se deja a la persona sin salida (14/08/2026).
+      //   - one-click: 400 y punto. Nadie está mirando una pantalla y una firma mala en un POST
+      //     automático es un robot, no alguien que se quiere ir.
+      //   - clic humano: se le pide que escriba su dirección y confirme (ver `paginaConfirmar`).
+      //     Antes veía "no pudimos darte de baja" y el botón siguiente es "spam" — que le cuesta
+      //     la entrega a TODOS los demás, no sólo a ese mail.
+      if (unClic) { res.status(400).send('firma inválida'); return; }
+      res.setHeader('content-type', 'text/html; charset=utf-8');
+      res.status(200).send(baja.paginaConfirmar(email));
       return;
     }
-    const r = await baja.darDeBaja(email, unClic ? 'list-unsubscribe' : 'link-pie');
+    const r = await baja.darDeBaja(email, unClic ? 'list-unsubscribe' : (confirmado ? 'formulario' : 'link-pie'));
     console.log(JSON.stringify({ type: 'baja_email', ok: r.ok, origen: unClic ? 'one-click' : 'link', ts: new Date().toISOString() }));
     if (unClic) { res.status(200).send('OK'); return; }
     res.setHeader('content-type', 'text/html; charset=utf-8');
