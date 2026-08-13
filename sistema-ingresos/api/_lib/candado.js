@@ -123,6 +123,56 @@ async function renovar(nombre, token) {
   }
 }
 
+// PASAR EL CANDADO AL ESLABÓN SIGUIENTE (13/08/2026). Renueva Y CAMBIA el token, en la misma
+// operación atómica. Sólo lo consigue quien traiga el token vigente; el segundo que llegue con
+// el mismo token viejo se encuentra con que ya no existe y frena.
+//
+// POR QUÉ HACÍA FALTA. La cadena compartía UN token entre todos los eslabones, y `renovar` deja
+// la fila igual. Eso hacía imposible reintentar el disparo de la hija: si la madre disparaba dos
+// veces, las DOS hijas renovaban con éxito y las dos mandaban — exactamente las corridas en
+// paralelo del 07/08. Con el token rotando, disparar de más es inofensivo: manda una sola.
+//
+// Efecto lateral bueno: la madre ya no puede soltar por error el candado que ahora es de la
+// hija. Su `soltar` filtra por su token viejo, no encuentra nada y no toca la fila.
+async function pasar(nombre, tokenViejo) {
+  if (!hayBase() || !tokenViejo) return { ok: true, sinRed: true, token: tokenViejo };
+  const token = randomUUID();
+  try {
+    const r = await rest(`${TABLA}?name=eq.${encodeURIComponent(nombre)}&value=eq.${encodeURIComponent(tokenViejo)}`, {
+      method: 'PATCH',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ value: token, updated_at: new Date().toISOString() }),
+    });
+    if (!r.ok) throw new Error(`candado pasar ${r.status}`);
+    const filas = await r.json();
+    if (!filas.length) return { ok: false, motivo: 'el candado ya no es nuestro (otra corrida de la misma cadena llegó antes, o venció)' };
+    return { ok: true, token };
+  } catch (e) {
+    // ⚠️ ACÁ SE FALLA CERRADO, al revés que `tomar`, y es a propósito. `tomar` falla abierto
+    // porque un hipo de Supabase no puede dejar al embudo un día entero sin mandar. Pero un
+    // eslabón encadenado ya tiene a su madre habiendo mandado: saltearlo cuesta media cola que
+    // mañana se reintenta sola, mientras que dejarlo pasar sin candado —con la madre disparando
+    // hasta tres veces— son tres corridas mandando en paralelo. Eso es el 07/08.
+    console.error('[candado] pasar:', e && e.message || e);
+    return { ok: false, motivo: `no se pudo pasar el candado (${e && e.message || e}): esta corrida no manda` };
+  }
+}
+
+// Quién es el dueño AHORA, sin tocar nada. Se usa para saber si la hija arrancó: el eslabón que
+// arranca rota el token, así que un token distinto al nuestro ES la prueba de vida.
+// Devuelve el token, `null` si ya no hay fila (alguien terminó y soltó) y `undefined` si no se
+// pudo consultar — que no es lo mismo y no se puede confundir con "arrancó".
+async function dueno(nombre) {
+  if (!hayBase()) return undefined;
+  try {
+    const actual = await fila(nombre);
+    return actual ? actual.value : null;
+  } catch (e) {
+    console.error('[candado] dueno:', e && e.message || e);
+    return undefined;
+  }
+}
+
 // Libera el candado. Borra la fila sólo si sigue siendo nuestra: si el TTL venció y otra corrida
 // ya arrancó con su propio token, este delete no la toca.
 async function soltar(nombre, token) {
@@ -150,4 +200,4 @@ async function estado(nombre, ttlSeg = 180) {
   } catch (e) { return { disponible: false, motivo: String(e && e.message || e) }; }
 }
 
-module.exports = { tomar, renovar, soltar, estado };
+module.exports = { tomar, renovar, pasar, dueno, soltar, estado };

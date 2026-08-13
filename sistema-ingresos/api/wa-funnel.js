@@ -1227,7 +1227,7 @@ const NOMBRE_ENVIO = {
 // ⚠️ LO QUE ESTA ALARMA NO CUBRE: si la cadena se muere de golpe (timeout de Vercel), no hay
 // último eslabón y por lo tanto no hay aviso. Ese caso lo tapa el log de corridas: la fila
 // queda abierta. Que el Panel de Salud lo lea es el paso siguiente, todavía sin hacer.
-async function avisarSiFaltoMandar(pendientes, hoy) {
+async function avisarSiFaltoMandar(pendientes, hoy, cadenaCortada) {
   const total = Object.values(pendientes).reduce((a, b) => a + b, 0);
   if (!total) return 'ok — el día cerró sin cola pendiente';
   const primero = await candado.tomar(`alarma_faltante_${hoy}`, 24 * 3600);
@@ -1235,7 +1235,9 @@ async function avisarSiFaltoMandar(pendientes, hoy) {
   const detalle = Object.entries(pendientes)
     .sort((a, b) => b[1] - a[1])
     .map(([k, v]) => `• ${NOMBRE_ENVIO[k] || k}: ${v}`).join('\n');
-  const texto = `⚠️ EL EMBUDO CERRÓ EL DÍA CON COLA SIN MANDAR\n\n${detalle}\n\nTotal: ${total} mails planificados que NO salieron (${hoy}).\n\nLa cadena de corridas terminó y esto quedó pendiente. Mañana se reintenta solo — pero si el número se repite todos los días, hay algo trabado y no se está vaciando.\n\nQué pasó, corrida por corrida: tabla \`funnel_corridas\` en Supabase.`;
+  const texto = cadenaCortada
+    ? `🚨 SE CORTÓ LA CADENA DEL EMBUDO\n\nLa corrida siguiente no arrancó (se la disparó 3 veces), así que el día terminó acá con esto sin mandar:\n\n${detalle}\n\nTotal: ${total} mails (${hoy}). Mañana se reintenta solo, pero si esto se repite el embudo nunca vacía la cola.\n\nQué pasó, corrida por corrida: tabla \`funnel_corridas\` en Supabase.`
+    : `⚠️ EL EMBUDO CERRÓ EL DÍA CON COLA SIN MANDAR\n\n${detalle}\n\nTotal: ${total} mails planificados que NO salieron (${hoy}).\n\nLa cadena de corridas terminó y esto quedó pendiente. Mañana se reintenta solo — pero si el número se repite todos los días, hay algo trabado y no se está vaciando.\n\nQué pasó, corrida por corrida: tabla \`funnel_corridas\` en Supabase.`;
   if (!tg.CHAT && !tg.GROUP) return `⚠️ quedaron ${total} sin mandar — sin Telegram configurado, no se pudo avisar`;
   const r = await tg.enviar({ chat_id: tg.CHAT || tg.GROUP, text: texto });
   return r && r.ok ? `⚠️ QUEDARON ${total} SIN MANDAR — avisado por Telegram` : `⚠️ quedaron ${total} sin mandar — falló el aviso por Telegram`;
@@ -1302,8 +1304,11 @@ export default async function handler(req, res) {
     const tokenHeredado = searchParams.get('lock') || '';
     let candadoInfo = 'no aplica (esta corrida no envía)';
     if (vaAEnviar) {
+      // `pasar` y no `renovar`: el eslabón que arranca se queda con un token NUEVO. Así la madre
+      // puede disparar a la hija varias veces sin riesgo —sólo la primera se lleva el candado— y
+      // así se sabe desde afuera si la hija arrancó: si el token cambió, arrancó. Ver `pasar`.
       const r = tokenHeredado
-        ? await candado.renovar(LOCK, tokenHeredado)
+        ? await candado.pasar(LOCK, tokenHeredado)
         : await candado.tomar(LOCK, LOCK_TTL);
       if (!r.ok) {
         // NO se manda nada. Y se dice por qué, que es la mitad del arreglo: el 07/08 las
@@ -1319,8 +1324,11 @@ export default async function handler(req, res) {
         });
         return;
       }
-      lockToken = tokenHeredado || r.token || '';
-      candadoInfo = r.sinRed ? `⚠️ SIN CANDADO — ${r.motivo}` : (tokenHeredado ? `renovado (eslabón ${chain})` : 'tomado');
+      // ⚠️ EL TOKEN NUEVO MANDA. Antes era `tokenHeredado || r.token` porque la cadena compartía
+      // uno solo; ahora cada eslabón rota el suyo y quedarse con el viejo dejaría a esta corrida
+      // sin poder renovar ni soltar su propio candado.
+      lockToken = r.token || tokenHeredado || '';
+      candadoInfo = r.sinRed ? `⚠️ SIN CANDADO — ${r.motivo}` : (tokenHeredado ? `recibido de la madre (eslabón ${chain})` : 'tomado');
       // La fila se abre ACÁ: con el candado ya en la mano y ANTES de leer nada de Brevo. Si la
       // corrida se muere durante el arranque —la hipótesis del 11/08, cuando el arranque tardó
       // ~32 s y Vercel la mató en el segundo 60— la fila queda abierta, y eso es el diagnóstico.
@@ -1663,7 +1671,7 @@ export default async function handler(req, res) {
     // 30 s, no 45: con 45 la corrida llena (arranque + envíos) llegaba al tope de 60 s de Vercel
     // y MORÍA ANTES de disparar la corrida siguiente. El encadenado sólo funcionaba cuando no
     // hacía falta. Con 30 s sobra margen y la cadena avanza siempre.
-    const BUDGET_MS = 30000;
+    const BUDGET_MS = 45000;
     // TOPE DURO MEDIDO DESDE EL ARRANQUE DE LA FUNCIÓN (12/08/2026). Vercel corta a los 60 s sin
     // ejecutar ningún `catch`: la corrida muere muda, no suelta el candado y —lo más caro— NO
     // llega a la línea que dispara la corrida siguiente, así que se corta la cadena entera.
@@ -1677,7 +1685,11 @@ export default async function handler(req, res) {
     // 14 s para encadenar, cerrar el log y contestar. Es el arreglo de fondo del comentario de
     // acá arriba, que bajó el presupuesto de 45 a 30 s por este mismo problema: eso compró
     // margen sin eliminar la falla, y el margen se volvió a consumir solo.
-    const DEADLINE = T_INICIO + 46000;
+    //
+    // 13/08: subido de 46 a 48 s. Medido en la corrida real de ese día: arranque 7,1 s, bucle
+    // 30,8 s, cierre inmediato → 38 s de 60. Sobraban 22. Con 48 s el bucle manda ~41 s en vez
+    // de 30 (+37%) y quedan ~9 s para encadenar, verificar y cerrar el log.
+    const DEADLINE = T_INICIO + 48000;
     const HARD_MAX = 220;
     // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
     // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
@@ -1859,6 +1871,9 @@ export default async function handler(req, res) {
     // completo —Brevo, la puerta, el registro— para no mandar nada.
     const enCola = Math.max(0, queue.length - attempted);
     const encadena = live && enCola > 0 && chain < MAX_CHAINS;
+    // Qué pasó con la corrida siguiente. Hasta hoy esto no se sabía: la respuesta decía
+    // `encadenada: true` cuando la madre había DISPARADO, no cuando la hija había arrancado.
+    let hija = encadena ? 'sin disparar todavía' : 'no corresponde: último eslabón';
     if (encadena) {
       const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
       // El `max` se arrastra a la hija. Sin esto, una corrida de prueba con tope disparaba una
@@ -1866,11 +1881,36 @@ export default async function handler(req, res) {
       // Y el `lock`: la hija sigue la MISMA cadena, así que renueva este candado en vez de pedir
       // uno nuevo (que estaría tomado por nosotros y la haría frenar en seco).
       const selfUrl = `https://${host}/api/wa-funnel?mode=live&chain=${chain + 1}${MAX_MANUAL ? `&max=${MAX_MANUAL}` : ''}${lockToken ? `&lock=${encodeURIComponent(lockToken)}` : ''}&key=${encodeURIComponent(secret)}`;
-      try {
-        // Disparamos la próxima corrida y NO esperamos a que termine: abortamos la espera a los 3 s
-        // (la hija ya arrancó sola en Vercel). Best-effort: si falla, no rompe la corrida actual.
-        await fetch(selfUrl, { signal: AbortSignal.timeout(3000) });
-      } catch (_) { /* esperado: abort tras disparar, o red → best-effort */ }
+
+      // ─── QUE LA HIJA ARRANQUE DE VERDAD (13/08/2026) ─────────────────────────────────────
+      //
+      // EL DATO. El 13/08 la corrida del cron mandó 70 mails, dijo `encadena: true` y la hija
+      // NUNCA escribió su fila en el log. Como hasta una corrida bloqueada deja fila, eso sólo
+      // puede significar que no llegó a arrancar. Explica la serie de la semana: 968 → 384 → 63
+      // → 70. No es que baje el volumen: es que la cadena se corta en el primer eslabón.
+      //
+      // LA CAUSA. Se disparaba UNA vez y se abandonaba a los 3 s, dando por hecho que Vercel ya
+      // la había puesto en marcha. Con la función fría, 3 s no alcanzan: se cancela el socket
+      // mientras la invocación todavía está en el ruteo, y la hija muere antes de nacer.
+      //
+      // EL ARREGLO. Se dispara hasta TRES veces. Es seguro porque el candado ahora rota su token
+      // (ver `candado.pasar`): la primera hija que arranca se lo lleva, y cualquier otra que
+      // llegue con el token viejo queda bloqueada y no manda nada — deja su fila diciéndolo.
+      // Sin esa rotación esto sería el incidente del 07/08 otra vez, no un arreglo.
+      //
+      // Y SE COMPRUEBA. Que el token haya cambiado ES la prueba de vida: sólo puede cambiarlo
+      // una hija que arrancó. Si después de tres intentos sigue siendo el nuestro, la cadena se
+      // cortó acá — y eso ahora se avisa, en vez de quedar en un `encadena: true` que miente.
+      for (let intento = 1; intento <= 3; intento++) {
+        // Sin margen de tiempo no se reintenta: mejor una cadena corta que una corrida que
+        // muere a los 60 s con el candado en la mano.
+        if (Date.now() > T_INICIO + 55000) { hija = `no se pudo reintentar: sin tiempo (intento ${intento})`; break; }
+        try { await fetch(selfUrl, { signal: AbortSignal.timeout(2500) }); } catch (_) { /* abort esperado */ }
+        const ahora = await candado.dueno(LOCK);
+        if (ahora === undefined) { hija = `disparada ${intento}× (no se pudo verificar: Supabase no contestó)`; break; }
+        if (ahora !== lockToken) { hija = `arrancó (intento ${intento})`; break; }
+        hija = `NO ARRANCÓ tras ${intento} intento(s)`;
+      }
     } else {
       // No hay hija: la cadena termina acá y el candado tiene que quedar libre ya, no en 4 minutos.
       await soltarCandado();
@@ -1888,9 +1928,15 @@ export default async function handler(req, res) {
     // El aviso por lo que FALTÓ, no por lo que sobró. Sólo en el último eslabón: en los del
     // medio que quede cola es lo normal y esperado —para eso encadena—, avisar ahí sería ruido
     // trece veces por día, que es la forma más rápida de que Jose empiece a ignorar los avisos.
+    //
+    // 13/08: también avisa cuando LA CADENA SE CORTA. La versión de ayer sólo sonaba en el
+    // último eslabón, y el primer día en producción falló justo por eso: la hija no arrancó, no
+    // hubo último eslabón, quedaron 97 mails sin salir y no sonó nada. Un aviso que depende de
+    // que el sistema termine bien no sirve para avisar que el sistema no terminó bien.
+    const cadenaCortada = encadena && String(hija).startsWith('NO ARRANCÓ');
     let alarmaFaltante = null;
-    if (!encadena) {
-      try { alarmaFaltante = await avisarSiFaltoMandar(sinMandarPorTipo, hoy); }
+    if (!encadena || cadenaCortada) {
+      try { alarmaFaltante = await avisarSiFaltoMandar(sinMandarPorTipo, hoy, cadenaCortada); }
       catch (e) { alarmaFaltante = `no se pudo evaluar (${e && e.message || e})`; }
     }
 
@@ -1906,6 +1952,7 @@ export default async function handler(req, res) {
       enviado: enviadoPorTipo,
       sin_intentar: sinMandarPorTipo,
       encadena,
+      hija,
       candado: candadoInfo,
     });
 
@@ -1922,7 +1969,9 @@ export default async function handler(req, res) {
       puerta_enganche: enganchados ? `operativa — ${enganchados.size} con señal de vida` : `INACTIVA (${enganchePorQue})`,
       mails_del_embudo_hoy: yaTocadosHoy + enviadosOk,
       alarma_volumen: alarma,
-      encadenada: encadena, report: report ? report.ok : null, results,
+      // `encadenada` decía que la madre había DISPARADO, no que la hija hubiera arrancado — y esa
+      // diferencia se comió la mitad de los mails de la semana. `hija` dice lo segundo.
+      encadenada: encadena, hija, report: report ? report.ok : null, results,
     });
   } catch (e) {
     console.error('wa-funnel error', e);
