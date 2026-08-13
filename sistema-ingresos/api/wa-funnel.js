@@ -1904,7 +1904,10 @@ export default async function handler(req, res) {
       for (let intento = 1; intento <= 3; intento++) {
         // Sin margen de tiempo no se reintenta: mejor una cadena corta que una corrida que
         // muere a los 60 s con el candado en la mano.
-        if (Date.now() > T_INICIO + 55000) { hija = `no se pudo reintentar: sin tiempo (intento ${intento})`; break; }
+        // 52 s, no 55: medido en la corrida real del 13/08 el total fue de 52 s de los 60, y un
+        // reintento cuesta hasta 2,5 s de espera + la consulta del candado. Arrancando uno a los
+        // 55 s la madre moriría en el intento, dejando su fila abierta y el candado en la mano.
+        if (Date.now() > T_INICIO + 52000) { hija = `no se pudo reintentar: sin tiempo (intento ${intento})`; break; }
         try { await fetch(selfUrl, { signal: AbortSignal.timeout(2500) }); } catch (_) { /* abort esperado */ }
         const ahora = await candado.dueno(LOCK);
         if (ahora === undefined) { hija = `disparada ${intento}× (no se pudo verificar: Supabase no contestó)`; break; }
