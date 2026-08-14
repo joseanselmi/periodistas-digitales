@@ -1689,7 +1689,16 @@ export default async function handler(req, res) {
     // 13/08: subido de 46 a 48 s. Medido en la corrida real de ese día: arranque 7,1 s, bucle
     // 30,8 s, cierre inmediato → 38 s de 60. Sobraban 22. Con 48 s el bucle manda ~41 s en vez
     // de 30 (+37%) y quedan ~9 s para encadenar, verificar y cerrar el log.
-    const DEADLINE = T_INICIO + 48000;
+    //
+    // 14/08: BAJADO de 48 a 38 s, y es una corrección de rumbo. Con 48 el bucle terminaba pasado
+    // el segundo 52 —el corte no es exacto: la última pieza en vuelo se pasa unos segundos— y el
+    // tope de reintentos de abajo daba por perdida la cadena SIN disparar ni una vez. Resultado
+    // medido el 14/08: 61 mails en una sola corrida, 116 re-enganches sin mandar, candado tomado
+    // a las 15:07:53 y jamás renovado. Ninguna hija.
+    // El canje es a favor: una corrida gorda que no encadena manda ~90 mails y se apaga; una
+    // corrida más flaca que SÍ encadena manda eso doce veces. El volumen lo da la cadena, no el
+    // tamaño del eslabón. Con 38 s quedan ~20 s de sobra para disparar, comprobar y cerrar.
+    const DEADLINE = T_INICIO + 38000;
     const HARD_MAX = 220;
     // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
     // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
@@ -1901,14 +1910,18 @@ export default async function handler(req, res) {
       // Y SE COMPRUEBA. Que el token haya cambiado ES la prueba de vida: sólo puede cambiarlo
       // una hija que arrancó. Si después de tres intentos sigue siendo el nuestro, la cadena se
       // cortó acá — y eso ahora se avisa, en vez de quedar en un `encadena: true` que miente.
+      // ⚠️ EL PRIMER DISPARO SALE SIEMPRE, aunque no quede tiempo (corregido el 14/08). El tope de
+      // 52 s se aplicaba también al primero, así que una corrida que terminaba tarde no disparaba
+      // NADA y mataba la cadena entera por ahorrarse 2,5 s. Pasó el 14/08 en la primera corrida
+      // automática: 61 mails, 116 re-enganches sin salir, y el candado tomado a las 15:07:53 sin
+      // renovar una sola vez. El seguro se había vuelto el freno.
+      // Disparar es barato y es lo único que mantiene viva la cadena. Lo caro —y lo prescindible
+      // cuando el reloj aprieta— es COMPROBAR que arrancó y REINTENTAR.
       for (let intento = 1; intento <= 3; intento++) {
-        // Sin margen de tiempo no se reintenta: mejor una cadena corta que una corrida que
-        // muere a los 60 s con el candado en la mano.
-        // 52 s, no 55: medido en la corrida real del 13/08 el total fue de 52 s de los 60, y un
-        // reintento cuesta hasta 2,5 s de espera + la consulta del candado. Arrancando uno a los
-        // 55 s la madre moriría en el intento, dejando su fila abierta y el candado en la mano.
-        if (Date.now() > T_INICIO + 52000) { hija = `no se pudo reintentar: sin tiempo (intento ${intento})`; break; }
+        const sinTiempo = Date.now() > T_INICIO + 52000;
+        if (sinTiempo && intento > 1) { hija = `disparada ${intento - 1}× — sin tiempo para reintentar`; break; }
         try { await fetch(selfUrl, { signal: AbortSignal.timeout(2500) }); } catch (_) { /* abort esperado */ }
+        if (sinTiempo) { hija = 'disparada 1× — sin tiempo para comprobar si arrancó'; break; }
         const ahora = await candado.dueno(LOCK);
         if (ahora === undefined) { hija = `disparada ${intento}× (no se pudo verificar: Supabase no contestó)`; break; }
         if (ahora !== lockToken) { hija = `arrancó (intento ${intento})`; break; }
@@ -1936,7 +1949,12 @@ export default async function handler(req, res) {
     // último eslabón, y el primer día en producción falló justo por eso: la hija no arrancó, no
     // hubo último eslabón, quedaron 97 mails sin salir y no sonó nada. Un aviso que depende de
     // que el sistema termine bien no sirve para avisar que el sistema no terminó bien.
-    const cadenaCortada = encadena && String(hija).startsWith('NO ARRANCÓ');
+    // 14/08: se avisa siempre que la cadena TENÍA que seguir y no hay confirmación de que siguió.
+    // Antes sólo contemplaba el caso "la disparé y no arrancó", y el día que falló de verdad fue
+    // por otro camino —ni siquiera llegó a dispararla—, así que no sonó nada mientras 116 mails
+    // se quedaban sin salir. Una alarma que enumera las formas de fallar sólo cubre las que
+    // alguien imaginó; ésta pregunta al revés: ¿hay prueba de que siguió? Si no, avisa.
+    const cadenaCortada = encadena && !String(hija).startsWith('arrancó');
     let alarmaFaltante = null;
     if (!encadena || cadenaCortada) {
       try { alarmaFaltante = await avisarSiFaltoMandar(sinMandarPorTipo, hoy, cadenaCortada); }
