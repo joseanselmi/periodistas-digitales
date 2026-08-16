@@ -1166,13 +1166,13 @@ async function avisarSiVolumenAlto(mailsHoy, hoy) {
 //
 // BEST-EFFORT DE PUNTA A PUNTA: si Supabase no contesta, el embudo manda igual. Un log que
 // puede frenar los envíos es peor que no tener log.
-async function abrirCorrida(fecha, eslabon, modo, cand) {
+async function abrirCorrida(fecha, eslabon, modo, cand, hostRecibido) {
   if (!SB_URL || !SB_KEY) return null;
   try {
     const r = await sbRest('funnel_corridas', {
       method: 'POST',
       headers: { Prefer: 'return=representation' },
-      body: JSON.stringify({ fecha, eslabon, modo, estado: 'arranco', candado: cand }),
+      body: JSON.stringify({ fecha, eslabon, modo, estado: 'arranco', candado: cand, host_recibido: hostRecibido || null }),
     });
     if (!r.ok) return null;
     const rows = await r.json();
@@ -1332,7 +1332,7 @@ export default async function handler(req, res) {
       // La fila se abre ACÁ: con el candado ya en la mano y ANTES de leer nada de Brevo. Si la
       // corrida se muere durante el arranque —la hipótesis del 11/08, cuando el arranque tardó
       // ~32 s y Vercel la mató en el segundo 60— la fila queda abierta, y eso es el diagnóstico.
-      corridaId = await abrirCorrida(todayISO(), chain, mode, candadoInfo);
+      corridaId = await abrirCorrida(todayISO(), chain, mode, candadoInfo, req.headers['x-forwarded-host'] || req.headers.host || '');
     }
 
     if (mode === 'setup') {
