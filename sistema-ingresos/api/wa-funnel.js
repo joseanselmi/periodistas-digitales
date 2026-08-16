@@ -1884,7 +1884,22 @@ export default async function handler(req, res) {
     // `encadenada: true` cuando la madre había DISPARADO, no cuando la hija había arrancado.
     let hija = encadena ? 'sin disparar todavía' : 'no corresponde: último eslabón';
     if (encadena) {
-      const host = req.headers['x-forwarded-host'] || req.headers.host || 'sistemadeingresosdiariosia.com';
+      // ⚠️ EL DOMINIO VA FIJO, NO SALE DE LA CABECERA (16/08/2026). Ésta era LA causa de que la
+      // cadena no arrancara nunca sola, y de que sí arrancara siempre que la probaba a mano.
+      //
+      // MEDIDO: el dominio público contesta 200 con JSON; la URL del deployment contesta 302 a la
+      // pantalla de login de Vercel. La madre armaba la dirección de la hija copiando el host que
+      // le llegaba en la cabecera — que cuando invoca el cron de Vercel es la del deployment. La
+      // hija se chocaba con el login y no se ejecutaba jamás.
+      //
+      // Por eso la prueba a mano SIEMPRE daba bien y el cron SIEMPRE fallaba: la única diferencia
+      // entre las dos era quién había puesto esa cabecera. Dos días de corridas automáticas
+      // (15 y 16/08) con `hija: NO ARRANCÓ tras 3 intentos` y 81 y 38 re-enganches sin salir.
+      //
+      // LECCIÓN: una función que se llama a sí misma no puede deducir su propia dirección de lo
+      // que le manda quien la llamó. Tiene que saberla.
+      const HOST_PROPIO = 'sistemadeingresosdiariosia.com';
+      const host = HOST_PROPIO;
       // El `max` se arrastra a la hija. Sin esto, una corrida de prueba con tope disparaba una
       // hija SIN tope y salía la cola entera: pasó el 28/07 al estrenar los Regalos 3/4 por email.
       // Y el `lock`: la hija sigue la MISMA cadena, así que renueva este candado en vez de pedir
