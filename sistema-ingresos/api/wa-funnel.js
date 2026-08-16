@@ -1671,7 +1671,18 @@ export default async function handler(req, res) {
     // 30 s, no 45: con 45 la corrida llena (arranque + envíos) llegaba al tope de 60 s de Vercel
     // y MORÍA ANTES de disparar la corrida siguiente. El encadenado sólo funcionaba cuando no
     // hacía falta. Con 30 s sobra margen y la cadena avanza siempre.
-    const BUDGET_MS = 45000;
+    // ⚠️ 16/08/2026 — EL LÍMITE DE 60 s NUNCA FUE DEL PLAN, ERA NUESTRO. La documentación de
+    // Vercel dice que el plan gratuito permite funciones de 300 s (5 minutos); el 60 estaba
+    // escrito a mano en `vercel.json`, heredado de cuando ese sí era el tope. Comprobado: se
+    // deployó con `maxDuration: 300` y la plataforma lo aceptó.
+    //
+    // LO QUE ESTO SIGNIFICA. Todo el aparato del auto-encadenado —la hija, el candado que se
+    // pasa de mano en mano, los segundos contados, las alarmas para vigilarlo— existe SÓLO
+    // porque una corrida no podía durar más de 60 s. Con 300 s una sola corrida despacha ~750
+    // mails y la cadena deja de hacer falta para el volumen de hoy.
+    // No se borra el encadenado todavía: queda de red por si un día la cola supera eso. Pero
+    // pasa de ser el mecanismo principal a ser el respaldo.
+    const BUDGET_MS = 280000;
     // TOPE DURO MEDIDO DESDE EL ARRANQUE DE LA FUNCIÓN (12/08/2026). Vercel corta a los 60 s sin
     // ejecutar ningún `catch`: la corrida muere muda, no suelta el candado y —lo más caro— NO
     // llega a la línea que dispara la corrida siguiente, así que se corta la cadena entera.
@@ -1698,7 +1709,9 @@ export default async function handler(req, res) {
     // El canje es a favor: una corrida gorda que no encadena manda ~90 mails y se apaga; una
     // corrida más flaca que SÍ encadena manda eso doce veces. El volumen lo da la cadena, no el
     // tamaño del eslabón. Con 38 s quedan ~20 s de sobra para disparar, comprobar y cerrar.
-    const DEADLINE = T_INICIO + 38000;
+    // 16/08: de 38 s a 280. La función ahora puede durar 300 (ver BUDGET_MS): el bucle suelta el
+    // turno a los 280 y quedan 20 s para encadenar —si hiciera falta—, cerrar el log y contestar.
+    const DEADLINE = T_INICIO + 280000;
     const HARD_MAX = 220;
     // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
     // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
