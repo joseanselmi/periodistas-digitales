@@ -3,7 +3,7 @@
   "outputDirectory": ".",
   "framework": null,
   "functions": {
-    "api/wa-funnel.js": { "maxDuration": 60 },
+    "api/wa-funnel.js": { "maxDuration": 300 },
     "api/recuperacion.js": { "maxDuration": 60 },
     "api/hotmart-sync.js": { "maxDuration": 60 },
     "api/salud.js": { "maxDuration": 60 }
