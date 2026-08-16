@@ -4,9 +4,9 @@
   "framework": null,
   "functions": {
     "api/wa-funnel.js": { "maxDuration": 300 },
-    "api/recuperacion.js": { "maxDuration": 60 },
-    "api/hotmart-sync.js": { "maxDuration": 60 },
-    "api/salud.js": { "maxDuration": 60 }
+    "api/recuperacion.js": { "maxDuration": 300 },
+    "api/hotmart-sync.js": { "maxDuration": 300 },
+    "api/salud.js": { "maxDuration": 300 }
   },
   "crons": [
     { "path": "/api/wa-funnel", "schedule": "0 13 * * *" },

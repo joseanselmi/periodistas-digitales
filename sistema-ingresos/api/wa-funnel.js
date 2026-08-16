@@ -1712,7 +1712,13 @@ export default async function handler(req, res) {
     // 16/08: de 38 s a 280. La función ahora puede durar 300 (ver BUDGET_MS): el bucle suelta el
     // turno a los 280 y quedan 20 s para encadenar —si hiciera falta—, cerrar el log y contestar.
     const DEADLINE = T_INICIO + 280000;
-    const HARD_MAX = 220;
+    // 16/08: de 220 a 1.200, por el mismo motivo que los 60 s. Era un tope anti-desbocado puesto
+    // cuando una corrida duraba 45 s y no llegaba ni cerca — o sea, no frenaba nada. Con 280 s de
+    // bucle una corrida puede despachar ~600, así que 220 pasó a ser EL techo real sin que nadie
+    // lo decidiera: el mismo patrón que el límite de 60 s heredado del plan viejo.
+    // Sigue siendo un backstop de verdad (si algo se desboca, corta), pero deja de ser el freno.
+    // Quien manda el volumen son los topes del DÍA y el tiempo, que sí se eligieron a propósito.
+    const HARD_MAX = 1200;
     // Tope del DÍA (no de la corrida) para las piezas del embudo. Con ~900 leads a los que les
     // falta algo, esto define en cuántos días se completa: a 500/día, ~6 días.
     const CAP_PIEZAS_DIA = parseInt(process.env.PIEZAS_CAP_DIA || '500', 10);
