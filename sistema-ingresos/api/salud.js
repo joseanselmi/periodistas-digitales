@@ -87,9 +87,62 @@ async function snapshotBrevo() {
 // ─────────────────────────────────────────────────────────────────────────────
 // FLUJO 1 — Funnel de regalos (WhatsApp). Objetivo real: que la gente LLEGUE a la oferta.
 // ─────────────────────────────────────────────────────────────────────────────
+// ¿CORRIÓ EL CRON DEL EMBUDO HOY? (17/08/2026)
+//
+// EL PUNTO CIEGO QUE TAPA. Todas las alarmas del embudo corren DENTRO del propio cron: si el
+// cron no arranca, no hay nada que se ejecute para avisarlo. Un día entero sin mandar se veía
+// exactamente igual que un día tranquilo. Pasó el 11, el 15 y el 16/08.
+//
+// Ahora se puede preguntar de afuera, porque `funnel_corridas` deja una fila por corrida — y la
+// escribe apenas toma el candado, ANTES de planificar, así que hasta una corrida sin nada que
+// mandar deja rastro. Cero filas = el cron no corrió. Es la única forma de detectar una ausencia.
+//
+// ⚠️ ORDEN: esto vale porque el panel corre a las 16:00 UTC y el embudo a las 13:00 (+59 min de
+// imprecisión como mucho). Si algún día el panel se adelantara al embudo, daría rojo siempre.
+async function corridasDelEmbudoHoy() {
+  const hoy = new Date().toISOString().slice(0, 10);
+  const filas = await sb(`funnel_corridas?fecha=eq.${hoy}&select=estado,enviado,sin_intentar,hija,eslabon&order=id`);
+  if (!Array.isArray(filas)) return null; // no se pudo consultar: no se opina
+  const enviados = filas.reduce((t, f) => t + Object.values(f.enviado || {}).reduce((a, b) => a + b, 0), 0);
+  const ultima = filas[filas.length - 1] || null;
+  return {
+    corridas: filas.length,
+    enviados,
+    // Una fila que quedó en 'arranco' ES el dato: esa corrida murió sin llegar al final.
+    abiertas: filas.filter((f) => f.estado === 'arranco').length,
+    con_error: filas.filter((f) => f.estado === 'error').length,
+    quedo_cola: ultima ? Object.values(ultima.sin_intentar || {}).reduce((a, b) => a + b, 0) : 0,
+  };
+}
+
 async function saludFunnel() {
   const key = process.env.BREVO_API_KEY;
   const met = {}; const puntos = []; let nivel = 'ok';
+  // Se pregunta ANTES que nada: si el cron no corrió, el resto de los números son de ayer y
+  // cualquier conclusión que se saque de ellos es sobre un día que no pasó.
+  try {
+    const c = await corridasDelEmbudoHoy();
+    met.corridas_hoy = c;
+    if (c === null) {
+      nivel = peor(nivel, 'alerta');
+      puntos.push('No se pudo leer el registro de corridas del embudo, así que hoy no se puede afirmar que el cron haya corrido.');
+    } else if (c.corridas === 0) {
+      nivel = 'critico';
+      puntos.push('🚨 EL CRON DEL EMBUDO NO CORRIÓ HOY. No dejó ni una corrida registrada. No es que haya mandado poco: no arrancó. Revisar los crons en Vercel (`vercel crons ls`) y que WA_FUNNEL_ENABLED siga en 1.');
+    } else {
+      const detalle = [`${c.corridas} corrida(s) del embudo hoy`, `${c.enviados} mails`];
+      if (c.quedo_cola > 0) detalle.push(`quedaron ${c.quedo_cola} sin mandar`);
+      puntos.push(`${detalle.join(' · ')}.`);
+      if (c.abiertas > 0) {
+        nivel = peor(nivel, 'alerta');
+        puntos.push(`${c.abiertas} corrida(s) quedaron abiertas: arrancaron y no llegaron al final (las mata el límite de tiempo de Vercel, que no deja error ni rastro). Mirar \`funnel_corridas\`.`);
+      }
+      if (c.con_error > 0) {
+        nivel = peor(nivel, 'alerta');
+        puntos.push(`${c.con_error} corrida(s) terminaron con error. El motivo está en la columna \`error\` de \`funnel_corridas\`.`);
+      }
+    }
+  } catch (e) { puntos.push(`No se pudo revisar el registro de corridas (${e.message || e}).`); }
   try {
     const all = []; let off = 0;
     for (let i = 0; i < 20; i++) {
@@ -294,7 +347,49 @@ async function saludPostCompra() {
   } else {
     puntos.push(`${ventasCurso.length} ventas del curso · ${customers.length} clientes guardados · última venta: ${hace(ultima)}. Se está registrando todo bien.`);
   }
-  return { flujo: '🟢 Post-compra (Hotmart)', que_mira: 'Que cada venta quede registrada (venta + cliente + bono).', nivel, puntos, met };
+
+  // ── EL BONO DE LEADR (ficha `leadr-acceso` en docs/FLUJOS.md) ──────────────
+  // El comprador se lleva 1 mes de Leadr Pro, y ese mail lo manda el OTRO repo. Justamente por
+  // eso nadie lo miraba: hasta el 14/08/2026 no estaba en ningún inventario ni en ningún panel.
+  // Y ya falló una vez en grande — de los 11 compradores del 01/07 al 28/07, NINGUNO pudo entrar
+  // nunca porque el mail salía por el SMTP de Supabase, que no entrega. Se descubrió porque uno
+  // se quejó por Hotmart, no porque un chequeo lo dijera. Esto es ese chequeo.
+  //
+  // Se cruza por ASUNTO y no por etiqueta: Leadr manda el tag en `X-Mailin-custom`, que el sync
+  // de eventos no lee (guarda `ev.tag`), así que estas filas llegan con `campana` en null. El
+  // asunto es lo único estable que hay hoy — ver la ficha para el arreglo de raíz.
+  const ASUNTO_ACCESO = 'Tu acceso a Leadr (viene con el curso)';
+  const ASUNTOS_RESCATE = ['Tu nuevo link para entrar a Leadr', 'Tu acceso a Leadr — te faltaba la contraseña'];
+  // Antes del 30/07 el mail salía por Supabase y no dejaba rastro en Brevo: de esos compradores
+  // no se puede opinar. Sin este corte el panel quedaría en rojo permanente por 11 casos viejos
+  // que ya sabemos que fallaron — y una alarma que grita en vano se empieza a ignorar.
+  const DESDE_BREVO = '2026-07-30';
+  const mailsLeadr = await sb('comunicaciones_email?select=email,asunto,entregado_en&asunto=like.*Leadr*&entregado_en=not.is.null');
+  if (mailsLeadr == null) {
+    if (nivel === 'ok') nivel = 'alerta';
+    puntos.push('No se pudo verificar el bono de Leadr: sin la lectura de Brevo no se sabe si el mail de acceso llegó.');
+  } else {
+    const norm = (e) => String(e || '').toLowerCase().trim();
+    const conAcceso = new Set(mailsLeadr.filter((m) => m.asunto === ASUNTO_ACCESO).map((m) => norm(m.email)));
+    const conRescate = new Set(mailsLeadr.filter((m) => ASUNTOS_RESCATE.includes(m.asunto)).map((m) => norm(m.email)));
+    const medibles = [...new Set(ventasCurso
+      .filter((v) => String(v.ocurrido_en || '').slice(0, 10) >= DESDE_BREVO)
+      .map((v) => norm(v.email)).filter(Boolean))];
+    // Sin NINGÚN mail de Leadr: ni el de la compra ni uno de rescate. Ese es el que quedó mudo.
+    const sinNada = medibles.filter((e) => !conAcceso.has(e) && !conRescate.has(e));
+    met.compradores_medibles_leadr = medibles.length;
+    met.sin_acceso_leadr = sinNada.length;
+    if (!medibles.length) {
+      puntos.push(`Bono de Leadr: todavía no hay compradores posteriores al ${DESDE_BREVO} para verificar.`);
+    } else if (sinNada.length) {
+      nivel = peor(nivel, 'critico');
+      puntos.push(`🔴 Bono de Leadr: ${sinNada.length} de ${medibles.length} compradores NO tienen ningún mail de acceso entregado (${sinNada.join(', ')}). Dos causas posibles y las dos hay que mirarlas: el webhook no llamó a Leadr, o la persona YA tenía cuenta — en ese caso se le extiende el plan y el sistema no le manda nada, que es el hueco declarado en la ficha \`leadr-acceso\`.`);
+    } else {
+      puntos.push(`✅ Bono de Leadr: los ${medibles.length} compradores desde el ${DESDE_BREVO} tienen su mail de acceso entregado en Brevo.`);
+    }
+  }
+
+  return { flujo: '🟢 Post-compra (Hotmart)', que_mira: 'Que cada venta quede registrada (venta + cliente + bono) y que el acceso a Leadr LLEGUE.', nivel, puntos, met };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
