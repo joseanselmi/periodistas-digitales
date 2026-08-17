@@ -328,7 +328,13 @@ function chequearContratoVercel() {
   // no falla ruidosamente, simplemente no pasa nada todos los días.
   for (const c of cfg.crons || []) {
     revisadas++;
-    const archivo = join(SI, c.path.replace(/^\//, '') + '.js');
+    // Sin la query: un cron puede llevar parámetros (`/api/wa-funnel?pase=2`) y el archivo que
+    // hay que buscar es el de la ruta, no el de la ruta con la query pegada. Hizo falta el
+    // 17/08/2026, al agregar un segundo pase del embudo sobre el mismo endpoint: el chequeo lo
+    // dio por roto y frenó el deploy. Falló del lado correcto —avisó en vez de dejar pasar— pero
+    // el que estaba equivocado era el chequeo.
+    const ruta = c.path.split('?')[0];
+    const archivo = join(SI, ruta.replace(/^\//, '') + '.js');
     if (!existsSync(archivo)) {
       rotas.push({ rel: 'sistema-ingresos/vercel.json', ref: `cron ${c.path}`, tipo: 'apunta a una función que no existe' });
     }
