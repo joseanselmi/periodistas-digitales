@@ -75,6 +75,29 @@ anuncio activo y gastando), y el post-compra no existía. Ninguno se veía leyen
 pieza funcionaba y devolvía 200. Lo que faltaba era el paso siguiente, que **no estaba en ningún
 lado y por eso no fallaba**.
 
+## 📏 Los límites de Vercel — verificarlos antes de diseñar alrededor de uno
+
+**Hay MUCHO más margen del que el código sugiere.** Verificado en la doc oficial el 16/08/2026:
+
+| | Plan actual (gratuito) |
+|---|---|
+| Duración de función | **300 s (5 min)** — igual que el default de Pro |
+| Invocaciones | 1.000.000/mes (se usan decenas por día) |
+| Cron jobs | **100 por proyecto**, pero **uno por día cada uno** (±59 min de imprecisión) |
+| Active CPU | **4 h/mes** ⚠️ el único a vigilar — sólo cuenta mientras EJECUTA, se pausa esperando I/O |
+| Runtime logs | **1 hora** — no sirven para diagnosticar lo de ayer |
+
+**Por qué existe esta sección.** Una semana entera de bugs del embudo salió de un número —`maxDuration: 60`— escrito en el código como si fuera el tope del plan cuando **hacía años que no lo era**. Todo el auto-encadenado de `wa-funnel.js` (la corrida que se llama a sí misma 12 veces, el candado que se pasa de mano en mano, los segundos contados, tres alarmas para vigilarlo) existe **sólo** por ese 60. Lo mismo con `HARD_MAX = 220` y con el comentario que decía "Hobby permite 2 crons" (permite 100).
+
+**Reglas que salen de ahí:**
+
+1. **Un tope numérico en el código necesita su razón escrita al lado.** Si no se sabe por qué está, probablemente ya no haga falta. Y si vino de un límite externo, ese límite **cambia**.
+2. **No partir el trabajo en pedacitos por miedo al tiempo.** Una corrida puede durar 5 minutos y despachar más de 1.000 mails.
+3. **Se pueden sumar crons nuevos sin pagar nada**, siempre que cada uno corra una vez al día. Sólo correr algo *más* de una vez al día exige plan pago.
+4. **Para diagnosticar no contar con los logs de Vercel** (duran 1 hora): por eso existe la tabla `funnel_corridas`, una fila por corrida.
+
+> ⚠️ El plan gratuito prohíbe el uso comercial y, si se supera un límite, la función queda apagada **30 días** sin opción de pagar para destrabarla. **Jose conoce el riesgo y decidió seguir así (16/08/2026)** — no volver a plantearlo salvo que él lo pida.
+
 ## 🚀 Deploy — SIEMPRE con `herramientas/deploy.mjs`, nunca `vercel --prod` a mano
 
 ```bash
