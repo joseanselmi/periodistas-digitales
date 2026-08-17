@@ -166,7 +166,7 @@ async function saludFunnel() {
     const compradores = new Set((ventas || []).map((v) => String(v.email || '').toLowerCase().trim()).filter(Boolean));
 
     let falta = 0, mailsHoy = 0, mailsAyer = 0, bloqueados = 0;
-    const porPieza = {};
+    let porPieza = {}; // `let`: si el embudo contesta, su desglose reemplaza a este conteo
     for (const c of all) {
       if (c.emailBlacklisted) { bloqueados++; continue; } // Brevo no les entrega: fuera a propósito
       if (compradores.has(String(c.email || '').toLowerCase().trim())) continue;
@@ -175,10 +175,39 @@ async function saludFunnel() {
       if (dia(a.WA_SENT_AT) === ayerISO) mailsAyer++;
       const antiguedad = Math.floor((Date.now() - new Date(c.createdAt).getTime()) / 86400000);
       for (const [nombre, marcador, minDays] of PIEZAS) {
+        // ⚠️ LA OFERTA SE PREGUNTA APARTE (ver `deudaSegunElEmbudo`): a quien no da señal de vida
+        // NO le falta la oferta, se la estamos reteniendo a propósito. Contarla acá como deuda
+        // dejaba el panel en 🟡 para siempre — y un aviso que grita en vano se deja de leer.
         if (!a[marcador] && antiguedad >= minDays) { porPieza[nombre] = (porPieza[nombre] || 0) + 1; falta++; }
       }
     }
-    Object.assign(met, { total: all.length, bloqueados, falta_total: falta, falta_por_pieza: porPieza, mails_hoy: mailsHoy, mails_ayer: mailsAyer });
+    // ── UN SOLO DUEÑO DEL DATO "CUÁNTO FALTA" (17/08/2026) ────────────────────────────────
+    // El embudo es el dueño: es quien decide a quién le manda y a quién no. Este panel contaba
+    // por su cuenta y le daba OTRO número — el 17/08 decía "faltan 219 (Oferta: 219)" mientras
+    // el embudo decía "cola: 0". Los dos tenían razón sobre cosas distintas: esos 219 no son
+    // deuda, son gente que la PUERTA DE ENGANCHE retiene a propósito porque nunca abrió nada.
+    // Contarlos como deuda dejaba el panel en 🟡 permanente, que es la forma más rápida de que
+    // Jose deje de leerlo (ya pasó una vez con el chequeo de entrega, ver tarjeta #123).
+    // Ahora se le pregunta al embudo. Si no contesta, se usa el conteo propio y SE DICE.
+    let retenidos = null;
+    try {
+      const secret = (process.env.CRON_SECRET || '').trim();
+      // Dominio fijo, no deducido de una cabecera: la lección del 16/08 (ver wa-funnel.js).
+      const r = await fetch(`https://sistemadeingresosdiariosia.com/api/wa-funnel?mode=dry&key=${encodeURIComponent(secret)}`, { signal: AbortSignal.timeout(60000) });
+      if (r.ok) {
+        const d = await r.json();
+        if (typeof d.total_faltante === 'number') {
+          falta = d.total_faltante;
+          porPieza = Object.fromEntries(Object.entries(d.le_falta_a || {}).filter(([, v]) => v > 0));
+          retenidos = d.retenidos_por_la_puerta;
+        }
+      }
+    } catch (e) {
+      puntos.push(`No se le pudo preguntar al embudo cuánto falta (${e.message || e}); el número de abajo es el conteo propio del panel, que NO descuenta a los retenidos por la puerta.`);
+    }
+    if (retenidos > 0) puntos.push(`${retenidos} leads esperando dar señal de vida para recibir la oferta. No es deuda: es la puerta de enganche haciendo su trabajo.`);
+
+    Object.assign(met, { total: all.length, bloqueados, falta_total: falta, falta_por_pieza: porPieza, retenidos_por_la_puerta: retenidos, mails_hoy: mailsHoy, mails_ayer: mailsAyer });
 
     if (falta === 0) {
       puntos.push(`Al día: los ${all.length - bloqueados} leads activos tienen las 4 piezas del embudo.`);
