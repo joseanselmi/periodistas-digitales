@@ -10,7 +10,8 @@
   },
   "crons": [
     { "path": "/api/wa-funnel", "schedule": "0 13 * * *" },
-    { "path": "/api/recuperacion", "schedule": "0 15 * * *" }
+    { "path": "/api/recuperacion", "schedule": "0 15 * * *" },
+    { "path": "/api/wa-funnel?pase=2", "schedule": "0 19 * * *" }
   ],
   "rewrites": [
     { "source": "/", "destination": "/paginas/index.html" },
