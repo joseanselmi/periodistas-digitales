@@ -35,6 +35,12 @@ const PLATAFORMA = {
   CODIGO: 'código propio (Vercel)',
   MAKE: 'Make',
   BREVO_AUTO: 'automatización de Brevo',
+  // Leadr es OTRO repo y OTRO proyecto de Vercel (../Leadr → www.leadr.cloud). Sus mails se
+  // declaran igual que los de Make: no los ejecutamos nosotros, pero son parte de lo que recibe
+  // un comprador nuestro. Quedaron fuera del inventario hasta el 14/08/2026 justamente por vivir
+  // del otro lado de la frontera — y "está en el otro repo" es la misma clase de excusa que dejó
+  // a republicadores sin secuencia: nadie lo miraba porque no era de nadie.
+  LEADR: 'Leadr (repo aparte)',
 };
 
 // ── TRIGGERS: qué dispara el flujo ───────────────────────────────────────────
@@ -43,6 +49,11 @@ const PLATAFORMA = {
 const TRIGGER = {
   EVENTO: 'evento',   // un webhook: un lead nuevo, una compra, un carrito abandonado
   RELOJ: 'reloj',     // un cron
+  // A MANO es un trigger legítimo, no un flujo a medio hacer: hay envíos que conviene que
+  // decida una persona (una tanda de rescate se manda cuando hay algo que decir, no cada martes).
+  // Se declara para poder distinguir "nadie lo dispara porque así se quiso" de "nadie lo dispara
+  // y nadie se dio cuenta" — que es el agujero que este archivo existe para no repetir.
+  MANO: 'a mano',
 };
 
 const FLUJOS = {
@@ -94,8 +105,9 @@ const FLUJOS = {
       { tipo: TRIGGER.EVENTO, que: 'lead nuevo de Meta Lead Ads', quien: PLATAFORMA.MAKE, detalle: 'escenario 9602489' },
     ],
     // 🔴 SIN MOTOR: entrega la guía y se detiene. `wa-funnel.js` lee sólo la lista 5.
-    // 196 de sus 326 contactos están sólo en esta lista y no recibieron nada más.
-    // El anuncio `ad5-lectores` sigue activo y gastando.
+    // 339 de sus 510 contactos están sólo en esta lista y no recibieron nada más
+    // (recontado el 18/08: eran 196 de 326 el 10/08 — el hueco CRECE, porque el
+    // anuncio `ad5-lectores` sigue activo y gastando mientras el paso siguiente no existe).
     motor: null,
 
     audiencia: { de: 'lista de Brevo', id: 6, nombre: 'Leadgen - Republicadores' },
@@ -201,6 +213,154 @@ const FLUJOS = {
     condiciones: [],
 
     metrica: 'sin definir — no hay flujo todavía.',
+    apagado: 'no aplica.',
+  },
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // LOS TRES FLUJOS DE LEADR (documentados el 14/08/2026).
+  //
+  // El bono de "1 mes de Leadr Pro" que viene con el curso genera correo, y ese correo no estaba
+  // en ningún inventario: FLUJOS.md lo despachaba con una línea ("lo manda la plataforma Leadr,
+  // no este sistema") y ahí terminaba. Vivía en el punto ciego entre los dos repos — el clásico
+  // "no es de nadie". Se documenta acá, del lado del CURSO, porque es el curso el que lo dispara
+  // y es el comprador del curso quien lo recibe. Que la ejecución esté en otro repo no lo saca
+  // del inventario, igual que las piezas de Make no salen por correr en Make.
+  // ───────────────────────────────────────────────────────────────────────────
+  'leadr-acceso': {
+    nombre: 'Acceso a Leadr que viene con la compra',
+    objetivo: 'Que el comprador pueda ENTRAR a usar el mes de Pro que le regalamos, no sólo tenerlo.',
+    dueno: 'Sofia (Email)',
+
+    trigger: [
+      { tipo: TRIGGER.EVENTO, que: 'webhook de Hotmart: compra aprobada', quien: PLATAFORMA.CODIGO, detalle: 'api/hotmart.js → POST a la API interna de Leadr /api/internal/course-access' },
+    ],
+    // El disparo vive acá; el envío, en `../Leadr/app/lib/acceso.ts`. Se nombra el nuestro porque
+    // es el que se puede romper de este lado: si el webhook no llama, del otro lado no pasa nada.
+    motor: 'sistema-ingresos/api/hotmart.js',
+
+    audiencia: { de: 'tabla', id: 'ventas', nombre: 'compradores del curso (producto 7966973)' },
+    dia0: 'cuándo se aprobó la compra',
+
+    piezas: [],
+    piezasAjenas: [
+      { clave: 'acceso', horas: 0, tag: 'leadr-acceso-curso', plataforma: PLATAFORMA.LEADR, detalle: 'asunto "Tu acceso a Leadr (viene con el curso)" · sale por Brevo, NUNCA por el SMTP de Supabase' },
+      // El auto-servicio no lo dispara nadie de nuestro lado: lo pide la persona cuando su link
+      // venció. Se declara porque es una pieza real que llega a su casilla, y porque es la que
+      // hoy salva la mayoría de los accesos (verificado 11/08: joaquinadg pidió uno y entró).
+      { clave: 'relink', horas: null, tag: 'leadr-acceso-reenvio', plataforma: PLATAFORMA.LEADR, detalle: 'asunto "Tu nuevo link para entrar a Leadr" · lo pide la persona desde /entrar cuando el link venció' },
+    ],
+
+    // ⚠️ ESTE ES EL HUECO. Si el comprador YA tenía cuenta en Leadr, el endpoint le extiende el
+    // plan y devuelve `upgraded` SIN mandar ningún mail: se le regala el Pro y no se entera.
+    // Hoy es 1 de 17 (parceparce894, compró el 28/07 con cuenta desde el 22/05), pero crece a
+    // medida que las dos listas se superponen.
+    excluye: ['🔴 quien YA tenía cuenta en Leadr — se le extiende el plan y NO recibe ningún mail'],
+    topes: {},
+    condiciones: [
+      'el link del mail VENCE, y antes de las 24 h que prometía el copy viejo',
+      'el mail lleva `hashed_token` a /entrar, nunca el `action_link` de Supabase (flujo implícito vs PKCE)',
+      '/entrar no canjea con GET: las precargas de Gmail gastaban el token antes que la persona',
+    ],
+
+    metrica: 'compradores que llegaron a INICIAR SESIÓN. Desde que el mail sale por Brevo (30/07): 3 de 6. Antes, con el SMTP de Supabase: 0 de 11.',
+    apagado: 'no hay flag: se apaga sacando la llamada del webhook (api/hotmart.js) o el secreto LEADR_INTERNAL_SECRET.',
+  },
+
+  // ───────────────────────────────────────────────────────────────────────────
+  'leadr-reactivacion': {
+    nombre: 'Rescate de quien no entró a Leadr',
+    objetivo: 'Devolverle la llave a quien tiene cuenta y nunca pudo entrar, y contarle las novedades a quien sí entró.',
+    dueno: 'Sofia (Email)',
+
+    // A MANO A PROPÓSITO — decisión de Jose, 14/08/2026. No es un flujo a medio hacer: una tanda
+    // de rescate se manda cuando hay algo que decir, no en piloto automático. Queda escrito para
+    // que dentro de tres meses nadie lo lea como un cron caído y "lo arregle".
+    trigger: [
+      { tipo: TRIGGER.MANO, que: 'alguien corre el script cuando decide mandar una tanda', quien: PLATAFORMA.LEADR },
+    ],
+    motor: '../Leadr/app/scripts/reactivacion-leadr.mjs',
+
+    audiencia: { de: 'tabla', id: 'users (base de Leadr)', nombre: 'segmento A: nunca inició sesión · segmento B: ya entró alguna vez' },
+    dia0: 'no hay: la tanda se arma con el estado del día en que se corre',
+
+    piezas: [],
+    piezasAjenas: [
+      { clave: 'segmento-a', horas: null, tag: 'leadr-reactivacion-a', plataforma: PLATAFORMA.LEADR, detalle: 'link de acceso NUEVO para quien nunca entró' },
+      { clave: 'segmento-b', horas: null, tag: 'leadr-reactivacion-b', plataforma: PLATAFORMA.LEADR, detalle: 'qué se sumó desde la última vez, para quien ya entró' },
+    ],
+
+    excluye: ['quien ya entró (para el segmento A)'],
+    topes: {},
+    condiciones: ['tiene `--dry` y `--solo <email>`: probar antes de mandar la tanda entera'],
+
+    metrica: 'rescatados / contactados. Tres tandas (30/07, 31/07, 02/08): 1 de 18.',
+    apagado: 'no aplica — no corre solo. Para que no salga, no se corre.',
+  },
+
+  // ───────────────────────────────────────────────────────────────────────────
+  'email-manifiesto': {
+    nombre: 'Tanda única a toda la base — "el negocio que sostenía al periodismo"',
+    objetivo: 'Reactivar la base entera con un mensaje de posición y llevarla al curso. Y, sobre todo, medir quién sigue vivo en la lista.',
+    dueno: 'Sofia (Email)',
+
+    // A MANO Y UNA SOLA VEZ. Es una campaña de Brevo disparada por API el 18/08/2026, no un
+    // flujo que corre solo: no tiene cron, no tiene cola y no se puede repetir (una campaña de
+    // Brevo se manda una vez). Se declara igual porque le llegó a 1.227 personas: un envío que
+    // no está en el inventario es exactamente el agujero que este archivo existe para evitar.
+    trigger: [
+      { tipo: TRIGGER.MANO, que: 'se creó la campaña de Brevo y se disparó por API', quien: PLATAFORMA.BREVO_AUTO, detalle: 'campaña #4, 18/08/2026' },
+    ],
+    motor: null,
+
+    audiencia: { de: 'lista de Brevo', id: 5, nombre: 'listas 5 + 6 deduplicadas por Brevo — 1.258 únicos, 1.227 tras sacar bajas y compradores' },
+    dia0: 'no hay: tanda única, el día que se mandó',
+
+    piezas: [],
+    piezasAjenas: [
+      // Sin tag de Brevo: el plan Starter lo rechaza con 405. La sincronización lo reconoce POR
+      // EL ASUNTO (brevo-events-sync.js: `ev.tag || porAsunto.get(ev.subject)`), que está cargado
+      // en funnel_steps. Si alguien edita el asunto en Brevo y no toca esa fila, la campaña pasa
+      // a mostrar CERO — indistinguible de "no la abrió nadie".
+      { clave: 'manifiesto', horas: 0, tag: 'email-manifiesto', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'asunto "Lo que se está muriendo no es el periodismo" · CTA a /?src=Email-Manifiesto' },
+    ],
+
+    excluye: ['compradores (lista de exclusión Brevo #7, 21 emails de customers+ventas)', 'dados de baja (emailBlacklisted)'],
+    topes: {},
+    condiciones: ['no se repite: una campaña de Brevo sólo se puede enviar una vez'],
+
+    metrica: 'aperturas, NO ventas. Con 1.227 destinatarios lo esperable son 10-25 clics y 0-1 ventas: cero ventas ahí no significa que el mensaje falló, significa que no hay muestra. Las ventas, si las hay, entran por ventas.src = Email-Manifiesto.',
+    apagado: 'no aplica — ya salió y no vuelve a salir.',
+  },
+
+  // ───────────────────────────────────────────────────────────────────────────
+  'leadr-vencimiento': {
+    nombre: 'Aviso de que se vence el Pro',
+    objetivo: 'Que el comprador sepa que su mes se termina y pueda decidir si paga. Es el único momento en que Leadr puede convertir.',
+    dueno: 'Sofia (Email)',
+
+    trigger: [
+      { tipo: TRIGGER.RELOJ, que: 'haría falta un cron diario que mire plan_expires_at', quien: PLATAFORMA.LEADR },
+    ],
+    // 🔴 SIN MOTOR: no existe. Nadie avisa ni antes ni después de que el Pro se cae. Y sin aviso
+    // no hay decisión de pagar, así que la #59 va a medir 0 conversiones sin poder distinguir
+    // "no quisieron" de "no se enteraron". Verificado el 14/08/2026 contra los crons de Leadr:
+    // los cinco que hay son Clara, el Director, los costos de Make y Clarity ×2. Ninguno de mail.
+    motor: null,
+
+    audiencia: { de: 'tabla', id: 'users (base de Leadr)', nombre: "plan = 'pro' con plan_expires_at cerca" },
+    dia0: 'la fecha de vencimiento del plan',
+
+    piezas: [],
+    piezasAjenas: [],
+
+    excluye: ['quien ya paga', 'quien nunca inició sesión (avisarle que se le vence algo que nunca usó suena a burla)'],
+    topes: {},
+    condiciones: [
+      '⏰ la primera ola vence entre el 28 y el 31/08/2026: 6 personas. Si no hay nada armado antes, se pierden y hay que esperar a septiembre',
+      '⚠️ la baja a `basic` sólo ocurre cuando la persona ENTRA al dashboard: quien no vuelve queda marcado `pro` para siempre en la base',
+    ],
+
+    metrica: 'compradores que pasan a Pro pago al vencerse el regalo. Hoy: 0 de 0 — nadie llegó a que le avise nada.',
     apagado: 'no aplica.',
   },
 };

@@ -1059,6 +1059,67 @@
 </footer>
 
 <script>
+/* ── ATRIBUCIÓN POR ANUNCIO + Meta Pixel en el checkout de Hotmart ──
+   MISMO BLOQUE que paginas/index.html. Hasta el 18/08/2026 esta página no tenía ni
+   atribución ni InitiateCheckout: sus botones quedaban clavados en `src=LeadGen-1USD`
+   pasara lo que pasara, así que cualquier campaña que apuntara acá con ?src= perdía la
+   atribución **en silencio** — la venta entraba igual, sólo que bajo el src equivocado.
+
+   La atribución (src/sck/utm) se aplica AL CARGAR la página, sobre TODOS los botones
+   de compra — así no depende de cómo el usuario haga clic. La cookie de Facebook
+   (fbp/fbc) se agrega en el clic, cuando ya está disponible. */
+function getCookie(name) {
+    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+}
+
+// 1) Al cargar: bakear src + sck + utm del anuncio en cada link de Hotmart.
+(function applyAdAttribution() {
+    const landing = new URLSearchParams(window.location.search);
+    const adSrc = landing.get('src');
+    const adSck = landing.get('sck');
+    document.querySelectorAll('a[href*="hotmart"]').forEach(a => {
+        try {
+            const url = new URL(a.href);
+            if (adSrc) url.searchParams.set('src', adSrc);   // ?src=ad4 → columna SRC en Hotmart
+            if (adSck) url.searchParams.set('sck', adSck);
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => {
+                const v = landing.get(k);
+                if (v) url.searchParams.set(k, v);
+                else if ((url.searchParams.get(k) || '').includes('{{')) url.searchParams.delete(k);
+            });
+            a.href = url.toString();
+        } catch (e) { /* si un link falla, los demás siguen igual */ }
+    });
+})();
+
+// 2) Al hacer clic: disparar InitiateCheckout y anexar la cookie de FB al sck.
+document.addEventListener('click', e => {
+    const link = e.target.closest('a[href*="hotmart"]');
+    if (!link) return;
+
+    if (window.fbq) fbq('track', 'InitiateCheckout', {
+        content_ids: ['curso-sistema-ingresos'],
+        content_type: 'product',
+        value: 27.00,
+        currency: 'USD'
+    });
+
+    try {
+        const fbp = getCookie('_fbp');
+        const fbc = getCookie('_fbc');
+        if (fbp || fbc) {
+            const url = new URL(link.href);
+            const baseSck = (url.searchParams.get('sck') || '').split('~')[0];  // preserva el sck del anuncio
+            let packed = baseSck;
+            if (fbp) packed += '~fbp:' + fbp;
+            if (fbc) packed += '~fbc:' + fbc;
+            url.searchParams.set('sck', packed);
+            link.href = url.toString();
+        }
+    } catch (err) { /* si algo falla, el checkout sigue andando igual */ }
+});
+
 /* ── REVEAL ON SCROLL ── */
 const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } });
