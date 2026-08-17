@@ -48,12 +48,8 @@
 const { LINKS, primerNombre } = require('./_lib/wa');
 // La FICHA de los dos flujos de recuperación: quién entra, los plazos, cuándo se da por perdido.
 const { secuenciasDeRecuperacion, FLUJOS, RECUPERACION_POR_TIPO } = require('./_lib/flujos');
-const { runHotmartSync } = require('./_lib/hotmart-sync');
-const { runMetaGastoTotalPorAnuncio } = require('./_lib/meta-gasto-total-por-anuncio');
-const { runMetaEmbudoDiarioPorAnuncio } = require('./_lib/meta-embudo-diario-por-anuncio');
-const { runMetaGastoDiarioTodaLaCuenta } = require('./_lib/meta-gasto-diario-toda-la-cuenta');
-const { runSyncEstados } = require('./_lib/sync-estados');
-const { runVersionesSync } = require('./_lib/versiones-sync');
+// Las seis sincronizaciones de datos se fueron a /api/hotmart-sync?todos=1 (17/08/2026), con
+// cron propio: una que falla ya no arrastra a las demas ni queda escondida detras de esta corrida.
 const { publicarStoryDelDia } = require('./_lib/story-diaria');
 
 const BREVO = 'https://api.brevo.com/v3';
@@ -232,57 +228,12 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Antes de recuperar: sincronizar con Hotmart (reconcilia ventas + captura pagos
-    // rechazados frescos → clientes_potenciales, para que la recuperación los agarre en
-    // esta misma corrida). Best-effort: si falla, no afecta la recuperación. Solo en la
-    // corrida real del cron / live (no en modos de solo lectura).
+    // ⚠️ LAS SEIS SINCRONIZACIONES DE DATOS YA NO CORREN ACÁ (17/08/2026).
+    // Se fueron a /api/hotmart-sync?todos=1, con cron propio a las 11:00 UTC. Vivían de
+    // pasajeras en esta corrida porque se creía que el plan sólo permitía 2 crons — permite 100.
+    // Ahora una que falla no arrastra a las otras ni queda escondida detrás de este trabajo, y
+    // un error acá ya no deja los paneles con datos de ayer.
     if (mode === 'cron' || mode === 'live') {
-      try {
-        const sync = await runHotmartSync();
-        console.log(JSON.stringify({ type: 'hotmart_sync', ...sync }));
-      } catch (e) {
-        console.error('hotmart-sync (no frena la recuperación):', e.message);
-      }
-      // Gasto ACUMULADO por anuncio → campanas (para CPA/ROAS por anuncio) + gasto mensual
-      // de la cuenta → gastos_meta_mensual (P&L). Best-effort, misma corrida.
-      try {
-        const meta = await runMetaGastoTotalPorAnuncio();
-        console.log(JSON.stringify({ type: 'meta_gasto_total_por_anuncio', ...meta }));
-      } catch (e) {
-        console.error('meta-gasto-total-por-anuncio (no frena la recuperación):', e.message);
-      }
-      // Embudo de cada anuncio POR DÍA → meta_insights_diario (lo lee la rutina autónoma de Mateo).
-      try {
-        const metaDia = await runMetaEmbudoDiarioPorAnuncio();
-        console.log(JSON.stringify({ type: 'meta_embudo_diario_por_anuncio', ...metaDia }));
-      } catch (e) {
-        console.error('meta-embudo-diario-por-anuncio (no frena la recuperación):', e.message);
-      }
-      // Gasto de Meta POR DÍA y por CAMPAÑA → meta_gasto_diario, la cuenta ENTERA (tenga
-      // ficha o no). Es lo que muestra el panel de campañas de Leadr. Antes se corría a
-      // mano y quedaba viejo sin avisar: el 02/08 el panel decía $0,52 y eran $1,86.
-      try {
-        const metaGasto = await runMetaGastoDiarioTodaLaCuenta();
-        console.log(JSON.stringify({ type: 'meta_gasto_diario_toda_la_cuenta', ...metaGasto }));
-      } catch (e) {
-        console.error('meta-gasto-diario-toda-la-cuenta (no frena la recuperación):', e.message);
-      }
-      // Estado de los agentes → agentes_estado (para que el Panel de Comando de la nube
-      // los lea por MCP; la nube no puede clonar el repo). Best-effort. Tarjeta #32.
-      try {
-        const est = await runSyncEstados();
-        console.log(JSON.stringify({ type: 'sync_estados', count: est.count, errores: est.errores }));
-      } catch (e) {
-        console.error('sync-estados (no frena la recuperación):', e.message);
-      }
-      // Métricas de la versión activa del checkout (Hotmart) + landing (events) → checkout_versiones
-      // / landing_versiones. Best-effort, misma corrida. Así las tablas de versiones se actualizan solas.
-      try {
-        const ver = await runVersionesSync();
-        console.log(JSON.stringify({ type: 'versiones_sync', ...ver }));
-      } catch (e) {
-        console.error('versiones-sync (no frena la recuperación):', e.message);
-      }
       // VALENTINA — la story del día en la fanpage. Las stories de página NO se
       // pueden programar (la API las publica al instante y duran 24 h), así que
       // la única forma de sostener una por día es dispararla una vez por día, y
