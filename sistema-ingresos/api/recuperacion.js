@@ -391,13 +391,18 @@ module.exports = async (req, res) => {
           live: true,
         }).catch(e => ({ ok: false, error: e.message }));
       }
-      // PANEL DE SALUD unificado (el "uno con todo"): se dispara acá, tras el trabajo del día,
-      // para no gastar un cron aparte (Hobby limita a 2). Best-effort: nunca frena la recuperación.
-      try {
-        const { enviarPanelSalud } = require('./salud');
-        const p = await enviarPanelSalud('send');
-        console.log(JSON.stringify({ type: 'panel_salud', ...p }));
-      } catch (e) { console.error('panel salud (no frena la recuperación):', e && e.message || e); }
+      // ⚠️ EL PANEL DE SALUD YA NO SE MANDA DESDE ACÁ (17/08/2026). Tiene su propio cron.
+      //
+      // Vivía en esta línea "para no gastar un cron aparte (Hobby limita a 2)" — y ese límite era
+      // falso: el plan permite 100 crons por proyecto, uno por día cada uno. Lo que sí limita es
+      // la cantidad de FUNCIONES (12, comprobado), pero el panel no necesita una nueva: sale por
+      // `/api/salud`, que ya existe.
+      //
+      // POR QUÉ IMPORTA SACARLO. El panel es lo ÚNICO que le avisa a Jose si algo se rompió, y
+      // estaba de último pasajero en un cron que carga otras siete cosas. Si esta corrida fallaba,
+      // se perdían las siete Y el aviso de que se perdieron. Desde su bandeja, "no llegó el panel"
+      // y "no había nada que avisar" se ven idénticos.
+      // Un vigilante no puede depender de lo que vigila.
     }
 
     return res.status(200).json({
