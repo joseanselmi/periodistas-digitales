@@ -52,6 +52,61 @@ const NO_POTENCIAL_EVENTS = [
   'PURCHASE_REFUNDED', 'PURCHASE_CHARGEBACK', 'PURCHASE_PROTEST',
 ]
 
+// Una venta que se cae DESPUÉS de cobrada. Hasta el 17/08/2026 estos eventos llegaban
+// acá, caían en "no es cliente potencial" y salían por un `200 {action:'ignored'}`:
+// Hotmart avisaba de la devolución y el aviso se tiraba a la basura. Una sola
+// (HP0260153496, 07/07) infló julio en 24,31 USD durante seis semanas.
+//
+// Esto es el camino RÁPIDO, no el único: depende de que el evento esté suscrito en el
+// panel de Hotmart, cosa que no se puede verificar desde el código. La red de abajo es
+// el barrido diario de `_lib/hotmart-sync.js`, que le pregunta a la API por estado y no
+// depende de ninguna configuración. Los dos marcan lo mismo y marcar dos veces no hace
+// nada: el segundo ve el estado ya puesto y no toca la fila.
+const DEVOLUCION_EVENTS = {
+  PURCHASE_REFUNDED:  'devuelta',
+  PURCHASE_CHARGEBACK: 'contracargo',
+  PURCHASE_PROTEST:    'contracargo',
+}
+
+// Marca la venta como caída. Toca UN campo y nada más: la fila tiene teléfono, país y
+// atribución que costaron consultas aparte, y una devolución no es motivo para perderlos.
+// No borra la fila a propósito — que la venta existió y se cayó es el dato con el que se
+// mide la tasa de devolución.
+async function marcarVentaCaida(transaction, estado) {
+  if (!transaction) return { ok: false, motivo: 'sin transaction' }
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/ventas?transaction_id=eq.${encodeURIComponent(transaction)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_SERVICE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({ estado, estado_actualizado_en: new Date().toISOString() }),
+      }
+    )
+    if (!r.ok) {
+      console.error('[curso webhook] no pude marcar', transaction, r.status, await r.text())
+      return { ok: false, motivo: `HTTP ${r.status}` }
+    }
+    const filas = await r.json().catch(() => [])
+    // Cero filas = Hotmart avisa de una devolución de una venta que no tenemos. No se
+    // inventa la fila: se deja el grito en el log para mirarlo, porque significa que la
+    // compra original nunca entró y eso es un agujero distinto.
+    if (!filas.length) {
+      console.error('[curso webhook] DEVOLUCIÓN SIN VENTA — no está en `ventas`:', transaction)
+      return { ok: false, motivo: 'sin venta' }
+    }
+    return { ok: true, filas: filas.length }
+  } catch (e) {
+    console.error('[curso webhook] error marcando la devolución:', e)
+    return { ok: false, motivo: 'excepción' }
+  }
+}
+
 const CONTENT_ID = 'curso-sistema-ingresos'
 const CONTENT_NAME = 'Sistema de Ingresos Diarios para Periodistas'
 
@@ -548,8 +603,15 @@ module.exports = async (req, res) => {
 
   // 3. Bifurcar según el evento:
   //    · compra aprobada/completa      → Meta CAPI + bono Leadr (sigue abajo)
+  //    · devolución / contracargo       → marcar la venta como caída y terminar
   //    · carrito abandonado / rechazado → registrar cliente potencial y terminar
   //    · cualquier otra cosa            → ignorar
+  const estadoCaida = DEVOLUCION_EVENTS[String(event).toUpperCase()]
+  if (estadoCaida) {
+    const r = await marcarVentaCaida(purchase.transaction, estadoCaida)
+    return res.status(200).json({ ok: true, action: 'venta_caida', estado: estadoCaida, marcada: r.ok, motivo: r.motivo })
+  }
+
   if (!PURCHASE_EVENTS.includes(event)) {
     const tipo = classifyPotencial(event, purchase)
     if (!tipo) {

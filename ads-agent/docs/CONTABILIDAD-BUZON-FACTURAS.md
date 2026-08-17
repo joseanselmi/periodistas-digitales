@@ -225,7 +225,13 @@ agregarlos solo si una factura reenviada cae en spam. Ver: `vercel dns ls leadr.
       `gastos@` llegó reenviado al Gmail y la búsqueda `to:gastos@leadr.cloud` lo encuentra.
 - [ ] **Jose:** poner `gastos@leadr.cloud` como email de facturación en los
       proveedores que SÍ cobran: **dominio leadr.cloud (Hostinger) + dominio
-      sistemadeingresosdiariosia.com**. (Brevo y Anthropic ✅ ya hechos.
+      sistemadeingresosdiariosia.com** + **Anthropic**. (Brevo ✅ hecho.
+      **⚠️ Anthropic NO estaba hecho, aunque acá figuraba como ✅ desde el
+      03/07** — corregido el 17/08/2026. El cambio se empezó y quedó a medias:
+      el 03/07 llegó a `gastos@` la verificación de Link/Stripe y nunca se
+      confirmó, así que los recibos siguieron yendo a `joseanselmi27@gmail.com`
+      y la rutina no los vio. Resultado: julio y agosto figuraban en $0 con un
+      gasto real de $116,17 y $100,00. Se cargaron a mano el 17/08.
       **Make ya no hace falta:** su panel no deja cambiarlo, así que el 01/08 se
       sumó `invoice+statements@make.com` a la lista blanca del PASO 1 y la rutina
       lee ese recibo directo del Gmail.)

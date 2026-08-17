@@ -2,17 +2,19 @@
 // al inicio de su corrida diaria). Equivalente serverless de ads-agent/scripts/datos/hotmart-sync.mjs
 // (la versión CLI). Detalle en ads-agent/docs/ARQUITECTURA-DATOS.md.
 //
-// Hace dos cosas, best-effort (si algo falla, loguea y sigue — nunca tumba la recuperación):
+// Hace tres cosas, best-effort (si algo falla, loguea y sigue — nunca tumba la recuperación):
 //   1. RECONCILIA VENTAS: trae TODOS los productos de la cuenta (curso + upsells + lo que
 //      venda el cross-sell/recomendador de Hotmart, que quizá ni pasa por el webhook),
 //      inserta en `ventas` las que falten (enriquecidas con USD + datos del comprador), y
 //      completa las filas del webhook que aún no tengan USD.
 //   2. CAPTURA RECHAZOS: los pagos rechazados recientes → `clientes_potenciales` como
 //      `pago_rechazado` (con teléfono, para que la recuperación pueda escribirles).
+//   3. MARCA DEVOLUCIONES: las ventas que se cayeron después de cobradas → `ventas.estado`.
 //
 // Env: HOTMART_CLIENT_ID, HOTMART_CLIENT_SECRET, HOTMART_BASIC, SUPABASE_URL,
 //      SUPABASE_SERVICE_ROLE_KEY. Opcionales: HOTMART_EXCLUDE_EMAILS (default el mail de
-//      Jose), HOTMART_ONLY_PRODUCTS (lista de ids; vacío = todos), HOTMART_RECHAZO_DIAS (3).
+//      Jose), HOTMART_ONLY_PRODUCTS (lista de ids; vacío = todos), HOTMART_RECHAZO_DIAS (3),
+//      HOTMART_DEVOLUCION_DIAS (16), HOTMART_CONTRACARGO_DIAS (120).
 
 const OAUTH_URL = 'https://api-sec-vlc.hotmart.com/security/oauth/token';
 const SALES_URL = 'https://developers.hotmart.com/payments/api/v1/sales/history';
@@ -21,6 +23,20 @@ const COMM_URL  = 'https://developers.hotmart.com/payments/api/v1/sales/commissi
 
 const SALE_STATUSES    = ['APPROVED', 'COMPLETE'];
 const RECHAZO_STATUSES = ['NO_FUNDS', 'BLOCKED', 'CANCELLED', 'EXPIRED', 'OVERDUE'];
+
+// Plata que ENTRÓ y después se fue. Es otra cosa que un rechazo (ese nunca entró).
+// ⚠️ El `start_date` de Hotmart filtra por la fecha de COMPRA, no por la de devolución
+// —verificado contra la API el 17/08/2026— y la respuesta no trae fecha de devolución
+// en ningún campo. O sea: NO se puede preguntar "¿qué se devolvió ayer?". Hay que barrer
+// las compras de una ventana hacia atrás y mirar en qué estado quedaron.
+// De ahí salen los dos números, que miden cosas distintas:
+//   · DEVOLUCION_DIAS = 16 → la garantía del curso es de 14 días, +2 de margen para que
+//     Hotmart procese la devolución del último día. Fuera de la garantía casi no hay.
+//   · CONTRACARGO_DIAS = 120 → un contracargo NO lo limita la garantía: lo abre el banco
+//     del comprador y puede llegar meses después. Con 16 días no se vería ninguno.
+// Cuesta una llamada más por día y hoy hay 0 contracargos, pero el día que haya uno la
+// diferencia es enterarse o no enterarse nunca.
+const DEVOLUCION_STATUSES = { REFUNDED: 'devuelta', CHARGEBACK: 'contracargo' };
 
 const SUPABASE_URL  = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
 const SUPABASE_KEY  = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
@@ -32,6 +48,8 @@ const EXCLUDE_EMAILS = (process.env.HOTMART_EXCLUDE_EMAILS || 'joseanselmi27@gma
 const ONLY_PRODUCTS = (process.env.HOTMART_ONLY_PRODUCTS || '')
   .split(',').map(s => s.trim()).filter(Boolean);
 const RECHAZO_DIAS  = Math.max(1, Number(process.env.HOTMART_RECHAZO_DIAS) || 3);
+const DEVOLUCION_DIAS  = Math.max(1, Number(process.env.HOTMART_DEVOLUCION_DIAS) || 16);
+const CONTRACARGO_DIAS = Math.max(1, Number(process.env.HOTMART_CONTRACARGO_DIAS) || 120);
 
 const pick = (...v) => { for (const x of v) if (x != null && x !== '') return x; return undefined; };
 const toIso = v => { if (v == null || v === '') return undefined; const n = Number(v); const d = Number.isFinite(n) ? new Date(n > 1e12 ? n : n * 1000) : new Date(v); return isNaN(d.getTime()) ? undefined : d.toISOString(); };
@@ -132,11 +150,17 @@ async function sbPatch(table, dedupKey, fields) {
   });
   return r.ok;
 }
+async function sbPatchByTx(table, tx, fields) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?transaction_id=eq.${encodeURIComponent(tx)}`, {
+    method: 'PATCH', headers: sbHeaders({ Prefer: 'return=minimal' }), body: JSON.stringify(fields),
+  });
+  return r.ok;
+}
 
 async function runHotmartSync() {
   if (!CLIENT_ID || !CLIENT_SECRET || !BASIC || !SUPABASE_KEY) return { skipped: 'faltan credenciales de Hotmart/Supabase' };
   const token = await getToken();
-  const out = { ventas_nuevas: 0, ventas_enriquecidas: 0, rechazos_nuevos: 0 };
+  const out = { ventas_nuevas: 0, ventas_enriquecidas: 0, rechazos_nuevos: 0, devoluciones_marcadas: 0 };
 
   // ── 1) VENTAS ──
   const raw = await hmList(SALES_URL, token);
@@ -208,6 +232,46 @@ async function runHotmartSync() {
     }
     out.rechazos_nuevos = await sbInsert('clientes_potenciales', toInsert);
   } catch (e) { console.error('sync rechazos', e.message); }
+
+  // ── 3) DEVOLUCIONES Y CONTRACARGOS → marcar en `ventas` ──
+  // Red de seguridad del webhook: si el evento no está suscrito en el panel de Hotmart,
+  // o si el webhook falló, esto lo agarra igual. Le pregunta a la API por estado, que no
+  // depende de ninguna configuración.
+  try {
+    const caidas = new Map(); // transaction_id → 'devuelta' | 'contracargo'
+    for (const [status, estado] of Object.entries(DEVOLUCION_STATUSES)) {
+      const dias = estado === 'contracargo' ? CONTRACARGO_DIAS : DEVOLUCION_DIAS;
+      try {
+        const u = new URL(SALES_URL);
+        u.searchParams.set('max_results', '100');
+        u.searchParams.set('transaction_status', status);
+        u.searchParams.set('start_date', String(Date.now() - dias * 86400000));
+        const r = await fetch(u.toString(), { headers: { Authorization: `Bearer ${token}` } });
+        if (!r.ok) { out.devoluciones_error = `${status} HTTP ${r.status}`; continue; }
+        for (const it of ((await r.json()).items || [])) {
+          const tx = pick((it.purchase || {}).transaction, it.transaction);
+          if (tx) caidas.set(String(tx), estado);
+        }
+      } catch (e) { out.devoluciones_error = `${status}: ${e.message}`; }
+    }
+
+    if (caidas.size) {
+      const filas = await sbSelect('ventas?select=transaction_id,estado&limit=100000');
+      const estadoActual = new Map(filas.map(r => [String(r.transaction_id), r.estado]));
+      for (const [tx, estado] of caidas) {
+        const actual = estadoActual.get(tx);
+        // La devolución existe en Hotmart pero la venta nunca entró a `ventas`. No se
+        // inventa la fila (un histórico solo completa, nunca adivina): se reporta.
+        if (actual === undefined) { (out.devoluciones_sin_venta ||= []).push(tx); continue; }
+        if (actual === estado) continue; // ya marcada — el webhook llegó primero
+        // Solo el estado. La fila conserva teléfono, país y atribución intactos.
+        if (await sbPatchByTx('ventas', tx, { estado, estado_actualizado_en: new Date().toISOString() })) {
+          out.devoluciones_marcadas++;
+          (out.devoluciones_detalle ||= []).push(`${tx}:${estado}`);
+        }
+      }
+    }
+  } catch (e) { console.error('sync devoluciones', e.message); out.devoluciones_error = e.message; }
 
   return out;
 }

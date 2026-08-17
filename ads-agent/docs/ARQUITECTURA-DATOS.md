@@ -666,3 +666,71 @@ proyecto** (`ovwlsnnhiuoxoazyrhvt`). Resultado: `401 Invalid API key` recién al
 después de bajar todo de Meta, sin ninguna pista de la causa. Ahora el script compara el
 `ref` que viene dentro del JWT contra la URL y avisa antes de escribir nada. En Vercel esto
 no pasa: ahí `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` son las dos de marketing.
+
+---
+
+## Actualización (2026-08-17): una venta también se puede CAER
+
+**Cómo apareció.** Jose comparó el panel de Contabilidad contra el de Hotmart: nosotros
+decíamos 17 ventas y $351,32; Hotmart, 16 y $280,19. La diferencia era **una sola venta**,
+`HP0260153496` (07/07, Perú, $27,54): comprada, cobrada y **devuelta** dentro de la
+garantía. Estuvo seis semanas contada como buena.
+
+**La causa.** La tabla `ventas` sólo sabía sumar. El webhook inserta, el sync completa —
+y nada daba de baja. Las dos puertas estaban abiertas y las dos dejaban pasar:
+
+- **El webhook recibía el aviso y lo tiraba.** `PURCHASE_REFUNDED` caía en "no es cliente
+  potencial" y salía por un `200 {action:'ignored'}`. Hotmart avisaba; nadie escuchaba.
+- **El sync nunca preguntaba.** Consultaba `APPROVED/COMPLETE` (ventas) y los cinco
+  estados de rechazo (pagos que nunca entraron). `REFUNDED` y `CHARGEBACK` —plata que
+  entró y se fue— no estaban en ninguna de las dos listas.
+
+### Lo que hay ahora
+
+`ventas.estado` (`vendida` | `devuelta` | `contracargo`). **La fila no se borra**: que la
+venta existió y después se cayó es el dato con el que se mide la tasa de devolución.
+`v_ingresos_mes` y `v_gastos_variables_mes` filtran por `estado = 'vendida'` — las dos, no
+sólo la del ingreso: la comisión de una venta devuelta no puede quedar como gasto de una
+venta que ya no existe.
+
+Se marca por **dos caminos que no dependen uno del otro**, y marcar dos veces no hace nada:
+
+1. **Webhook (instantáneo)** — `api/hotmart.js`. Depende de que el evento esté suscrito en
+   el panel de Hotmart, cosa que **no se puede verificar desde el código**. Por eso no
+   alcanza solo.
+2. **Barrido diario (red de seguridad)** — `api/_lib/hotmart-sync.js`, dentro del cron que
+   ya corría. Le pregunta a la API por estado; no depende de ninguna configuración.
+
+### ⚠️ Por qué el barrido NO puede mirar "el día anterior"
+
+Verificado contra la API el 17/08/2026:
+
+```
+REFUNDED desde 01/06 → HP0260153496
+REFUNDED desde 08/07 → (ninguna)      ← comprada el 07/07
+```
+
+**El `start_date` de Hotmart filtra por fecha de COMPRA, no de devolución**, y la respuesta
+no trae fecha de devolución en ningún campo (sólo `order_date`, `approved_date` y
+`warranty_expire_date`). Una devolución siempre llega días después de la venta, así que la
+ventana de "ayer" es justo donde nunca hay ninguna: un cron que el 11/07 pregunta por las
+compras del 10/07 jamás ve la devolución de una compra del 07/07.
+
+Hay que barrer **compras de una ventana hacia atrás** y mirar en qué estado quedaron. De ahí
+los dos números, que miden cosas distintas:
+
+| Env | Default | Por qué |
+|---|---|---|
+| `HOTMART_DEVOLUCION_DIAS` | **16** | Garantía de 14 días + 2 de margen de procesamiento |
+| `HOTMART_CONTRACARGO_DIAS` | **120** | Un contracargo **no lo limita la garantía**: lo abre el banco del comprador y puede llegar meses después. Con 16 días no se vería ninguno |
+
+**Corolario incómodo:** el barrido de 16 días nunca habría encontrado la devolución de
+julio (41 días de antigüedad). Esa se marcó **a mano**. Cada vez que se toque la ventana
+hacia abajo, lo que queda afuera queda afuera para siempre.
+
+### Lo que sigue faltando
+
+Una **alarma de cuadre**: comparar una vez por mes nuestro neto contra el de Hotmart y
+avisar si no dan iguales. Lo de arriba tapa *este* agujero; la alarma avisa del próximo,
+sea cual sea. Sin ella, la única razón por la que esto se encontró fue que Jose miró las
+dos pantallas de casualidad.
