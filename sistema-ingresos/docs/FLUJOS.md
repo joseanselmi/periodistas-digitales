@@ -305,14 +305,31 @@ callada — y sólo se puede mandar una vez, así que el bug de las dos corridas
 `paginas/index.html` inyecta ese `src` en los botones de Hotmart, y `api/hotmart.js` lo guarda en
 `ventas.src`. Se mide con `select count(*) from ventas where src='Email-Manifiesto'`.
 
-**Métricas del MAIL — se actualizan solas.** Van por `funnels`/`funnel_steps` → el cron `/api/salud`
-(18:00 España) → `comunicaciones_email` → vista `v_embudo_email`. Como el plan Starter de Brevo no
-deja poner `tag` en una campaña, la atribución entra **por el asunto** (el mismo camino que ya usan
-el Regalo 1 y el 2). Se consulta con
-`select * from v_embudo_email where brevo_tag='email-manifiesto'`.
+**Métricas del MAIL — corregido el 18/08 a la noche.** Se consulta con
+`select * from v_embudo_email where brevo_tag='email-manifiesto'` y hoy devuelve
+**1.227 enviados · 1.189 entregados · 65 aperturas · 7 clics · 48 rebotes** (números deduplicados:
+1.227 filas para 1.227 emails distintos, o sea **nadie lo recibió dos veces** — la duda que había
+quedado abierta esa noche).
 
-> 🔴 Si alguien edita el asunto en Brevo sin tocar `funnel_steps.contenido_asunto`, la campaña pasa
-> a mostrar cero — que es indistinguible de "no la abrió nadie".
+> 🔴 **Durante todo el 18/08 esta ficha dijo algo falso y el panel mostró CERO.** Decía que las
+> métricas iban por `funnels`/`funnel_steps` → cron `/api/salud` → `comunicaciones_email`, y que la
+> atribución entraba por el asunto. **Ninguna de las dos cosas podía funcionar**, y ninguna se había
+> probado contra los datos — sólo leído en el código, donde cada eslabón existía:
+>
+> - el cron le pregunta a `/v3/smtp/statistics/events`, que es la API **transaccional** y **no
+>   contiene una sola campaña de marketing**;
+> - el webhook de campañas **ni siquiera existía** (había uno solo, de tipo `transactional`);
+> - y el payload de una campaña **no trae `subject`**, así que la atribución por asunto era
+>   imposible de entrada.
+>
+> Cómo funciona ahora: **webhook de tipo `marketing`** → `/api/brevo-webhook` en Leadr →
+> `comunicaciones_email`, atribuyendo por **`funnel_steps.brevo_camp_id`** (el número de campaña de
+> Brevo, que nadie puede editar sin querer — a diferencia del asunto). Una campaña nueva **tiene que
+> cargar su `brevo_camp_id`**; si no, sus filas quedan sin atribuir (visibles, no perdidas).
+>
+> Lo vigila el **FLUJO 6 del Panel de Salud** (`saludCampanas` en `api/salud.js`): le pregunta a
+> Brevo cuánto entregó de verdad y lo compara con lo guardado. Si Brevo dice 1.353 y tenemos 0,
+> avisa en rojo el mismo día.
 
 ⚠️ **No se puede juzgar por las ventas.** El mail de oferta salió a 686 y dio 16 clics y 0 ventas;
 acá el rango realista es 10-25 clics y 0-1 ventas. Lo que sí mide es **quién sigue vivo en la lista**.

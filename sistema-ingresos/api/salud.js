@@ -503,6 +503,94 @@ const COLOR = {
   alerta: { bg: '#3a2f0d', bd: '#e0a83a', chip: '🟡' },
   ok: { bg: '#0d2f22', bd: '#22c58a', chip: '✅' },
 };
+// ─────────────────────────────────────────────────────────────────────────────
+// FLUJO 6 - Campanas de Brevo. Objetivo: que lo que se mando se PUEDA VER.
+//
+// POR QUE EXISTE (18/08/2026). La tanda `email-manifiesto` salio a 1.227 personas y el panel
+// mostro CERO durante todo el dia. No fallo ningun envio: los eventos de una campana de
+// marketing no llegaban por ningun lado -- habia un solo webhook y era transaccional, y la
+// sincronizacion diaria le pregunta a la API transaccional, que no contiene campanas.
+//
+// Lo que hace a este agujero distinto de un bug normal: CERO ES UN NUMERO QUE SE LEE BIEN.
+// "0 aperturas" y "no lo abrio nadie" se escriben igual. Ninguna pieza fallo, todas devolvieron
+// 200, y la ficha del flujo declaraba por escrito un camino de medicion que nunca se habia
+// probado contra los datos -- solo leido en el codigo.
+//
+// De ahi la regla que este chequeo encarna: EL CAMINO POR EL QUE SE MIRA UN FLUJO SE VERIFICA
+// CONTRA LA FUENTE, IGUAL QUE EL CAMINO POR EL QUE SE MANDA. Aca se le pregunta a Brevo cuanto
+// entrego de verdad y se compara con lo guardado. Si Brevo dice 1.353 y tenemos 0, eso es rojo
+// -- y se ve el mismo dia, no cuando alguien lo nota de casualidad.
+//
+// No se compara por igualdad. Brevo cuenta las entregas POR LISTA y quien esta en dos listas
+// aparece dos veces (169 personas en la #4: 1.395 "envios" sobre 1.227 reales). Lo nuestro esta
+// deduplicado, asi que SIEMPRE va a dar menos. Por eso el umbral es 60%: pilla "tenemos 0 de
+// 1.353" sin gritar por el 14% de doble conteo. Un chequeo que grita en vano se empieza a
+// ignorar, que es peor que no tenerlo.
+async function saludCampanas() {
+  const met = {}; const puntos = []; let nivel = 'ok';
+  const flujo = '\U0001F4E3 Campanas de Brevo';
+  const que_mira = 'Que una campana enviada se pueda VER en el panel - no que se haya enviado.';
+
+  const pasos = await sb('funnel_steps?select=nombre,brevo_tag,brevo_camp_id&brevo_camp_id=not.is.null');
+  if (pasos == null) return { flujo, que_mira, nivel: 'alerta', puntos: ['No se pudo leer funnel_steps.'], met };
+
+  // Una campana que llego con un camp_id que nadie declaro: el webhook la guarda igual, sin
+  // atribuir, justamente para que se vea aca en vez de desaparecer.
+  const huerfanas = await sb('comunicaciones_email?select=asunto&campana=is.null&mensaje_id=like.camp:*&limit=200');
+  met.campanas_declaradas = pasos.length;
+  met.filas_sin_atribuir = (huerfanas || []).length;
+
+  if (!pasos.length) {
+    puntos.push('No hay ninguna campana de Brevo declarada (`funnel_steps.brevo_camp_id`). Si se mando una y no esta aca, sus eventos se guardan sin atribuir y no aparecen en el embudo.');
+  }
+
+  for (const paso of pasos) {
+    const tag = paso.brevo_tag;
+    let camp = null;
+    try {
+      const r = await fetch(`${BREVO}/emailCampaigns/${paso.brevo_camp_id}`, { headers: { 'api-key': process.env.BREVO_API_KEY, accept: 'application/json' } });
+      if (r.ok) camp = await r.json();
+    } catch { /* se trata abajo como "no se pudo preguntar" */ }
+
+    if (!camp) {
+      nivel = peor(nivel, 'alerta');
+      puntos.push(`No se pudo preguntarle a Brevo por la campana #${paso.brevo_camp_id} (${tag}), asi que hoy va sin verificar.`);
+      continue;
+    }
+    if (camp.status !== 'sent') { puntos.push(`La campana #${paso.brevo_camp_id} (${tag}) todavia no se envio (${camp.status}).`); continue; }
+
+    // Suma POR LISTA: incluye el doble conteo. Es el numero contra el que se compara.
+    const porLista = (camp.statistics && camp.statistics.campaignStats) || [];
+    const entregadasBrevo = porLista.reduce((a, l) => a + (l.delivered || 0), 0);
+
+    const nuestras = await sb(`comunicaciones_email?select=mensaje_id&campana=eq.${encodeURIComponent(tag)}&entregado_en=not.is.null&limit=5000`);
+    const tenemos = (nuestras || []).length;
+    met[`${tag}_brevo`] = entregadasBrevo;
+    met[`${tag}_nuestro`] = tenemos;
+
+    if (nuestras == null) {
+      nivel = peor(nivel, 'alerta');
+      puntos.push(`No se pudo contar lo guardado de ${tag}.`);
+    } else if (entregadasBrevo > 0 && tenemos === 0) {
+      nivel = 'critico';
+      puntos.push(`\U0001F534 Brevo entrego ${entregadasBrevo} mails de ${tag} y no tenemos NI UNO guardado. El panel de esa campana esta mostrando cero, que se lee igual que "no lo abrio nadie". Los eventos no estan llegando: revisar que exista el webhook de tipo marketing en Brevo apuntando a /api/brevo-webhook.`);
+    } else if (entregadasBrevo > 0 && tenemos < entregadasBrevo * 0.6) {
+      nivel = peor(nivel, 'alerta');
+      puntos.push(`\U0001F7E1 De ${tag} tenemos ${tenemos} entregas guardadas y Brevo dice ${entregadasBrevo} (contadas por lista, con doble conteo). Falta mas de lo que ese doble conteo explica.`);
+    } else {
+      puntos.push(`\u2705 ${tag}: ${tenemos} entregas guardadas contra ${entregadasBrevo} que dice Brevo (por lista, con doble conteo - lo nuestro esta deduplicado y por eso da menos).`);
+    }
+  }
+
+  if (met.filas_sin_atribuir > 0) {
+    nivel = peor(nivel, 'alerta');
+    const nombres = [...new Set((huerfanas || []).map((h) => h.asunto).filter(Boolean))].slice(0, 3).join(', ');
+    puntos.push(`\U0001F7E1 Hay ${met.filas_sin_atribuir} filas de campanas que no se pudieron atribuir${nombres ? ` (${nombres})` : ''}. Falta cargarles brevo_camp_id en funnel_steps para que entren al embudo.`);
+  }
+
+  return { flujo, que_mira, nivel, puntos, met };
+}
+
 function tituloGeneral(nivel) {
   if (nivel === 'critico') return '🔴 Hay un problema que necesita tu atención';
   if (nivel === 'alerta') return '🟡 Todo corre, con un par de avisos';
@@ -559,7 +647,7 @@ async function enviarPanelSalud(mode) {
   // Se cuelga de acá porque Vercel Hobby solo deja 2 crons. Best-effort igual que arriba.
   try { await syncComunicaciones(7); } catch (e) { console.error('syncComunicaciones (no frena el panel):', (e && e.message) || e); }
   const flujos = [];
-  for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio]) {
+  for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio, saludCampanas]) {
     try { flujos.push(await fn()); }
     catch (e) { flujos.push({ flujo: fn.name, que_mira: '', nivel: 'alerta', puntos: [`Error al diagnosticar: ${e.message || e}`], met: {} }); }
   }
