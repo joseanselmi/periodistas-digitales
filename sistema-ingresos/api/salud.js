@@ -19,6 +19,22 @@ const LIST_ID = 5;
 const REPORTE_A = 'joseanselmi27@gmail.com';
 const SENDER = { name: 'Panel de Salud', email: 'jose@sistemadeingresosdiariosia.com' };
 
+// Cuenta filas SIN traerlas. Existe porque PostgREST corta en 1.000 y no avisa: contar el largo
+// de lo que devuelve da 1.000 para 1.189 y para 40.000 por igual, y una lista truncada se ve
+// exactamente igual que una completa. El total viene en Content-Range ("0-0/1189").
+// Devuelve null si no se pudo preguntar — que NO es lo mismo que cero.
+async function sbCount(path) {
+  if (!SB_URL || !SB_KEY) return null;
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${path}${path.includes('?') ? '&' : '?'}limit=1`, {
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'count=exact' },
+    });
+    if (!r.ok) return null;
+    const total = (r.headers.get('content-range') || '').split('/')[1];
+    return total && total !== '*' ? Number(total) : null;
+  } catch { return null; }
+}
+
 // Lectura best-effort de Supabase (REST con service_role). Devuelve null si falla.
 async function sb(path) {
   if (!SB_URL || !SB_KEY) return null;
@@ -528,7 +544,7 @@ const COLOR = {
 // ignorar, que es peor que no tenerlo.
 async function saludCampanas() {
   const met = {}; const puntos = []; let nivel = 'ok';
-  const flujo = '\U0001F4E3 Campanas de Brevo';
+  const flujo = '📣 Campanas de Brevo';
   const que_mira = 'Que una campana enviada se pueda VER en el panel - no que se haya enviado.';
 
   const pasos = await sb('funnel_steps?select=nombre,brevo_tag,brevo_camp_id&brevo_camp_id=not.is.null');
@@ -536,9 +552,9 @@ async function saludCampanas() {
 
   // Una campana que llego con un camp_id que nadie declaro: el webhook la guarda igual, sin
   // atribuir, justamente para que se vea aca en vez de desaparecer.
-  const huerfanas = await sb('comunicaciones_email?select=asunto&campana=is.null&mensaje_id=like.camp:*&limit=200');
+  const huerfanas = await sb('comunicaciones_email?select=asunto&campana=is.null&mensaje_id=like.camp:*&limit=50');
   met.campanas_declaradas = pasos.length;
-  met.filas_sin_atribuir = (huerfanas || []).length;
+  met.filas_sin_atribuir = await sbCount('comunicaciones_email?select=mensaje_id&campana=is.null&mensaje_id=like.camp:*');
 
   if (!pasos.length) {
     puntos.push('No hay ninguna campana de Brevo declarada (`funnel_steps.brevo_camp_id`). Si se mando una y no esta aca, sus eventos se guardan sin atribuir y no aparecen en el embudo.');
@@ -563,29 +579,28 @@ async function saludCampanas() {
     const porLista = (camp.statistics && camp.statistics.campaignStats) || [];
     const entregadasBrevo = porLista.reduce((a, l) => a + (l.delivered || 0), 0);
 
-    const nuestras = await sb(`comunicaciones_email?select=mensaje_id&campana=eq.${encodeURIComponent(tag)}&entregado_en=not.is.null&limit=5000`);
-    const tenemos = (nuestras || []).length;
+    const tenemos = await sbCount(`comunicaciones_email?select=mensaje_id&campana=eq.${encodeURIComponent(tag)}&entregado_en=not.is.null`);
     met[`${tag}_brevo`] = entregadasBrevo;
     met[`${tag}_nuestro`] = tenemos;
 
-    if (nuestras == null) {
+    if (tenemos == null) {
       nivel = peor(nivel, 'alerta');
-      puntos.push(`No se pudo contar lo guardado de ${tag}.`);
+      puntos.push(`No se pudo contar lo guardado de ${tag}, asi que hoy va sin verificar.`);
     } else if (entregadasBrevo > 0 && tenemos === 0) {
       nivel = 'critico';
-      puntos.push(`\U0001F534 Brevo entrego ${entregadasBrevo} mails de ${tag} y no tenemos NI UNO guardado. El panel de esa campana esta mostrando cero, que se lee igual que "no lo abrio nadie". Los eventos no estan llegando: revisar que exista el webhook de tipo marketing en Brevo apuntando a /api/brevo-webhook.`);
+      puntos.push(`🔴 Brevo entrego ${entregadasBrevo} mails de ${tag} y no tenemos NI UNO guardado. El panel de esa campana esta mostrando cero, que se lee igual que "no lo abrio nadie". Los eventos no estan llegando: revisar que exista el webhook de tipo marketing en Brevo apuntando a /api/brevo-webhook.`);
     } else if (entregadasBrevo > 0 && tenemos < entregadasBrevo * 0.6) {
       nivel = peor(nivel, 'alerta');
-      puntos.push(`\U0001F7E1 De ${tag} tenemos ${tenemos} entregas guardadas y Brevo dice ${entregadasBrevo} (contadas por lista, con doble conteo). Falta mas de lo que ese doble conteo explica.`);
+      puntos.push(`🟡 De ${tag} tenemos ${tenemos} entregas guardadas y Brevo dice ${entregadasBrevo} (contadas por lista, con doble conteo). Falta mas de lo que ese doble conteo explica.`);
     } else {
       puntos.push(`\u2705 ${tag}: ${tenemos} entregas guardadas contra ${entregadasBrevo} que dice Brevo (por lista, con doble conteo - lo nuestro esta deduplicado y por eso da menos).`);
     }
   }
 
-  if (met.filas_sin_atribuir > 0) {
+  if (met.filas_sin_atribuir) {
     nivel = peor(nivel, 'alerta');
     const nombres = [...new Set((huerfanas || []).map((h) => h.asunto).filter(Boolean))].slice(0, 3).join(', ');
-    puntos.push(`\U0001F7E1 Hay ${met.filas_sin_atribuir} filas de campanas que no se pudieron atribuir${nombres ? ` (${nombres})` : ''}. Falta cargarles brevo_camp_id en funnel_steps para que entren al embudo.`);
+    puntos.push(`🟡 Hay ${met.filas_sin_atribuir} filas de campanas que no se pudieron atribuir${nombres ? ` (${nombres})` : ''}. Falta cargarles brevo_camp_id en funnel_steps para que entren al embudo.`);
   }
 
   return { flujo, que_mira, nivel, puntos, met };
