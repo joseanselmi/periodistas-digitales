@@ -50,6 +50,28 @@ const DESTINOS = {
   'leadr-bonus-3': 'https://www.leadr.cloud/bonus/3',   // Que te lean miles…
 };
 
+// Guías que YA VIVEN DENTRO DE LEADR. Cualquier clic a estas, venga del link
+// que venga y aunque no traiga `?ir=`, termina en la plataforma.
+//
+// 🔒 POR QUÉ ESTÁ ACÁ Y NO EN CADA LINK: el botón del formulario de Meta —por
+// donde entra el 93% de la gente, 399 personas contra 42 del mail— **no se
+// puede cambiar**. Un formulario publicado es inmutable: Meta contesta
+// `success: true` y descarta el cambio sin avisar (probado el 18/08/2026,
+// releído después: la URL seguía igual). Cambiarlo exigiría formulario nuevo +
+// hook nuevo + escenario nuevo de Make, y reapuntar el anuncio a mano.
+//
+// Pero la URL del formulario apunta acá. El link está congelado; lo que ESTA
+// función hace con él, no. Una línea en este mapa mueve todo el tráfico de esa
+// guía sin tocar Meta.
+//
+// ⚠️ Alcanza también a los links YA ENVIADOS por mail. Es a propósito: la
+// decisión de Jose es llevar ese tráfico a Leadr, no una parte.
+// Para volver atrás: se saca la línea y todo vuelve al PDF al instante.
+// Para un link suelto que igual tiene que dar el PDF: `&ir=pdf`.
+const GUIAS_EN_LEADR = {
+  'que-te-lean-miles.pdf': 'leadr-bonus-3',
+};
+
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
 const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
@@ -152,10 +174,15 @@ export default async function handler(req, res) {
     return;
   }
 
+  // `ir=pdf` es la salida de emergencia: fuerza el archivo aunque la guía ya
+  // viva en Leadr. Sirve para QA y para cualquier link que tenga que seguir
+  // entregando el PDF pase lo que pase.
+  const aLaPlataforma = ir === 'pdf' ? null : (ir || GUIAS_EN_LEADR[file] || null);
+
   // `?ir=` sólo acepta claves de la lista cerrada. Un valor que no está no se
   // ignora en silencio: se corta. Un link mal armado en un mail tiene que
   // notarse al primer clic, no meses después en un informe.
-  if (ir && !DESTINOS[ir]) {
+  if (aLaPlataforma && !DESTINOS[aLaPlataforma]) {
     res.status(400).send('Destino desconocido.');
     return;
   }
@@ -163,17 +190,17 @@ export default async function handler(req, res) {
   // Al destino de Leadr se le pega el `src` para que la plataforma pueda guardar
   // de dónde vino la persona (users.origen). Sin eso se pierde la atribución
   // justo en el salto entre los dos sistemas.
-  const destino = ir
-    ? `${DESTINOS[ir]}${src ? `?src=${encodeURIComponent(src)}` : ''}`
+  const destino = aLaPlataforma
+    ? `${DESTINOS[aLaPlataforma]}${src ? `?src=${encodeURIComponent(src)}` : ''}`
     : `/${file}`;
 
   // Visible vía `vercel logs` — no bloquea el redirect si falla nada acá.
-  console.log(JSON.stringify({ type: 'pdf_download', file, src: src || null, sck: sck || null, ir: ir || null, ts: new Date().toISOString() }));
+  console.log(JSON.stringify({ type: 'pdf_download', file, src: src || null, sck: sck || null, ir: aLaPlataforma || 'pdf', ts: new Date().toISOString() }));
 
   // Guarda la apertura en la base (best-effort, con timeout corto).
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || null;
   const ua = req.headers['user-agent'] || null;
-  await logApertura({ file, src, sck, ip, ua, destino: ir ? 'leadr' : 'pdf' });
+  await logApertura({ file, src, sck, ip, ua, destino: aLaPlataforma ? 'leadr' : 'pdf' });
 
   res.writeHead(302, { Location: destino });
   res.end();
