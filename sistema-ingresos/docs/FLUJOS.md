@@ -133,11 +133,22 @@ escenario (alta en Brevo lista 6, POST a `/api/lead`, link de baja) quedó igual
 ese embudo **no recibe un lead desde el 31/07** (anuncio pausado, y Jose decidió no reactivarlo
 todavía). Todo el tráfico nuevo entra por acá: 184 personas en 7 días.
 
-**Qué cambia para medir.** Ese `/api/d` era lo único que contaba la entrega, y era **anónima**:
-836 aperturas en 30 días sin un solo nombre. Ahora la lectura queda registrada con la persona en
-la tabla `content_views` de **Leadr** (otra base), y de dónde vino en `users.origen`, con el mismo
-vocabulario que `leads.src`. Es decir: **el conteo de `pdf_open` de esta guía va a caer a cero, y
-eso es lo esperado, no una avería.**
+**Qué cambia para medir — y qué NO.** El botón sigue pasando por `/api/d`, ahora con `&ir=leadr-bonus-3`:
+registra el MISMO evento `pdf_open`, con el mismo `file` y el mismo `src`, y recién después redirige
+a Leadr. **La serie histórica de la campaña no se corta**, que es lo que permite comparar el antes
+con el después. `payload.destino` dice `pdf` o `leadr`.
+
+⚠️ Lo que **no** es comparable: antes un clic significaba que la persona YA tenía la guía; ahora
+significa que llegó a la puerta de Leadr y puede no entrar. Ese segundo tramo se mide del otro
+lado — `content_views` en Leadr — que además dice QUIÉN, cosa que el PDF anónimo nunca dio.
+
+O sea, el embudo entero queda así:
+
+| Se mide | Dónde | Qué contesta |
+|---|---|---|
+| clics en el botón | `events.pdf_open` (marketing) | cuánta gente pidió la guía — **serie continua desde siempre** |
+| cuentas creadas | `users.origen` (Leadr) | cuántas de ésas entraron |
+| lecturas | `content_views` (Leadr) | cuántas la leyeron de verdad, y quiénes |
 
 ⚠️ Se cambió sólo la pieza del día 0. Los links a `/api/d` de los mails YA ENVIADOS siguen
 funcionando y no se tocan.
