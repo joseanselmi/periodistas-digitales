@@ -52,7 +52,7 @@ flujo nuevo pasa a ser escribir sus mails y su ficha, sin tocar el motor.
 > Estas fichas describen lo que el sistema hace de verdad, verificado contra el código, Make,
 > Brevo y la base. Si las dos se contradicen, manda esta.
 
-Última verificación completa: **2026-08-10**.
+Última verificación completa: **2026-08-10**. · `republicadores` revisado y modificado el **2026-08-18**.
 
 ---
 
@@ -102,7 +102,7 @@ Todo eso vive en el motor, no en el flujo — por eso conviene que los demás fl
 |---|---|
 | **¿Quiénes?** | Lista Brevo **#6** "Leadgen - Republicadores" — **510 contactos** (18/08). Los da de alta el escenario de Make **9602489**. Anuncio `ad5-lectores`, **ACTIVO y gastando**. |
 | **¿Día 0?** | Cuándo entra el lead. |
-| **¿Qué piezas?** | **UNA**: la guía "Que te lean miles", al instante, mandada por Make (`republicadores-r1`). |
+| **¿Qué piezas?** | **UNA**: la guía "Que te lean miles", al instante, mandada por Make (`republicadores-r1`). **Desde el 18/08 el botón lleva a Leadr** (`www.leadr.cloud/bonus/3?src=Email-Republicadores-R1`), no al PDF. |
 | **¿Quién NO?** | Nadie: no hay filtros. |
 | **¿Tope?** | Ninguno. |
 | **Motor** | **Ninguno.** `wa-funnel.js` lee **sólo la lista 5**. |
@@ -121,6 +121,26 @@ captando 184 personas más en ocho días y el paso siguiente sigue sin existir.
 
 ℹ️ El 18/08 estos 510 recibieron, por única vez, la tanda de `email-manifiesto` (ficha 8). Eso
 **no cierra el hueco**: fue un envío suelto, no la secuencia que le falta a este flujo.
+
+### 🎁 18/08/2026 — el regalo pasó a entregarse DENTRO de Leadr (tarjeta #136)
+
+El botón del mail del día 0 **ya no baja un PDF**: abre
+`www.leadr.cloud/bonus/3?src=Email-Republicadores-R1`, donde la guía se lee entera y también se
+puede descargar. El cambio se hizo en el escenario de Make **9602489**, módulo 2 — el resto del
+escenario (alta en Brevo lista 6, POST a `/api/lead`, link de baja) quedó igual.
+
+**Por qué acá y no en `guias-claude`:** la tarjeta pedía cambiar el día 0 de `guias-claude`, pero
+ese embudo **no recibe un lead desde el 31/07** (anuncio pausado, y Jose decidió no reactivarlo
+todavía). Todo el tráfico nuevo entra por acá: 184 personas en 7 días.
+
+**Qué cambia para medir.** Ese `/api/d` era lo único que contaba la entrega, y era **anónima**:
+836 aperturas en 30 días sin un solo nombre. Ahora la lectura queda registrada con la persona en
+la tabla `content_views` de **Leadr** (otra base), y de dónde vino en `users.origen`, con el mismo
+vocabulario que `leads.src`. Es decir: **el conteo de `pdf_open` de esta guía va a caer a cero, y
+eso es lo esperado, no una avería.**
+
+⚠️ Se cambió sólo la pieza del día 0. Los links a `/api/d` de los mails YA ENVIADOS siguen
+funcionando y no se tocan.
 
 **Lo mínimo para cerrarlo:** darle una secuencia. Con el motor único, es escribir los mails y su
 ficha. Sin el motor único, es duplicar `wa-funnel.js` para la lista 6 — que es exactamente lo que
@@ -310,7 +330,7 @@ No tienen ficha porque no mandan mails. Se listan sólo para que nadie las busqu
 | Flujo | Personas | Piezas | Motor | Estado |
 |---|---|---|---|---|
 | `guias-claude` | 919 | 7 | `wa-funnel.js` | anuncio pausado · 1 venta de 944 |
-| `republicadores` | 510 | 1 | ninguno | 🔴 339 sin secuencia · anuncio activo |
+| `republicadores` | 510 | 1 | ninguno | 🔴 339 sin secuencia · anuncio activo · 🎁 el día 0 lleva a Leadr desde el 18/08 |
 | `recuperacion-carrito` | ~9 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `recuperacion-rechazo` | ~21 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `post-compra` | — | **0** | — | 🔴 no existe |
