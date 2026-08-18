@@ -157,9 +157,45 @@ Todo por la API de Brevo, en tres pasos separados a propósito — el número de
 - **La clave en `sistema-ingresos/.env.local` está guardada entre comillas.** Un script que la lea
   sin sacárselas se come un `401 Key not found`, que parece una clave revocada y no lo es.
 
+## ⚠️ Los números por lista de Brevo DOBLE-CUENTAN
+
+Brevo reporta `campaignStats` **por lista**, y las 169 personas que están en las dos aparecen en
+ambas. Por eso la suma no cierra con el público real:
+
+| | lista 5 | lista 6 | suma cruda | únicos reales |
+|---|---|---|---|---|
+| enviados | 894 | 501 | **1.395** | **~1.228** |
+| entregados | 870 | 483 | 1.353 | — |
+| aperturas únicas | 35 | 16 | 51 | — |
+| clics únicos | 2 | 2 | 4 | — |
+| rebotes (duros/blandos) | 2 / 30 | 9 / 12 | 11 / 42 | — |
+| bajas | 1 | 0 | 1 | — |
+
+**Leer 1.395 como "se mandaron 1.395 mails" es el error.** Son 1.228 personas; 169 figuran dos veces
+en el reporte.
+
+🔴 **Lo que quedó SIN confirmar (18/08).** Que esas 169 hayan recibido **un** mail y no dos. Los
+números por lista salen iguales con las dos hipótesis, así que la aritmética no alcanza. No se pudo
+comprobar esa noche porque la API de eventos de Brevo no expone los eventos de campañas de
+marketing, y el sync local no corre sin la `SUPABASE_SERVICE_ROLE_KEY`. **Se resuelve después del
+cron de las 18:00:**
+
+```sql
+select count(*) as filas, count(distinct email) as personas
+from comunicaciones_email where campana = 'email-manifiesto';
+-- tienen que dar IGUAL
+```
+
+Es la regla que más caro salió en este repo (una vez se mandaron 1.800 mails en bucle): **destinatarios
+únicos == envíos.**
+
 ## Estado
 
-**18/08/2026 — ENVIADA.** Campaña Brevo #4, 1.227 destinatarios.
+**18/08/2026 — ENVIADA.** Campaña Brevo #4, ~1.228 personas. Estuvo ~45 min en `in_review` (el
+antispam de Brevo mira los saltos de volumen: la cuenta venía mandando 40-70 por día) y se despachó
+a las 01:59.
+
+Las aperturas del primer rato (51) no significan nada todavía: se acumulan durante 24-48 h.
 
 Quedó **sin verificar** una cosa que conviene mirar: el número **"+5.500 periodistas"** que aparece
 en la landing a la que lleva el mail. Si no es real, se cae la credibilidad justo en el momento de
