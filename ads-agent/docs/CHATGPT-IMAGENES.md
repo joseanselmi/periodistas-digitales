@@ -58,11 +58,12 @@ Un chat por familia. El nombre del chat va con emoji adelante para encontrarlo d
 
 | Chat | Para qué | Formato | Estado |
 |---|---|---|---|
-| 🎬 Portadas del curso | Portadas de módulo y de clase del curso en video | 16:9 · 1920×1080 · sin texto | ✅ ya existe |
+| **Portada SIDP** | Portadas de módulo y de clase del curso en video | 16:9 · 1920×1080 · sin texto | ✅ ya existe |
 | 📣 Ads | Creativos de anuncios de Meta (Mateo) | 1:1, 4:5 y 9:16 | ✅ ya existe |
 | 📱 Orgánico | Fondos e ilustraciones para carruseles y posteos del muro (Valentina) | 4:5 · 1080×1350 | ➕ crear |
 | 🌐 Web | Imágenes de la landing del curso y de Leadr (hero, secciones, avatares) | según la sección | ➕ crear |
 | 🎁 Guías y regalos | Tapas de las guías-regalo en PDF | 3:4 vertical, tipo portada de libro | ➕ crear |
+| 🔷 Marca | Logos e isotipos de Leadr y del curso | 1:1 · blanco sobre negro plano | ➕ crear |
 | 🧪 Laboratorio | Probar prompts, estilos y variantes nuevas. **Nada de acá va a producción sin repetirlo en su chat.** | libre | ➕ crear |
 
 **Regla de oro:** si una imagen no entra en ninguna de esas familias, se abre un chat nuevo
@@ -80,7 +81,10 @@ con su propio prompt maestro — no se mete en el más parecido.
 
 ## 3. Prompts maestros por chat
 
-### 🎬 Portadas del curso
+### Portadas del curso — chat **"Portada SIDP"**
+> El nombre real del chat es `Portada SIDP`. Antes acá decía "🎬 Portadas del curso", que no
+> existe: un agente mandado a buscar ese nombre no lo encuentra. Corregido el 14/08/2026.
+
 El prompt maestro completo, la tabla de color por módulo y el elemento por clase están en
 [sistema-ingresos/curso/docs/IDENTIDAD-PORTADAS.md](../../sistema-ingresos/curso/docs/IDENTIDAD-PORTADAS.md).
 Se guardan en `Escritorio\Contenido del curso\Portadas\Módulo X - Nombre\`.
@@ -137,6 +141,99 @@ ELEMENTO CENTRAL: [ELEMENTO] en líneas de neón con glow.
 Sin ningún texto ni letras: el título se monta después.
 ```
 
+### 🔷 Marca
+
+> 🔴 **Tres rondas para entender qué falla.** La v1 salió como el pictograma de un baño
+> (cabeza redonda sobre cuerpo cuadrado). La v2 lo arregló inclinándolo. La v3 le puso el
+> color de marca. Y aun así Jose dijo "hacé algo más pro" — con razón.
+>
+> Lo que fallaba no era el dibujo: era la **idea**. Un micrófono con un cubo con una letra
+> adentro son **tres piezas diciendo lo mismo**, y eso se ve como un ícono de banco de
+> imágenes. Un logo se lee como profesional cuando **una sola forma dice dos cosas**.
+>
+> **Regla que sale de acá:** si tres vueltas de prompt no lo arreglan, el problema no es el
+> prompt. Contar las piezas: si cada una explica lo mismo por separado, sobran.
+
+> 🔴 **El primer intento salió como el pictograma de un baño.** El prompt pedía "cabeza
+> redonda arriba, cubo grande abajo, mango corto": eso es, exactamente, cómo se dibuja una
+> persona. Las 4 variantes salieron iguales y todas mal.
+>
+> Lo que lo arregla no es pedir "que parezca más un micrófono", es **romper la silueta
+> humana**: inclinarlo, agrandar la esfera hasta que desborde el cubo, y **sacar el espacio
+> entre la esfera y el cubo** — ese hueco es el cuello, y es lo que dispara la lectura.
+>
+> **Regla que sale de acá:** cuando un logo se lee como otra cosa, nombrarle a ChatGPT la
+> lectura equivocada (`⛔ ERROR A EVITAR`). Sin eso repite la misma silueta con otro adorno.
+
+> ⚠️ **Esta familia contradice a propósito las instrucciones del proyecto.** El resto de las
+> imágenes son cinematográficas, con fondo #07070f y glow. Un logo no puede ser nada de eso:
+> tiene que ser plano y recortable. El prompt lo dice en la primera línea porque, si no,
+> ChatGPT obedece la instrucción del proyecto y devuelve una ilustración con resplandor que
+> **no sirve como logo**.
+
+> 🔴 **Pedirlo en blanco y negro fue un error.** La idea era recortar la silueta y aplicarle
+> el color exacto por código, porque ChatGPT no respeta un hex. Pero eso deja a Jose juzgando
+> un logo a medio hacer: mirando cuatro micrófonos en blanco y negro no se puede decidir nada.
+>
+> **Se pide CON los colores de marca.** Que el cian no salga clavado en #22d3ee da igual en
+> esta etapa: primero se decide la forma, y el color se ajusta después sobre la elegida.
+> Optimizar el archivo final antes de tener la forma aprobada es resolver el problema que
+> todavía no toca.
+
+> ⚠️ **Las letras las deforma.** Si la `L` sale torcida en las 4 variantes, se le pide el
+> mismo logo **con el cubo vacío** y la letra se monta después con la tipografía real.
+
+```
+Rehacé el logo de Leadr. Los anteriores son un dibujo de un micrófono: se
+entienden, pero parecen un ícono de banco de imágenes, no una identidad.
+
+Quiero nivel de estudio de identidad corporativa: geométrico, construido, una
+sola idea y ninguna pieza de más.
+
+LA IDEA
+El micrófono ES la letra L. Una sola forma con dos lecturas:
+- Un trazo grueso en ángulo recto que dibuja una L: una barra vertical, y un pie
+  horizontal que sale hacia la derecha desde abajo.
+- En el extremo de arriba de la barra vertical, un círculo sólido de poco más del
+  doble del ancho del trazo: la cabeza del micrófono.
+Nada más. Sin cubo, sin rejilla, sin ondas, sin mano, sin base.
+Se lee "L" y se lee "micrófono", y son exactamente la misma forma.
+
+CONSTRUCCIÓN
+- Hecho con regla y compás sobre una grilla: círculo perfecto, ángulos de
+  exactamente 90 grados, un único grosor de trazo en toda la pieza, un único
+  radio para todas las esquinas.
+- Las puntas del trazo cortadas rectas, no redondeadas.
+- Estilo de identidad corporativa suiza: minimalismo geométrico, precisión,
+  espacio negativo generoso.
+
+COLOR
+- Fondo azul muy oscuro casi negro #07070f, todo el lienzo.
+- La forma en un degradado suave de índigo #6366f1 abajo a cian #22d3ee arriba.
+- Sin contornos, sin brillos, sin sombras, sin 3D, sin texturas.
+
+TAMAÑO
+Se tiene que reconocer a 16 píxeles. Trazo grueso, cero detalle chico.
+Centrado, cuadrado, con mucho aire alrededor. Sin ningún texto.
+
+Generá 4 variantes cambiando solo tres cosas: el grosor del trazo, el tamaño del
+círculo respecto del trazo, y el largo del pie de la L.
+```
+
+**Conceptos de reserva**, por si el micrófono no convence. Se piden en el mismo chat
+cambiando solo el bloque `QUÉ SE VE`:
+
+| Concepto | Qué se ve | Qué dice |
+|---|---|---|
+| **La libreta** | Libreta de reportero con espiral arriba; la primera línea escrita, gruesa y llena; las de abajo, cortas | El *lead* es el primer párrafo — el nombre de la marca, dibujado |
+| **La comilla** | Una comilla de apertura tipográfica que, girada, también es una L | La cita: la materia prima del oficio |
+
+⚠️ **El nombre no dice periodismo por sí solo.** "Leadr" solo se entiende si ya sabés que el
+*lead* es la entrada de una noticia — y eso lo sabe un periodista, no alguien que recién llega.
+Por eso el dibujo tiene que poner el oficio, no la letra: un logo que sea solo una L no lo dice.
+
+---
+
 ---
 
 ## 4. El flujo, de punta a punta
@@ -150,6 +247,13 @@ Sin ningún texto ni letras: el título se monta después.
    (`modulo-3-clase-2.png`, no `imagen (4).png`).
 6. Si es para un anuncio, queda registrada en la ficha del ad
    ([ads-agent/registro-anuncios.md](../registro-anuncios.md)).
+
+> ⚠️ **Descargar EN EL MOMENTO, nunca al día siguiente.** Las imágenes de ChatGPT se sirven por
+> una URL firmada que **caduca**. Si volvés a un chat viejo y le das a descargar, Chrome guarda
+> igual un archivo `.png`… de 45 bytes, con `{"detail":"Invalid signature or expired URL"}`
+> adentro. En la carpeta se ve como una portada normal: **el único síntoma es el tamaño**. Si un
+> PNG pesa menos de ~100 KB, no es una imagen. Recuperarlo: recargar la página (F5) para que el
+> chat pida URLs nuevas, y recién ahí descargar. Pasó el 15/08/2026 con 10 archivos.
 
 **Límite del plan free:** hay un tope diario de generaciones. Si es una tanda grande (todas las
 portadas de un módulo), conviene hacerla de una sentada en el mismo chat y no de a una por día:
