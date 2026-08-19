@@ -200,26 +200,27 @@ export default async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || null;
   const ua = req.headers['user-agent'] || null;
 
-  // ⏱️ LA REDIRECCIÓN SALE PRIMERO. EL ORDEN NO ES COSMÉTICO.
+  // ⛔ EL ORDEN ES A PROPOSITO: SE ESCRIBE Y RECIEN DESPUES SE REDIRIGE.
   //
-  // Antes esto era `await logApertura(...)` y recién después el 302: la persona
-  // se quedaba esperando a que Supabase confirmara una fila. Medido el
-  // 19/08/2026, ese await costaba **~0,6 s del 0,73 s** que tardaba la función,
-  // y es el primero de tres saltos encadenados antes de ver una pantalla. Jose
-  // lo notó desde el navegador de Facebook: cinco segundos hasta que abría Leadr.
+  // Tienta invertirlo. Este `await` cuesta ~0,5 s y es el primero de tres saltos
+  // antes de que la persona vea una pantalla; desde el navegador de Facebook eso
+  // se siente. El 19/08/2026 se probo mandar el 302 primero y registrar despues.
   //
-  // Ahora la respuesta se manda y el registro se hace después. La función sigue
-  // viva hasta que este handler termina —por eso el `await` de abajo se mantiene,
-  // no se puede soltar la promesa y volver: si el handler retorna antes, la
-  // escritura se puede perder y estaríamos comprando velocidad con clics.
+  // NO FUNCIONA, Y FALLA CALLADO. Medido en produccion: la funcion bajo de 0,73 s
+  // a 0,21 s, pero de 5 clics de prueba **solo se guardaron 3**. Vercel congela la
+  // invocacion apenas se vacia la respuesta, asi que el insert que quedo pendiente
+  // se pierde. No tira error, no aparece en ningun log: simplemente faltan filas.
+  // Se revirtio el mismo dia.
   //
-  // ⚠️ SI ALGÚN DÍA VUELVE A TARDAR: comprobar si Vercel pasó a bufferear la
-  // respuesta hasta que el handler retorna. Si lo hace, este orden deja de servir
-  // y hay que usar `waitUntil` (paquete `@vercel/functions`). Se comprueba
-  // midiendo el primer byte: `curl -o /dev/null -w '%{time_starttransfer}'`.
-  // Sano ≈ 0,15 s · roto ≈ 0,7 s.
+  // La forma correcta de acelerarlo es `waitUntil` (paquete `@vercel/functions`),
+  // que le pide a la plataforma que mantenga viva la invocacion mientras la
+  // respuesta ya viajo. Requiere darle un package.json a sistema-ingresos, que hoy
+  // no tiene ninguno.
+  //
+  // Regla: cualquier intento de acelerar esto se verifica CONTANDO FILAS, no
+  // midiendo el tiempo. El tiempo mejora igual cuando se estan perdiendo clics.
+  await logApertura({ file, src, sck, ip, ua, destino: aLaPlataforma ? 'leadr' : 'pdf' });
+
   res.writeHead(302, { Location: destino });
   res.end();
-
-  await logApertura({ file, src, sck, ip, ua, destino: aLaPlataforma ? 'leadr' : 'pdf' });
 }
