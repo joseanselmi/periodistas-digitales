@@ -197,11 +197,29 @@ export default async function handler(req, res) {
   // Visible vía `vercel logs` — no bloquea el redirect si falla nada acá.
   console.log(JSON.stringify({ type: 'pdf_download', file, src: src || null, sck: sck || null, ir: aLaPlataforma || 'pdf', ts: new Date().toISOString() }));
 
-  // Guarda la apertura en la base (best-effort, con timeout corto).
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || null;
   const ua = req.headers['user-agent'] || null;
-  await logApertura({ file, src, sck, ip, ua, destino: aLaPlataforma ? 'leadr' : 'pdf' });
 
+  // ⏱️ LA REDIRECCIÓN SALE PRIMERO. EL ORDEN NO ES COSMÉTICO.
+  //
+  // Antes esto era `await logApertura(...)` y recién después el 302: la persona
+  // se quedaba esperando a que Supabase confirmara una fila. Medido el
+  // 19/08/2026, ese await costaba **~0,6 s del 0,73 s** que tardaba la función,
+  // y es el primero de tres saltos encadenados antes de ver una pantalla. Jose
+  // lo notó desde el navegador de Facebook: cinco segundos hasta que abría Leadr.
+  //
+  // Ahora la respuesta se manda y el registro se hace después. La función sigue
+  // viva hasta que este handler termina —por eso el `await` de abajo se mantiene,
+  // no se puede soltar la promesa y volver: si el handler retorna antes, la
+  // escritura se puede perder y estaríamos comprando velocidad con clics.
+  //
+  // ⚠️ SI ALGÚN DÍA VUELVE A TARDAR: comprobar si Vercel pasó a bufferear la
+  // respuesta hasta que el handler retorna. Si lo hace, este orden deja de servir
+  // y hay que usar `waitUntil` (paquete `@vercel/functions`). Se comprueba
+  // midiendo el primer byte: `curl -o /dev/null -w '%{time_starttransfer}'`.
+  // Sano ≈ 0,15 s · roto ≈ 0,7 s.
   res.writeHead(302, { Location: destino });
   res.end();
+
+  await logApertura({ file, src, sck, ip, ua, destino: aLaPlataforma ? 'leadr' : 'pdf' });
 }
