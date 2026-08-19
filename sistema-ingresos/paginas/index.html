@@ -718,7 +718,7 @@
         </div>
 
         <div style="text-align:center;margin-top:48px;" class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=dolor&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero activar el sistema por $27
             </a>
@@ -874,7 +874,7 @@
         </div>
 
         <div style="text-align:center;margin-top:32px;" class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=bonos&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
                 Quiero todo esto por $27 USD
             </a>
             <p style="color:var(--muted);font-size:.82rem;margin-top:12px;">Garantía 7 días · Acceso inmediato · Sin suscripción</p>
@@ -1004,7 +1004,7 @@
                 </div>
             </div>
 
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-full btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=precio&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-full btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero todo esto por $27 USD
             </a>
@@ -1086,7 +1086,7 @@
         <p class="final-cta-sub reveal">+5.500 periodistas ya crearon su medio en IG y Facebook. Con IA, con Canva, con el sistema. Por $27, hoy mismo.</p>
 
         <div class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=cierre&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero activar mi sistema ahora
             </a>
@@ -1100,7 +1100,7 @@
     <p><strong>Periodistas Digitales</strong></p>
     <p style="margin-top:8px;">© 2026 Sistema de Ingresos Diarios para Periodistas — José Fiaccini</p>
     <p style="margin-top:12px;">
-        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" style="color:var(--indigo)">Comprar ahora</a>
+        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=pie&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" style="color:var(--indigo)">Comprar ahora</a>
         &nbsp;·&nbsp;
         <a href="mailto:hola@sistemadeingresosdiariosia.com" style="color:var(--muted)">Contacto</a>
     </p>
@@ -1133,12 +1133,15 @@ function getCookie(name) {
 (function applyAdAttribution() {
     const landing = new URLSearchParams(window.location.search);
     const adSrc = landing.get('src');
-    const adSck = landing.get('sck');
+    // ⚠️ El `sck` de la URL NO se copia a propósito (ver docs/NOMENCLATURA-SRC.md):
+    //    src = DE DÓNDE vino la persona  →  lo trae el link de origen
+    //    sck = QUÉ BOTÓN tocó            →  lo pone cada botón de esta página, y nadie lo pisa
+    // Antes un `?sck=...` en la URL pisaba el del botón, así que las 33 ventas registradas
+    // dicen todas `b2` y no se puede saber dónde clicó nadie.
     document.querySelectorAll('a[href*="hotmart"]').forEach(a => {
         try {
             const url = new URL(a.href);
-            if (adSrc) url.searchParams.set('src', adSrc);   // ?src=ad4 → columna SRC en Hotmart
-            if (adSck) url.searchParams.set('sck', adSck);
+            if (adSrc) url.searchParams.set('src', adSrc);   // ?src=ad-fomo-a1 → columna SRC en Hotmart
             ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => {
                 const v = landing.get(k);
                 if (v) url.searchParams.set(k, v);
@@ -1255,7 +1258,7 @@ document.querySelectorAll('.value-stack').forEach(el => vsObserver.observe(el));
             </div>
             <span class="sticky-note">Acceso completo + 3 bonos · Garantía 7 días</span>
         </div>
-        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green">
+        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=sticky&utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}" class="btn btn-green">
             Quiero crear mi periódico digital ya
         </a>
     </div>

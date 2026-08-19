@@ -10,6 +10,8 @@ curso — eso está en [`../curso/docs/`](../curso/docs/README.md).
 
 - [`TRACKING.md`](TRACKING.md) — el tracking de punta a punta: Pixel, CAPI,
   atribución por `?src=`. **El documento de referencia.**
+- [`NOMENCLATURA-SRC.md`](NOMENCLATURA-SRC.md) — **cómo se escribe un `src`**: los niveles,
+  qué va en `sck`, y los límites de Hotmart (30 caracteres, sin guion bajo).
 - [`POST-COMPRA.md`](POST-COMPRA.md) — qué se dispara cuando alguien compra.
 - [`RECUPERACION.md`](RECUPERACION.md) — carritos abandonados y rechazos de tarjeta.
 - [`TIME_TO_VALUE.md`](TIME_TO_VALUE.md) — qué recibe el comprador, y cuándo.
