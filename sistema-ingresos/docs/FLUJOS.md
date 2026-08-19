@@ -342,6 +342,88 @@ Ficha completa, asuntos y checklist de envío: [campanas/email-manifiesto/](../c
 
 ---
 
+## 9. `email-comunidad` — el semanal a los activos
+
+🟡 **Andamiaje montado el 19/08/2026. Todavía no salió ningún envío.** Un mail por semana, para
+siempre, a quien sigue leyendo: qué pasa en la comunidad, cómo le va a los alumnos, el oficio.
+Cierra en el curso de $27 o en Leadr. **Es el único canal que no se paga** — no se apaga cuando se
+pausa un anuncio, y mejora envío a envío en vez de gastarse.
+
+| | |
+|---|---|
+| **¿Quiénes?** | Los **ACTIVOS**, calculados de nuevo antes de cada envío. Hoy: **425 activos + 299 nuevos = 724**. |
+| **¿Día 0?** | No hay. Es un canal permanente, no una secuencia: cada envío es su propio día 0. |
+| **¿Qué piezas y cuándo?** | Una por semana, día y hora fijos. Se anotan de a una, a medida que salen. |
+| **¿Quién NO?** | Compradores · marcó spam (para siempre) · rebota siempre · **dormidos** · dados de baja. |
+| **¿Tope y condiciones?** | 1 envío por semana. ~2.900 mails/mes de un plan de ~10.000, con el embudo usando ~7.500. |
+| **Motor** | **Ninguno, a propósito.** Una campaña de Brevo por semana, programada a mano. |
+
+### ⚠️ La audiencia es DINÁMICA — la lista no es la audiencia
+
+La lista **#8 de Brevo es sólo el vehículo**. Quién recibe lo decide la vista
+`v_email_comunidad_audiencia`, que se recalcula **cada vez que se la consulta**, y el script
+`ads-agent/scripts/datos/sincronizar-audiencia-comunidad.mjs` deja la lista igual a eso **antes de
+cada envío**. Quien abre un mail esta semana vuelve a entrar solo; quien deja de abrir, sale solo.
+
+**Congelar esa lista a mano es volver exactamente al problema que esto resuelve.**
+
+La regla, entera:
+
+| Estado | Quién es | Hoy |
+|---|---|---|
+| **activo** | abrió o clicó **cualquier** mail nuestro en los últimos **60 días** | **425** |
+| **nuevo** | lead de menos de 30 días **y** con menos de 3 mails recibidos — todavía no tuvo chance real de abrir | **299** |
+| **dormido** | 3 mails de este canal sin abrir ninguno, o sin señal en 60 días | 554 |
+| **excluido** | ya compró · marcó spam · 2+ rebotes y 0 entregas | 38 |
+
+> 🔎 **El corte del "nuevo" ya se corrigió una vez, el mismo día que se escribió.** La primera
+> versión miraba sólo los mails *de este canal*, y metía como "nuevos" a **166 personas que ya
+> habían recibido 3+ mails del embudo sin abrir uno solo**: fríos disfrazados de recién llegados.
+> El beneficio de la duda es para quien no tuvo oportunidad, no para quien no la usó.
+
+### Cómo se sabe qué funcionó — y qué NO se va a poder saber
+
+**No se puede decidir por ventas.** Con ~700 destinatarios lo esperable son 10-25 clics y 0-1
+ventas por envío; a ese volumen, cero ventas y una venta son el mismo número. Por eso cada envío
+declara su **`angulo`**, su **`tono`** y su **`destino`** en `funnel_steps`, y lo que se compara es
+el **acumulado por ángulo**, no un mail contra otro:
+
+```sql
+select * from v_email_comunidad_envios  order by envio;   -- ¿cómo fue ESTE mail?
+select * from v_email_comunidad_angulos order by pct_clic_sobre_apertura desc;  -- ¿qué TEMA funciona?
+```
+
+`v_email_comunidad_angulos` **avisa sola** cuando la muestra es chica (`⚠️ muestra chica: N envíos,
+no concluir`). Recién con 3+ envíos del mismo ángulo empieza a significar algo.
+
+El clic se mide **sobre aperturas, no sobre entregados**: si no abrieron el asunto, el cuerpo nunca
+tuvo la oportunidad de fallar. Mezclarlos hace culpar al mensaje por un problema de asunto.
+
+### El número incómodo que hay que mirar de frente
+
+La última tanda a toda la base (`email-manifiesto`, 18/08) tuvo **6,1% de apertura y 7 clics sobre
+1.189 entregados**. La base está fría. Por eso este canal arranca **sólo con los activos**: mandarle
+seguido a quien no abre no es neutral — **quema la reputación del dominio por el que también salen
+los mails de acceso de los compradores a Leadr**.
+
+Los 554 dormidos no se tocan todavía. Se les prueba aparte, con una serie corta de reactivación,
+cuando este canal tenga varios envíos encima.
+
+### Atribución de ventas
+
+Cada envío usa su propio `src` numerado según el estándar de [NOMENCLATURA-SRC.md](NOMENCLATURA-SRC.md):
+`/?src=em-comunidad-01`. El `sck` NO se manda: lo pone el botón de la landing. La
+cadena es la misma verificada para el manifiesto (`paginas/index.html` lo inyecta en los botones de
+Hotmart → `api/hotmart.js` lo guarda en `ventas.src`), y `v_email_comunidad_envios` ya lo cuenta.
+
+⚠️ **Cada campaña nueva tiene que cargar su `brevo_camp_id`** en su fila de `funnel_steps`. Si no,
+sus eventos quedan sin atribuir y el panel muestra CERO — que se lee igual que "no lo abrió nadie".
+
+Ficha completa, plan de ángulos y checklist de envío:
+[campanas/email-comunidad/](../campanas/email-comunidad/README.md).
+
+---
+
 ## Campañas de Meta que NO alimentan ningún flujo de mails
 
 No tienen ficha porque no mandan mails. Se listan sólo para que nadie las busque acá:
@@ -366,6 +448,7 @@ No tienen ficha porque no mandan mails. Se listan sólo para que nadie las busqu
 | `leadr-reactivacion` | 18 | 2 | script **a mano** | 🟡 manual a propósito · 1 rescatado de 18 |
 | `leadr-vencimiento` | 19 | **0** | — | 🔴 no existe · ⏰ 6 vencen el 28–31/08 |
 | `email-manifiesto` | 1.227 | 1 | campaña Brevo (una vez) | ✅ enviada 18/08 |
+| `email-comunidad` | **724** (dinámica) | 1/semana | campaña Brevo (a mano) | 🟡 andamiaje listo 19/08 · falta escribir el envío 1 |
 
 ---
 

@@ -1,0 +1,25 @@
+-- email-comunidad — lo que vive en la base, guardado acá porque una vista que sólo existe en
+-- Supabase es invisible para cualquiera que lea el repo (la auditoría del 18/08 encontró 14 así).
+-- APLICADO el 19/08/2026 en `periodistas-marketing` (wxyimqkjlwfncvzozpjy).
+--
+--   v_email_comunidad_audiencia → QUIÉN recibe (regla dinámica, se recalcula al consultarla)
+--   v_email_comunidad_envios    → cómo fue cada envío
+--   v_email_comunidad_angulos   → qué tema funciona (acumulado; es la que decide)
+--
+-- Las tres se leen; ninguna se escribe. Si hay que cambiar la regla de "activo", se cambia ACÁ
+-- y en ningún otro lado: el script de sincronización no decide nada, sólo obedece.
+--
+-- El texto exacto de cada vista se recupera con:
+--   select pg_get_viewdef('v_email_comunidad_audiencia'::regclass, true);
+--
+-- Y las columnas que este canal agregó a funnel_steps:
+--   angulo  → comunidad | alumno | oficio | advertencia | herramienta
+--   tono    → calido | urgente | reflexivo | directo
+--   destino → landing | checkout | leadr
+--
+-- El SQL fuente completo quedó versionado como migraciones de Supabase (se listan con el MCP:
+-- `list_migrations`, o en el panel → Database → Migrations):
+--   email_comunidad_andamiaje                    → las 3 columnas de funnel_steps + el funnel
+--   email_comunidad_audiencia_dinamica           → primera versión de la regla
+--   email_comunidad_audiencia_nuevo_con_chance_real → la corrección del corte de "lead nuevo"
+--   email_comunidad_vistas_resultado             → envíos + ángulos

@@ -333,6 +333,52 @@ const FLUJOS = {
   },
 
   // ───────────────────────────────────────────────────────────────────────────
+  'email-comunidad': {
+    nombre: 'El semanal de la comunidad',
+    objetivo: 'Sostener la relación con quien sigue leyendo: comunidad, alumnos que avanzan, oficio. Lleva al curso o a Leadr. Es el canal que NO se paga — el activo propio que no se apaga cuando se pausa un anuncio.',
+    dueno: 'Sofia (Email)',
+
+    // A MANO, UNA CAMPAÑA DE BREVO POR SEMANA. No hay cron ni cola: la decisión del 13/08
+    // congela MOTORES nuevos, no mails, y una campaña de Brevo no puede mandarse dos veces —
+    // así que el bug de las dos corridas no puede repetirse acá. Se automatiza recién cuando
+    // haya 8-10 envíos y se sepa qué ángulo funciona; antes sería automatizar una incógnita.
+    trigger: [
+      { tipo: TRIGGER.MANO, que: 'se crea la campaña de Brevo y se programa, un envío por semana', quien: PLATAFORMA.BREVO_AUTO },
+    ],
+    motor: null,
+
+    // ⚠️ La audiencia NO es la lista: la lista es el vehículo. Quién recibe lo decide la vista
+    // `v_email_comunidad_audiencia`, que se recalcula cada vez que se la consulta, y el script
+    // `ads-agent/scripts/datos/sincronizar-audiencia-comunidad.mjs` deja la lista 8 igual a eso
+    // ANTES de cada envío. Congelar esta lista a mano es volver al problema que resuelve.
+    audiencia: { de: 'lista de Brevo', id: 8, nombre: 'Comunidad - activos · se reescribe desde v_email_comunidad_audiencia antes de cada envío (19/08: 425 activos + 299 nuevos = 724)' },
+    dia0: 'no hay: es un canal permanente, no una secuencia. Cada envío es su propio día 0.',
+
+    // Las piezas se agregan de a una, a medida que se mandan: el envío 12 todavía no está
+    // escrito y anotarlo antes sería inventar historia. La numeración manda el `src`.
+    piezas: [],
+    piezasAjenas: [
+      { clave: 'comunidad-01', horas: 0, tag: 'comunidad-01', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'PENDIENTE de escribir · CTA a /?src=em-comunidad-01' },
+    ],
+
+    excluye: [
+      'compradores (los saca la propia vista: cruce con ventas + customers)',
+      'quien marcó spam alguna vez — para siempre, no se negocia',
+      'quien nunca recibió nada por rebote (2+ rebotes, 0 entregas)',
+      'DORMIDOS: sin apertura ni clic en 60 días, o 3 mails de este canal sin abrir ninguno',
+      'dados de baja (Brevo nunca le manda a un emailBlacklisted)',
+    ],
+    topes: { porSemana: 1 },
+    condiciones: [
+      'el lead NUEVO (menos de 30 días y menos de 3 mails recibidos) entra aunque no haya abierto nada todavía: si no, el que se anotó ayer quedaría dormido desde el día uno, en silencio',
+      '~724 destinatarios × 4 semanas = ~2.900 mails/mes. El plan de Brevo es de ~10.000 y el embudo ya consume ~7.500: si el embudo se reactiva, esto es lo primero que aprieta',
+    ],
+
+    metrica: 'CLIC SOBRE APERTURAS, acumulado por ángulo — no ventas por mail. Con ~700 destinatarios un solo envío no distingue nada, y 2-4 ventas por semana es ruido. Se lee en v_email_comunidad_angulos, que avisa sola cuando la muestra es chica. Las ventas entran por ventas.src = Email-Comunidad-NN.',
+    apagado: 'no hay flag: no se manda solo. Para frenarlo, no se programa la campaña de la semana.',
+  },
+
+  // ───────────────────────────────────────────────────────────────────────────
   'leadr-vencimiento': {
     nombre: 'Aviso de que se vence el Pro',
     objetivo: 'Que el comprador sepa que su mes se termina y pueda decidir si paga. Es el único momento en que Leadr puede convertir.',
