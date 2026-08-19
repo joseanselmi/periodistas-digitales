@@ -152,8 +152,8 @@ async function marcarEntrega({ wamid, estado, ts }) {
 // Lo usa el mail de recuperación (_lib/recup-email.js).
 const CHECKOUT = 'https://pay.hotmart.com/P106404871J?checkoutMode=10';
 const LINKS = {
-  carrito_abandonado: `${CHECKOUT}&src=recup-abandono`,
-  pago_rechazado: `${CHECKOUT}&src=recup-rechazo`,
+  carrito_abandonado: `${CHECKOUT}&src=em-recup-abandono`,
+  pago_rechazado: `${CHECKOUT}&src=em-recup-rechazo`,
 };
 
 // Normaliza a E.164 sin "+". Corrige el bug del "9" faltante en móviles argentinos

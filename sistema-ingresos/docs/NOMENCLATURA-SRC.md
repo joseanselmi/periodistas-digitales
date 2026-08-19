@@ -28,10 +28,12 @@ clicó una sola persona**.
 - `SRC` y `SCK` son **dos pestañas distintas** del Dashboard de Origen de Ventas: son dos columnas,
   no una. Por eso el estándar usa las dos.
 
-> ⚠️ **Medido en nuestros datos: el `sck` se corta en 255 caracteres.** Como ahí viajan las cookies
-> de Facebook, **4 de las 9 ventas con `fbc` lo tienen truncado** y a Meta le llegó un click-id
-> inválido. El botón se salva porque va **primero**; lo que se rompe es lo del final. Esto es un bug
-> aparte, anotado en la #145 — pero explica por qué el `sck` no tiene lugar para más jerarquía.
+> ⚠️ **Medido en nuestros datos: el `sck` se corta en 255 caracteres.** Ahí viajaban las cookies
+> de Facebook, y **4 de las 9 ventas con `fbc` lo tenían truncado**: a Meta le llegaba un click-id
+> inválido y no podía atribuir esas compras. El botón se salvaba porque va **primero**; lo que se
+> rompía era el final. Explica por qué el `sck` no tiene lugar para más jerarquía.
+>
+> **Arreglado el 19/08/2026** — ver "El `fbc` ya no viaja por la URL" más abajo.
 
 ## El estándar
 
@@ -85,6 +87,33 @@ razón de que las 33 ventas dijeran `b2`: cualquier `?sck=` de un mail lo sobree
 Al hacer clic, la página le anexa las cookies de Facebook: `precio~fbp:...~fbc:...`. El botón queda
 primero para que sobreviva al corte de 255.
 
+## El `fbc` ya no viaja por la URL
+
+**El problema.** Un `fbc` cortado no es "un poco menos preciso": es un click-id **inválido**, y Meta
+descarta la atribución entera. Da igual que falten tres caracteres o cien. Con el `sck` topeado en
+255 y un `fbc` que llega a 231 él solo, no entraba.
+
+**Cómo quedó:**
+
+| | Qué viaja | Cuánto mide |
+|---|---|---|
+| `sck` de la URL | `<botón>~fbp:<fbp>` | 49 caracteres como máximo |
+| `sck` de la URL, si el `fbc` entra entero | `+ ~fbc:<fbc>` | sólo si el total queda ≤ 250 |
+| si no entra | nada — lo recupera el webhook | — |
+
+El `fbp` mide 37 caracteres como mucho, así que **entra siempre**. Y es la llave: `api/hotmart.js`
+(`fbcDesdeEvents`) busca en la tabla `events` el `fbc` **completo** — el beacon del navegador
+(`paginas/track.js`) lo guarda ahí sin límite de largo — y lo usa tanto para el evento que va a Meta
+como para la fila que queda guardada.
+
+**Por qué se cruza por `fbp` y no por email:** las filas de `events` son **anónimas**. No tienen
+email ni `transaction_id`, así que no hay por dónde cruzarlas con la venta. El `fbp` es la única
+llave común. Verificado sobre las 9 ventas con `fbc`: en las 5 que **no** estaban truncadas, el
+`fbc` que devuelve esta búsqueda es idéntico al que había llegado por la URL.
+
+Un `fbc` que igual llegue truncado (sck en el tope y sin match en `events`) **se descarta**: mandarle
+a Meta un click-id roto es peor que no mandarle ninguno.
+
 ## Cómo se genera (para no escribirlos a mano)
 
 ```bash
@@ -121,3 +150,28 @@ mayúsculas y los niveles vacíos.
 | `Email-Republicadores-R1` | `em-lectores-r1` | |
 | `WhatsApp-Regalo3` | `wa-guias-r3` | el canal está cerrado; queda por el histórico |
 | `Email-Comunidad-01` | `em-comunidad-01` | el canal nuevo arranca ya con el estándar |
+| `Email-Regalo2` | `em-guias-r2` | |
+| `Email-Oferta2` | `em-guias-oferta2` | |
+| `Email-Republicadores-fix` | `em-lectores-fix` | |
+| `WhatsApp-Reenvio` | `wa-reenvio` | el asistente reenvía el link; recibir sigue vivo |
+| `PDF-Regalo4` | `pdf-regalo4` | el link dentro de la guía de los 5 pilares |
+| `guia-lectores` | `pdf-lectores` | el link dentro de "Que te lean miles" |
+| `Landing-tu-medio` | `dir-tumedio` | la landing de republicadores (`/tu-medio`) |
+| `LeadGen-1USD` | `dir-leadgen` | landing sin tráfico desde el 03/07: queda por prolijidad |
+| `recup-abandono` | `em-recup-abandono` | recuperación de carritos — **sale por email**, no por WhatsApp |
+| `recup-rechazo` | `em-recup-rechazo` | ídem: el `_lib/wa.js` que los define alimenta a `recup-email.js` |
+| `ad4` / `ad4-perfil` | `ad-lectores-a4` | el anuncio de republicadores |
+| `wa-asistente` | `wa-asistente` | ya cumplía: no se toca |
+
+Aplicadas al código el 19/08/2026 (50 reemplazos en 15 archivos). **El histórico no se pisó:** las
+filas ya guardadas siguen diciendo lo que decían; sólo cambia lo que se manda de acá en adelante.
+
+## Que no se degrade
+
+`node herramientas/verificar-repo.mjs` recorre todos los `src=` escritos en el código y los pasa por
+**el mismo validador** que usa el generador (`ads-agent/scripts/utiles/src.mjs`, que exporta
+`revisar()`). No se reimplementa el criterio en dos lados a propósito: dos copias terminan diciendo
+cosas distintas, que es exactamente cómo se llegó a tener cinco formas de escribir lo mismo.
+
+Sólo mira el código, no los `.md`: esta tabla nombra los valores viejos para documentarlos, y
+marcarlos sería pedirle a la documentación que mienta.

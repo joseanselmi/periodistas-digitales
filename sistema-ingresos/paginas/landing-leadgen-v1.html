@@ -666,7 +666,7 @@
         </div>
 
         <div style="text-align:center;margin-top:48px;" class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=LeadGen-1USD&sck=leadgen1usd" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-leadgen&sck=leadgen1usd" class="btn btn-green btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero activar el sistema por $27
             </a>
@@ -822,7 +822,7 @@
         </div>
 
         <div style="text-align:center;margin-top:32px;" class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=LeadGen-1USD&sck=leadgen1usd" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-leadgen&sck=leadgen1usd" class="btn btn-green btn-lg">
                 Quiero todo esto por $27 USD
             </a>
             <p style="color:var(--muted);font-size:.82rem;margin-top:12px;">Garantía 7 días · Acceso inmediato · Sin suscripción</p>
@@ -952,7 +952,7 @@
                 </div>
             </div>
 
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=LeadGen-1USD&sck=leadgen1usd" class="btn btn-green btn-full btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-leadgen&sck=leadgen1usd" class="btn btn-green btn-full btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero todo esto por $27 USD
             </a>
@@ -1034,7 +1034,7 @@
         <p class="final-cta-sub reveal">+5.500 periodistas ya crearon su medio en IG y Facebook. Con IA, con Canva, con el sistema. Por $27, hoy mismo.</p>
 
         <div class="reveal">
-            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=LeadGen-1USD&sck=leadgen1usd" class="btn btn-green btn-lg">
+            <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-leadgen&sck=leadgen1usd" class="btn btn-green btn-lg">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Quiero activar mi sistema ahora
             </a>
@@ -1048,7 +1048,7 @@
     <p><strong>Periodistas Digitales</strong></p>
     <p style="margin-top:8px;">© 2026 Sistema de Ingresos Diarios para Periodistas — José Fiaccini</p>
     <p style="margin-top:12px;">
-        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=LeadGen-1USD&sck=leadgen1usd" style="color:var(--indigo)">Comprar ahora</a>
+        <a href="https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-leadgen&sck=leadgen1usd" style="color:var(--indigo)">Comprar ahora</a>
         &nbsp;·&nbsp;
         <a href="mailto:hola@sistemadeingresosdiariosia.com" style="color:var(--muted)">Contacto</a>
     </p>
@@ -1061,7 +1061,7 @@
 <script>
 /* ── ATRIBUCIÓN POR ANUNCIO + Meta Pixel en el checkout de Hotmart ──
    MISMO BLOQUE que paginas/index.html. Hasta el 18/08/2026 esta página no tenía ni
-   atribución ni InitiateCheckout: sus botones quedaban clavados en `src=LeadGen-1USD`
+   atribución ni InitiateCheckout: sus botones quedaban clavados en `src=dir-leadgen`
    pasara lo que pasara, así que cualquier campaña que apuntara acá con ?src= perdía la
    atribución **en silencio** — la venta entraba igual, sólo que bajo el src equivocado.
 
@@ -1081,7 +1081,7 @@ function getCookie(name) {
     document.querySelectorAll('a[href*="hotmart"]').forEach(a => {
         try {
             const url = new URL(a.href);
-            if (adSrc) url.searchParams.set('src', adSrc);   // ?src=ad4 → columna SRC en Hotmart
+            if (adSrc) url.searchParams.set('src', adSrc);   // ?src=ad-lectores-a4 → columna SRC en Hotmart
             if (adSck) url.searchParams.set('sck', adSck);
             ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => {
                 const v = landing.get(k);

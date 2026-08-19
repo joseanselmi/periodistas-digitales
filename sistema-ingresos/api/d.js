@@ -1,5 +1,5 @@
 // Redirector con tracking para descargas de PDF.
-// Uso: /api/d?file=guia-periodico-digital-ig-fb.pdf&src=WhatsApp-Regalo3&sck=wa3
+// Uso: /api/d?file=guia-periodico-digital-ig-fb.pdf&src=wa-guias-r3&sck=wa3
 //
 // Por qué existe: un archivo .pdf servido como estático no deja ningún rastro
 // en los logs de Vercel (solo las invocaciones de funciones se loguean). Esta

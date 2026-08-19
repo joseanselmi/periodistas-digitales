@@ -1116,7 +1116,7 @@
    saber de qué anuncio salió. Reemplaza el viejo método de 10 landings (una por
    anuncio) por UNA sola landing que identifica el anuncio por la URL.
 
-   Cómo: cada anuncio apunta a  ...com/?src=ad4  (un código corto por anuncio).
+   Cómo: cada anuncio apunta a  ...com/?src=ad-lectores-a4  (un código corto por anuncio).
    Esta landing lo reenvía al checkout de Hotmart → en el reporte de ventas, la
    columna SRC te dice de qué anuncio salió cada venta. (Meta además atribuye solo
    por la cookie fbc → tenés DOS fuentes independientes.)
@@ -1171,8 +1171,16 @@ document.addEventListener('click', e => {
             const url = new URL(link.href);
             const baseSck = (url.searchParams.get('sck') || '').split('~')[0];  // preserva el sck del anuncio
             let packed = baseSck;
+            // El fbp mide 37 caracteres como mucho (medido): entra siempre, y es la
+            // llave con la que el webhook recupera el fbc entero desde `events`.
             if (fbp) packed += '~fbp:' + fbp;
-            if (fbc) packed += '~fbc:' + fbc;
+            // ⚠️ Hotmart CORTA el sck en 255 caracteres y no avisa: guarda el pedazo.
+            // El fbc solo llega a 231, así que se comía el cupo y 4 de las 9 ventas
+            // con fbc lo tenían truncado → a Meta le llegaba un click-id INVÁLIDO y
+            // no podía atribuir esas compras. Un fbc cortado es peor que ninguno.
+            // Ahora sólo se anexa si entra entero; si no, el webhook lo busca en
+            // `events` cruzando por fbp (ver api/hotmart.js → fbcDesdeEvents).
+            if (fbc && (packed + '~fbc:' + fbc).length <= 250) packed += '~fbc:' + fbc;
             url.searchParams.set('sck', packed);
             link.href = url.toString();
         }

@@ -219,7 +219,7 @@ const MAIL5 = {
             <tr><td style="padding:8px 0;vertical-align:top;width:28px;"><span style="color:#22d3ee;font-size:18px;">→</span></td><td style="padding:8px 0;font-size:15px;color:#c0c0d8;line-height:1.5;"><strong style="color:#ffffff;">Cómo empezar paso a paso</strong> — sin conocimientos técnicos y sin reformar todo de golpe</td></tr>
           </table>
           <table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
-            <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&amp;src=Email-Regalo5&amp;sck=email5" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía de agentes de IA (PDF) →</a>
+            <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&amp;src=em-guias-r5&amp;sck=email5" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía de agentes de IA (PDF) →</a>
           </td></tr></table>
           <p style="margin:28px 0 0 0;font-size:13px;color:#606080;text-align:center;line-height:1.6;">Leela con calma: es la base para que la IA deje de ser una herramienta suelta y pase a trabajar para tu medio.</p>
         </td></tr>
@@ -241,7 +241,7 @@ LO QUE VAS A ENCONTRAR
 → Casos prácticos para una redacción — producción, investigación, audiencia y archivo
 → Cómo empezar paso a paso — sin conocimientos técnicos y sin reformar todo de golpe
 
-Descargar la guía de agentes de IA (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&src=Email-Regalo5&sck=email5
+Descargar la guía de agentes de IA (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&src=em-guias-r5&sck=email5
 
 Leela con calma: es la base para que la IA deje de ser una herramienta suelta y pase a trabajar para tu medio.`,
 };
@@ -278,7 +278,7 @@ const MAILOFERTA = {
           </table>
           <p style="margin:0 0 24px 0;font-size:16px;color:#a0a0b8;line-height:1.7;">En esta página te mostramos cómo funciona y cómo podés empezar hoy 👇</p>
           <table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
-            <a href="https://sistemadeingresosdiariosia.com/?src=Email-Oferta&amp;sck=email-oferta" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Ver cómo funciona el curso →</a>
+            <a href="https://sistemadeingresosdiariosia.com/?src=em-guias-oferta&amp;sck=email-oferta" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Ver cómo funciona el curso →</a>
           </td></tr></table>
         </td></tr>
         <tr><td align="center" style="padding:28px 20px 0 20px;"><p style="margin:0;font-size:12px;color:#40405a;line-height:1.6;">${PIE_LEGAL}</p></td></tr>
@@ -301,7 +301,7 @@ Para eso está el curso Sistema de Ingresos Diarios: te lleva paso a paso, con e
 → Tu oficio, tu firma — la experiencia que ya tenés, puesta a producir
 
 En esta página te mostramos cómo funciona y cómo podés empezar hoy:
-https://sistemadeingresosdiariosia.com/?src=Email-Oferta&sck=email-oferta`,
+https://sistemadeingresosdiariosia.com/?src=em-guias-oferta&sck=email-oferta`,
 };
 
 // REGALOS 3 y 4 POR EMAIL — la ENTRADA del embudo, que hasta acá sólo salía por WhatsApp.
@@ -571,7 +571,7 @@ const OFERTA_REENVIO = {
     'Eso es el curso Sistema de Ingresos Diarios: el recorrido completo, en video, desde donde estás hoy hasta tu periódico digital funcionando con tu firma y tu criterio.',
   ],
   cta: 'Ver cómo funciona el curso →',
-  url: 'https://sistemadeingresosdiariosia.com/?src=Email-Oferta2&sck=email-oferta2',
+  url: 'https://sistemadeingresosdiariosia.com/?src=em-guias-oferta2&sck=email-oferta2',
   cierre: 'Está todo explicado en la página, con calma.',
 };
 

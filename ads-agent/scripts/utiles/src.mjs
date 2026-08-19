@@ -12,6 +12,8 @@
  *   node scripts/utiles/src.mjs --canales             → qué canales hay y qué significan
  */
 
+import { pathToFileURL } from 'node:url';
+
 const CANALES = {
   ad:  'Meta pago (anuncios)',
   em:  'email',
@@ -42,6 +44,18 @@ function revisar(codigo) {
   if (codigo.split('-').length < 2) problemas.push('le falta el nivel 2 (el origen): con el canal solo no se distingue nada');
   return problemas;
 }
+
+// La validacion la reusa `herramientas/verificar-repo.mjs` para revisar los `src`
+// escritos en todo el repo. Se exporta para que el criterio tenga UN solo dueno:
+// si se reimplementara alla, en tres meses dirian cosas distintas.
+export { revisar, CANALES, BOTONES, TOPE };
+
+// De aca para abajo es la CLI. Solo corre si se invoca el script directamente;
+// al importarlo (verificar-repo) no debe imprimir ni llamar a process.exit().
+const esCLI = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (esCLI) main();
+
+function main() {
 
 const args = process.argv.slice(2);
 
@@ -98,3 +112,5 @@ console.log(`  Al checkout    https://pay.hotmart.com/P106404871J?checkoutMode=1
 console.log(`  A una guía     https://sistemadeingresosdiariosia.com/api/d?file=<archivo>.pdf&src=${codigo}\n`);
 console.log('Recordá: el `sck` lo pone el botón de la página, no el link de origen.');
 console.log(`Botones de la landing: ${BOTONES.join(' · ')}\n`);
+
+} // fin de main()

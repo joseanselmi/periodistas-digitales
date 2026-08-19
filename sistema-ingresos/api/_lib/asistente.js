@@ -25,9 +25,9 @@ function checkoutFor(segmento) {
   return `${HOTMART_CHECKOUT}&src=${src}&utm_source=wa-asistente&utm_medium=whatsapp`;
 }
 // Las 5 guías del embudo, en orden cronológico de envío (R1 día 0 … R5 día 8). El link
-// pasa por /api/d (redirige al PDF y registra la descarga). src=WhatsApp-Reenvio para
+// pasa por /api/d (redirige al PDF y registra la descarga). src=wa-reenvio para
 // distinguir en las métricas los reenvíos del asistente.
-const D = (file) => `${BASE}/api/d?file=${file}&src=WhatsApp-Reenvio&sck=wa-reenvio`;
+const D = (file) => `${BASE}/api/d?file=${file}&src=wa-reenvio&sck=wa-reenvio`;
 const PDF = {
   1: { label: 'la Guía Claude para periodistas', link: D('guia-claude-periodistas.pdf') },
   2: { label: 'la guía completa de +50 prompts', link: D('guia-completa-50-prompts.pdf') },

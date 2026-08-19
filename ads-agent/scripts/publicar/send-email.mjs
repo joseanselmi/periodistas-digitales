@@ -583,7 +583,7 @@ PD: Si ya activaste, ignorá este email. Gracias.`,
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-claude-periodistas.pdf&amp;src=Email-Regalo1&amp;sck=email1" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía (PDF) →</a>
+                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-claude-periodistas.pdf&amp;src=em-guias-r1&amp;sck=email1" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía (PDF) →</a>
                   </td>
                 </tr>
               </table>
@@ -611,7 +611,7 @@ QUÉ INCLUYE LA GUÍA
 → El prompt maestro — lo configurás una sola vez
 → 4 prompts rápidos para entrevistas, transcripción, documentos largos y edición
 
-Descargar la guía (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-claude-periodistas.pdf&src=Email-Regalo1&sck=email1
+Descargar la guía (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-claude-periodistas.pdf&src=em-guias-r1&sck=email1
 
 En los próximos días te escribimos con algo más: la versión completa, con +50 prompts para cada situación.`,
   },
@@ -658,7 +658,7 @@ En los próximos días te escribimos con algo más: la versión completa, con +5
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-completa-50-prompts.pdf&amp;src=Email-Regalo2&amp;sck=email2" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar los +50 prompts (PDF) →</a>
+                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-completa-50-prompts.pdf&amp;src=em-guias-r2&amp;sck=email2" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar los +50 prompts (PDF) →</a>
                   </td>
                 </tr>
               </table>
@@ -687,7 +687,7 @@ En el mail anterior te dijimos que te íbamos a mandar algo más completo. Acá 
 → Redacción, redes y multimedia
 → Lo legal y la seguridad de fuentes
 
-Descargar los +50 prompts (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-completa-50-prompts.pdf&src=Email-Regalo2&sck=email2
+Descargar los +50 prompts (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-completa-50-prompts.pdf&src=em-guias-r2&sck=email2
 
 Con esto ya tenés el primer ladrillo de tu propio medio digital armado — la parte de producción de contenido con IA. Te vamos a escribir por WhatsApp con el siguiente paso.`,
   },
@@ -723,7 +723,7 @@ Con esto ya tenés el primer ladrillo de tu propio medio digital armado — la p
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&amp;src=Email-Republicadores-fix&amp;sck=emailrepfix" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía (PDF) →</a>
+                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&amp;src=em-lectores-fix&amp;sck=emailrepfix" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía (PDF) →</a>
                   </td>
                 </tr>
               </table>
@@ -751,7 +751,7 @@ Pediste la guía y, si intentaste abrirla en las últimas horas, es probable que
 
 Fue un problema nuestro, ya está resuelto. Te pido disculpas por el rodeo.
 
-Descargar la guía (PDF): https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&src=Email-Republicadores-fix&sck=emailrepfix
+Descargar la guía (PDF): https://sistemadeingresosdiariosia.com/api/d?file=que-te-lean-miles.pdf&src=em-lectores-fix&sck=emailrepfix
 
 Son siete cosas concretas para tu próxima publicación. Sin publicar nada distinto de lo que ya publicás.
 
@@ -803,7 +803,7 @@ José`,
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&amp;src=Email-Regalo5&amp;sck=email5" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía de agentes de IA (PDF) →</a>
+                    <a href="https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&amp;src=em-guias-r5&amp;sck=email5" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:16px 40px;border-radius:10px;letter-spacing:0.3px;">Descargar la guía de agentes de IA (PDF) →</a>
                   </td>
                 </tr>
               </table>
@@ -834,7 +834,7 @@ LO QUE VAS A ENCONTRAR
 → Casos prácticos para una redacción — producción, investigación, audiencia y archivo
 → Cómo empezar paso a paso — sin conocimientos técnicos y sin reformar todo de golpe
 
-Descargar la guía de agentes de IA (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&src=Email-Regalo5&sck=email5
+Descargar la guía de agentes de IA (PDF): https://sistemadeingresosdiariosia.com/api/d?file=guia-agentes-ia-periodistas.pdf&src=em-guias-r5&sck=email5
 
 Leela con calma: es la base para que la IA deje de ser una herramienta suelta y pase a trabajar para tu medio.`,
   },

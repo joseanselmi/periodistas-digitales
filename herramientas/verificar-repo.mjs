@@ -37,7 +37,7 @@
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 
@@ -565,6 +565,56 @@ function chequearFichasDeFlujo() {
   return { revisadas, rotas };
 }
 
+// ── 9) Los `src` escritos en el repo cumplen el estándar ─────────────────────
+//
+// POR QUÉ. El 19/08/2026, al escribir el estándar, las 33 ventas registradas tenían sólo
+// tres valores de `src` y los seis botones de compra decían todos `b2`: no se sabía dónde
+// había clicado una sola persona. La causa no fue un bug puntual sino que cada quien
+// escribió el código a mano — llegaron a convivir `Email-Manifiesto`, `em-manifiesto`,
+// `ad1-fomo` y `Landing-page-1` para cosas del mismo tipo. Hotmart no avisa: guarda lo que
+// le mandes, y recién seis meses después alguien nota que los reportes no cierran.
+//
+// Este chequeo recorre los `src=` escritos en el código y los pasa por el MISMO validador
+// que usa el generador (`ads-agent/scripts/utiles/src.mjs`). No se reimplementa acá a
+// propósito: dos copias del criterio terminan diciendo cosas distintas.
+//
+// Sólo mira el CÓDIGO, no los .md: la tabla de equivalencias del estándar nombra los
+// valores viejos justamente para documentarlos, y marcarlos sería pedirle a la
+// documentación que mienta.
+const EXT_SRC = /\.(js|mjs|html)$/;
+async function chequearEstandarSrc() {
+  const rotas = [];
+  let revisadas = 0;
+
+  let revisar;
+  try {
+    ({ revisar } = await import(pathToFileURL(join(ROOT, 'ads-agent/scripts/utiles/src.mjs')).href));
+  } catch (e) {
+    return { revisadas: 0, rotas: [{ rel: 'ads-agent/scripts/utiles/src.mjs', ref: 'no se pudo cargar el validador del estándar', tipo: String(e && e.message || e) }] };
+  }
+
+  // `[?&]src=` y no `primer_src=`: sólo el parámetro de una URL, no cualquier cosa que
+  // termine en "src". El valor no puede seguir con un punto — así quedan afuera los
+  // filtros de PostgREST (`?src=eq.algo`, `&primer_src=is.null`), que no son atribución.
+  const RE = /[?&]src=([A-Za-z0-9][A-Za-z0-9_-]*)(?![.A-Za-z0-9_-])/g;
+
+  for (const rel of archivosDelRepo(EXT_SRC)) {
+    const txt = readFileSync(join(ROOT, rel), 'utf8');
+    const vistos = new Set();
+    for (const m of txt.matchAll(RE)) {
+      const codigo = m[1];
+      if (vistos.has(codigo)) continue;   // un archivo repite el mismo src en cada botón
+      vistos.add(codigo);
+      revisadas++;
+      const problemas = revisar(codigo);
+      if (problemas.length) {
+        rotas.push({ rel, ref: `src=${codigo} → ${problemas[0]}`, tipo: 'no cumple el estándar de NOMENCLATURA-SRC.md' });
+      }
+    }
+  }
+  return { revisadas, rotas };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const pasos = [
@@ -576,12 +626,13 @@ const pasos = [
   ['Equipo de agentes (state ↔ panel en la nube)', chequearAgentes],
   ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
   ["Flujos de mails: cada uno con su ficha y su motor vivo", chequearFichasDeFlujo],
+  ['Los `src` cumplen el estándar de atribución', chequearEstandarSrc],
 ];
 
 let totalRotas = 0;
 console.log('');
 for (const [titulo, fn] of pasos) {
-  const { revisadas, rotas } = fn();
+  const { revisadas, rotas } = await fn();
   totalRotas += rotas.length;
   const estado = rotas.length ? rojo(`${rotas.length} ROTA(S)`) : verde('OK');
   console.log(`${estado}  ${titulo}  —  ${revisadas} chequeadas`);

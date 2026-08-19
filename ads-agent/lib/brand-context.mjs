@@ -3,7 +3,7 @@ export const BRAND = {
   price: 27,
   perceivedValue: 227,
   landingUrl: 'https://sistemadeingresosdiariosia.com',
-  hotmartUrl: 'https://pay.hotmart.com/P106404871J?checkoutMode=10&src=Landing-page-1&sck=b2',
+  hotmartUrl: 'https://pay.hotmart.com/P106404871J?checkoutMode=10&src=dir-landing&sck=b2',
 
   audience: {
     description: 'Periodistas latinoamericanos 30-55 años',

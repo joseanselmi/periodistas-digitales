@@ -321,7 +321,7 @@ const FLUJOS = {
       // EL ASUNTO (brevo-events-sync.js: `ev.tag || porAsunto.get(ev.subject)`), que está cargado
       // en funnel_steps. Si alguien edita el asunto en Brevo y no toca esa fila, la campaña pasa
       // a mostrar CERO — indistinguible de "no la abrió nadie".
-      { clave: 'manifiesto', horas: 0, tag: 'email-manifiesto', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'asunto "Lo que se está muriendo no es el periodismo" · CTA a /?src=Email-Manifiesto' },
+      { clave: 'manifiesto', horas: 0, tag: 'email-manifiesto', plataforma: PLATAFORMA.BREVO_AUTO, detalle: 'asunto "Lo que se está muriendo no es el periodismo" · CTA a /?src=em-manifiesto' },
     ],
 
     excluye: ['compradores (lista de exclusión Brevo #7, 21 emails de customers+ventas)', 'dados de baja (emailBlacklisted)'],

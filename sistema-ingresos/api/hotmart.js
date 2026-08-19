@@ -143,6 +143,69 @@ function parseSck(sck) {
   return out
 }
 
+// Hotmart corta el `sck` en 255 caracteres sin avisar. Un `fbc` cortado NO es
+// "un poco menos preciso": es un click-id inválido, y Meta descarta la atribución
+// entera. Medido el 19/08/2026 sobre las 33 ventas: 4 de las 9 que traían fbc lo
+// tenían truncado (sck exactamente en 255).
+//
+// La landing ya no manda un fbc que no entre entero (paginas/index.html), pero el
+// fbp —37 caracteres— viaja siempre. Con él se recupera acá el fbc COMPLETO desde
+// `events`, donde el beacon del navegador lo guarda sin límite de largo.
+//
+// Por qué por fbp y no por email: las filas de `events` son ANÓNIMAS (no tienen
+// email ni transaction_id), así que no hay por dónde cruzarlas con la venta. El fbp
+// es la única llave común. Verificado: en las 5 ventas sin truncar, el fbc que
+// devuelve esta búsqueda es idéntico al que llegó por la URL.
+const SCK_TOPE = 255
+
+async function fbcDesdeEvents(fbp, ocurridoEn) {
+  if (!fbp || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) return ''
+  try {
+    // Ventana amplia hacia atrás: el clic es siempre ANTERIOR a la compra, pero
+    // entre el clic y el pago aprobado pueden pasar horas.
+    // `ocurridoEn` llega ya normalizado por toIso() (Hotmart manda epoch en ms).
+    const hasta = ocurridoEn ? new Date(ocurridoEn) : new Date()
+    if (isNaN(hasta.getTime())) return ''
+    const limite = new Date(hasta.getTime() + 60 * 60 * 1000).toISOString()  // +1h de colchón
+    const url = `${SUPABASE_URL}/rest/v1/events`
+      + `?fbp=eq.${encodeURIComponent(fbp)}`
+      + `&fbc=not.is.null`
+      + `&ocurrido_en=lte.${encodeURIComponent(limite)}`
+      + `&select=fbc&order=ocurrido_en.desc&limit=1`
+    const r = await fetch(url, {
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` },
+    })
+    if (!r.ok) return ''
+    const filas = await r.json()
+    return (Array.isArray(filas) && filas[0] && filas[0].fbc) || ''
+  } catch (e) {
+    console.error('[curso webhook] no se pudo buscar el fbc en events:', e && e.message || e)
+    return ''
+  }
+}
+
+// Completa fb.fbc con el de `events` y DESCARTA el que vino cortado por la URL.
+async function completarFbc(fb, sckRaw, ocurridoEn) {
+  const truncado = String(sckRaw || '').length >= SCK_TOPE
+  const recuperado = await fbcDesdeEvents(fb.fbp, ocurridoEn)
+
+  if (recuperado) {
+    if (fb.fbc && fb.fbc !== recuperado) {
+      console.log('[curso webhook] fbc reemplazado por el completo de events', {
+        url: fb.fbc.length, events: recuperado.length, truncado,
+      })
+    }
+    return { ...fb, fbc: recuperado }
+  }
+  // Sin match en events: si el sck venía en el tope, lo que trae la URL está
+  // cortado. Mandarlo sería peor que no mandar nada.
+  if (truncado && fb.fbc) {
+    console.log('[curso webhook] fbc descartado: llegó truncado y no está en events', { largo: fb.fbc.length })
+    return { ...fb, fbc: '' }
+  }
+  return fb
+}
+
 // El sck viaja como "b2~fbp:...~fbc:...". Para saber por dónde entró la persona
 // solo sirve el primer tramo: "b2" (nuestro checkout) o "HOTMART_PRODUCT_PAGE"
 // (nos encontró sola en el marketplace de Hotmart). El resto son los ids de
@@ -641,11 +704,24 @@ module.exports = async (req, res) => {
   const origin = purchase.origin || data.origin || {}
   const tracking = purchase.tracking || data.tracking || {}
   const sck = pick(tracking.source_sck, tracking.sck, origin.sck, body.sck)
-  const fb = parseSck(sck)
 
   const value = pick(purchase.price && purchase.price.value, purchase.full_price && purchase.full_price.value, 27)
   const currency = pick(purchase.price && purchase.price.currency_value, 'USD')
   const eventId = pick(purchase.transaction, purchase.order_date && `${email}-${purchase.order_date}`)
+
+  // El fbc puede haber llegado cortado por el tope de 255 del sck: se completa
+  // desde `events` ANTES de usarlo, así lo arreglado vale para las dos cosas que
+  // dependen de él — el evento que va a Meta y la fila que queda guardada.
+  // Si la búsqueda falla, `fb` queda como estaba: nunca frena la venta.
+  const fbUrl = parseSck(sck)
+  const fb = await (async () => {
+    try {
+      return await completarFbc(fbUrl, sck, toIso(pick(purchase.approved_date, purchase.order_date, purchase.date)))
+    } catch (e) {
+      console.error('[curso webhook] completarFbc falló, sigue con lo que trajo la URL:', e && e.message || e)
+      return fbUrl
+    }
+  })()
 
   // Cada paso va aislado: si uno se cae, los demás siguen. Antes no era así —
   // un ReferenceError dentro de saveVenta (una función que dice ser "best-effort")
