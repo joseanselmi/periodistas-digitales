@@ -53,7 +53,7 @@ intermedia: son dos niveles y se termina. Un mail sí: es la campaña, y adentro
 
 | Nivel | Qué es | Valores |
 |---|---|---|
-| 1 · **canal** | siempre | `ad` (Meta pago) · `em` (email) · `wa` · `og` (orgánico) · `pdf` (guía) · `dir` (directo, sin origen) |
+| 1 · **canal** | siempre | `ad` (Meta pago) · `og` (orgánico) · `em` (email) · `wa` · `pdf` (guía) · `dir` (directo) · `test` (pruebas) |
 | 2 · **origen** | casi siempre | la campaña o el flujo: `fomo`, `lectores`, `comunidad`, `guias`, `recup`, `landing` |
 | 3 · **pieza** | sólo si el origen tiene varias | el anuncio (`a1`, `a5`) o el número de mail (`03`) o su nombre (`oferta`) |
 
@@ -113,6 +113,137 @@ llave común. Verificado sobre las 9 ventas con `fbc`: en las 5 que **no** estab
 
 Un `fbc` que igual llegue truncado (sck en el tope y sin match en `events`) **se descarta**: mandarle
 a Meta un click-id roto es peor que no mandarle ninguno.
+
+## El mapa completo: todo lo que puede vender, hoy
+
+Relevado el 19/08/2026 contra la API de Meta, `_lib/flujos.js` y los `src` que llegaron de verdad
+a la tabla `events`. **Si algo puede terminar en una venta, tiene que estar en esta tabla.**
+
+### Pago — Meta
+
+| Qué | Estado | Código |
+|---|---|---|
+| Anuncio `ad1-fomo` | **ACTIVE** — 17 de 33 ventas | `ad-fomo-a1` ⛔ no se renombra estando activo |
+| Comentario de ese anuncio | funcionando (62 eventos, 5 clics) | `ad-fomo-a1-com` |
+| Anuncio `ad3-mundial` | pausado | `ad-mundial-a3` |
+| Anuncio `ad5-lectores` | ACTIVE — Lead Ads | `ad-lectores-a5` — *sin `src`: el lead entra por Make, no pasa por la landing* |
+| Campaña `interacción` | ACTIVE | *no lleva a ningún lado — no vende, no necesita código* |
+| Publicación orgánica promocionada | $1/día, 7 días | `ad-<plataforma>-<formato>-<tema>` |
+
+### Orgánico
+
+| Qué | Dónde vive el archivo | Código |
+|---|---|---|
+| Historia diaria del muro | `contenido/carousels/muro-stories/` | `og-ig-hist-muro1908` |
+| Carrusel semanal (lun/mié/vie/dom) | `contenido/carousels/publicados/` | `og-ig-carr-<tema>` |
+| Reel / short | — | `og-ig-reel-<tema>` |
+| Video de TikTok | — | `og-tt-video-<tema>` |
+| Comentario de ese video | — | `og-tt-video-<tema>-com` |
+| Clase en YouTube | canal Tufuturoconia | `og-yt-clase-<tema>` |
+| Link de la biografía | — | `og-ig-bio` · `og-tt-bio` |
+| Mensaje en un grupo | — | `og-fb-grupo-<tema>` |
+
+### Email — un código por PIEZA, no por flujo
+
+Los flujos son los de `sistema-ingresos/api/_lib/flujos.js`. **El `src` identifica el mail
+concreto**, no la campaña: saber que una venta vino "del embudo de guías" no sirve para decidir
+nada; saber que vino del regalo 3 sí.
+
+| Flujo | Piezas | Código |
+|---|---|---|
+| `guias-claude` | los 5 regalos + oferta | `em-guias-r1` … `em-guias-r5` · `em-guias-oferta` |
+| `republicadores` | — | `em-lectores-r1` |
+| `recup-carrito` | carrito abandonado | `em-recup-abandono` |
+| `recup-rechazo` | pago rechazado | `em-recup-rechazo` |
+| `email-manifiesto` | tanda única | `em-manifiesto` |
+| `email-comunidad` | el semanal | `em-comunidad-01`, `-02`, … |
+| `post-compra` | — | `em-postcompra-<pieza>` |
+
+### El resto
+
+| Qué | Código |
+|---|---|
+| Link dentro de una guía en PDF | `pdf-regalo4` · `pdf-lectores` |
+| El asistente de WhatsApp reenviando el link | `wa-asistente` · `wa-reenvio` |
+| Entró a la landing sin ningún origen | `dir-landing` |
+| Entró a `/tu-medio` sin origen | `dir-tumedio` |
+| Pruebas nuestras | `test-<loquesea>` |
+
+## ⭐ La pieza se identifica por el NOMBRE DEL ARCHIVO
+
+Decidido con Jose el 19/08/2026. **Una imagen bien nombrada ya contiene su `src`.** No hay que
+inventarlo dos veces, ni acordarse dentro de seis meses de qué era "la historia del 19/08".
+
+```
+<plataforma>-<formato>-<tema>[-<n>].<ext>
+
+ig-carr-primerprecio-01.jpg   →   og-ig-carr-primerprecio
+ig-hist-mediakit.jpg          →   og-ig-hist-mediakit
+tt-video-sueldo.mp4           →   og-tt-video-sueldo
+```
+
+El código lo arma el script leyendo el archivo — no se escribe a mano:
+
+```bash
+cd ads-agent
+node scripts/utiles/src.mjs --archivo contenido/carousels/ig-carr-primerprecio-01.jpg
+node scripts/utiles/src.mjs --archivo <ruta> --pagado       # el mismo creativo, promocionado
+node scripts/utiles/src.mjs --archivo <ruta> --comentario   # el link que va en el comentario
+```
+
+**El número de slide se descarta a propósito.** Las 7 imágenes de un carrusel son UNA
+publicación y comparten un solo `src`: si cada slide tuviera el suyo, el reporte diría que el
+carrusel vendió siete veces menos de lo que vendió.
+
+**El canal NO va en el nombre del archivo**, y es a propósito: el mismo creativo se publica
+orgánico y después se promociona con $1/día (está en la estrategia de orgánico). Es el mismo
+archivo y tienen que poder distinguirse, porque uno cuesta plata:
+
+| | Código |
+|---|---|
+| publicado sin pagar | `og-ig-carr-primerprecio` |
+| el mismo, promocionado | `ad-ig-carr-primerprecio` |
+| el link del comentario | `og-ig-carr-primerprecio-com` |
+
+### Los niveles
+
+| Nivel | Qué es | Valores |
+|---|---|---|
+| 1 · **canal** | siempre | `ad` · `og` · `em` · `wa` · `pdf` · `dir` · `test` |
+| 2 · **plataforma** (orgánico) | dónde se publicó | `ig` · `fb` · `tt` · `yt` |
+| 3 · **formato** | qué forma tiene | `hist` · `post` · `carr` · `reel` · `video` · `clase` · `bio` · `grupo` |
+| 4 · **tema** | de qué trata | una palabra, la del archivo |
+| 5 · **sufijo** | sólo si hace falta | `com` (comentario) · `fij` (comentario fijado) |
+
+En los canales que **no** son orgánicos el nivel 2 no es una plataforma sino el origen, y
+alcanzan menos niveles:
+
+```
+ad-fomo-a1              anuncio a1 de la campaña fomo
+ad-fomo-a1-com          el link del comentario de ese anuncio
+em-comunidad-03         mail 3 del semanal de la comunidad
+em-guias-oferta         el mail de oferta del embudo de regalos
+em-manifiesto           la tanda única (dos niveles alcanzan)
+pdf-regalo4             el link dentro de la guía 4
+og-ig-bio               el link de la biografía de Instagram
+dir-landing             entró a la landing sin ningún origen
+test-qa                 una prueba nuestra — NO es tráfico real
+```
+
+### ⚠️ El canal `test` existe para poder filtrar la basura
+
+En los datos reales conviven `test`, `qa`, `chequeo`, `verificacion`, `prueba-deploy`,
+`prueba-viejo`, `formulario` y `valentina`: pruebas nuestras mezcladas con tráfico de gente. Como
+no tenían nada en común, no había forma de sacarlas de un reporte sin conocerlas de memoria.
+**Toda prueba va bajo `test-*`**, y así se descarta con un solo filtro.
+
+### El sufijo del comentario es `-com`, no `-coment`
+
+Antes era `-coment` (`ad1-fomo-coment`, 62 eventos y 5 clics: la convención funciona). Se acorta
+porque el techo de 30 caracteres es real y el comentario es justo el caso que se pasa:
+`og-ig-carr-primerprecio-coment` da **30 clavados**, sin margen para un tema un poco más largo.
+Después de lo que costó el corte silencioso del `sck` en 255, no se diseña nada que quede
+exactamente en el techo.
 
 ## Cómo se genera (para no escribirlos a mano)
 
