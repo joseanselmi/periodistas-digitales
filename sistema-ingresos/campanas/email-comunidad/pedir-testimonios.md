@@ -45,6 +45,56 @@ nota antes de terminar el segundo.
 
 ---
 
+## Si contesta "no tengo idea de qué escribir"
+
+Pasa seguido y **no significa que no tenga nada que contar**: significa que no sabe por dónde
+arrancar. Para eso está esto — la estructura ya armada, con los huecos para que ponga lo suyo.
+
+### Qué me gustaría que destaques (mandarle esta lista tal cual)
+
+> Si querés que te diga qué es lo que más sirve del otro lado, es esto — en este orden:
+>
+> 1. **Cómo venías antes.** Es lo más importante de todo. El que lee está ahí ahora, y si no ve
+>    su propia situación en el primer renglón, no sigue leyendo.
+> 2. **Que sos periodista con años de oficio**, no alguien que arranca de cero a los veinte. Eso
+>    es lo que hace que el otro diga "ah, entonces yo también".
+> 3. **Una cosa concreta que hacés distinto ahora.** Una sola, bien específica. Vale más "armo la
+>    investigación antes de salir a cubrir" que "mejoré mi productividad".
+> 4. **El tiempo.** Cuánto te llevaba antes y cuánto ahora. Es lo que más se entiende de una.
+> 5. **Que se puede en paralelo**, sin renunciar a nada ni pelearse con nadie — si fue tu caso.
+>
+> Lo que **no** hace falta: elogiarme a mí, ni al curso. Eso no le sirve a nadie y encima se nota.
+
+### La plantilla (para completar)
+
+> Si te sirve, copiá esto y completá lo que está entre corchetes. Cambiale las palabras todo lo que
+> quieras: es tu historia, no la mía.
+>
+> ---
+>
+> *Antes de esto yo [QUÉ HACÍAS / EN QUÉ SITUACIÓN ESTABAS]. Llevaba [CUÁNTO TIEMPO] [PROBANDO QUÉ
+> COSAS / SIN CONSEGUIR QUÉ], y lo que más me trababa era [QUÉ TE TRABABA].*
+>
+> *Lo que me destrabó fue [QUÉ CLASE, QUÉ HERRAMIENTA O QUÉ CAMBIO CONCRETO]. Empecé a [LA ACCIÓN
+> CONCRETA QUE HACÉS AHORA Y ANTES NO].*
+>
+> *Hoy [QUÉ CAMBIÓ — lo que sea verdad: cuánto tardás, cuánto publicás, qué conseguiste]. [SI TENÉS
+> UN NÚMERO TUYO, VA ACÁ.]*
+>
+> *Si estás dudando, [LO QUE LE DIRÍAS A UN COLEGA EN TU SITUACIÓN DE ANTES].*
+>
+> ---
+>
+> Con cuatro renglones alcanza. Y si algún hueco no aplica a tu caso, salteálo: es preferible que
+> queden tres frases verdaderas y no cuatro rellenadas.
+
+⚠️ **Los corchetes los llena el alumno, siempre.** La estructura y las frases de unión las podemos
+poner nosotros —eso es ayudar a alguien a escribir, lo hace cualquiera—; los hechos no. Si un
+alumno devuelve la plantilla con los corchetes sin tocar o con datos que no son suyos, ese
+testimonio no se publica.
+
+---
+
 ## Versión corta, para WhatsApp
 
 > Buenísimo que te ofrezcas 🙌 No quiero que escribas algo "promocional": contá lo tuyo tal cual.
