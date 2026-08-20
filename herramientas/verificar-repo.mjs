@@ -616,6 +616,83 @@ async function chequearEstandarSrc() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 10) Registro de servicios: ningún servicio que cobra puede quedar a medias.
+//
+// POR QUÉ. El 17/08/2026 se descubrió que Anthropic llevaba mes y medio cobrando $100/mes y
+// figurando en $0. La causa no fue un bug: el email de facturación se cambió a medias en julio
+// y el doc decía ✅. Nadie volvió a mirar, porque el ✅ equivocado es lo que apaga la revisión.
+// El 20/08 pasó otra vez con ElevenLabs ($22/mes desde el 19/07, nunca registrado).
+//
+// El circuito nunca falla en estos casos: no se entera. Un servicio que cobra y no está en el
+// registro no rompe nada — el P&L simplemente reporta de menos, en silencio.
+//
+// Este chequeo NO puede saber qué contrató Jose (eso lo caza el descubridor mensual de la
+// rutina). Lo que sí puede garantizar es que un servicio ya conocido no quede escrito a
+// medias: si el registro dice que un proveedor factura desde un remitente propio, ese
+// remitente TIENE que estar en la query del PASO 1 del prompt. Si no está, la rutina no lo
+// busca nunca, y el registro miente igual que mentía el doc.
+const REGISTRO_SERVICIOS = 'ads-agent/state/servicios-facturacion.json';
+const DOC_CONTABILIDAD = 'ads-agent/docs/CONTABILIDAD-BUZON-FACTURAS.md';
+const ESTADOS_SERVICIO = new Set(['paga', 'gratis-confirmado', 'baja', 'no-tocar', 'personal']);
+function chequearRegistroDeServicios() {
+  const rotas = [];
+  let revisadas = 0;
+
+  const pReg = join(ROOT, REGISTRO_SERVICIOS);
+  const pDoc = join(ROOT, DOC_CONTABILIDAD);
+  for (const [rel, abs] of [[REGISTRO_SERVICIOS, pReg], [DOC_CONTABILIDAD, pDoc]]) {
+    if (!existsSync(abs)) {
+      return { revisadas: 0, rotas: [{ rel, ref: 'el registro de servicios / su doc', tipo: 'no existe' }] };
+    }
+  }
+
+  let registro;
+  try {
+    registro = JSON.parse(readFileSync(pReg, 'utf8'));
+  } catch (e) {
+    return { revisadas: 0, rotas: [{ rel: REGISTRO_SERVICIOS, ref: e.message, tipo: 'JSON inválido' }] };
+  }
+
+  const doc = readFileSync(pDoc, 'utf8');
+
+  for (const s of registro.servicios ?? []) {
+    revisadas++;
+    if (!s.servicio || !ESTADOS_SERVICIO.has(s.estado)) {
+      rotas.push({
+        rel: REGISTRO_SERVICIOS,
+        ref: `${s.servicio ?? '(sin nombre)'} → estado '${s.estado}'`,
+        tipo: `falta el nombre o el estado no es uno de: ${[...ESTADOS_SERVICIO].join(', ')}`,
+      });
+      continue;
+    }
+
+    // El servicio tiene que estar nombrado en el doc, que es la copia del prompt vivo.
+    // Si no está, la rutina no sabe que existe.
+    if (!doc.includes(s.servicio)) {
+      rotas.push({
+        rel: DOC_CONTABILIDAD,
+        ref: s.servicio,
+        tipo: 'está en el registro pero no en el prompt del doc — la rutina no lo conoce',
+      });
+    }
+
+    // Y si factura desde un remitente propio, ese remitente tiene que estar en la query.
+    // Es el chequeo que habría atajado a Anthropic y a ElevenLabs.
+    for (const r of s.remitentes ?? []) {
+      if (!doc.includes(r)) {
+        rotas.push({
+          rel: DOC_CONTABILIDAD,
+          ref: `${s.servicio} → ${r}`,
+          tipo: 'remitente del registro que no aparece en el prompt: la rutina nunca lo va a buscar',
+        });
+      }
+    }
+  }
+
+  return { revisadas, rotas };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const pasos = [
   ['Rutas escritas en docs y código', chequearRutasEnTexto],
@@ -627,6 +704,7 @@ const pasos = [
   ['Nada suelto: toda carpeta con su README', chequearCarpetasDocumentadas],
   ["Flujos de mails: cada uno con su ficha y su motor vivo", chequearFichasDeFlujo],
   ['Los `src` cumplen el estándar de atribución', chequearEstandarSrc],
+  ['Servicios: ninguno que cobre queda fuera de la rutina de facturas', chequearRegistroDeServicios],
 ];
 
 let totalRotas = 0;

@@ -1,0 +1,159 @@
+{
+  "_que_es": "Registro único de TODO servicio que el negocio usa, pague o no. Es la lista contra la que la rutina semanal de facturas (Trello #46) reconcilia la tabla `gastos`. Un servicio que no está acá es un servicio que nadie vigila.",
+  "_la_regla": "Servicio nuevo = email de facturación en gastos@leadr.cloud, y su fila acá. Si el proveedor NO deja cambiar el email de facturación (pasó con Make), se pone `llega_por: 'remitente'` y su remitente EXACTO en `remitentes` — y ese remitente tiene que estar también en la query del PASO 1 de la rutina. `node herramientas/verificar-repo.mjs` no deja que quede a medias.",
+  "_por_que_existe": "El 17/08/2026 se descubrió que Anthropic ($100/mes) llevaba mes y medio en $0. El circuito no falló: nunca se enteró. El email de facturación se cambió a medias en julio y el doc decía ✅. Un servicio sin fila acá factura en silencio y el P&L reporta de menos.",
+  "_actualizado": "2026-08-20",
+  "servicios": [
+    {
+      "servicio": "Brevo",
+      "categoria": "Infraestructura",
+      "estado": "paga",
+      "moneda": "EUR",
+      "monto_esperado": 14,
+      "dia_factura": 24,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "€14/mes desde agosto (Starter €7 + Recurring emails €7). Julio fueron €21 por un prorrateo único del 12/07. Dos facturas en el mismo mes se SUMAN, no se pisan."
+    },
+    {
+      "servicio": "Make.com",
+      "categoria": "Herramientas",
+      "estado": "paga",
+      "moneda": "USD",
+      "monto_esperado": 10.59,
+      "dia_factura": 18,
+      "llega_por": "remitente",
+      "remitentes": [
+        "invoice+statements@make.com"
+      ],
+      "notas": "Plan Core. Su panel NO deja cambiar el email de facturación, por eso va por remitente. El asunto dice 'Your receipt from Celonis Inc.' (Celonis es la dueña de Make) — no es un proveedor desconocido. Cobra del 18 al 18: el mes se toma de la fecha de emisión."
+    },
+    {
+      "servicio": "Anthropic API (Claude)",
+      "categoria": "IA",
+      "estado": "paga",
+      "moneda": "USD",
+      "monto_esperado": 100,
+      "dia_factura": 2,
+      "llega_por": "remitente",
+      "remitentes": [
+        "invoice+statements@mail.anthropic.com"
+      ],
+      "notas": "El nombre canónico dice API por historia, pero lo que se paga es la suscripción Claude Max 5x. Julio fueron $116,17 por el IVA español del 21%. IGNORAR failed-payments@mail.anthropic.com: son cobros rechazados, no facturas."
+    },
+    {
+      "servicio": "ElevenLabs",
+      "categoria": "IA",
+      "estado": "paga",
+      "moneda": "USD",
+      "monto_esperado": 22,
+      "dia_factura": 19,
+      "llega_por": "remitente",
+      "remitentes": [
+        "invoice+statements+acct_1M07hSLmdOdiMXBs@stripe.com"
+      ],
+      "notas": "Plan Creator, 22 USD/mes. Factura via Stripe: el remitente NO dice elevenlabs, dice invoice+statements+acct_1M07hSLmdOdiMXBs@stripe.com y el asunto 'Your receipt from Eleven Labs Inc.'. DESCUBIERTO el 20/08/2026 por el barrido unico: llevaba 2 meses cobrando sin estar en la contabilidad (jul 11 USD con 50% off primer mes, ago 22 USD). Es el servicio que tiene en hold el M4 del curso."
+    },
+    {
+      "servicio": "Dominios",
+      "categoria": "Infraestructura",
+      "estado": "paga",
+      "moneda": null,
+      "monto_esperado": null,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "🔴 BLOQUEADO EN JOSE. sistemadeingresosdiariosia.com (~20/04) + leadr.cloud (~02/05), comprados en Hostinger. No hay NI UNA factura de Hostinger en el Gmail (buscado por remitente, asunto y fechas de registro). Hace falta entrar a hpanel.hostinger.com → Facturación → Historial de pagos. Es el último fijo en $0 que no es gratis."
+    },
+    {
+      "servicio": "Vercel",
+      "categoria": "Infraestructura",
+      "estado": "gratis-confirmado",
+      "moneda": "USD",
+      "monto_esperado": 0,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "Plan Hobby. Confirmado por evidencia el 17/08/2026: cero facturas en 200 días y un mail que ofrece 'Upgrade to Pro' (no te lo ofrecen si ya sos Pro). Si algún día pasa a pago, la factura cae en gastos@ y la rutina la carga sola."
+    },
+    {
+      "servicio": "Supabase",
+      "categoria": "Infraestructura",
+      "estado": "gratis-confirmado",
+      "moneda": "USD",
+      "monto_esperado": 0,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "Plan Free. Confirmado por Jose el 11/08/2026."
+    },
+    {
+      "servicio": "ChatGPT",
+      "categoria": "IA",
+      "estado": "gratis-confirmado",
+      "moneda": "USD",
+      "monto_esperado": 0,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "Plan gratuito. Proveedor de imágenes desde el 03/07/2026. Confirmado por Jose el 11/08/2026."
+    },
+    {
+      "servicio": "higgsfield",
+      "categoria": "IA",
+      "estado": "baja",
+      "moneda": "USD",
+      "monto_esperado": 0,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "Dado de baja el 01/08/2026 — reemplazado por ChatGPT como proveedor de imágenes (Trello #51). recurrente=false en `gastos`, así que el centinela no lo reclama."
+    },
+    {
+      "servicio": "fal.ai",
+      "categoria": "IA",
+      "estado": "baja",
+      "moneda": "USD",
+      "monto_esperado": 0,
+      "dia_factura": null,
+      "llega_por": "gastos@",
+      "remitentes": [],
+      "notas": "No se usa. Borrado de `gastos` el 11/08/2026."
+    },
+    {
+      "servicio": "Meta Ads",
+      "categoria": "Publicidad",
+      "estado": "no-tocar",
+      "moneda": "USD",
+      "monto_esperado": null,
+      "dia_factura": null,
+      "llega_por": "otra-via",
+      "remitentes": [],
+      "notas": "⚠️ NO redirigir a gastos@ ni cargar como fijo. Ya se carga solo a nivel cuenta desde la API de Meta (`gastos_meta_mensual` → `v_gastos_variables_mes`). Si entra al buzón, el gasto se DUPLICA. La rutina lo ignora por completo."
+    },
+    {
+      "servicio": "WhatsApp de Meta",
+      "categoria": "Herramientas",
+      "estado": "no-tocar",
+      "moneda": "USD",
+      "monto_esperado": null,
+      "dia_factura": null,
+      "llega_por": "otra-via",
+      "remitentes": [],
+      "notas": "⚠️ Igual que Meta Ads: se estima solo desde la tabla `mensajes` (`v_gastos_mensajes_mes`). Cargarlo desde una factura lo duplicaría."
+    },
+    {
+      "servicio": "Railway",
+      "categoria": null,
+      "estado": "personal",
+      "moneda": "USD",
+      "monto_esperado": 5,
+      "dia_factura": 13,
+      "llega_por": "otra-via",
+      "remitentes": [
+        "invoice+statements+acct_1HNrvlCJoPsRzQsd@stripe.com"
+      ],
+      "notas": "⚠️ NO ES DEL NEGOCIO — confirmado por Jose el 20/08/2026. Plan Hobby 5 USD/mes, cobra los 13. Figura aca justamente para que la rutina lo IGNORE y no lo reporte todos los meses como servicio desconocido: tiene pinta de servicio de negocio (Stripe, plan de hosting) pero es personal."
+    }
+  ]
+}
