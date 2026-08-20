@@ -69,6 +69,36 @@ a uno, se comparan por ángulo acumulado.
 5. **Sin auto-bombo.** Si una frase se puede borrar sin perder información, era auto-bombo.
 6. **Un CTA por mail**, con su `src` numerado.
 
+## Los envíos
+
+### 1 · "Urgente: no publiques eso todavía" — 🟡 escrito, sin mandar
+
+| | |
+|---|---|
+| **Archivo** | [comunidad-01.html](comunidad-01.html) — pegar tal cual en Brevo (editor HTML) |
+| **Asunto** | **Urgente: no publiques eso todavía** |
+| **Ángulo** | `oficio` — lo que un periodista con años tiene y un recién llegado no |
+| **Tono** | `urgente` — lo eligió Jose el 20/08 |
+| **Destino** | `landing` · `/?src=em-comunidad-01` |
+| **Qué da** | el chequeo de 30 segundos: las 3 preguntas para que una IA no te publique un dato inventado |
+| **Cuándo** | martes 15:00 España (10:00 ART · 08:00 CDMX) |
+| **Remitente** | `José — Periodistas del Futuro IA <jose@sistemadeingresosdiariosia.com>` (el mismo de todo el embudo) |
+
+**Cómo se paga la urgencia del asunto.** La regla es que un asunto de alarma se sostiene con el
+cuerpo o entrena a la gente a no abrir. Acá la urgencia es real y concreta: **si publicás un dato
+que la IA inventó, el que queda pegado sos vos**, con tu firma y tu credibilidad. El mail abre con
+esa consecuencia y a los dos párrafos entrega el chequeo que la evita. No hay alarma sin contenido.
+
+Alternativas si Jose prefiere otro: *"Periodista: la IA te va a hacer publicar un dato falso"* ·
+*"Urgente, periodista: revisá esto antes de publicar"*.
+
+**El CTA no lleva `sck`.** El `src` dice de dónde vino; el botón lo pone la landing. Ver
+[NOMENCLATURA-SRC.md](../../docs/NOMENCLATURA-SRC.md).
+
+⚠️ **El tono `urgente` arranca gastado.** Es el que más rinde la primera vez y el que más rápido se
+quema. Si el envío 2 y el 3 también abren con alarma, la apertura del 4 lo va a mostrar — por eso
+el tono se declara en `funnel_steps` y se compara acumulado, no de a un mail.
+
 ## Checklist de cada envío
 
 1. `node scripts/datos/sincronizar-audiencia-comunidad.mjs` → mirar cuántos entran y cuántos salen.
