@@ -64,7 +64,7 @@ em-comunidad-03    mail 3 del semanal de la comunidad
 em-guias-oferta    el mail de oferta del embudo de regalos
 em-manifiesto      la tanda única (no tiene piezas: dos niveles alcanzan)
 wa-recup-1         primer mensaje de recuperación
-pdf-regalo4        el link dentro de la guía 4
+pdf-guias-r4       el link dentro de la guía 4
 dir-landing        entró a la landing sin ningún origen
 ```
 
@@ -163,11 +163,122 @@ nada; saber que vino del regalo 3 sí.
 
 | Qué | Código |
 |---|---|
-| Link dentro de una guía en PDF | `pdf-regalo4` · `pdf-lectores` |
+| Link dentro de una guía en PDF | `pdf-guias-r4` · `pdf-lectores` |
 | El asistente de WhatsApp reenviando el link | `wa-asistente` · `wa-reenvio` |
 | Entró a la landing sin ningún origen | `dir-landing` |
 | Entró a `/tu-medio` sin origen | `dir-tumedio` |
 | Pruebas nuestras | `test-<loquesea>` |
+
+## 🔁 Los PIPELINES — qué hacer en cada acción
+
+**El nombre no es una tabla que se consulta: es un paso dentro de una rutina.** Cada cosa que se
+hace repetido tiene su procedimiento, y el `src` sale de ahí — no se decide aparte ni al final.
+
+---
+
+### 1 · GUARDAR una imagen (antes de publicarla)
+
+El archivo se nombra **cuando se guarda**, no cuando se sube. Si se deja para después, el tema se
+pierde: hoy hay `slide-01.jpg` y `dia-01-imagen.jpg` que no dicen de qué tratan.
+
+```
+<plataforma>-<formato>-<tema>[-<n>].<ext>
+ig-carr-primerprecio-01.jpg
+```
+
+1. **Plataforma** — `ig` `fb` `tt` `yt`
+2. **Formato** — `hist` `post` `carr` `reel` `video` `clase` `bio` `grupo`
+3. **Tema** — una palabra, sin guiones adentro. **Máximo 15 caracteres** (si no, el código se pasa de 30)
+4. **Numerito** sólo si son varias piezas de lo mismo (los slides de un carrusel)
+
+⛔ El canal (`og`/`ad`) **NO** va en el nombre del archivo. Se decide al publicar.
+
+---
+
+### 2 · SUBIR una imagen (publicarla)
+
+```bash
+cd ads-agent
+node scripts/utiles/src.mjs --archivo <ruta al archivo>
+```
+
+Devuelve el código y los links listos. Si el nombre no alcanza, dice exactamente cómo renombrarlo
+**antes** de subir nada.
+
+- Se publica gratis → sale `og-…`
+- Se promociona después → el mismo archivo con `--pagado` → `ad-…`
+- El link va en el pie, la bio o la historia → se usa **ese** código, no otro
+
+⚠️ Un carrusel entero lleva **un solo** código, aunque sean 7 imágenes.
+
+---
+
+### 3 · RESPONDER un comentario con el link del checkout
+
+```bash
+node scripts/utiles/src.mjs --archivo <ruta> --comentario     # → og-ig-carr-primerprecio-com
+node scripts/utiles/src.mjs ad fomo a1 com                    # → ad-fomo-a1-com
+```
+
+Es la **misma pieza**, pero la persona llegó por otro lado: por eso el sufijo `-com` y no un código
+nuevo. Así se puede comparar cuánto trae la publicación contra cuánto trae su comentario.
+
+⛔ **Sacar SIEMPRE el `fbclid` que Facebook pega al copiar el link.** Queda fijo para todos los que
+clican, no atribuye a nadie y ensucia el Ads Manager. La página ya arma el `fbp`/`fbc` real de cada
+visitante — el pegado a mano sólo estorba.
+
+---
+
+### 4 · CREAR una campaña
+
+La campaña es el **nivel 2** del `src`, y es lo que junta al anuncio con los mails que salen de él.
+Se elige **una vez** y se repite en todos los canales:
+
+```
+ad-<campana>-a<n>      el anuncio
+em-<campana>-<pieza>   cada mail
+pdf-<campana>-<pieza>  el link dentro de la guía
+```
+
+Ejemplo real — la campaña `guias`: `ad-guias-a2` · `em-guias-r1`…`em-guias-r5` · `em-guias-oferta`
+· `pdf-guias-r4`. Todas distintas, **todas de la misma campaña**, y por eso `v_campana_embudo` las
+suma juntas.
+
+Al crearla:
+
+1. Elegir el nombre de campaña por **QUIÉN es la persona**, nunca por el imán — el regalo cambia,
+   la persona no.
+2. Generar cada código con el script. Nunca a mano.
+3. **Anotarlos en la tabla de equivalencias de este documento el mismo día.**
+4. Si capta emails, darle su ficha de flujo (`FLUJOS.md` + `_lib/flujos.js`).
+
+---
+
+### 5 · MANDAR un mail
+
+El `src` va en **cada link** del mail, y es el de la pieza (`em-guias-r3`), no el del flujo.
+
+⚠️ **Hoy hay un agujero acá.** `comunicaciones_email` guarda `campana` con OTRO vocabulario
+(`regalo3-periodico`), no el `src`. Por eso los envíos y los clics no se cruzaban solos, y hay un
+puente de traducción (`f_campana_email_a_src`) en `atribucion-vistas.sql` — **un parche de lectura,
+no la cura**. La cura es que el que manda escriba el `src` en la fila.
+
+→ Cuando se agregue un mail nuevo: **sumarlo al puente el mismo día**, o su envío no aparece en
+ningún embudo.
+
+---
+
+## 📊 El número, siempre: `v_campana_embudo`
+
+```sql
+select campana, sum(gasto_usd) gasto, sum(mails_enviados) mails,
+       sum(visitas)+sum(guias_abiertas) llegadas,
+       sum(clic_checkout) checkout, sum(ventas) ventas, sum(neto_usd) neto
+from v_campana_embudo where campana <> 'pruebas'
+group by 1 order by ventas desc;
+```
+
+Cambiando `campana` por `pieza` se abre el detalle: qué anuncio, qué mail, qué historia.
 
 ## ⚠️ Dos códigos que NO se pueden corregir desde el código
 
@@ -263,7 +374,7 @@ ad-fomo-a1-com          el link del comentario de ese anuncio
 em-comunidad-03         mail 3 del semanal de la comunidad
 em-guias-oferta         el mail de oferta del embudo de regalos
 em-manifiesto           la tanda única (dos niveles alcanzan)
-pdf-regalo4             el link dentro de la guía 4
+pdf-guias-r4            el link dentro de la guía 4
 og-ig-bio               el link de la biografía de Instagram
 dir-landing             entró a la landing sin ningún origen
 test-qa                 una prueba nuestra — NO es tráfico real
@@ -324,7 +435,7 @@ mayúsculas y los niveles vacíos.
 | `Email-Oferta2` | `em-guias-oferta2` | |
 | `Email-Republicadores-fix` | `em-lectores-fix` | |
 | `WhatsApp-Reenvio` | `wa-reenvio` | el asistente reenvía el link; recibir sigue vivo |
-| `PDF-Regalo4` | `pdf-regalo4` | el link dentro de la guía de los 5 pilares |
+| `PDF-Regalo4` | `pdf-guias-r4` | el link dentro de la guía de los 5 pilares |
 | `guia-lectores` | `pdf-lectores` | el link dentro de "Que te lean miles". ⚠️ El **PDF en circulación sigue mandando `guia-lectores`** hasta que se regenere |
 | `Landing-tu-medio` | `dir-tumedio` | la landing de republicadores (`/tu-medio`) |
 | `LeadGen-1USD` | `dir-leadgen` | landing sin tráfico desde el 03/07: queda por prolijidad |
