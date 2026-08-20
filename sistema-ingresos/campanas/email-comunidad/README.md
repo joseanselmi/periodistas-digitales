@@ -99,6 +99,51 @@ dato falso"*.
 quema. Si el envío 2 y el 3 también abren con alarma, la apertura del 4 lo va a mostrar — por eso
 el tono se declara en `funnel_steps` y se compara acumulado, no de a un mail.
 
+### 2 · "Lo estamos logrando" — 🟡 escrito · ⏳ falta la captura de Jose
+
+| | |
+|---|---|
+| **Archivo** | [comunidad-02.html](comunidad-02.html) |
+| **Asunto** | **Lo estamos logrando** |
+| **Ángulo** | `comunidad` · **Tono** `calido` (a propósito distinto del 1, que fue `urgente`) |
+| **Destino** | `landing` · `/?src=em-comunidad-02` |
+| **Qué hace** | cuenta lo que pasó de verdad y **pide** que cuenten en qué andan |
+
+⏳ **PENDIENTE: la captura.** Hay un bloque comentado en el HTML, marcado `👉 JOSE`, listo para
+pegar un mensaje o una captura **real** de alguien. Jose la sube. El mail cierra igual sin ella.
+
+**Por qué este mail pide en vez de mostrar.** El 20/08 no hay ni un logro de alumno documentado:
+8 personas vieron alguna clase, 8 valoraciones (4,6 de promedio) y **cero comentarios escritos**
+positivos — el único con texto es una crítica. Lo que sí es verdad y se cuenta: 120 clases
+publicadas y gente adentro. Las respuestas que lleguen son el material del envío 4 o 5, ya con
+nombre y permiso. Y tienen un beneficio extra: **las respuestas mejoran la reputación del dominio**,
+que con 6,1% de apertura es justo lo que hace falta.
+
+## El plan de las próximas semanas — que ninguno se parezca al anterior
+
+Lo que se rota no es sólo el tema: también **el tono y la forma**. Un canal que manda siempre el
+mismo mail con otro título deja de abrirse aunque cada mail, por separado, esté bien.
+
+| # | Ángulo | Tono | Forma | Destino |
+|---|---|---|---|---|
+| 1 | `oficio` | urgente | advertencia + checklist de 3 pasos | landing |
+| 2 | `comunidad` | cálido | balance + pregunta abierta | landing |
+| 3 | `herramienta` | directo | una sola cosa usable, sin vueltas | leadr |
+| 4 | `alumno` | cálido | **una** historia real, contada entera | checkout |
+| 5 | `advertencia` | urgente | qué está cambiando y a quién deja afuera | landing |
+| 6 | `oficio` | reflexivo | carta corta, sin listas ni bullets | landing |
+
+**Las tres reglas de la rotación:**
+
+1. **El mismo tono no va dos semanas seguidas.** El `urgente` es el que más rinde la primera vez y
+   el que más rápido se quema.
+2. **El mismo ángulo no vuelve antes de tres envíos.**
+3. **La forma cambia aunque el ángulo se repita.** El 1 y el 6 son los dos `oficio` y no se parecen
+   en nada: uno es una advertencia con checklist, el otro una carta corta de un solo hilo.
+
+⛔ El envío 4 (`alumno`) **sólo sale si para entonces hay una historia real**. Si no llegó ninguna,
+se corre de lugar y entra otro ángulo. No se inventa un caso para llenar el casillero.
+
 ## Checklist de cada envío
 
 1. `node scripts/datos/sincronizar-audiencia-comunidad.mjs` → mirar cuántos entran y cuántos salen.
