@@ -144,6 +144,12 @@ mismo mail con otro título deja de abrirse aunque cada mail, por separado, est�
 ⛔ El envío 4 (`alumno`) **sólo sale si para entonces hay una historia real**. Si no llegó ninguna,
 se corre de lugar y entra otro ángulo. No se inventa un caso para llenar el casillero.
 
+✅ **20/08: varios alumnos se ofrecieron a contar su experiencia.** Qué contestarles —las preguntas
+guía, el pedido de permiso y qué hacer cuando lleguen— está en
+[pedir-testimonios.md](pedir-testimonios.md). Se les dan **preguntas, no un texto para repetir**:
+si a cinco personas les dictás las mismas frases, los cinco testimonios se parecen y este público
+lo nota.
+
 ## Checklist de cada envío
 
 1. `node scripts/datos/sincronizar-audiencia-comunidad.mjs` → mirar cuántos entran y cuántos salen.
