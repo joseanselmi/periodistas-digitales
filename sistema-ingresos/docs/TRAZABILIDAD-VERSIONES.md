@@ -56,9 +56,27 @@ distinto largo), no por conteos crudos.
 - landing **v2** (barra sticky + hero "reservar cupo" + "Deslizá", 19/07→28/07 23:45 UTC): **NO GANÓ.**
   513 sesiones, 48 clics (**9,36%**, +59% vs v1) y **ventas planas** (0,39 → 0,42/día), 0 bumps,
   $23,84 por comprador. Ver "El clic no es veredicto".
-- landing **v3** (identificación con el problema antes que el precio, 28/07 23:45 UTC→activa):
-  en medición. Deploy `dpl_Brm2YgdtqP8ukLwdJFpJt2dfPLVr`, commit `497ee51`.
-  Chequeo ~05/08, veredicto ~12/08.
+- landing **v3** (identificación con el problema antes que el precio, 29/07 08:14→20/08 08:30 UTC):
+  **NO CONCLUYENTE POR MUESTRA** — no es lo mismo que "perdió". 22,4 días, 1.065 sesiones,
+  100 clics (9,39%), **8 compras, 5 bumps, $29,16 por comprador**.
+  Ventas/día 0,39 (v1) / 0,42 (v2) / **0,36 (v3)**: la diferencia son 1-2 ventas en tres
+  semanas, o sea ruido. Donde v3 **sí** se despega es en la plata por comprador — el más alto
+  de las tres — y en el attach de bumps (**62,5%** contra 37,5% en v1 y 0% en v2). Lectura:
+  no trajo más compradores, trajo compradores que agregan al carrito. El clic al checkout
+  quedó igual que v2 (9,36% → 9,39%), confirmando que ese número solo sirve de control.
+  Deploy `dpl_Brm2YgdtqP8ukLwdJFpJt2dfPLVr`, commit `497ee51`.
+- landing **v4** (una sola sección antes del precio, 20/08 08:30 UTC→activa): **en medición.**
+  Las dos secciones consecutivas que contaban lo mismo se fusionaron en una: los 3 pasos de
+  "EL MECANISMO ÚNICO" eran los módulos 01, 02 y 04 de "LO QUE RECIBES" escritos distinto.
+  **De la sección vieja no se perdió nada**: la imagen del stack y el nombre del mecanismo
+  bajaron al encabezado de los módulos, y la caja "¿Por qué funciona para periodistas?"
+  (credibilidad y criterio) quedó antes del botón. Los 6 botones de checkout **idénticos byte
+  a byte**. Medido con Chrome headless sobre la página real, **móvil 412px**:
+  scroll hasta el precio **12.636 → 11.538px (-1.098px, ~1,2 pantallas)**, alto total -7,3%,
+  HTML 82.073 → 79.354 bytes. Escritorio: -668px hasta el precio.
+  **Veredicto ~29/08 por COMPORTAMIENTO en Clarity** (scroll y tiempo hasta el precio), no por
+  ventas: v3 acaba de demostrar que 8 compras en 22 días no alcanzan para declarar ganadora.
+  Deploy `dpl_AkTWLMynqUJKPF2DqURLDAphkt4H`, commit `456d52c`. Tarjeta #147.
 
 ### El clic no es veredicto (aprendizaje de landing v2, 28/07/2026)
 
