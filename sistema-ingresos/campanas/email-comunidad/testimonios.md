@@ -86,21 +86,26 @@ las ideas. Nada de eso se mejora sin que deje de sonar a él.
 
 ---
 
-## 1 · Eje A (el antes trabado) — recibido el 20/08/2026
+## 1 · "Carlos Méndez" — ⛔ NO ES UN TESTIMONIO. No usar.
 
-| | |
-|---|---|
-| **Nombre** | Carlos Méndez (según la captura) |
-| **Estado** | 🔴 **sin verificar** |
-| **Permiso** | ⏳ falta |
-| **Cifra que menciona** | 300 USD por un mes de publicidad local |
+**Es una imagen generada con ChatGPT**, no un mensaje de un alumno. Se confirmó el 20/08/2026 al
+subirla a Drive: el archivo se llama `ChatGPT Image 20 ago 2026, 01_07_28 p.m.png` y es la misma
+captura que había circulado antes en el chat.
 
-🔴 **No publicar todavía.** No aparece ningún "Carlos Méndez" en `ventas`, `customers`, `leads` ni
-en los usuarios de Leadr (buscado el 20/08). El único Carlos comprador es **Carlos Alberto Baron
-Serrano** (`carlosbaronserrano@hotmail.com`, compró el 24/07, Pro en Leadr).
+Simula un posteo de comunidad completo: foto de perfil, nombre, "2 h", etiqueta "Resultados 🏅",
+12 reacciones, 5 comentarios. Y trae una cifra —**300 USD por un mes de publicidad local**— y una
+frase de cierre sobre Leadr.
 
-Puede ser que en la comunidad use otro nombre — pasa todo el tiempo. Pero el mail va a llevar
-**nombre, foto y una cifra**, y este público es el que sabe verificar: si alguien pregunta y no
-tenemos con qué contestar, se cae la credibilidad de todos los demás testimonios también.
+**Como referencia de formato sirve** —muestra bien cómo tendría que verse un testimonio: el antes
+primero, la cifra al final— y para eso quedó anotada acá.
 
-**Qué falta:** atarlo a un email de comprador y su permiso por escrito.
+⛔ **Como pieza para mandar, no.** Es una persona que no existe: no hay ningún Carlos Méndez en
+`ventas`, `customers`, `leads` ni en los usuarios de Leadr (buscado el 20/08; el único Carlos
+comprador es Carlos Alberto Baron Serrano). Publicarla sería inventarle a 750 periodistas un
+alumno, una cifra y una prueba social. Este público es, entre todos los públicos posibles, el que
+sabe verificar: si uno solo pregunta quién es Carlos Méndez, se cae también todo lo verdadero —
+incluido el testimonio de más arriba, que sí llegó y es bueno.
+
+**El eje A sigue libre**, esperando un testimonio real que lo ocupe.
+
+---
