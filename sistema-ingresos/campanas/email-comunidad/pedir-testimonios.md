@@ -95,6 +95,72 @@ testimonio no se publica.
 
 ---
 
+## Variante B — para el segundo (y para todos los que sigan)
+
+⚠️ **No mandar la misma guía dos veces.** Si dos alumnos devuelven un texto con la misma estructura
+y las mismas frases de arranque, cualquiera que lea los dos se da cuenta de que se los dictaron — y
+ahí se cae la credibilidad de los dos, no de uno. **Cada persona recibe un eje distinto.**
+
+Esta variante es para quien dice **"me encanta tu curso"**: hay que sacarlo del elogio, que no le
+sirve a nadie, y llevarlo a lo concreto. Toca la **resistencia inicial**, el **momento en que hizo
+clic** y **cómo es su semana ahora**. Sin cifras a propósito: que aporte lo que el otro no.
+
+### Qué me gustaría que destaques (mandarle esta lista tal cual)
+
+> Te agradezco un montón, en serio. Y te pido una cosa: **no me elogies a mí ni al curso**. Suena
+> raro, pero un "excelente curso, muy recomendable" no le sirve a nadie que esté dudando — lo lee
+> y sigue de largo.
+>
+> Lo que sí le sirve es esto:
+>
+> 1. **Qué pensabas antes de empezar.** Sobre todo si dudaste: "no soy bueno con la tecnología",
+>    "a mi edad ya no", "otra cosa más que compro y no uso". Esa duda la tiene el que está leyendo,
+>    y necesita escucharla en boca de alguien que la tuvo y siguió igual.
+> 2. **El momento exacto en que dijiste "ah, ahora entiendo".** Qué clase era, qué estabas
+>    haciendo. Ese instante es lo más valioso que podés contar.
+> 3. **Cómo es tu semana ahora.** No un resultado grande: la rutina. Qué hacés los lunes que antes
+>    no hacías, cuánto tardás en algo que antes te comía la tarde.
+> 4. **Qué te resultó más fácil de lo que esperabas.** Y si algo te costó, decilo también: un
+>    testimonio sin una sola dificultad no se lo cree nadie.
+>
+> No hace falta que sea largo ni que esté bien escrito. Con que sea tuyo alcanza.
+
+### La plantilla (para completar)
+
+> Si preferís tener una estructura, completá los corchetes y cambiale las palabras a gusto:
+>
+> ---
+>
+> *Cuando empecé pensaba que [LA DUDA QUE TENÍAS: la tecnología, la edad, el tiempo, lo que sea].
+> Por eso lo venía pateando [CUÁNTO TIEMPO].*
+>
+> *El momento en que me di cuenta de que sí podía fue [QUÉ CLASE / QUÉ PARTE / QUÉ ESTABAS
+> HACIENDO]. Ahí entendí que [QUÉ ENTENDISTE].*
+>
+> *Ahora mi semana es distinta: [QUÉ HACÉS AHORA QUE ANTES NO — la rutina concreta, no un logro].*
+>
+> *Lo que más fácil me resultó fue [QUÉ]. Lo que más me costó, [QUÉ] — y lo digo porque es real.*
+>
+> ---
+
+## Los ejes, para que no se repitan
+
+Cada testimonio nuevo toma un eje que no esté usado. Cuando se acaben, se vuelve a empezar: para
+entonces ya pasaron meses y son personas distintas contando cosas distintas.
+
+| Eje | De qué habla | Usado por |
+|---|---|---|
+| A · el antes trabado | qué te frenaba, qué destrabó, qué cambió, con cifra si la hay | Carlos M. (20/08) |
+| B · la resistencia | la duda inicial, el momento del clic, cómo es tu semana | *(pendiente — el segundo)* |
+| C · el oficio | qué de tus años de periodista te sirvió acá y no sabías | — |
+| D · el error | algo que hiciste mal al principio y cómo lo corregiste | — |
+| E · lo cotidiano | un día tuyo, de la mañana a la noche, contado sin épica | — |
+
+⚠️ **Los corchetes los llena el alumno, siempre.** La estructura y las frases de unión las ponemos
+nosotros —eso es ayudar a escribir a alguien que no sabe por dónde arrancar—; los hechos, no.
+
+---
+
 ## Versión corta, para WhatsApp
 
 > Buenísimo que te ofrezcas 🙌 No quiero que escribas algo "promocional": contá lo tuyo tal cual.
