@@ -169,6 +169,45 @@ nada; saber que vino del regalo 3 sí.
 | Entró a `/tu-medio` sin origen | `dir-tumedio` |
 | Pruebas nuestras | `test-<loquesea>` |
 
+## ⚠️ Dos códigos que NO se pueden corregir desde el código
+
+Encontrados el 19/08/2026 revisando qué llegó de verdad a `events`. No son deuda para saldar:
+son límites de afuera, y están acá para que nadie pierda una tarde intentando "arreglarlos".
+
+### 1. `ad5-lectores` — el botón del formulario de Meta es INMUTABLE
+
+Los **956 `pdf_open`** de la guía de republicadores llegan con `src=ad5-lectores`, que lo pone el
+botón de gracias del formulario de Lead Ads. **Un formulario publicado no se puede editar** —
+tampoco su botón. Seguirá llegando así mientras ese formulario esté vivo.
+
+Su equivalente del estándar (`ad-lectores-a5`) se aplica sólo si algún día se publica un formulario
+nuevo. **No se toca el que anda.**
+
+### 2. El PDF en circulación manda `guia-lectores`, no `pdf-lectores`
+
+El link que va **dentro** de `que-te-lean-miles.pdf` dice `?src=guia-lectores`. El HTML fuente ya
+se pasó al estándar (`pdf-lectores`), pero **el PDF es un archivo ya generado**: se alinea recién
+cuando se regenere con `node scripts/exportar/export-pdf.mjs`. Hasta entonces conviven los dos, y
+está bien que así sea — el `.html` no se publica (`/que-te-lean-miles.html` da 404), o sea que la
+gente sólo ve el PDF y **no hay dos códigos vivos al mismo tiempo**.
+
+> 📌 Regla general: **un `src` que viaja dentro de un archivo ya distribuido no se corrige
+> renombrándolo en la fuente.** Se corrige regenerando el archivo, o no se corrige.
+
+### Lo que el relevamiento dejó ver de paso
+
+El embudo de republicadores, medido de punta a punta (19/08/2026):
+
+| Paso | Gente |
+|---|---|
+| Abrieron la guía | **~426 personas reales** (de 956 aperturas: 213 IPs eran bots y previsualizadores) |
+| Clic al link que está dentro de la guía | 21 |
+| De esos, clic al checkout | 3 |
+| **Ventas** | **0** |
+
+No es un problema de nomenclatura y no se arregla acá — queda anotado porque apareció midiendo
+esto y porque **el número grande engaña**: 956 aperturas suenan a muchísimo y son 426 personas.
+
 ## ⭐ La pieza se identifica por el NOMBRE DEL ARCHIVO
 
 Decidido con Jose el 19/08/2026. **Una imagen bien nombrada ya contiene su `src`.** No hay que
@@ -286,7 +325,7 @@ mayúsculas y los niveles vacíos.
 | `Email-Republicadores-fix` | `em-lectores-fix` | |
 | `WhatsApp-Reenvio` | `wa-reenvio` | el asistente reenvía el link; recibir sigue vivo |
 | `PDF-Regalo4` | `pdf-regalo4` | el link dentro de la guía de los 5 pilares |
-| `guia-lectores` | `pdf-lectores` | el link dentro de "Que te lean miles" |
+| `guia-lectores` | `pdf-lectores` | el link dentro de "Que te lean miles". ⚠️ El **PDF en circulación sigue mandando `guia-lectores`** hasta que se regenere |
 | `Landing-tu-medio` | `dir-tumedio` | la landing de republicadores (`/tu-medio`) |
 | `LeadGen-1USD` | `dir-leadgen` | landing sin tráfico desde el 03/07: queda por prolijidad |
 | `recup-abandono` | `em-recup-abandono` | recuperación de carritos — **sale por email**, no por WhatsApp |
