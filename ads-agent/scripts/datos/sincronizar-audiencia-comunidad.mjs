@@ -57,6 +57,13 @@ const ARCHIVO  = iArchivo > -1 ? process.argv[iArchivo + 1] : null
 // si algún día cambia, cambia en un lugar que se lee, no en una variable que nadie mira.
 const LISTA_ID = Number(process.env.BREVO_LISTA_COMUNIDAD || 8)
 
+// La lista de exclusión de Brevo. Se pone como "excluir" al crear CUALQUIER campaña de venta.
+// La vista de audiencia ya saca a los compradores, así que esto es la segunda red — y hace falta
+// por la ventana: entre que se sincroniza la lista y que sale el mail pueden pasar horas, y quien
+// compra en el medio recibiría igual una oferta de lo que acaba de pagar. Se armó a mano el 18/08
+// con 21 emails; sin refrescarla, en un mes miente.
+const LISTA_COMPRADORES = Number(process.env.BREVO_LISTA_COMPRADORES || 7)
+
 const brevo = (ruta, opciones = {}) =>
   fetch('https://api.brevo.com/v3' + ruta, {
     ...opciones,
@@ -136,6 +143,40 @@ async function main() {
     console.error('🔴 La regla no devolvió a nadie. Eso casi siempre es un error de datos, no una')
     console.error('   audiencia vacía de verdad: no se toca la lista.')
     return 1
+  }
+
+  // ── 1b. La segunda red: la lista de exclusión ──────────────────────────────
+  // Los compradores ya salen por la vista de audiencia. Esto cubre la VENTANA: quien compra
+  // entre la sincronización y el envío. Sin clave de Supabase no se puede refrescar, y eso se
+  // dice — una red de seguridad que envejeció en silencio es peor que no tenerla.
+  if (!ARCHIVO) {
+    const compradores = await leerVista('v_compradores_email', 'email')
+    const enBrevo = await contactosDeLaLista(LISTA_COMPRADORES)
+    if (enBrevo === null) {
+      console.log(`⚠️  La lista de exclusión ${LISTA_COMPRADORES} no existe en Brevo.`)
+    } else {
+      const faltan = compradores.filter(c => !enBrevo.has(c.email))
+      console.log(`🛡️  Exclusión (lista ${LISTA_COMPRADORES}): ${compradores.length} compradores · ${enBrevo.size} en Brevo · faltan ${faltan.length}`)
+      if (faltan.length && APLICAR) {
+        for (const tanda of enTandas(faltan, 100)) {
+          const r = await brevo('/contacts/import', {
+            method: 'POST',
+            body: JSON.stringify({
+              listIds: [LISTA_COMPRADORES],
+              updateExistingContacts: true,
+              emptyContactsAttributes: false,
+              jsonBody: tanda.map(c => ({ email: c.email })),
+            }),
+          })
+          if (!r.ok) { console.error('  ⚠️ no se pudo refrescar la exclusión:', r.status, await r.text()); break }
+        }
+        console.log(`   ${faltan.length} sumados a la exclusión.`)
+      } else if (faltan.length) {
+        console.log('   (se suman con --aplicar)')
+      }
+    }
+  } else {
+    console.log(`⚠️  Sin Supabase no se refresca la lista de exclusión ${LISTA_COMPRADORES}: puede estar vieja.`)
   }
 
   // ── 2. Qué tiene Brevo hoy ─────────────────────────────────────────────────

@@ -4,16 +4,16 @@ Un mail por semana, **para siempre**, a quien sigue leyendo. No es un embudo con
 es el canal propio. No se paga, no se apaga cuando se pausa un anuncio, y **mejora envío a envío en
 vez de gastarse** — que es exactamente lo contrario de lo que hace el presupuesto de Meta.
 
-🟡 **Estado al 19/08/2026: andamiaje montado, ningún envío hecho todavía.**
+🟡 **Estado al 20/08/2026: envío 1 escrito y aprobado el asunto. Todavía no salió.**
 
 ## Las seis preguntas
 
 | | |
 |---|---|
-| **¿Quiénes?** | Los **activos**, recalculados antes de cada envío. Hoy **724** (425 activos + 299 nuevos) de 1.316 leads. |
+| **¿Quiénes?** | Los **activos**, recalculados antes de cada envío. **750** el 20/08 (435 activos + 315 nuevos) de 1.316 leads; el 19/08 eran 724. **El número se mueve solo: no lo copies, consultalo.** |
 | **¿Día 0?** | No hay. Canal permanente: cada envío es su propio día 0. |
 | **¿Qué piezas y cuándo?** | Una por semana, **día y hora fijos**. Se anotan de a una, a medida que salen. |
-| **¿Quién NO?** | Compradores · marcó spam · rebota siempre · **dormidos** · dados de baja. |
+| **¿Quién NO?** | **Compradores (doble red: la vista los saca + la lista 7 de Brevo como exclusión)** · marcó spam · rebota siempre · **dormidos** · dados de baja. |
 | **¿Tope y condiciones?** | 1 por semana. ~2.900 mails/mes sobre un plan de ~10.000 con el embudo usando ~7.500. |
 | **¿Qué motor la ejecuta?** | **Ninguno, a propósito.** Campaña de Brevo programada a mano, una por semana. |
 
@@ -71,12 +71,12 @@ a uno, se comparan por ángulo acumulado.
 
 ## Los envíos
 
-### 1 · "Urgente: no publiques eso todavía" — 🟡 escrito, sin mandar
+### 1 · "Urgente, periodista: revisá esto antes de publicar" — 🟡 escrito, sin mandar
 
 | | |
 |---|---|
 | **Archivo** | [comunidad-01.html](comunidad-01.html) — pegar tal cual en Brevo (editor HTML) |
-| **Asunto** | **Urgente: no publiques eso todavía** |
+| **Asunto** | **Urgente, periodista: revisá esto antes de publicar** |
 | **Ángulo** | `oficio` — lo que un periodista con años tiene y un recién llegado no |
 | **Tono** | `urgente` — lo eligió Jose el 20/08 |
 | **Destino** | `landing` · `/?src=em-comunidad-01` |
@@ -89,8 +89,8 @@ cuerpo o entrena a la gente a no abrir. Acá la urgencia es real y concreta: **s
 que la IA inventó, el que queda pegado sos vos**, con tu firma y tu credibilidad. El mail abre con
 esa consecuencia y a los dos párrafos entrega el chequeo que la evita. No hay alarma sin contenido.
 
-Alternativas si Jose prefiere otro: *"Periodista: la IA te va a hacer publicar un dato falso"* ·
-*"Urgente, periodista: revisá esto antes de publicar"*.
+Alternativas: *"Urgente: no publiques eso todavía"* · *"Periodista: la IA te va a hacer publicar un
+dato falso"*.
 
 **El CTA no lleva `sck`.** El `src` dice de dónde vino; el botón lo pone la landing. Ver
 [NOMENCLATURA-SRC.md](../../docs/NOMENCLATURA-SRC.md).
@@ -103,15 +103,19 @@ el tono se declara en `funnel_steps` y se compara acumulado, no de a un mail.
 
 1. `node scripts/datos/sincronizar-audiencia-comunidad.mjs` → mirar cuántos entran y cuántos salen.
 2. Correrlo con `--aplicar`. Verificar que Brevo diga el mismo número que la regla.
-3. Crear la campaña en Brevo sobre la **lista 8**, con el asunto elegido.
+3. Crear la campaña en Brevo sobre la **lista 8**, con el asunto elegido, y **poniendo la lista 7
+   ("Compradores — EXCLUIR") como lista de exclusión**. Es la segunda red: la vista ya saca a los
+   compradores, pero entre la sincronización y el envío pasan horas y quien compre en el medio
+   recibiría una oferta de lo que acaba de pagar.
 4. **Cargar la fila en `funnel_steps`** — este paso es el que se olvida y deja el panel en cero:
 
 ```sql
 insert into funnel_steps (funnel_id, orden, slug, nombre, tipo, estado,
                           brevo_tag, brevo_camp_id, contenido_asunto, angulo, tono, destino, url)
-select id, 1, 'comunidad-01', 'Envío 1 — <título>', 'email', 'activo',
-       'comunidad-01', <ID DE LA CAMPAÑA DE BREVO>, '<el asunto exacto>',
-       'oficio', 'reflexivo', 'landing',
+select id, 1, 'comunidad-01', 'Envío 1 — el chequeo de 30 segundos', 'email', 'activo',
+       'comunidad-01', <ID DE LA CAMPAÑA DE BREVO>,
+       'Urgente, periodista: revisá esto antes de publicar',
+       'oficio', 'urgente', 'landing',
        'https://sistemadeingresosdiariosia.com/?src=em-comunidad-01'
 from funnels where slug = 'email-comunidad';
 ```
@@ -133,5 +137,5 @@ select * from v_email_comunidad_angulos order by pct_clic_sobre_apertura desc;
 - ⛔ **No sumarle un cron todavía.** La decisión del 13/08 congela motores nuevos, y automatizar
   antes de saber qué ángulo funciona es automatizar una incógnita.
 - ⛔ **No juzgar un envío por sus ventas.** A ~700 destinatarios, 0 y 1 venta son el mismo número.
-- ⛔ **No mandarle a los 554 dormidos "ya que estamos".** Es lo que hunde la entregabilidad del
+- ⛔ **No mandarle a los ~550 dormidos "ya que estamos".** Es lo que hunde la entregabilidad del
   dominio por el que salen los mails de acceso de los compradores.
