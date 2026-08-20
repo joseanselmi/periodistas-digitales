@@ -126,6 +126,53 @@ node --env-file=.env.local scripts/datos/checkout-trazabilidad.mjs --desde=2026-
 Ningún cambio de checkout o landing entra sin: (1) crear su versión, (2) congelar el "antes",
 (3) medir el "después", (4) escribir el veredicto. Siempre número contra número.
 
+### ⚠️ Un ARREGLO no lleva veredicto — se verifica y se cierra (Jose, 20/08/2026)
+
+**El veredicto es para cambios de CRITERIO, no para correcciones de defectos.** La diferencia
+es una sola pregunta: **¿existe un resultado que nos haría volver atrás?**
+
+- **Sí existe → es una apuesta, lleva veredicto.** "¿Este titular convence más?" — si el
+  número dice que no, se vuelve al anterior. Ahí medir tiene sentido.
+- **No existe → es un arreglo, se verifica.** La landing v4 sacó dos secciones consecutivas
+  que contaban lo mismo. **Ningún número volvería aceptable el duplicado**, así que no hay
+  nada que decidir: la tarjeta #147 tenía un paso de "veredicto a los 7-10 días" que la
+  bloqueaba nueve días para una respuesta que no iba a cambiar nada.
+
+**La versión se crea igual**, aunque no lleve veredicto: marca el corte en el tiempo y sin
+ella las métricas de la versión siguiente se atribuyen mal. Lo que cambia es el paso 4: en
+vez de un veredicto va **la verificación de que la corrección quedó bien** (en vivo, contra la
+fuente, sin restos huérfanos).
+
+Forzar un veredicto donde no corresponde no es sólo perder tiempo: **invita a leer como
+resultado un número que se movió por otra causa** — justo el caso de abajo.
+
+### ⛔ El scroll de Clarity es un PORCENTAJE DE LA ALTURA: acortar la página lo sube solo
+
+`clarity_diario.scroll_promedio` sale de `ScrollDepth.averageScrollDepth`, que es el porcentaje
+de la **altura de la página** al que se llegó. Entonces **cualquier cambio que acorte la
+página sube ese número sin que nadie lea una línea más.**
+
+La v4 acortó la página un 7,3% → el scroll % sube ~2,3 puntos por pura aritmética.
+
+**Para comparar dos versiones de distinta altura hay que usar el scroll ABSOLUTO:**
+
+```
+scroll_absoluto_px = scroll_promedio_% x altura_de_la_pagina_px
+v3: 29,26% x 15.117px = 4.423px    (movil 412px)
+v4: empata en 31,55% — recien por encima de eso hay mejora real
+```
+
+**Y antes de leer cualquier diferencia, mirar el ruido.** El scroll diario de v3 fue de 17,47%
+a 41,67% (desvío **6,12** sobre 13 días continuos). Con 9 días el promedio se mueve **±2,04
+solo por azar**, y hace falta un salto de **~6-8 puntos** para distinguir algo. Un efecto
+esperado del tamaño del ruido no se puede medir con esta muestra: eso se escribe como **"no
+concluyente"**, que es una respuesta válida y distinta de "perdió".
+
+⚠️ **`landing_versiones.scroll_promedio` se llenaba con una foto de 3 días** de la API de
+Clarity (lo único que devuelve), no con el promedio de la ventana — por eso v3 decía 31,78%
+cuando su promedio real era 29,26%. Desde que existe `clarity_diario` (07/08/2026) cada
+versión se cierra con el promedio de **su** ventana. Corregido el 20/08.
+
 ## Cómo se ven las sesiones (Clarity + GA4, medido 28/07/2026)
 
 Contexto obligatorio para leer cualquier veredicto de landing: **82% del tráfico entra por el
