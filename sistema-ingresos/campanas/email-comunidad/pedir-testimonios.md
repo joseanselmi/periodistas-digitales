@@ -150,8 +150,8 @@ entonces ya pasaron meses y son personas distintas contando cosas distintas.
 
 | Eje | De qué habla | Usado por |
 |---|---|---|
-| A · el antes trabado | qué te frenaba, qué destrabó, qué cambió, con cifra si la hay | Carlos M. (20/08) |
-| B · la resistencia | la duda inicial, el momento del clic, cómo es tu semana | *(pendiente — el segundo)* |
+| A · el antes trabado | qué te frenaba, qué destrabó, qué cambió, con cifra si la hay | Carlos M. (20/08) — 🔴 sin verificar |
+| B · la resistencia | la duda inicial, el momento del clic, cómo es tu semana | el de 51 años (20/08) |
 | C · el oficio | qué de tus años de periodista te sirvió acá y no sabías | — |
 | D · el error | algo que hiciste mal al principio y cómo lo corregiste | — |
 | E · lo cotidiano | un día tuyo, de la mañana a la noche, contado sin épica | — |
