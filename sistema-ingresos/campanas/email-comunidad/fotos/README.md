@@ -6,9 +6,22 @@ sin tener que pasarla por ningún lado.
 
 ## Cómo subirla estando en remoto
 
-1. Abrir la **app de OneDrive** en la tablet o el celular.
-2. Ir a `Escritorio / Periodistas Digitales / sistema-ingresos / campanas / email-comunidad / fotos`.
-3. Subir la imagen ahí y **avisar en el chat**. Con eso alcanza.
+**Por Google Drive** (la vía que se usa, probada el 20/08/2026):
+
+1. Subir la imagen a **Google Drive** desde la tablet o el celular, a cualquier carpeta.
+2. **Avisar en el chat** con el nombre del archivo.
+3. Claude la busca, la baja con el MCP de Drive y la guarda acá con
+   `node herramientas/guardar-imagen-drive.mjs`.
+
+El binario **no pasa por el contexto**: el MCP devuelve base64 (una foto de 200 KB son ~260.000
+caracteres, que no entran), el resultado queda en un archivo y el script lo decodifica desde el
+disco. Además verifica que sea una imagen **por la firma del archivo**, no por la extensión — un
+base64 cortado a la mitad se escribe sin dar error y produce algo que parece sano hasta que alguien
+lo abre.
+
+> ⚠️ **Por OneDrive ya no.** Sería lo natural, porque el repo vive adentro de OneDrive y una foto
+> subida desde la app aparecería sola en la notebook. Pero **la cuenta está llena** (20/08/2026).
+> Si algún día se libera espacio, vuelve a ser el camino más corto.
 
 ## Cómo se nombra
 
