@@ -13,8 +13,8 @@ parezcan entre sí, y su **permiso**: sin nombre es sin nombre, también dentro 
 
 | | |
 |---|---|
-| **Nombre** | ⏳ pendiente |
-| **Foto** | ⏳ pendiente — Jose la genera después de las 17:20 |
+| **Nombre** | ⏳ pendiente — hasta que confirme, sale como «un colega, 51 años» |
+| **Foto** | no hace falta: el testimonio va como texto en el mail, no como imagen |
 | **Permiso** | ⏳ falta confirmarlo por escrito |
 | **Edad que menciona** | 51 |
 | **Eje** | B — la resistencia inicial, el momento del clic, cómo es su semana |
@@ -50,6 +50,20 @@ En el original dice *"tengo un trabajo que **ao** y me da mi sueldo"*. Puede ser
 **"que odio"**, y **cambia el sentido entero de la frase**: en un caso el proyecto convive con algo
 que le gusta, en el otro es la salida de algo que no soporta. No se adivina — se le pregunta y se
 pone lo que él diga.
+
+### ⛔ La captura de "Jorge Palacios" no se usa
+
+El 21/08 llegó una segunda imagen generada (`ChatGPT Image 21 ago 2026, 04_35_06 a.m..png`): **el
+texto real de este testimonio**, pero firmado por un tal "Jorge Palacios", con cara generada,
+"1 d (editado)", 8 reacciones y 3 comentarios de un posteo que nunca existió. El texto es
+verdadero; el envoltorio, no.
+
+**Y aunque fuera legítima, en un mail no sirve:** Gmail y Outlook bloquean imágenes por defecto, así
+que el testimonio —justo lo que más convence— se vería como un rectángulo vacío. Tampoco se puede
+seleccionar, ni copiar, ni lo lee un lector de pantalla. **En email, el testimonio va en HTML.**
+
+Así está puesto en [comunidad-02.html](comunidad-02.html): un bloque de cita con borde cian, con el
+texto tal cual y firmado «un colega, 51 años» hasta que dé permiso para su nombre.
 
 ### Original, tal cual llegó
 
