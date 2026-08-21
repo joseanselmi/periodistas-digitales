@@ -82,7 +82,7 @@ a uno, se comparan por ángulo acumulado.
 | **Destino** | `landing` · `/?src=em-comunidad-01` |
 | **Qué da** | el chequeo de 30 segundos: las 3 preguntas para que una IA no te publique un dato inventado |
 | **Cuándo** | martes 15:00 España (10:00 ART · 08:00 CDMX) |
-| **Remitente** | `José — Periodistas del Futuro IA <jose@sistemadeingresosdiariosia.com>` (el mismo de todo el embudo) |
+| **Remitente** | **`Equipo de Periodistas Digitales <jose@sistemadeingresosdiariosia.com>`** — decidido el 21/08. El nombre cambia libremente; la DIRECCIÓN no se toca, porque es la verificada en Brevo y de ella cuelga la reputación del dominio. |
 
 **Cómo se paga la urgencia del asunto.** La regla es que un asunto de alarma se sostiene con el
 cuerpo o entrena a la gente a no abrir. Acá la urgencia es real y concreta: **si publicás un dato
@@ -149,6 +149,19 @@ guía, el pedido de permiso y qué hacer cuando lleguen— está en
 [pedir-testimonios.md](pedir-testimonios.md). Se les dan **preguntas, no un texto para repetir**:
 si a cinco personas les dictás las mismas frases, los cinco testimonios se parecen y este público
 lo nota.
+
+## Antes de crear la campaña: mandarse una prueba
+
+```bash
+cd ads-agent
+node scripts/publicar/enviar-prueba.mjs ../sistema-ingresos/campanas/email-comunidad/comunidad-01.html jose@... "El asunto"
+```
+
+Va por la API transaccional, no como campaña: **no toca listas ni ensucia las métricas** de nada.
+Dos cosas que se ven raras en la prueba y son normales — en la campaña real no pasan:
+
+- el pie muestra `{{ unsubscribe }}` literal, porque ese tag lo resuelve el motor de campañas;
+- el mail no aparece en `comunicaciones_email`, porque no lleva etiqueta de campaña.
 
 ## Checklist de cada envío
 
