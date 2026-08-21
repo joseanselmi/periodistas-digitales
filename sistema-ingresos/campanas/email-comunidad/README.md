@@ -99,25 +99,36 @@ dato falso"*.
 quema. Si el envío 2 y el 3 también abren con alarma, la apertura del 4 lo va a mostrar — por eso
 el tono se declara en `funnel_steps` y se compara acumulado, no de a un mail.
 
-### 2 · "Lo estamos logrando" — 🟡 escrito · ⏳ falta la captura de Jose
+### 2 · "A mis 51 años pensé que no iba a poder" — 🟡 escrito, sin mandar
 
 | | |
 |---|---|
 | **Archivo** | [comunidad-02.html](comunidad-02.html) |
-| **Asunto** | **Lo estamos logrando** |
+| **Asunto** | **«A mis 51 años pensé que no iba a poder»** — la frase del propio alumno |
 | **Ángulo** | `comunidad` · **Tono** `calido` (a propósito distinto del 1, que fue `urgente`) |
 | **Destino** | `landing` · `/?src=em-comunidad-02` |
-| **Qué hace** | cuenta lo que pasó de verdad y **pide** que cuenten en qué andan |
+| **Qué hace** | el testimonio real, la oferta y el botón. Nada más. |
 
-⏳ **PENDIENTE: la captura.** Hay un bloque comentado en el HTML, marcado `👉 JOSE`, listo para
-pegar un mensaje o una captura **real** de alguien. Jose la sube. El mail cierra igual sin ella.
+El testimonio va **como texto, no como imagen**: Gmail y Outlook bloquean imágenes por defecto, y
+justo lo que más convence se vería como un rectángulo vacío.
 
-**Por qué este mail pide en vez de mostrar.** El 20/08 no hay ni un logro de alumno documentado:
-8 personas vieron alguna clase, 8 valoraciones (4,6 de promedio) y **cero comentarios escritos**
-positivos — el único con texto es una crítica. Lo que sí es verdad y se cuenta: 120 clases
-publicadas y gente adentro. Las respuestas que lleguen son el material del envío 4 o 5, ya con
-nombre y permiso. Y tienen un beneficio extra: **las respuestas mejoran la reputación del dominio**,
-que con 6,1% de apertura es justo lo que hace falta.
+Firmado «un colega, 51 años» hasta que confirme si puede ir su nombre.
+
+## ✂️ Cortos y de venta (decidido el 21/08)
+
+Los dos primeros envíos estaban escritos como canal de contenido: largos, con la oferta al final y
+casi de costado. **Jose los quiere cortos, precisos y que se entienda que hay un curso para
+comprar.** Reescritos así:
+
+- **menos de 200 palabras** cada uno (antes pasaban las 400);
+- la oferta **en un bloque visible**: US$ 27, pago único, 3 bonos, garantía de 7 días;
+- **un solo botón**, que dice a dónde va;
+- lo que se da (el chequeo, el testimonio) queda arriba y en tres líneas, no en cinco párrafos.
+
+⚠️ **Lo que hay que vigilar.** Un canal semanal que siempre vende cansa más rápido que uno que a
+veces sólo da algo — y la base ya viene de 6,1% de apertura. La señal a mirar no son las ventas del
+primer envío sino **las bajas y la apertura del tercero**: si la apertura cae envío a envío, el
+canal se está gastando y hay que meter uno que no venda nada.
 
 ## El plan de las próximas semanas — que ninguno se parezca al anterior
 
