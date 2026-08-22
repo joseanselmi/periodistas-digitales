@@ -44,8 +44,10 @@ const html = readFileSync(resolve(archivo), 'utf-8')
 
 // Quién firma. El NOMBRE se puede cambiar libremente; lo que Brevo tiene verificado es la
 // DIRECCIÓN, y esa no se toca: la reputación del dominio y si cae o no en spam cuelgan de ahí.
-// Decidido el 21/08/2026: el canal Comunidad firma como equipo, no como persona.
-const REMITENTE = { name: 'Equipo de Periodistas Digitales', email: 'jose@sistemadeingresosdiariosia.com' }
+// Decidido el 22/08/2026: el canal Comunidad sale como 'Periodistas Digitales' — el MISMO
+// nombre con el que salen las campanas de verdad. Si la prueba firma distinto, no se esta
+// probando lo que va a ver la gente.
+const REMITENTE = { name: 'Periodistas Digitales', email: 'jose@sistemadeingresosdiariosia.com' }
 
 const r = await fetch('https://api.brevo.com/v3/smtp/email', {
   method: 'POST',
