@@ -62,8 +62,10 @@ verdadero; el envoltorio, no.
 que el testimonio —justo lo que más convence— se vería como un rectángulo vacío. Tampoco se puede
 seleccionar, ni copiar, ni lo lee un lector de pantalla. **En email, el testimonio va en HTML.**
 
-Así está puesto en [comunidad-02.html](comunidad-02.html): un bloque de cita con borde cian, con el
-texto tal cual y firmado «un colega, 51 años» hasta que dé permiso para su nombre.
+Se usó así en el envío 2 que se escribió el 21/08 — un bloque de cita con el texto tal cual,
+firmado «un colega, 51 años». **Ese mail se descartó** (Jose eligió otra línea editorial y pidió no
+guardar los descartes), pero el testimonio sigue siendo válido y entra en el envío del ángulo
+`alumno` cuando toque. Sigue faltando su permiso para el nombre.
 
 ### Original, tal cual llegó
 

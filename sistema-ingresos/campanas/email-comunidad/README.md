@@ -4,7 +4,7 @@ Un mail por semana, **para siempre**, a quien sigue leyendo. No es un embudo con
 es el canal propio. No se paga, no se apaga cuando se pausa un anuncio, y **mejora envío a envío en
 vez de gastarse** — que es exactamente lo contrario de lo que hace el presupuesto de Meta.
 
-🟡 **Estado al 20/08/2026: envío 1 escrito y aprobado el asunto. Todavía no salió.**
+✅ **ENVÍO 1 MANDADO el 22/08/2026** a 774 personas · campaña Brevo **#5** · asunto «¿Te acordás por qué elegiste esto?»
 
 ## Las seis preguntas
 
@@ -71,64 +71,41 @@ a uno, se comparan por ángulo acumulado.
 
 ## Los envíos
 
-### 1 · "Urgente, periodista: revisá esto antes de publicar" — 🟡 escrito, sin mandar
+### 1 · "¿Te acordás por qué elegiste esto?" — ✅ ENVIADO el 22/08/2026
 
 | | |
 |---|---|
-| **Archivo** | [comunidad-01.html](comunidad-01.html) — pegar tal cual en Brevo (editor HTML) |
-| **Asunto** | **Urgente, periodista: revisá esto antes de publicar** |
-| **Ángulo** | `oficio` — lo que un periodista con años tiene y un recién llegado no |
-| **Tono** | `urgente` — lo eligió Jose el 20/08 |
-| **Destino** | `landing` · `/?src=em-comunidad-01` |
-| **Qué da** | el chequeo de 30 segundos: las 3 preguntas para que una IA no te publique un dato inventado |
-| **Cuándo** | martes 15:00 España (10:00 ART · 08:00 CDMX) |
-| **Remitente** | **`Equipo de Periodistas Digitales <jose@sistemadeingresosdiariosia.com>`** — decidido el 21/08. El nombre cambia libremente; la DIRECCIÓN no se toca, porque es la verificada en Brevo y de ella cuelga la reputación del dominio. |
+| **Archivo** | [comunidad-01.html](comunidad-01.html) |
+| **Campaña Brevo** | **#5** — cargada en `funnel_steps.brevo_camp_id` |
+| **Salió a** | **774 personas** (792 de la regla, menos 18 dados de baja) |
+| **Ángulo / tono / destino** | `oficio` · `reflexivo` · `landing` (`?src=em-comunidad-01`) |
+| **Remitente** | `Periodistas Digitales <jose@sistemadeingresosdiariosia.com>` |
+| **Firma** | Jose Fianculli, creador del Sistema de Ingresos Diarios |
 
-**Cómo se paga la urgencia del asunto.** La regla es que un asunto de alarma se sostiene con el
-cuerpo o entrena a la gente a no abrir. Acá la urgencia es real y concreta: **si publicás un dato
-que la IA inventó, el que queda pegado sos vos**, con tu firma y tu credibilidad. El mail abre con
-esa consecuencia y a los dos párrafos entrega el chequeo que la evita. No hay alarma sin contenido.
+## ⭐ El estándar de redacción — así se escriben todos
 
-Alternativas: *"Urgente: no publiques eso todavía"* · *"Periodista: la IA te va a hacer publicar un
-dato falso"*.
+Jose aprobó este mail y pidió que **todos los siguientes sean así**. Es la fórmula de
+[Isra Bravo](https://onpremarketing.com/copywriting-para-ganar-el-metodo-de-isra-bravo/): una carta
+de una persona a otra, no un newsletter.
 
-**El CTA no lleva `sck`.** El `src` dice de dónde vino; el botón lo pone la landing. Ver
-[NOMENCLATURA-SRC.md](../../docs/NOMENCLATURA-SRC.md).
+1. **~300 palabras.** Ni una más. Éste tiene 279.
+2. **Asunto que no se pueda contestar sin abrir.** *"¿Te acordás por qué elegiste esto?"* no dice
+   nada del producto, no promete plata y no parece un mail de venta — que es exactamente por qué se
+   abre. Los asuntos con precio y con "última oportunidad" este público los tiene entrenados.
+3. **Primera frase que da vuelta la expectativa**: *"Nadie se mete a periodista por la plata"*.
+4. **La herida concreta**, no el problema abstracto: la nota que le bajaron, el editor, escribir lo
+   que conviene.
+5. **Un enemigo con cara**: los que informan hoy sin chequear nada, ocupando su lugar.
+6. **El curso aparece recién ahí**, como respuesta a eso — nunca como oferta que llega de la nada.
+7. **Lo práctico en un solo párrafo**: 24 horas, 30 minutos, sin dejar el trabajo, primer anunciante.
+8. **Firma de persona + PD.** La PD es lo segundo más leído después del asunto y es donde va el
+   remate: *"el periodismo no se murió. Lo dejaron sin lugar. Vos podés hacerte uno."*
 
-⚠️ **El tono `urgente` arranca gastado.** Es el que más rinde la primera vez y el que más rápido se
-quema. Si el envío 2 y el 3 también abren con alarma, la apertura del 4 lo va a mostrar — por eso
-el tono se declara en `funnel_steps` y se compara acumulado, no de a un mail.
+**Sin bloques de precio grandes, sin listas de bonos, sin diseño de folleto.** Texto y un botón.
 
-### 2 · "A mis 51 años pensé que no iba a poder" — 🟡 escrito, sin mandar
-
-| | |
-|---|---|
-| **Archivo** | [comunidad-02.html](comunidad-02.html) |
-| **Asunto** | **«A mis 51 años pensé que no iba a poder»** — la frase del propio alumno |
-| **Ángulo** | `comunidad` · **Tono** `calido` (a propósito distinto del 1, que fue `urgente`) |
-| **Destino** | `landing` · `/?src=em-comunidad-02` |
-| **Qué hace** | el testimonio real, la oferta y el botón. Nada más. |
-
-El testimonio va **como texto, no como imagen**: Gmail y Outlook bloquean imágenes por defecto, y
-justo lo que más convence se vería como un rectángulo vacío.
-
-Firmado «un colega, 51 años» hasta que confirme si puede ir su nombre.
-
-## ✂️ Cortos y de venta (decidido el 21/08)
-
-Los dos primeros envíos estaban escritos como canal de contenido: largos, con la oferta al final y
-casi de costado. **Jose los quiere cortos, precisos y que se entienda que hay un curso para
-comprar.** Reescritos así:
-
-- **menos de 200 palabras** cada uno (antes pasaban las 400);
-- la oferta **en un bloque visible**: US$ 27, pago único, 3 bonos, garantía de 7 días;
-- **un solo botón**, que dice a dónde va;
-- lo que se da (el chequeo, el testimonio) queda arriba y en tres líneas, no en cinco párrafos.
-
-⚠️ **Lo que hay que vigilar.** Un canal semanal que siempre vende cansa más rápido que uno que a
-veces sólo da algo — y la base ya viene de 6,1% de apertura. La señal a mirar no son las ventas del
-primer envío sino **las bajas y la apertura del tercero**: si la apertura cae envío a envío, el
-canal se está gastando y hay que meter uno que no venda nada.
+⛔ **Lo que se descartó.** Se escribieron y probaron otras cuatro versiones —"Lo estamos logrando",
+"A mis 51 años…", la del chequeo de la IA, la de "tu propio medio"— y **ninguna quedó**. Se borraron
+a propósito: el único registrado es éste. Guardar los descartes invita a reciclarlos.
 
 ## El plan de las próximas semanas — que ninguno se parezca al anterior
 
