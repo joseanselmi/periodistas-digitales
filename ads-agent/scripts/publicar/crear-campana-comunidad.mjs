@@ -43,6 +43,13 @@ const api = (ruta, opciones = {}) =>
 
 const args = process.argv.slice(2)
 
+// Programar en vez de mandar al toque. Brevo espera UTC: 15:00 en España son las 13:00 UTC
+// en horario de verano. Si se pone mal, sale a una hora que nadie mira y no hay forma de saber
+// si lo que falló fue el mail o el horario.
+const iProg = args.indexOf('--programar')
+const CUANDO = iProg > -1 ? args[iProg + 1] : null
+if (iProg > -1) args.splice(iProg, 2)
+
 // ── Paso 2: enviar una campaña ya creada ─────────────────────────────────────
 if (args[0] === '--enviar') {
   const id = args[1]
@@ -87,6 +94,7 @@ const r = await api('/emailCampaigns', {
     sender: REMITENTE,
     htmlContent: html,
     recipients: { listIds: [LISTA], exclusionListIds: [EXCLUIR] },
+    ...(CUANDO ? { scheduledAt: CUANDO } : {}),
     // ⚠️ Sin `tag`: el plan Starter de Brevo lo rechaza con 405 ("not allowed to avail tag
     // option"). La atribución de cada evento va por el NÚMERO DE CAMPAÑA (`brevo_camp_id` en
     // funnel_steps), que además nadie puede editar sin querer — a diferencia del asunto, que
@@ -104,6 +112,12 @@ console.log(`   de:        ${REMITENTE.name} <${REMITENTE.email}>`)
 console.log(`   a:         lista ${LISTA} (${lista.totalSubscribers} contactos · ${lista.totalBlacklisted} de baja)`)
 console.log(`   excluye:   lista ${EXCLUIR} (compradores)`)
 console.log(`   sin etiqueta: el plan Starter no la permite; se atribuye por el id de campaña`)
+if (CUANDO) {
+  const d = new Date(CUANDO)
+  // hour12:false a propósito: sin eso, las 15:00 se imprimían como "03:00" y parecía que el
+  // mail salía de madrugada. La hora hay que verificarla igual contra Brevo (campo scheduledAt).
+  console.log(`   ⏰ PROGRAMADA: ${d.toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour12: false })} España · ${d.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false })} Argentina`)
+}
 console.log(`\n   Todavía NO salió. Para enviarla:`)
 console.log(`   node scripts/publicar/crear-campana-comunidad.mjs --enviar ${cuerpo.id}`)
 console.log(`\n   Y anotar el id ${cuerpo.id} en funnel_steps.brevo_camp_id, o el panel va a mostrar CERO.`)

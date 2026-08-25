@@ -82,6 +82,43 @@ a uno, se comparan por ángulo acumulado.
 | **Remitente** | `Periodistas Digitales <jose@sistemadeingresosdiariosia.com>` |
 | **Firma** | Jose Fianculli, creador del Sistema de Ingresos Diarios |
 
+### 2 · "¿Cuántas veces te dijeron que eso no se publica?" — ⏰ PROGRAMADO 26/08 15:00 España
+
+| | |
+|---|---|
+| **Archivo** | [comunidad-02.html](comunidad-02.html) · campaña Brevo **#6** (`queued`) |
+| **Sale a** | **585 personas** (605 de la regla menos 20 de baja) |
+| **Ángulo / tono / destino** | `oficio` · `reflexivo` · `landing` (`?src=em-comunidad-02`) |
+
+**Es una prueba de UNA sola variable: el link va ARRIBA.** Todo lo demás se mantiene igual que en el
+envío 1 — el estilo carta, el destino (la landing, no el checkout), el precio, la firma, el largo y
+el tipo de asunto. Lo único que cambia es que el botón aparece tras tres párrafos, además de al
+final.
+
+**Por qué esa variable.** El envío 1 abrió **12,4%** (mejor que el manifiesto, 9,9%) pero convirtió
+apenas **3,2% de apertura a clic**, contra 10,2% del manifiesto y 16,2% del mail de oferta. O sea:
+el asunto funcionó y la gente se perdió adentro del mail, con el único botón al final.
+
+⚠️ **El texto es distinto, y eso ensucia el test.** No se puede mandar dos veces el mismo mail, así
+que si el clic sube no va a ser 100% atribuible a la posición del botón. Es lo más cerca de un test
+limpio que permite este volumen.
+
+## 📉 Cada envío achica la audiencia — mirar esto antes del envío 3
+
+| | 22/08 (envío 1) | 25/08 |
+|---|---|---|
+| Reciben | **792** | **605** |
+| Dormidos | 549 | **765** |
+
+**216 personas pasaron a dormidas después del envío 1.** No es un error: es la regla haciendo lo
+suyo. Eran "nuevos" que ya tenían dos mails del embudo encima; el envío 1 fue el tercero sin abrir
+ninguno, y el corte de `3+ sin abrir` los sacó.
+
+🔴 **Y de ahí no vuelven solos.** Un dormido vuelve a ser activo si abre algo — pero si dejamos de
+escribirle, no tiene qué abrir. **La lista se achica sola en cada envío hasta quedar en el núcleo de
+activos (~460).** Para recuperarlos hace falta la serie de reactivación que está pendiente desde el
+19/08; no se arregla mandando el semanal.
+
 ## ⭐ El estándar de redacción — así se escriben todos
 
 Jose aprobó este mail y pidió que **todos los siguientes sean así**. Es la fórmula de
