@@ -87,21 +87,54 @@ a uno, se comparan por ángulo acumulado.
 | | |
 |---|---|
 | **Archivo** | [comunidad-02.html](comunidad-02.html) · campaña Brevo **#6** (`queued`) |
-| **Sale a** | **585 personas** (605 de la regla menos 20 de baja) |
+| **Sale a** | **TODA la base: 1.384** (464 activos + 141 nuevos + **779 dormidos**) |
+| **Lista** | **9** — "Comunidad - TODA la base", no la 8 |
 | **Ángulo / tono / destino** | `oficio` · `reflexivo` · `landing` (`?src=em-comunidad-02`) |
 
-**Es una prueba de UNA sola variable: el link va ARRIBA.** Todo lo demás se mantiene igual que en el
-envío 1 — el estilo carta, el destino (la landing, no el checkout), el precio, la firma, el largo y
-el tipo de asunto. Lo único que cambia es que el botón aparece tras tres párrafos, además de al
-final.
+**Dos cosas se prueban a la vez, y por eso hubo que preparar antes de mandar:**
 
-**Por qué esa variable.** El envío 1 abrió **12,4%** (mejor que el manifiesto, 9,9%) pero convirtió
-apenas **3,2% de apertura a clic**, contra 10,2% del manifiesto y 16,2% del mail de oferta. O sea:
-el asunto funcionó y la gente se perdió adentro del mail, con el único botón al final.
+1. **El link va ARRIBA.** Todo lo demás igual que el envío 1 — estilo carta, destino landing,
+   precio, firma, largo, tipo de asunto. El envío 1 abrió **12,4%** pero convirtió apenas **3,2% de
+   apertura a clic** (el manifiesto hizo 10,2%; el mail de oferta, 16,2%).
+2. **Va a toda la base**, decisión de Jose el 25/08. Los 779 dormidos hacía tres o más mails que no
+   abrían nada.
 
-⚠️ **El texto es distinto, y eso ensucia el test.** No se puede mandar dos veces el mismo mail, así
-que si el clic sube no va a ser 100% atribuible a la posición del botón. Es lo más cerca de un test
-limpio que permite este volumen.
+### ⚠️ Por qué se usó la lista 9 y no la 8
+
+La **lista 8 significa "activos"** y `sincronizar-audiencia-comunidad.mjs` la reescribe desde la
+vista en cada corrida. Meterle los dormidos la corrompe, y la próxima sincronización los sacaría
+igual. La 9 es de este envío; la 8 sigue siendo lo que dice ser.
+
+### 🧊 La foto de destinatarios — sin esto, el envío no se puede leer
+
+`v_email_comunidad_audiencia` se recalcula al consultarla: es lo que la hace útil y lo que **borra
+su propio pasado**. Si 40 dormidos abren este mail, pasan a "activo" y mañana ya no habría forma de
+saber que estaban dormidos cuando les llegó.
+
+Por eso, **antes** de enviar, se congeló quién era quién en `email_comunidad_destinatarios`
+(envío 2: 779 dormidos, 464 activos, 141 nuevos).
+
+Con esa tabla, después del envío se pueden contestar dos preguntas que si no se pierden:
+
+```sql
+-- ¿Funcionó el link arriba? Se compara SÓLO el grupo activo contra el envío 1.
+select d.estado_al_enviar,
+       count(*) recibieron,
+       count(c.abierto_en) aperturas,
+       count(c.clic_en) clics,
+       round(100.0*count(c.abierto_en)/count(*),1) pct_apertura,
+       round(100.0*count(c.clic_en)/nullif(count(c.abierto_en),0),1) pct_clic_sobre_apertura
+from email_comunidad_destinatarios d
+left join comunicaciones_email c
+       on lower(c.email) = d.email and c.campana = 'comunidad-02'
+where d.envio = 2
+group by 1 order by 2 desc;
+```
+
+⚠️ **El % de apertura GLOBAL de este envío no es comparable con el del envío 1**: el 1 fue sólo a
+activos y éste mezcla activos con dormidos, que por definición no abren. Comparar los totales va a
+dar "empeoró" cuando lo único que cambió fue a quién se le mandó. **Se compara activos contra
+activos.**
 
 ## 📉 Cada envío achica la audiencia — mirar esto antes del envío 3
 
