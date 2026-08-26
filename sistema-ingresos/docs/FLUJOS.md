@@ -122,6 +122,30 @@ captando 184 personas más en ocho días y el paso siguiente sigue sin existir.
 ℹ️ El 18/08 estos 510 recibieron, por única vez, la tanda de `email-manifiesto` (ficha 8). Eso
 **no cierra el hueco**: fue un envío suelto, no la secuencia que le falta a este flujo.
 
+### 🚪 25/08/2026 — el regalo ya se entrega en Leadr, pero la puerta está cerrada (tarjeta #151)
+
+Medido ocho días después del cambio del 18/08:
+
+| Paso | Cantidad |
+|---|---|
+| Leads capturados (18–25/08) | 165 · ~24 por día · **$0,03 cada uno** |
+| **Clic en el botón que lleva a Leadr** | **197 personas** |
+| **Crearon cuenta** | **23 — el 12%** |
+| Vieron alguna clase | 8 |
+
+**La causa está verificada abriendo la página, no supuesta:** `www.leadr.cloud/bonus/3` recibe al
+visitante con un **muro de login** que le pide email y contraseña de una cuenta que no tiene. El
+"creá una gratis" está al pie. Alguien pidió una guía en Facebook, abre el mail para buscarla, y le
+piden una contraseña.
+
+**Lo que hace que esto duela:** traer a esa persona costó 3 centavos y la máquina de captura anda
+fina. Se pagan 24 llegadas por día que mueren en los tres segundos entre el clic y el formulario.
+
+**Y la solución ya existe**: cuando alguien COMPRA el curso, Leadr le crea la cuenta sola
+(`api/internal/course-access` → `auth.admin.createUser`) y le manda un link personal por Brevo
+(`lib/acceso.ts`). Nadie llena un formulario. Falta hacer lo mismo con los leads, en plan `basic`.
+Detalle completo y cuidados en la tarjeta **#151**.
+
 ### 🎁 18/08/2026 — el regalo pasó a entregarse DENTRO de Leadr (tarjeta #136)
 
 El botón del mail del día 0 **ya no baja un PDF**: abre
