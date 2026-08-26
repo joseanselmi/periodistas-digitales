@@ -52,7 +52,7 @@ flujo nuevo pasa a ser escribir sus mails y su ficha, sin tocar el motor.
 > Estas fichas describen lo que el sistema hace de verdad, verificado contra el código, Make,
 > Brevo y la base. Si las dos se contradicen, manda esta.
 
-Última verificación completa: **2026-08-10**. · `republicadores` revisado y modificado el **2026-08-18**.
+Última verificación completa: **2026-08-10**. · `republicadores` revisado y modificado el **2026-08-18** y el **2026-08-26**.
 
 ---
 
@@ -102,7 +102,7 @@ Todo eso vive en el motor, no en el flujo — por eso conviene que los demás fl
 |---|---|
 | **¿Quiénes?** | Lista Brevo **#6** "Leadgen - Republicadores" — **510 contactos** (18/08). Los da de alta el escenario de Make **9602489**. Anuncio `ad5-lectores`, **ACTIVO y gastando**. |
 | **¿Día 0?** | Cuándo entra el lead. |
-| **¿Qué piezas?** | **UNA**: la guía "Que te lean miles", al instante, mandada por Make (`republicadores-r1`). **Desde el 18/08 el botón lleva a Leadr** (`www.leadr.cloud/bonus/3?src=Email-Republicadores-R1`), no al PDF. |
+| **¿Qué piezas?** | **UNA**: la guía "Que te lean miles", al instante, mandada por Make (`republicadores-r1`). **Desde el 18/08 el botón lleva a Leadr** (`www.leadr.cloud/bonus/3?src=Email-Republicadores-R1`), no al PDF. **Desde el 26/08 lleva además el correo** (`&e=…`): la puerta llega con el campo lleno y se entra con un botón. |
 | **¿Quién NO?** | Nadie: no hay filtros. |
 | **¿Tope?** | Ninguno. |
 | **Motor** | **Ninguno.** `wa-funnel.js` lee **sólo la lista 5**. |
@@ -122,29 +122,61 @@ captando 184 personas más en ocho días y el paso siguiente sigue sin existir.
 ℹ️ El 18/08 estos 510 recibieron, por única vez, la tanda de `email-manifiesto` (ficha 8). Eso
 **no cierra el hueco**: fue un envío suelto, no la secuencia que le falta a este flujo.
 
-### 🚪 25/08/2026 — el regalo ya se entrega en Leadr, pero la puerta está cerrada (tarjeta #151)
+### 🚪 26/08/2026 — se saca el muro de la puerta (tarjeta #151)
 
-Medido ocho días después del cambio del 18/08:
+**Recontado el 26/08, y el recuento cambió el diagnóstico.** La primera medición decía "197 tocan
+la puerta, entran 23 = 12%". Separando quién es quién, del 18 al 26/08 (8 días):
 
-| Paso | Cantidad |
-|---|---|
-| Leads capturados (18–25/08) | 165 · ~24 por día · **$0,03 cada uno** |
-| **Clic en el botón que lleva a Leadr** | **197 personas** |
-| **Crearon cuenta** | **23 — el 12%** |
-| Vieron alguna clase | 8 |
+| Quién llega a `/bonus/3` | Personas (IPs) | Crearon cuenta | Entra |
+|---|---|---|---|
+| Botón del **formulario de Meta** (`ad5-lectores`) | **129** | 19 | **15%** |
+| Botón del **mail** (`Email-Republicadores-R1`) | **15** | 5 | **33%** |
+| Previsualizador de Facebook | 111 | — | no son personas |
 
-**La causa está verificada abriendo la página, no supuesta:** `www.leadr.cloud/bonus/3` recibe al
-visitante con un **muro de login** que le pide email y contraseña de una cuenta que no tiene. El
-"creá una gratis" está al pie. Alguien pidió una guía en Facebook, abre el mail para buscarla, y le
-piden una contraseña.
+Tres cosas que sólo se ven separando así:
 
-**Lo que hace que esto duela:** traer a esa persona costó 3 centavos y la máquina de captura anda
-fina. Se pagan 24 llegadas por día que mueren en los tres segundos entre el clic y el formulario.
+1. **Los 197 incluían 111 IPs del previsualizador de Facebook.** Personas de verdad fueron ~145,
+   y entraron 27 → **19%**. Malo igual, pero ése es el número honesto.
+   (Es el mismo bicho que ya había inflado 87 de 180 descargas de PDF: descontarlo no es opcional.)
+2. **El mail es sólo el 10% de la puerta** — 15 personas contra 129. Ponerle un link personal al
+   mail, que era el plan original de la tarjeta, arreglaba a esos 15. La fuga grande está del otro
+   lado, en el botón del formulario, que es inmutable y **no puede llevar nada personal**.
+3. **Entrar con email y contraseña estaba muerto.** De las 24 cuentas con origen, **22 entraron por
+   Google**. Las 2 que eligieron email+contraseña quedaron con `email_confirmed_at` y
+   `last_sign_in_at` en null: nunca entraron. Es la enfermedad de siempre — `signUp()` manda el mail
+   de confirmación por el SMTP de Supabase, que no entrega. La única puerta que funcionaba era
+   Google, y encima Google muestra el dominio raro de Supabase (tarjeta #144).
 
-**Y la solución ya existe**: cuando alguien COMPRA el curso, Leadr le crea la cuenta sola
-(`api/internal/course-access` → `auth.admin.createUser`) y le manda un link personal por Brevo
-(`lib/acceso.ts`). Nadie llena un formulario. Falta hacer lo mismo con los leads, en plan `basic`.
-Detalle completo y cuidados en la tarjeta **#151**.
+**Y el que entra, lee**: de las 24 cuentas, 22 vieron contenido. No hay un problema de interés —
+hay una puerta cerrada. Traer a cada persona cuesta 3 centavos y se pierden ~14 por día en los tres
+segundos entre el clic y el formulario.
+
+**Lo que se hizo (26/08).** Dos arreglos, en ese orden:
+
+- **La puerta**, para los 129: `/bonus/N` ya no dibuja el login. Dibuja `PuertaGuia` — **un campo,
+  ninguna contraseña**: escribís tu correo y quedás adentro, en la guía. Es un `<form>` nativo con
+  un 303, sin `fetch` y sin JavaScript, porque por ahí entra el navegador de adentro de Facebook,
+  que es donde se registran el 100% de nuestros errores de JS. Google sigue estando, abajo.
+- **El mail**, para los 15: el botón lleva `&e=<correo>`, así que la puerta llega **con el campo ya
+  lleno** y sólo hay que apretar un botón. Sigue pasando por `/api/d` —la serie histórica de la
+  campaña no se corta—. En Make es un parámetro más en la URL: ni módulo nuevo, ni secreto, ni
+  depender de que Leadr conteste para que el correo salga.
+
+**La regla, y por qué es segura.** La decide el alta misma, no una consulta previa: si la cuenta
+**no existía**, se crea y entra en el acto —es tan seguro como no haber tenido cuenta—; si **ya
+existía**, link por Brevo y nada más, porque ahí puede haber un comprador o un Pro. El `&e=` no es
+una credencial: es exactamente lo que la persona podría tipear en el campo, y escribir el correo de
+otro nunca alcanza para entrar en su cuenta.
+
+⚠️ **Eso depende de que nadie pre-cree cuentas.** Se evaluó el camino de crearle la cuenta al lead
+cuando entra (que era el plan original de la tarjeta) y se descartó por dos motivos que sólo se ven
+juntos: daría de alta ~24 cuentas por día de gente que quizá nunca entre —y `cuentas nuevas por
+día`, que es justo la métrica con la que se mide este arreglo, dejaría de significar nada—, y
+además daría vuelta la regla de arriba, mandando por correo justo a los leads. El aviso está
+escrito en `Leadr/app/lib/puerta.ts`, donde vive la regla.
+
+**Cómo se verifica que funcionó** (a los 7 días, o sea el **02/09/2026**): cuentas nuevas por día y
+por origen. Hoy son 3-4 por día; con los mismos ~24 leads diarios deberían ser 12-18.
 
 ### 🎁 18/08/2026 — el regalo pasó a entregarse DENTRO de Leadr (tarjeta #136)
 
@@ -464,7 +496,7 @@ No tienen ficha porque no mandan mails. Se listan sólo para que nadie las busqu
 | Flujo | Personas | Piezas | Motor | Estado |
 |---|---|---|---|---|
 | `guias-claude` | 919 | 7 | `wa-funnel.js` | anuncio pausado · 1 venta de 944 |
-| `republicadores` | 510 | 1 | ninguno | 🔴 339 sin secuencia · anuncio activo · 🎁 el día 0 lleva a Leadr desde el 18/08 |
+| `republicadores` | 510 | 1 | ninguno | 🔴 339 sin secuencia · anuncio activo · 🎁 el día 0 lleva a Leadr desde el 18/08, y entra sin contraseña desde el 26/08 |
 | `recuperacion-carrito` | ~9 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `recuperacion-rechazo` | ~21 | 2 | `recuperacion.js` | encendido · 0 recuperadas |
 | `post-compra` | — | **0** | — | 🔴 no existe |

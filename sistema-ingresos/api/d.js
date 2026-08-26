@@ -45,10 +45,28 @@ const SAFE_FILENAME = /^[a-z0-9][a-z0-9-]*\.pdf$/i;
 // A dónde puede mandar `?ir=`. Es una lista CERRADA a propósito: aceptar una URL
 // suelta convertiría esto en un trampolín para llevar gente a cualquier lado con
 // un link que parece nuestro y que además sale en nuestros mails.
+const LEADR = 'https://www.leadr.cloud';
 const DESTINOS = {
-  'leadr-bonus-2': 'https://www.leadr.cloud/bonus/2',   // Cómo usar Claude…
-  'leadr-bonus-3': 'https://www.leadr.cloud/bonus/3',   // Que te lean miles…
+  'leadr-bonus-2': '/bonus/2',   // Cómo usar Claude…
+  'leadr-bonus-3': '/bonus/3',   // Que te lean miles…
 };
+
+// 📧 `?e=` — el correo de la persona, para que la puerta de Leadr llegue con el
+// campo ya lleno y sólo tenga que apretar un botón.
+//
+// Sólo lo lleva el link del MAIL, donde Make ya sabe a quién le escribe. El
+// botón del formulario de Meta es el mismo para todos y no puede llevar nada
+// personal — ahí la persona escribe su correo, que es un paso y no un muro.
+//
+// ⚠️ NO ES UNA CREDENCIAL Y NO AUTORIZA NADA. Es exactamente lo mismo que la
+// persona podría tipear a mano en el campo. Quien decide si esa dirección entra
+// de una o recibe un link por correo es `cuenta_reclamada`, del lado de Leadr:
+// una cuenta que ya es de alguien nunca se abre por escribir su dirección. Por
+// eso no lleva firma — firmarlo daría a entender que sirve para algo más.
+//
+// Venir sin `e=` es normal (el formulario de Meta, un link viejo, un mail que
+// se armó mal): la puerta pide el correo y sigue funcionando igual.
+const CORREO_SANO = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // Guías que YA VIVEN DENTRO DE LEADR. Cualquier clic a estas, venga del link
 // que venga y aunque no traiga `?ir=`, termina en la plataforma.
@@ -190,9 +208,22 @@ export default async function handler(req, res) {
   // Al destino de Leadr se le pega el `src` para que la plataforma pueda guardar
   // de dónde vino la persona (users.origen). Sin eso se pierde la atribución
   // justo en el salto entre los dos sistemas.
-  const destino = aLaPlataforma
-    ? `${DESTINOS[aLaPlataforma]}${src ? `?src=${encodeURIComponent(src)}` : ''}`
-    : `/${file}`;
+  //
+  // Y si el link trae el correo, viaja con él para que la puerta llegue con el
+  // campo lleno.
+  const correo = (searchParams.get('e') || '').trim().toLowerCase();
+  const conCorreo = aLaPlataforma && correo && CORREO_SANO.test(correo);
+
+  let destino;
+  if (aLaPlataforma) {
+    const q = new URLSearchParams();
+    if (src) q.set('src', src);
+    if (conCorreo) q.set('e', correo);
+    const cola = q.toString();
+    destino = `${LEADR}${DESTINOS[aLaPlataforma]}${cola ? `?${cola}` : ''}`;
+  } else {
+    destino = `/${file}`;
+  }
 
   // Visible vía `vercel logs` — no bloquea el redirect si falla nada acá.
   console.log(JSON.stringify({ type: 'pdf_download', file, src: src || null, sck: sck || null, ir: aLaPlataforma || 'pdf', ts: new Date().toISOString() }));
