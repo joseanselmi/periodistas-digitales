@@ -4,7 +4,7 @@ Un mail por semana, **para siempre**, a quien sigue leyendo. No es un embudo con
 es el canal propio. No se paga, no se apaga cuando se pausa un anuncio, y **mejora envío a envío en
 vez de gastarse** — que es exactamente lo contrario de lo que hace el presupuesto de Meta.
 
-✅ **ENVÍO 1 MANDADO el 22/08/2026** a 774 personas · campaña Brevo **#5** · asunto «¿Te acordás por qué elegiste esto?»
+✅ **Dos envíos hechos.** #1 el 22/08 (774 activos) · #2 el 26/08 (1.341, toda la base). **El link arriba cuadruplicó el clic**; la cadencia quedó en semanal a activos + mensual a todos.
 
 ## Las seis preguntas
 
@@ -12,9 +12,9 @@ vez de gastarse** — que es exactamente lo contrario de lo que hace el presupue
 |---|---|
 | **¿Quiénes?** | Los **activos**, recalculados antes de cada envío. **750** el 20/08 (435 activos + 315 nuevos) de 1.316 leads; el 19/08 eran 724. **El número se mueve solo: no lo copies, consultalo.** |
 | **¿Día 0?** | No hay. Canal permanente: cada envío es su propio día 0. |
-| **¿Qué piezas y cuándo?** | Una por semana, **día y hora fijos**. Se anotan de a una, a medida que salen. |
-| **¿Quién NO?** | **Compradores (doble red: la vista los saca + la lista 7 de Brevo como exclusión)** · marcó spam · rebota siempre · **dormidos** · dados de baja. |
-| **¿Tope y condiciones?** | 1 por semana. ~2.900 mails/mes sobre un plan de ~10.000 con el embudo usando ~7.500. |
+| **¿Qué piezas y cuándo?** | **Martes 15:00 España.** Tres semanas al mes a los ACTIVOS (~605); **una vez al mes, a TODOS** (~1.384) — ese envío hace de reactivación. Ver la cadencia abajo. |
+| **¿Quién NO?** | **Compradores (doble red: la vista los saca + la lista 7 de Brevo como exclusión)** · marcó spam · rebota siempre · dados de baja. **Los dormidos quedan afuera del semanal, pero entran en el mensual.** |
+| **¿Tope y condiciones?** | 1 por semana. ~3.200 mails/mes (605×3 + 1.384) sobre 9.975 créditos. |
 | **¿Qué motor la ejecuta?** | **Ninguno, a propósito.** Campaña de Brevo programada a mano, una por semana. |
 
 La regla completa de quién es "activo", con sus números y por qué cada corte está donde está, vive
@@ -82,12 +82,13 @@ a uno, se comparan por ángulo acumulado.
 | **Remitente** | `Periodistas Digitales <jose@sistemadeingresosdiariosia.com>` |
 | **Firma** | Jose Fianculli, creador del Sistema de Ingresos Diarios |
 
-### 2 · "¿Cuántas veces te dijeron que eso no se publica?" — ⏰ PROGRAMADO 26/08 15:00 España
+### 2 · "¿Cuántas veces te dijeron que eso no se publica?" — ✅ ENVIADO el 26/08/2026 15:00
 
 | | |
 |---|---|
-| **Archivo** | [comunidad-02.html](comunidad-02.html) · campaña Brevo **#6** (`queued`) |
-| **Sale a** | **TODA la base: 1.384** (464 activos + 141 nuevos + **779 dormidos**) |
+| **Archivo** | [comunidad-02.html](comunidad-02.html) · campaña Brevo **#6** |
+| **Salió a** | **1.341 entregados** de 1.362 (464 activos + 141 nuevos + **779 dormidos**) |
+| **Resultado** | activos: **12,7% apertura · 10,5% clic** · dormidos: 2,1% y 25 rebotes · **0 ventas** |
 | **Lista** | **9** — "Comunidad - TODA la base", no la 8 |
 | **Ángulo / tono / destino** | `oficio` · `reflexivo` · `landing` (`?src=em-comunidad-02`) |
 
@@ -136,21 +137,56 @@ activos y éste mezcla activos con dormidos, que por definición no abren. Compa
 dar "empeoró" cuando lo único que cambió fue a quién se le mandó. **Se compara activos contra
 activos.**
 
-## 📉 Cada envío achica la audiencia — mirar esto antes del envío 3
+## 🔁 La cadencia — semanal a los activos, mensual a todos
 
-| | 22/08 (envío 1) | 25/08 |
+Decidida el 27/08/2026 con los números de los dos primeros envíos.
+
+| | A quién | Cuántos | Para qué |
+|---|---|---|---|
+| **Semanal** (3 de cada 4 martes) | activos + nuevos | ~605 | el canal propiamente dicho |
+| **Mensual** (1 martes al mes) | **todos, dormidos incluidos** | ~1.384 | darle una puerta de vuelta a los dormidos |
+
+**Por qué el mensual existe.** La regla saca del semanal a quien acumula 3 mails sin abrir — pero un
+dormido sólo vuelve a activo **si abre algo**, y si nunca le llega nada, no tiene qué abrir. Sin el
+mensual, la lista se achica hasta el núcleo duro y nadie vuelve jamás.
+
+**Por qué es mensual y no semanal.** Medido en el envío 2, que fue a toda la base:
+
+| Grupo | Apertura | Rebotes |
 |---|---|---|
-| Reciben | **792** | **605** |
-| Dormidos | 549 | **765** |
+| activos | **12,7%** | 2 |
+| dormidos | **2,1%** | **25** |
 
-**216 personas pasaron a dormidas después del envío 1.** No es un error: es la regla haciendo lo
-suyo. Eran "nuevos" que ya tenían dos mails del embudo encima; el envío 1 fue el tercero sin abrir
-ninguno, y el corte de `3+ sin abrir` los sacó.
+Los dormidos abren seis veces menos y **generaron 25 de los 34 rebotes**. Cada rebote le avisa al
+proveedor de correo que estamos escribiendo a direcciones muertas, y eso se paga en la bandeja de
+todos los demás — incluidos los mails de acceso de los compradores. Una vez al mes es tolerable;
+todas las semanas, no.
 
-🔴 **Y de ahí no vuelven solos.** Un dormido vuelve a ser activo si abre algo — pero si dejamos de
-escribirle, no tiene qué abrir. **La lista se achica sola en cada envío hasta quedar en el núcleo de
-activos (~460).** Para recuperarlos hace falta la serie de reactivación que está pendiente desde el
-19/08; no se arregla mandando el semanal.
+**Lo que rinde el mensual, medido:** de los 779 dormidos, **16 volvieron a activo** (2%) y 1 quedó
+excluido por rebotar. ~190 personas recuperadas al año, y la lista se limpia sola de paso.
+
+⚠️ **El mensual reemplaza al semanal de esa semana**, no se suma. Y conviene que sea el mail más
+fuerte del mes: es el único tiro que tienen los dormidos.
+
+## 📊 Lo que ya se aprendió, envío por envío
+
+| | Envío 1 (22/08) | Envío 2 (26/08) |
+|---|---|---|
+| A quién | 766 activos | 1.341 (toda la base) |
+| Apertura **de los activos** | 14,9% | 12,7% |
+| **Clic sobre apertura (activos)** | **2,6%** | **10,5%** |
+| Ventas | 0 | 0 |
+
+**El link arriba funcionó: el clic sobre apertura se cuadruplicó** y quedó al nivel del manifiesto
+(10,2%), que era el mejor de los mails que venden. La apertura no se resintió. **Queda como
+estándar: el botón va arriba y repetido, no sólo al final.**
+
+⚠️ Son 6 clics contra 3 — la dirección es clara pero el volumen no alcanza para llamarlo probado.
+Si el envío 3 repite el patrón, ahí sí.
+
+⛔ **Y el número global de apertura del envío 2 (5,7%) no se compara con nada**: mezcla activos con
+dormidos. Comparar totales entre un envío a activos y uno a toda la base dice "empeoró" cuando lo
+único que cambió fue a quién se le mandó. **Siempre por `email_comunidad_destinatarios`.**
 
 ## ⭐ El estándar de redacción — así se escriben todos
 
