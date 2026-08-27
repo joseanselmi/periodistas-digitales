@@ -141,6 +141,32 @@ activos y éste mezcla activos con dormidos, que por definición no abren. Compa
 dar "empeoró" cuando lo único que cambió fue a quién se le mandó. **Se compara activos contra
 activos.**
 
+### 3 · "¿Cuánto gana un periódico digital?" — ⏰ PROGRAMADO 02/09 15:00 España
+
+| | |
+|---|---|
+| **Archivo** | [comunidad-03.html](comunidad-03.html) · campaña Brevo **#7** (`queued`) |
+| **Sale a** | **540 activos** (563 de la regla menos 23 de baja) |
+| **Ángulo / tono / destino** | `dinero` · `directo` · `landing` (`?src=em-comunidad-03`) |
+| **Largo** | **102 palabras** — el más corto hasta ahora |
+
+**Tres cosas nuevas, decididas por Jose el 27/08:**
+
+1. **Promete plata de entrada.** *"Con dos anunciantes ya cobras entre 200 y 800 dólares al mes.
+   Dos. No doscientos."* Los dos primeros envíos apelaban a la identidad; éste al bolsillo.
+2. **Primer mail en español NEUTRO** (ver la regla 3).
+3. **Dos botones**: uno pegado a la cifra (*"¿Cómo puedo hacerlo?"*) y otro más abajo.
+
+⚠️ **La cifra de 200-800 la puso Jose y todavía no tiene respaldo escrito.** Lo único que hay en el
+material propio es `curso/docs/MODELO-MONETIZACION.md`: *"un anunciante fijo a US$80/mes"* y
+*"apuntá a 5-10 anunciantes fijos"* — con eso, dos anunciantes son ~$160, no 200-800. Si alguien
+pregunta de dónde sale el rango, hoy no hay con qué contestar. **Pedirle a Jose de dónde salió y
+anotarlo acá.**
+
+⚠️ **Y roza el filtro de la propia landing**, que pone *"esperás ganar miles de dólares en el primer
+mes sin esfuerzo"* en la lista de para quién NO es. Por eso el mail dice *"es más simple de lo que
+parece"* y no *"es súper fácil"*: promete sin chocar de frente con la página a la que manda.
+
 ## 🔁 La cadencia — semanal a los activos, mensual a todos
 
 Decidida el 27/08/2026 con los números de los dos primeros envíos.
