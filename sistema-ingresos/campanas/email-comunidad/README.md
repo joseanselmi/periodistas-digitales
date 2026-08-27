@@ -63,7 +63,11 @@ a uno, se comparan por ángulo acumulado.
 2. **El asunto de alarma se paga con el cuerpo.** "Urgente", "hay que cortar con esto", "el
    periodismo ya no es el mismo" funcionan **una o dos veces**; si adentro no hay nada que
    justifique la alarma, la próxima no te abren. Y la base ya viene de **6,1% de apertura**.
-3. **Voseo.** Es el trato de toda la marca (387 usos contra 0).
+3. **Español NEUTRO.** Decidido por Jose el 27/08/2026: nada de voseo. Ni *tenés*, ni *hacé*, ni
+   *mirá*. La audiencia está repartida por toda LatAm y España — la propia landing dice que hay
+   alumnos rentables en Venezuela, Bolivia, Ecuador y Paraguay, y en ninguno de esos países se
+   vosea. ⚠️ **Esto revierte la regla anterior**, que era voseo por los 387 usos del curso: el
+   curso quedó escrito así, los mails de acá en adelante no.
 4. **Sólo positivo, desde la vocación.** El lector es un periodista con experiencia, no alguien a
    quien hay que rescatar.
 5. **Sin auto-bombo.** Si una frase se puede borrar sin perder información, era auto-bombo.
