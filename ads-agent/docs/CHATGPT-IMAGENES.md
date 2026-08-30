@@ -129,6 +129,70 @@ pero con la regla de la marca: nadie sonriendo a cámara, luz cinematográfica, 
 Antes de generar una foto de persona real (ej. el instructor), revisar la memoria de imágenes
 de la landing: hubo un bug con esa foto.
 
+#### La imagen de la sección "El problema" — la que promete plata (28/08/2026)
+
+**Qué cambia.** La imagen que estaba (credencial de prensa gastada + celular con un feed ajeno)
+contaba el problema. Jose la quiere del otro lado: **la solución, con la plata a la vista**, porque
+esa sección es la primera imagen que ve el que llega y hoy no promete nada.
+
+**Cómo se muestra la plata sin que parezca una estafa.** Nada de fajos de billetes ni de autos:
+Meta rechaza anuncios con promesas de ingresos exageradas y la landing está enlazada desde los
+anuncios. Lo que sí funciona es **una notificación de cobro**, con la cifra que ya está respaldada
+por un testimonio real y verificado — los **300 USD** que cobró Carlos por su primera publicidad
+local. Lo que promete la imagen tiene un nombre y un caso detrás.
+
+**El prompt completo — con el mensaje que lo acompaña, los rescates para cuando algo sale mal y qué
+hacer al recibir la imagen — está listo para copiar y pegar en
+`Escritorio/BOCETO-LANDING/PROMPT-CHATGPT.txt`.**
+
+La escena en una línea: **celular con un feed de Instagram apagado → flecha de luz índigo-cian →
+tablet encendida con el periódico propio**, y flotando sobre ella la notificación del pago. Se lee
+de izquierda a derecha como un antes y después. El resumen del prompt:
+
+```
+Fotografía de producto de estudio, realista. NO ilustración, NO render 3D plano,
+NO diseño gráfico. Formato horizontal 16:9, alta resolución.
+
+A LA IZQUIERDA: un celular vertical, más chico, con una app tipo Instagram —
+historias en círculos, una publicación con foto de calle en blanco y negro.
+Todo gris, desaturado, con menos brillo que la tablet.
+
+EN EL CENTRO: una flecha horizontal hecha de LUZ con volumen, de índigo
+(#6366f1) a cian (#22d3ee), con resplandor real sobre la superficie. No un
+icono plano pegado encima.
+
+A LA DERECHA: una tablet horizontal, más grande y más brillante, con un
+periódico digital propio — cabecera en serif DESENFOCADA, foto grande de una
+ciudad en color, dos líneas de titular, tres tarjetas de notas abajo.
+
+FLOTANDO sobre su esquina superior derecha, una notificación de pago en vidrio
+oscuro con borde verde. EL ÚNICO TEXTO LEGIBLE DE LA IMAGEN, en dos líneas:
+    + USD 300
+    Pago recibido
+
+LUZ: fondo azul muy oscuro casi negro (#07070f), glow índigo a cian detrás de
+la tablet, luz lateral suave, reflejos en los bordes. Sobrio y premium.
+
+PROHIBIDO: personas, manos, billetes, monedas, símbolos de dólar, gráficos de
+barras, confeti, texto suelto, logos reales.
+```
+
+**Adjuntar el boceto de composición** (`Escritorio/BOCETO-LANDING/5-boceto-flecha.png`, armado el 28/08
+con HTML + puppeteer) y decirle: *"Respetá esta composición: qué objeto va dónde y de qué tamaño.
+Lo que quiero distinto es que sea una fotografía real, no un diseño plano."* Una referencia de
+composición ahorra la ronda de prueba y error, que en el plan gratuito cuesta el cupo del día.
+
+**Cómo pasar las referencias.** Adjuntar la imagen del celular, la portada de Hotmart y una captura
+del feed de Instagram, y aclarar en la misma línea:
+
+> *"Estas tres son referencia de **paleta y de clima**, no de composición. Quiero fotografía real,
+> con la escena que te describo abajo."*
+
+⚠️ **El texto es lo que más falla.** GPT Image deforma las letras cuando le pedís varias frases;
+por eso el prompt pide **dos líneas y nada más**. Al recibirla, lo primero que hay que mirar es si
+la cifra se lee bien. Si sale rota, se pide de nuevo con la cifra sola (`+ USD 300`), sin la
+segunda línea.
+
 ### 🎁 Guías y regalos
 ```
 Creá la tapa de una guía en PDF, formato vertical 3:4, alta resolución.

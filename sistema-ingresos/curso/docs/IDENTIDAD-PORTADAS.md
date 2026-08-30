@@ -44,15 +44,46 @@ Sin ningún texto ni letras en la imagen.
 > El título ("Módulo 0 · Bienvenida") lo agregás encima en Hotmart/Canva, o lo dejamos sin texto
 > (queda limpio y premium igual).
 
-## Tabla por MÓDULO (color + elemento)
-| Módulo | [COLOR] | [ELEMENTO] |
+## ⛔ El color por módulo NO se aplica en las portadas (decisión de Jose, 16/08/2026)
+
+**Las portadas del curso son todas de la misma familia azul/violeta, y así se quedan.** El color
+por módulo existe **sólo en los videos**. Si esta doc y las portadas reales no coinciden, mandan
+las portadas: la doc describía una intención que nunca se cumplió.
+
+**Por qué.** Se midió el tono real del neón de las 38 portadas existentes con
+`ads-agent/scripts/curso/portadas-verificar-color.mjs`:
+
+| Módulo | Color pedido | Tono que devolvió ChatGPT |
 |---|---|---|
-| 0 · Bienvenida | cian | un cohete despegando |
-| 1 · Fundamentos | índigo | una flecha ascendente / gráfico de crecimiento |
-| 2 · IA | cian | un chip de computadora con conexiones |
-| 3 · Verificación | violeta | un escudo con una tilde de verificado |
-| 4 · Nombre y marca | violeta | una gota de tinta / paleta de color |
-| 5 · Nicho y lector | cian | una diana / un faro que ilumina |
+| 0 · Bienvenida | cian (188°) | 209-222° |
+| 1 · Fundamentos | índigo (239°) | 212-236° |
+| 2 · IA | cian (188°) | 221-224° |
+| 5 · Nicho y lector | cian | 202-213° |
+| 3 · Verificación | violeta | 252-255° |
+| 4 · Nombre y marca | violeta | 254-256° |
+
+**Pedirle cian y pedirle índigo devuelve el mismo azul eléctrico.** Sólo el violeta sale distinto,
+porque está lejos del azul. No hay seis colores posibles: hay azul y violeta. Regenerar 17
+imágenes para perseguir verde y rosa costaba 2-3 días de cupo del plan gratis para un detalle que
+el alumno no ve —mira una clase a la vez, no el listado completo comparando tonos.
+
+> ⚠️ **No "arreglar" esto.** Ni regenerando ni rotando el tono por software (se probó el 16/08 con
+> `sharp modulate({hue})`: el núcleo del neón está casi blanco y no se mueve, el fondo sí, y M5
+> quedó con fondo magenta y aros celestes — peor que el problema).
+
+## Tabla por MÓDULO — el ELEMENTO, que es lo que sí cambia
+
+El color de la tabla queda como referencia de la intención original y del **motivo de los videos**;
+para las portadas, lo único que se varía es el elemento central.
+
+| Módulo | Color del VIDEO | [ELEMENTO] |
+|---|---|---|
+| 0 · Bienvenida | cian `#22d3ee` | un cohete despegando |
+| 1 · Fundamentos | índigo `#6366f1` | una flecha ascendente / gráfico de crecimiento |
+| 2 · IA | cian `#22d3ee` | un chip de computadora con conexiones |
+| 3 · Verificación | verde `#34d399` | un escudo con una tilde de verificado |
+| 4 · Nombre y marca | rosa `#f472b6` | una gota de tinta / paleta de color |
+| 5 · Nicho y lector | violeta `#a78bfa` | una diana / un faro que ilumina |
 | 6 · Contenido | violeta | una señal de compartir / ondas |
 | 7 · Comunidad | violeta | un grupo de nodos conectados |
 | 8 · Probar y medir | cian | un tablero con gráficos / un gráfico de líneas |
