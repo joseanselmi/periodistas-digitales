@@ -5,6 +5,17 @@
 Lo que hace falta para cargar cada módulo en Hotmart: título y descripción de
 cada clase, el orden, el checklist de subida, y los prompts de las portadas.
 
+## Dónde vive el curso en Hotmart (2026-08-16)
+
+| Qué | Dónde |
+|---|---|
+| Producto (gestión) | `https://app.hotmart.com/products/manage/7966973` |
+| Club (área de miembros, donde se editan las clases) | `https://sistemadeingresosdiario-lqmoaa.club.hotmart.com` |
+
+Salió de inspeccionar la sesión real con
+[`ads-agent/scripts/curso/hotmart-inspeccionar.mjs`](../../../ads-agent/scripts/curso/README.md);
+no estaba escrito en ningún lado y sin eso no se puede automatizar nada contra el Club.
+
 - [`HOTMART-M1-completo.md`](HOTMART-M1-completo.md)
 - [`HOTMART-M2-completo.md`](HOTMART-M2-completo.md)
 - [`HOTMART-M3-completo.md`](HOTMART-M3-completo.md)
