@@ -146,6 +146,65 @@ fuente, sin restos huérfanos).
 Forzar un veredicto donde no corresponde no es sólo perder tiempo: **invita a leer como
 resultado un número que se movió por otra causa** — justo el caso de abajo.
 
+### ⛔ Un cambio que entra SIN versión no se pierde: contamina la versión abierta (31/08/2026)
+
+El 28/08 entraron los testimonios nuevos y **nadie creó la versión**. La v4 seguía abierta desde
+el 20/08, así que durante tres días estuvo midiendo **dos landings distintas sumadas**, y su
+número se movía por una causa que su propia ficha no nombraba.
+
+El daño no es "faltó documentar". Es que **el número existía y se leía bien**: v4 marcaba 573
+sesiones y 58 clics, cifras perfectamente creíbles que no eran de ninguna landing en particular.
+
+**Cómo se recorta una versión contaminada** (hecho el 31/08 para v4 → v5):
+
+1. `landing_versiones.vigente_hasta` de la vieja = el momento del cambio. **La resta la hace
+   sola `v_landing_panel`**, que calcula todo entre `vigente_desde` y `vigente_hasta`; no hay
+   que restar a mano en ningún lado.
+2. Congelar en la fila de la vieja los valores ya recortados (son la foto; la vista es el vivo).
+3. **El día del cambio queda AFUERA de las dos versiones.** Ese día sirvió las dos landings y no
+   se puede atribuir. Un hueco declarado es peor que nada, pero mucho mejor que un número que
+   miente. Escribirlo en la `nota` de las dos, o el hueco se lee como datos perdidos.
+
+⚠️ **Y hace falta la fecha del DEPLOY, no la del commit.** No son lo mismo y la del deploy no
+está en el repo: los logs de Vercel duran 1 hora y sin token de la API no hay dónde mirarla.
+Cuando no se puede confirmar, el corte va al **día siguiente completo** (el conservador) y el
+supuesto se escribe en la `nota`.
+
+### ⛔ Meta reporta el MISMO evento bajo varios nombres — sumarlos multiplica (31/08/2026)
+
+`meta_insights_diario` venía con **pagos iniciados al doble y compras al triple**, todos los días
+desde el 29/06. 95 filas, 468 pagos iniciados donde había 234, y 63 compras donde había 21.
+
+La causa: `sumAction()` en
+[meta-embudo-diario-por-anuncio.mjs](../../ads-agent/scripts/datos/meta-embudo-diario-por-anuncio.mjs)
+recibía varios `action_type` y los **sumaba**. Pero Meta devuelve el mismo evento repetido bajo
+un nombre específico del píxel y varios agregados que ya lo contienen. Medido contra la API el
+31/08 sobre `ad1-fomo` del 27/08:
+
+```
+initiate_checkout                              5
+offsite_conversion.fb_pixel_initiate_checkout  5   ← los MISMOS 5
+purchase                                       1
+offsite_conversion.fb_pixel_purchase           1   ← la MISMA 1
+onsite_web_purchase                            1   ← la MISMA 1
+```
+
+**La huella se veía sin abrir el código: 31 días seguidos de `pagos_iniciados` sin un solo número
+impar** (probabilidad ~1 en mil millones). Una columna de enteros que nunca es impar está
+multiplicada, y eso se puede chequear con una consulta de una línea:
+
+```sql
+select count(*) filter (where pagos_iniciados % 2 = 1) from meta_insights_diario;  -- 0 = sospechoso
+```
+
+**Regla que queda: una métrica, UN `action_type`.** Si algún día hacen falta compras que no pasen
+por el píxel, va una **columna nueva**, nunca otro sumando en la misma. Es el mismo principio de
+un solo dueño por dato.
+
+**Consecuencia de haberlo creído:** durante dos meses el embudo de Meta dijo que la landing
+convertía la mitad de bien de lo que convertía (el doble de pagos iniciados para las mismas
+compras), y que había 3 ventas donde había 1. Corregido en la tabla y en el script el 31/08.
+
 ### ⛔ El scroll de Clarity es un PORCENTAJE DE LA ALTURA: acortar la página lo sube solo
 
 `clarity_diario.scroll_promedio` sale de `ScrollDepth.averageScrollDepth`, que es el porcentaje

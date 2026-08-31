@@ -59,13 +59,24 @@ function extraerSrc(...nombres) {
   return null
 }
 
-const sumAction = (actions, ...types) => {
-  let s = 0
-  for (const t of types) {
-    const a = (actions || []).find(x => x.action_type === t)
-    if (a) s += Number(a.value || 0)
-  }
-  return s
+// UN action_type por metrica, nunca varios sumados.
+//
+// Meta devuelve el MISMO evento bajo varios nombres a la vez: el especifico del
+// pixel (offsite_conversion.fb_pixel_purchase) y agregados que YA lo contienen
+// (purchase, onsite_web_purchase, omni_purchase...). Sumarlos multiplica.
+// Medido el 31/08/2026 sobre ad1-fomo del 27/08: initiate_checkout=5 y
+// offsite_conversion.fb_pixel_initiate_checkout=5 son los mismos 5; purchase=1,
+// offsite_conversion.fb_pixel_purchase=1 y onsite_web_purchase=1 son la misma 1.
+// Este script los sumaba: pagos_iniciados salia x2 y compras x3 TODOS los dias.
+// La huella era visible sin mirar el codigo: 31 dias seguidos de pagos_iniciados
+// sin un solo numero impar.
+//
+// El dueno del dato es el evento del pixel, que es lo que manda la landing
+// (navegador + CAPI, ya deduplicado por event_id). Si alguna vez hay ventas que
+// NO pasen por el pixel, se agrega otra COLUMNA, no otro sumando en esta.
+const sumAction = (actions, type) => {
+  const a = (actions || []).find(x => x.action_type === type)
+  return a ? Number(a.value || 0) : 0
 }
 
 async function fetchDaily() {
@@ -103,8 +114,8 @@ function agrupar(rows) {
     a.impresiones += Number(r.impressions || 0)
     a.link_clicks += Number(r.inline_link_clicks || 0)
     a.landing_views += sumAction(r.actions, 'landing_page_view')
-    a.pagos_iniciados += sumAction(r.actions, 'offsite_conversion.fb_pixel_initiate_checkout', 'initiate_checkout')
-    a.compras += sumAction(r.actions, 'offsite_conversion.fb_pixel_purchase', 'purchase', 'onsite_web_purchase')
+    a.pagos_iniciados += sumAction(r.actions, 'offsite_conversion.fb_pixel_initiate_checkout')
+    a.compras += sumAction(r.actions, 'offsite_conversion.fb_pixel_purchase')
   }
   return Object.values(g).map(a => ({ ...a, spend_usd: +a.spend_usd.toFixed(2) }))
 }
