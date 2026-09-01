@@ -236,10 +236,10 @@
         <div class="step" id="tgCard">
             <div class="step-num">3</div>
             <div class="step-body">
-                <h3>Sumate a la comunidad</h3>
-                <p>Vas a poder entrar a nuestro canal privado de <strong>Telegram</strong>: novedades, dudas y acompañamiento mientras montás tu periódico digital.</p>
+                <h3>Tu regalo: el canal privado</h3>
+                <p>Por contestar <strong>5 preguntas</strong> te regalo el acceso a nuestro canal privado de <strong>Telegram</strong>: novedades, recursos y avisos mientras montás tu periódico digital. Es un canal de información — publicamos nosotros y vos solo leés —, así que <strong>no tenés que escribir nada</strong>. Las preguntas las leo yo: son dos minutos.</p>
                 <div class="step-actions">
-                    <a href="#" id="tgBtn" target="_blank" rel="noopener" class="btn btn-green" style="display:none;">Unirme al canal de Telegram</a>
+                    <a href="#" id="tgBtn" target="_blank" rel="noopener" class="btn btn-green" style="display:none;">Responder y recibir el acceso →</a>
                 </div>
                 <span class="soon-tag" id="tgSoon"><span class="dot"></span> Canal lleno por ahora — te avisamos por email cuando lo reabramos próximamente</span>
             </div>
@@ -256,18 +256,24 @@
 </footer>
 
 <script>
-/* ── Canal de Telegram ──
-   Cuando el canal exista, pegá su link de invitación acá (t.me/...) y el botón
-   se enciende solo; el aviso de "muy pronto" desaparece. Vacío = se muestra el
-   estado "muy pronto" (sin dejar un link roto). Es el ÚNICO cambio necesario para
-   activar el paso 3. Ver sistema-ingresos/docs/POST-COMPRA.md. */
-const TELEGRAM_INVITE = "https://t.me/+ywAiiHyHe7wyYjRk";
+/* ── Paso 3: la encuesta es la PUERTA del canal ──
+   El botón NO lleva al canal de Telegram: lleva al formulario de 5 preguntas. El link
+   del canal vive en el MENSAJE DE CONFIRMACIÓN del formulario, que Google muestra
+   recién después de enviarlo. Ese es todo el gate — no hay código acá que lo aplique.
+
+   ⚠ Si alguna vez se vuelve a poner el link directo del canal en este botón, el
+   formulario queda opcional y no lo llena nadie. Es el único punto que lo sostiene.
+
+   El canal, para referencia: https://t.me/+ywAiiHyHe7wyYjRk
+   Vacío = se muestra el estado "muy pronto" (sin dejar un link roto).
+   Por qué existe la encuesta y qué pregunta: docs/ENCUESTA-VOZ-CLIENTE.md */
+const ENCUESTA_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfZwROPlrh1wQPobv4FLJIJqN_7sAqXCFvUBhXCsKdVV1E-dA/viewform";
 
 (function () {
-    if (!TELEGRAM_INVITE) return;
+    if (!ENCUESTA_URL) return;
     const btn  = document.getElementById('tgBtn');
     const soon = document.getElementById('tgSoon');
-    btn.href = TELEGRAM_INVITE;
+    btn.href = ENCUESTA_URL;
     btn.style.display = '';
     if (soon) soon.style.display = 'none';
 })();

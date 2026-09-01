@@ -15,6 +15,8 @@ curso — eso está en [`../curso/docs/`](../curso/docs/README.md).
 - [`POST-COMPRA.md`](POST-COMPRA.md) — qué se dispara cuando alguien compra.
 - [`RECUPERACION.md`](RECUPERACION.md) — carritos abandonados y rechazos de tarjeta.
 - [`TIME_TO_VALUE.md`](TIME_TO_VALUE.md) — qué recibe el comprador, y cuándo.
+- [`ENCUESTA-VOZ-CLIENTE.md`](ENCUESTA-VOZ-CLIENTE.md) — las 5 preguntas abiertas que
+  capturan el vocabulario literal del cliente para escribir los anuncios con sus palabras.
 
 ## Canales
 

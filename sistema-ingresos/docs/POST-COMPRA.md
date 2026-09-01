@@ -21,7 +21,7 @@ Tres piezas:
 - **Contenido:** confirmación de pago + 3 próximos pasos:
   1. Revisá tu correo (Hotmart mandó el acceso al curso).
   2. Activá tu mes gratis de Leadr Pro (entrando a leadr.cloud con el email de compra).
-  3. Sumate a la comunidad de Telegram → **encendido** (botón con el link del grupo, ver punto 3).
+  3. Entrá al canal privado → **encendido**, pero el botón pasa por la encuesta de 5 preguntas (ver punto 3).
 - **`noindex`:** la página lleva `<meta name="robots" content="noindex,nofollow">` (es una
   confirmación privada, no debe aparecer en Google).
 - **Meta Pixel:** dispara **solo `PageView`**. NO dispara `Purchase` del lado del navegador
@@ -30,12 +30,20 @@ Tres piezas:
   sin ese `event_id` inflaría las compras en Meta. La atribución por anuncio ya viaja por
   el `?src=` del checkout (ver [TRACKING.md](TRACKING.md)).
 
-### Pendiente de Jose (config en el panel de Hotmart)
-Para que el comprador **llegue** a esta página hay que configurar la redirección post-compra
-en Hotmart → producto "Sistema de Ingresos Diarios" → Configuración de compra / Página de
-agradecimiento → URL propia: `https://sistemadeingresosdiariosia.com/gracias`.
-Hasta que se configure, Hotmart muestra su propia página genérica (el alta del customer y el
-bono de Leadr funcionan igual, porque van por el webhook, no por la página).
+### Redirección post-compra de Hotmart — LISTA (verificado 01/09/2026)
+
+Hotmart redirige al comprador a `https://sistemadeingresosdiariosia.com/gracias`.
+**Verificado contra la tabla `events`, no contra el panel:** los referrers de las visitas
+a /gracias son `pay.hotmart.com/thanks?transactionReference=...` y
+`pay.hotmart.com/P106404871J?checkoutMode=10...` — o sea compradores reales saliendo del
+checkout, desde MX, PE, CO, AR, ES, HN y DO.
+
+Llegan **~9 de cada 11 compradores**. Los que faltan cierran la pestaña antes de que
+corra el script. El alta del customer y el bono de Leadr no dependen de esto: van por el
+webhook.
+
+> ⚠️ Al contar visitas a /gracias hay que **descontar el robot `meta-externalads`**
+> (previsualizador de Facebook): son 4 de cada 25 filas y no son personas.
 
 ---
 
@@ -69,12 +77,24 @@ bono de Leadr funcionan igual, porque van por el webhook, no por la página).
 Jose creó el grupo de Telegram y pasó el link de invitación. Ya está en vivo en la página de
 gracias (paso 3):
 
-- En [gracias.html](../paginas/gracias.html) la constante es `const TELEGRAM_INVITE = "https://t.me/+ywAiiHyHe7wyYjRk";`.
-  - **Con un link** `t.me/...` (estado actual) → el botón "Unirme al canal de Telegram" se enciende
-    solo y el aviso de "canal lleno" desaparece. Verificado en vivo tras `vercel --prod`.
-  - **Vacía** (estado anterior) → mostraba "Canal lleno por ahora — te avisamos por email cuando lo
-    reabramos próximamente" (gancho de escasez, sin dejar un link roto).
-- **Para cambiar el grupo:** reemplazar el link en esa constante y `vercel --prod`. Es el ÚNICO cambio.
+### ⚠ Desde el 01/09/2026 el botón NO lleva al canal: lleva a una encuesta
+
+El paso 3 pasa por [`ENCUESTA-VOZ-CLIENTE.md`](ENCUESTA-VOZ-CLIENTE.md) — 5 preguntas abiertas
+para capturar el vocabulario del comprador y escribir anuncios con sus palabras. **El link del
+canal vive en el MENSAJE DE CONFIRMACIÓN del formulario**, que Google muestra recién al enviarlo.
+Ese es todo el gate: no hay código que lo aplique.
+
+- En [gracias.html](../paginas/gracias.html) la constante ahora es `ENCUESTA_URL` (antes
+  `TELEGRAM_INVITE`) y apunta al formulario, no a `t.me`.
+- ⚠ **Si alguna vez se vuelve a poner el link directo del canal en ese botón, el formulario
+  queda opcional y no lo llena nadie.** Es el único punto que sostiene el gate.
+- **Vacía** → muestra "Canal lleno por ahora — te avisamos por email cuando lo reabramos
+  próximamente" (gancho de escasez, sin dejar un link roto). Sigue funcionando igual.
+- **Para cambiar el grupo:** el link de `t.me` ya no está en el código — se cambia en el mensaje
+  de confirmación del formulario, sin tocar ni deployar la página.
+- ⚠ **Costo a vigilar:** el paso 3 era el único enganche social del post-compra y esta gente entra
+  una vez y no vuelve. Si al mes las respuestas no compensan, se revierte volviendo el botón al
+  canal.
 - **Mecánica elegida para v1:** link de invitación **fijo** (el mismo para todos). El link
   **único por comprador** (bot que genera un link de un solo uso por compra) queda para una v2
   si hace falta control de acceso.
@@ -89,7 +109,7 @@ gracias (paso 3):
 |---|---|
 | Copy + diseño de la página de gracias | ✅ hecho (respeta la identidad de la landing) |
 | Publicar `/gracias` | ✅ LIVE (deploy prod, responde 200) |
-| Redirección post-compra en Hotmart | ⏳ **pendiente de Jose** (config en el panel de Hotmart) |
-| Mecánica de Telegram + CTA | ✅ LIVE (grupo creado, link fijo en `TELEGRAM_INVITE`, botón visible, verificado en vivo) |
+| Redirección post-compra en Hotmart | ✅ **lista** — verificado 01/09/2026 por los referrers de `events` |
+| Mecánica de Telegram + CTA | ✅ LIVE — desde el 01/09 el botón pasa por la encuesta (`ENCUESTA_URL`); el link del canal vive en el mensaje de confirmación del formulario |
 | Alta del `customer` desde el webhook | ✅ LIVE (tabla `customers` + `saveCustomer`, validado en DB) |
 | Prueba E2E con compra real | ⏳ **a confirmar con la 1ª venta real** (checkout → gracias → fila en `customers`). No se simuló para no disparar Meta CAPI + bono Leadr + venta con datos falsos. |
