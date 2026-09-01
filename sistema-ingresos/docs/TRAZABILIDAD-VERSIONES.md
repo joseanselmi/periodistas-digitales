@@ -146,6 +146,43 @@ fuente, sin restos huérfanos).
 Forzar un veredicto donde no corresponde no es sólo perder tiempo: **invita a leer como
 resultado un número que se movió por otra causa** — justo el caso de abajo.
 
+### ⛔ Lo que pesa una página no está en su HTML (01/09/2026)
+
+Medir la landing bajando el HTML y sus etiquetas daba **1,52 MB**. Medirla con un navegador de
+verdad, emulando un celular, daba **7,89 MB**. La diferencia era el hero 3D de Spline, que **se
+inyecta por JavaScript** y por eso no aparece en ninguna etiqueta del HTML:
+
+| | KB |
+|---|---|
+| `unpkg.com/@splinetool/viewer` | **3.480** |
+| `scene.splinecode` | **1.318** |
+| `process.wasm` | 322 |
+| `process.js` | 78 |
+| **subtotal Spline** | **5.203 — el 66% de la página** |
+| todo lo demás | 2.688 |
+
+Además dejaba **48 MB de heap de JavaScript**. En un sitio donde el **75% del tráfico entra por
+el webview de Facebook/Instagram**, en celular, en LatAm. Estaba bien implementado —diferido,
+con póster estático, y se saltea en 2G o con ahorro de datos— pero eso no cambia lo que pesa
+para todos los demás.
+
+**Se reemplazó por una FOTO de la misma escena**, capturada del propio Spline: 18 KB apaisada y
+28 KB vertical. **La página pasó de 7.891 KB a 1.662 KB (−79%)** y se ve igual: la escena casi no
+se movía. Hacen falta las dos orientaciones — recortar la apaisada en vertical deja al robot sin
+cabeza.
+
+**Reglas que quedan:**
+
+1. **El peso se mide con un navegador, no leyendo el HTML.** Todo lo que entra por
+   `document.createElement('script')` es invisible para un `curl` + regex. Se mide así:
+   ```bash
+   # con playwright, escuchando 'response' y sumando los cuerpos, con emulación de celular
+   ```
+2. **Un asset de terceros se pesa ANTES de aceptarlo.** 5,2 MB para un fondo decorativo no es un
+   detalle de optimización, es la mayor parte del producto que se le entrega al visitante.
+3. Si algún día vuelve el 3D, la captura estática se queda igual como póster: es lo que se ve
+   mientras carga.
+
 ### ⛔ `checkout_clicks` y `clics_checkout` NO son la misma métrica (01/09/2026)
 
 Dos nombres casi iguales para dos cosas distintas, en la misma pantalla:

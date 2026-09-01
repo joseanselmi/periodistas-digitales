@@ -24,7 +24,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-    <!-- Spline (hero 3D) se carga DIFERIDO al final del body: primero se ve el hero-poster estático (rápido en celular), el 3D entra después -->
 
     <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -108,23 +107,19 @@
         display: flex; flex-direction: column; justify-content: center;
         overflow: hidden; background: #000;
     }
-    /* Poster estático del hero: se ve al instante mientras (o si no) carga el 3D. On-brand: glow indigo/cyan sobre negro */
+    /* Fondo del hero: una FOTO del mismo robot, ya no el 3D en vivo.
+       Medido el 01/09/2026 contra el dominio: el visor de Spline bajaba 5.203 KB —el 66% de
+       TODO lo que descargaba la página— y dejaba 48 MB de heap de JavaScript, en un sitio donde
+       el 75% del tráfico entra por el webview de Facebook/Instagram en celular. Las dos
+       imágenes de abajo pesan 18 KB y 28 KB y se ven igual: la escena casi no se movía.
+       El degradado queda DEBAJO de la imagen: se pinta al instante y cubre si todavía no llegó. */
     .hero-poster {
         position: absolute; inset: 0; z-index: 0;
         background:
+            url('/paginas/img/sistema-ingresos-hero-robot.webp') center / cover no-repeat,
             radial-gradient(120% 90% at 78% 32%, rgba(99,102,241,.38) 0%, rgba(99,102,241,0) 55%),
             radial-gradient(90% 80% at 96% 82%, rgba(34,211,238,.22) 0%, rgba(34,211,238,0) 50%),
             #07070f;
-    }
-    .hero-spline {
-        position: absolute; inset: 0; z-index: 0;
-        opacity: 0; transition: opacity 1.2s ease;
-    }
-    .hero-spline.loaded { opacity: 1; }
-    .hero-spline spline-viewer {
-        display: block;
-        width: 100%; height: 100%;
-        position: absolute; inset: 0;
     }
     .hero-overlay {
         position: absolute; inset: 0; z-index: 1;
@@ -138,12 +133,6 @@
         max-width: 680px;
         text-align: left;
     }
-    .hero-eyebrow {
-        display: flex; align-items: center; gap: 10px;
-        font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-        color: var(--indigo); margin-bottom: 24px;
-    }
-    .hero-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--indigo); flex-shrink: 0; }
     .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.25; color: #fff; margin-bottom: 20px; text-shadow: 0 2px 24px rgba(0,0,0,.5); }
     .hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--indigo), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero-sub { font-size: 1.1rem; color: rgba(241,245,249,.85); max-width: 480px; margin-bottom: 36px; line-height: 1.75; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
@@ -350,7 +339,22 @@
         .testimonials-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 700px) {
-        .hero-content { padding: 0 24px 72px; max-width: 100%; }
+        /* El hero REPARTE la altura en tres franjas en vez de amontonar todo arriba:
+           el badge queda absoluto arriba, DESLIZÁ absoluto abajo, y el contenido ocupa
+           el medio con aire propio. El padding de arriba y abajo es lo que despeja a
+           esos dos; el gap separa titular, bajada y botón sin que se peguen. */
+        .hero-content {
+            flex: 1;
+            display: flex; flex-direction: column; justify-content: center;
+            gap: 30px;
+            padding: 124px 24px 96px;
+            max-width: 100%;
+        }
+        /* en vertical la foto apaisada dejaria al robot sin cabeza: va la version vertical */
+        .hero-poster { background-image: url('/paginas/img/sistema-ingresos-hero-robot-vertical.webp'); }
+        .hero h1 { margin-bottom: 0; }
+        .hero-sub { margin-bottom: 0; max-width: 100%; font-size: 1.15rem; }
+        .hero-content .btn { align-self: flex-start; }
         .hero-overlay {
             background:
                 linear-gradient(to bottom, rgba(0,0,0,.35) 0%, rgba(0,0,0,.6) 40%, rgba(0,0,0,.97) 70%),
@@ -498,9 +502,8 @@
      1. HERO
 ═══════════════════════════════════ -->
 <section class="hero" id="hero">
-    <!-- Poster estático (instantáneo) + Spline 3D diferido (se inyecta por JS al final del body) -->
+    <!-- Fondo del hero: imagen estática (ver .hero-poster en el CSS). El 3D de Spline se sacó el 01/09/2026 -->
     <div class="hero-poster"></div>
-    <div class="hero-spline" data-spline="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></div>
     <div class="hero-overlay"></div>
 
     <!-- Badge de urgencia centrado arriba -->
@@ -510,8 +513,6 @@
     </div>
 
     <div class="hero-content">
-        <p class="hero-eyebrow">Para periodistas de LATAM</p>
-
         <h1>Sabés hacer periodismo.<br>Nadie te enseñó a <em>vivir de él online</em>.</h1>
 
         <p class="hero-sub">Periodistas de 50 países ya viven de su periódico digital con IA.</p>
@@ -1222,34 +1223,7 @@ document.querySelectorAll('.value-stack').forEach(el => vsObserver.observe(el));
 <script>window.PD_TRACK={funnel:'meta-ads-directo',step:'landing'};</script>
 <script src="/track.js" defer></script>
 
-<!-- Hero 3D (Spline) DIFERIDO: recién cuando la página ya está usable, para no frenar la 1ª impresión en celular.
-     Hasta entonces (y en conexiones lentas / ahorro de datos) se ve el hero-poster estático. -->
-<script>
-(function(){
-  function cargarSpline(){
-    var cont = document.querySelector('.hero-spline[data-spline]');
-    if (!cont || cont.dataset.loaded) return;
-    cont.dataset.loaded = '1';
-    var s = document.createElement('script');
-    s.type = 'module';
-    s.src = 'https://unpkg.com/@splinetool/viewer/build/spline-viewer.js';
-    document.head.appendChild(s);
-    var v = document.createElement('spline-viewer');
-    v.setAttribute('url', cont.getAttribute('data-spline'));
-    v.addEventListener('load', function(){ cont.classList.add('loaded'); });
-    cont.appendChild(v);
-    setTimeout(function(){ cont.classList.add('loaded'); }, 2500); // fallback si 'load' no dispara
-  }
-  function arrancar(){
-    var c = navigator.connection;
-    if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return; // ahorro de datos / 2G: dejar solo el poster
-    if ('requestIdleCallback' in window) requestIdleCallback(cargarSpline, { timeout: 3000 });
-    else setTimeout(cargarSpline, 1200);
-  }
-  if (document.readyState === 'complete') arrancar();
-  else window.addEventListener('load', arrancar);
-})();
-</script>
+
 
 <!-- Rastreador de Brevo (Automatizaciones). Snippet oficial de tracker-doc.brevo.com,
      va antes de </body>. La clave sale de GET /v3/account -> marketingAutomation.key.
