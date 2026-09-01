@@ -103,16 +103,35 @@ function proximoPaso(seq, pasoEnviado, horasOld, horasDesdeUltimo) {
 function sbHeaders(extra) {
   return { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', ...extra };
 }
+// ── LA LISTA TRUNCADA SE VE IGUAL QUE LA COMPLETA (01/09/2026) ───────────────
+// PostgREST corta en 1.000 filas y NO avisa: `.limit(20000)` devuelve 1.000 igual. Acá eso
+// sería especialmente feo porque `sbGetPotenciales` ES LA COLA y ordena ASCENDENTE: al cruzar
+// las 1.000 se quedaría con los MÁS VIEJOS y los carritos recientes —los únicos recuperables—
+// no recibirían nada, sin un solo error.
+//
+// HOY NO TRUNCA y por eso NO se paginó: `clientes_potenciales` tiene 41 filas y `ventas` 22
+// (medido el 01/09). Meter paginación en el camino que MANDA MAILS por una bomba que está a
+// 25 veces de distancia agrega más riesgo del que saca. Lo que sí cuesta cero es que la bomba
+// AVISE el día que llegue, en vez de descubrirlo por los carritos que dejaron de recibir.
+// Cuando esto suene, ahí sí se pagina.
+const TOPE_POSTGREST = 1000;
+function avisarSiTruncado(nombre, filas) {
+  if (Array.isArray(filas) && filas.length >= TOPE_POSTGREST) {
+    console.error(`[recuperacion] 🔴 ${nombre} devolvió ${filas.length} filas: es el tope de PostgREST, así que la lista está TRUNCADA y falta gente. Hay que paginar esta consulta YA — la cola ordena ascendente, así que lo que se está perdiendo son los casos más NUEVOS.`);
+  }
+  return filas;
+}
+
 async function sbGetPotenciales() {
   const url = `${SUPABASE_URL}/rest/v1/clientes_potenciales?select=*&estado_recuperacion=in.(pendiente,contactado)&order=ocurrido_en.asc`;
   const r = await fetch(url, { headers: sbHeaders() });
   if (!r.ok) throw new Error(`Supabase potenciales ${r.status}: ${await r.text()}`);
-  return r.json();
+  return avisarSiTruncado('clientes_potenciales (LA COLA)', await r.json());
 }
 async function sbGetVentasEmails() {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/ventas?select=email,ocurrido_en`, { headers: sbHeaders() });
   if (!r.ok) throw new Error(`Supabase ventas ${r.status}: ${await r.text()}`);
-  const rows = await r.json();
+  const rows = avisarSiTruncado('ventas (para no escribirle a quien ya compró)', await r.json());
   const map = new Map();
   for (const v of rows) {
     const e = String(v.email || '').toLowerCase().trim();
