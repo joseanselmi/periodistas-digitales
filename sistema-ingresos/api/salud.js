@@ -67,6 +67,8 @@ const PEOR = { ok: 0, alerta: 1, critico: 2 };
 // lista copiada se desincroniza el día que se agrega un paso, y el cruce empezaría a decir
 // "sin entrega" sobre mails que sí llegaron.
 const { TODAS_LAS_TAGS: TAGS_RECUP } = require('./_lib/recup-email');
+const brevoCuenta = require('./_lib/brevo-cuenta');
+const tg = require('./_lib/tg');
 function peor(a, b) { return PEOR[b] > PEOR[a] ? b : a; }
 
 // Foto de stats de email de Brevo → Supabase (tabla brevo_stats). El Panel de Comando corre en un
@@ -606,6 +608,53 @@ async function saludCampanas() {
   return { flujo, que_mira, nivel, puntos, met };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// FLUJO 7 - El saldo de Brevo. Objetivo: que haya con qué mandar.
+//
+// POR QUE EXISTE (01/09/2026). Del 28/08 al 01/09 no salio UN SOLO mail automatico y este
+// panel decia que todo corria. Miraba si los flujos hacian su trabajo, y ninguno miraba si la
+// cuenta que los ejecuta tenia saldo. La cuenta estaba en 0 creditos y la suscripcion Starter
+// figuraba `cancelled` desde el 28/08 (la tarjeta estaba rechazada).
+//
+// ES EL CHEQUEO MAS BARATO Y EL QUE MAS TAPA: si esto esta en rojo, TODOS los demas flujos de
+// email estan rotos aunque se vean sanos. Un envio con la cuenta seca devuelve OK igual y ni
+// siquiera figura como "pedido" en el informe de Brevo — verificado el 01/09 contra las dos
+// fuentes de la API. Es decir: aguas abajo el problema es INVISIBLE. Solo se ve aca.
+//
+// AVISA ANTES, no despues: por debajo de AVISO_BAJO creditos ya es amarillo, y una suscripcion
+// cancelada es amarilla aunque todavia queden creditos — es la senal temprana, el 28/08 el plan
+// se cancelo horas antes de que el saldo llegara a cero.
+async function saludBrevoCuenta() {
+  const met = {}; const puntos = []; let nivel = 'ok';
+  const flujo = '💳 Saldo de Brevo';
+  const que_mira = 'Que la cuenta tenga con qué mandar — sin esto, TODO el email está roto y se ve sano.';
+
+  const c = await brevoCuenta.estadoCuenta();
+  met.creditos = c.creditos;
+  met.suscripcion_cancelada = c.cancelado;
+
+  if (!c.sabemos) {
+    // No saber no es estar bien, pero tampoco es estar roto: queda en amarillo y se dice por qué.
+    return { flujo, que_mira, nivel: 'alerta', puntos: [`No se pudo averiguar el saldo de Brevo (${c.motivo}). Hoy este chequeo va a ciegas.`], met };
+  }
+
+  if (c.seco) {
+    nivel = 'critico';
+    puntos.push(`🔴 ${c.motivo}. No sale NINGÚN mail: ni las guías a los leads nuevos, ni el embudo, ni la recuperación, ni este panel.`);
+    puntos.push('El embudo se frena solo mientras dure (mira el saldo antes de escribir la primera reserva). Es a propósito: con la cuenta seca cada intento marca a una persona como "ya lo recibió" y el mail no existe nunca.');
+    puntos.push('Se destraba pagando la suscripción de Brevo. Después de pagar no hay que tocar nada.');
+  } else if (c.cancelado) {
+    nivel = 'alerta';
+    puntos.push(`🟡 ${c.motivo}. Cuando se agoten, se corta todo el email de golpe — conviene arreglar el pago antes de llegar ahí.`);
+  } else if (c.creditos < brevoCuenta.AVISO_BAJO) {
+    nivel = 'alerta';
+    puntos.push(`🟡 Quedan ${c.creditos} créditos de envío (avisa por debajo de ${brevoCuenta.AVISO_BAJO}). Un día del embudo son ~90-150 mails, así que es cuestión de días.`);
+  } else {
+    puntos.push(`✅ Quedan ${c.creditos} créditos de envío y la suscripción está al día.`);
+  }
+  return { flujo, que_mira, nivel, puntos, met };
+}
+
 function tituloGeneral(nivel) {
   if (nivel === 'critico') return '🔴 Hay un problema que necesita tu atención';
   if (nivel === 'alerta') return '🟡 Todo corre, con un par de avisos';
@@ -662,7 +711,8 @@ async function enviarPanelSalud(mode) {
   // Se cuelga de acá porque Vercel Hobby solo deja 2 crons. Best-effort igual que arriba.
   try { await syncComunicaciones(7); } catch (e) { console.error('syncComunicaciones (no frena el panel):', (e && e.message) || e); }
   const flujos = [];
-  for (const fn of [saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio, saludCampanas]) {
+  // El saldo va PRIMERO: si está en rojo, todo lo de abajo que hable de email es ruido.
+  for (const fn of [saludBrevoCuenta, saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio, saludCampanas]) {
     try { flujos.push(await fn()); }
     catch (e) { flujos.push({ flujo: fn.name, que_mira: '', nivel: 'alerta', puntos: [`Error al diagnosticar: ${e.message || e}`], met: {} }); }
   }
@@ -685,8 +735,36 @@ async function enviarPanelSalud(mode) {
   } catch (e) { console.error('agenda trello (no frena el panel):', e && e.message || e); }
 
   const sent = await enviar(subject, htmlFinal);
+
+  // ── EL AVISO NO PUEDE VIAJAR POR EL CANAL QUE VIGILA (01/09/2026) ──────────
+  // Este panel es lo único que avisaría de que el email dejó de funcionar, y se manda por
+  // email. Del 28/08 al 01/09 Brevo se quedó sin créditos y el panel cayó con él: cuatro días
+  // sin un solo mail y sin una sola alarma. Era la mitad que le faltó a la #135 —"que el
+  // vigilante no dependa del vigilado"—: se lo sacó del cron ajeno, pero no del canal.
+  //
+  // Telegram sale por otra puerta (otro proveedor, otras credenciales), así que sobrevive
+  // justo al caso que importa. Sale cuando hay algo ROJO o cuando el propio email no salió —
+  // esas dos, y nada más: un aviso que llega todos los días se vuelve parte del paisaje.
+  let alarma = null;
+  if (general === 'critico' || !sent.ok) {
+    const rojos = flujos.filter((f) => f.nivel === 'critico');
+    const cabeza = sent.ok
+      ? '🔴 PANEL DE SALUD — hay algo roto'
+      : '🔴 PANEL DE SALUD — y además el mail del panel NO salió';
+    const cuerpo = rojos.length
+      ? rojos.map((f) => `\n▸ ${f.flujo}\n${f.puntos.slice(0, 2).map((p) => `  · ${p.replace(/<[^>]+>/g, '')}`).join('\n')}`).join('\n')
+      : '\n(sin flujos en rojo — lo que falló fue el envío del panel en sí)';
+    const pie = sent.ok ? '\n\nEl detalle completo está en el mail del Panel de Salud.' : '\n\n⚠️ Este Telegram es el único aviso: el mail no llegó.';
+    if (!tg.CHAT && !tg.GROUP) {
+      alarma = 'sin Telegram configurado: la alarma crítica no tiene por dónde salir';
+    } else {
+      const r = await tg.enviar({ chat_id: tg.CHAT || tg.GROUP, text: `${cabeza}${cuerpo}${pie}` }).catch(() => null);
+      alarma = r && r.ok ? 'telegram enviado' : 'telegram falló';
+    }
+  }
+
   return {
-    general, enviado: sent.ok, resumen: flujos.map((f) => `${f.nivel}:${f.flujo}`),
+    general, enviado: sent.ok, alarma, resumen: flujos.map((f) => `${f.nivel}:${f.flujo}`),
     trello: agenda ? { ejecutadas: agenda.ejecutadas, vencidas: agenda.vencidas.length, hoy: agenda.hoy.length, proximas: agenda.proximas.length, error: agenda.error } : null,
   };
 }

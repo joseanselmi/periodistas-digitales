@@ -121,6 +121,7 @@ const tg = require('./_lib/tg');
 const baja = require('./_lib/baja');
 // Candado: una sola corrida enviando a la vez (ver _lib/candado.js).
 const candado = require('./_lib/candado');
+const brevoCuenta = require('./_lib/brevo-cuenta');
 // La FICHA de este flujo: quién entra, qué piezas, qué lo dispara, cómo se mide (_lib/flujos.js).
 // Las piezas salen de ahí, no de una lista escrita en este archivo.
 const { piezasParaMotor } = require('./_lib/flujos');
@@ -1149,6 +1150,21 @@ async function avisarSiVolumenAlto(mailsHoy, hoy) {
   return r && r.ok ? `⚠️ VOLUMEN ALTO (${mailsHoy}) — avisado por Telegram` : `⚠️ volumen alto (${mailsHoy}) — falló el aviso por Telegram`;
 }
 
+// ── ALARMA DE CUENTA SECA ────────────────────────────────────────────────────
+// Sale por TELEGRAM y no por mail, y ese es el punto entero: el aviso de que el correo no
+// funciona no puede viajar por correo. Del 28/08 al 01/09 el Panel de Salud —lo único que
+// habría avisado— se mandaba por Brevo, así que cayó junto con lo que tenía que vigilar.
+// Una vez por día, con el mismo candado que usa la alarma de volumen: las 13 corridas
+// encadenadas mandarían 13 avisos idénticos, que es la forma más rápida de que se los ignore.
+async function avisarCuentaSeca(cuenta, hoy) {
+  const primero = await candado.tomar(`alarma_brevo_seco_${hoy}`, 24 * 3600);
+  if (!primero.ok) return 'ya avisado hoy';
+  const texto = `🔴 BREVO SIN SALDO — el embudo NO mandó nada\n\n${cuenta.motivo}.\n\nEl embudo se frenó solo a propósito: con la cuenta seca, cada intento marca a la persona como "ya lo recibió" y el mail no existe nunca. Frenar es lo que evita quemar la oferta de alguien.\n\nSe destraba pagando la suscripción de Brevo. Después de pagar no hay que tocar nada: el cron vuelve a mandar solo.`;
+  if (!tg.CHAT && !tg.GROUP) return 'sin Telegram configurado, no se pudo avisar';
+  const r = await tg.enviar({ chat_id: tg.CHAT || tg.GROUP, text: texto });
+  return r && r.ok ? 'avisado por Telegram' : 'falló el aviso por Telegram';
+}
+
 // ─── EL LOG DE CORRIDAS (12/08/2026) ─────────────────────────────────────────────────────
 //
 // POR QUÉ. El 11 y el 12/08 el embudo mandó 63 y 77 mails con 237 planificados, y para saber
@@ -1333,6 +1349,34 @@ export default async function handler(req, res) {
       // corrida se muere durante el arranque —la hipótesis del 11/08, cuando el arranque tardó
       // ~32 s y Vercel la mató en el segundo 60— la fila queda abierta, y eso es el diagnóstico.
       corridaId = await abrirCorrida(todayISO(), chain, mode, candadoInfo, req.headers['x-forwarded-host'] || req.headers.host || '');
+
+      // ── ¿HAY SALDO? SI NO, NO SE MANDA NADA (01/09/2026) ────────────────────
+      // Va ACÁ: con el candado ya tomado y ANTES de escribir la primera reserva. Es el único
+      // lugar donde sirve. La reserva se escribe en Brevo antes del envío, así que con la
+      // cuenta seca el marcador queda puesto y el mail se evapora: la persona figura como "ya
+      // lo recibió" y esa pieza no le llega nunca más. Del 28/08 al 01/09 se quemaron así la
+      // OFERTA y su reenvío para dos personas — las dos piezas que venden.
+      //
+      // No alcanza con mirar la respuesta del envío: con 0 créditos Brevo contesta OK igual y
+      // el mail ni siquiera figura como "pedido" en su propio informe. Ver `_lib/brevo-cuenta`.
+      //
+      // Falla ABIERTO: si no se puede averiguar el saldo, se sigue como siempre.
+      const cuenta = await brevoCuenta.estadoCuenta();
+      if (cuenta.sabemos && cuenta.seco) {
+        await avisarCuentaSeca(cuenta, todayISO());
+        await cerrarCorrida(corridaId, {
+          estado: 'sin_creditos',
+          motivo_corte: cuenta.motivo,
+          error: 'Brevo sin créditos: no se intentó ningún envío (las reservas se habrían quemado)',
+        });
+        await candado.soltar(LOCK, lockToken).catch(() => {});
+        res.status(200).json({
+          mode, chain, enviados: 0, freno: 'brevo_sin_creditos',
+          motivo: cuenta.motivo,
+          que_hacer: 'pagar la suscripción de Brevo. Hasta que haya créditos el embudo NO manda: es a propósito, porque cada intento con la cuenta seca marca a una persona como "ya lo recibió" sin que el mail exista.',
+        });
+        return;
+      }
     }
 
     if (mode === 'setup') {
