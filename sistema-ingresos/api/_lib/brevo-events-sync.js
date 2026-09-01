@@ -60,16 +60,33 @@ async function traerEventos({ apiKey, dias, limite = 20000 }) {
 // En vez de etiquetarlos a mano cada vez (que fue lo que se hizo, y que la
 // propia sincronización volvió a borrar), se deducen por el asunto: cada paso
 // del embudo ya tiene guardado el asunto exacto con el que sale.
+//
+// ⚠️ FALLA ABIERTO, PERO RUIDOSO (01/09/2026). Antes devolvía un Map vacío y no decía nada.
+// Seguir corriendo está BIEN —quedarse sin los eventos por no poder deducir un tag sería peor—
+// pero callarse no: sin el mapa, el Regalo 1 y el Regalo 2 (los dos de MÁS volumen) entran con
+// `campana: null`, se caen de todos los filtros por campaña del Panel de Salud, y el panel se
+// pone verde porque las filas son INVISIBLES, no porque la entrega funcione. Es la tercera vez
+// que aparece la misma forma: un fallo y un "no hay nada" que se escriben igual.
+// Por eso ahora devuelve TAMBIÉN si pudo o no, y quien llama lo reporta.
 async function tagsPorAsunto({ supabaseUrl, serviceKey }) {
+  const vacio = (motivo) => {
+    console.error(`[brevo-events-sync] ⚠️ no se pudo leer funnel_steps (${motivo}). Los mails sin tag propio —Regalo 1 y Regalo 2— van a quedar con campana:null y desaparecen de los filtros por campaña.`);
+    return { mapa: new Map(), ok: false, motivo };
+  };
+  if (!supabaseUrl || !serviceKey) return vacio('faltan supabaseUrl/serviceKey');
   try {
     const res = await fetch(
       `${supabaseUrl}/rest/v1/funnel_steps?select=brevo_tag,contenido_asunto&brevo_tag=not.is.null&contenido_asunto=not.is.null`,
       { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
     );
-    if (!res.ok) return new Map();
-    return new Map((await res.json()).map((s) => [s.contenido_asunto, s.brevo_tag]));
-  } catch {
-    return new Map(); // sin el mapa el sync igual corre: solo no deduce tags
+    if (!res.ok) return vacio(`Supabase HTTP ${res.status}`);
+    const mapa = new Map((await res.json()).map((s) => [s.contenido_asunto, s.brevo_tag]));
+    // Un mapa que llega VACÍO sin error también es un problema: significa que ningún paso tiene
+    // asunto cargado, y el efecto es idéntico al de no poder consultarlo.
+    if (mapa.size === 0) return vacio('funnel_steps no devolvió ningún asunto');
+    return { mapa, ok: true, motivo: null };
+  } catch (e) {
+    return vacio((e && e.message) || String(e));
   }
 }
 
@@ -109,8 +126,11 @@ function agrupar(eventos, porAsunto = new Map()) {
 /** Trae los eventos y los agrupa, sin escribir. Lo usa el backfill a mano. */
 async function filasDeEventosBrevo({ apiKey, dias = 7, limite = 50000, supabaseUrl, serviceKey }) {
   const eventos = await traerEventos({ apiKey, dias, limite });
-  const porAsunto = supabaseUrl && serviceKey ? await tagsPorAsunto({ supabaseUrl, serviceKey }) : new Map();
-  return { eventos: eventos.length, filas: agrupar(eventos, porAsunto) };
+  const tags = supabaseUrl && serviceKey
+    ? await tagsPorAsunto({ supabaseUrl, serviceKey })
+    : { mapa: new Map(), ok: false, motivo: 'no se pidieron credenciales de Supabase' };
+  const filas = agrupar(eventos, tags.mapa);
+  return { eventos: eventos.length, filas, tags_ok: tags.ok, tags_motivo: tags.motivo, sin_campana: filas.filter((f) => !f.campana).length };
 }
 
 /**
@@ -123,9 +143,13 @@ async function filasDeEventosBrevo({ apiKey, dias = 7, limite = 50000, supabaseU
  */
 async function sincronizarEventosBrevo({ apiKey, supabaseUrl, serviceKey, dias = 7, limite = 20000 }) {
   const eventos = await traerEventos({ apiKey, dias, limite });
-  const porAsunto = await tagsPorAsunto({ supabaseUrl, serviceKey });
-  const filas = agrupar(eventos, porAsunto);
-  if (filas.length === 0) return { eventos: eventos.length, filas: 0 };
+  const tags = await tagsPorAsunto({ supabaseUrl, serviceKey });
+  const filas = agrupar(eventos, tags.mapa);
+  // Se informa SIEMPRE, salga bien o mal: `sin_campana` es el síntoma directo de que los mails
+  // sin tag propio no se pudieron atribuir, y es lo que el Panel de Salud mira para no ponerse
+  // verde por filas invisibles.
+  const diagnostico = { tags_ok: tags.ok, tags_motivo: tags.motivo, sin_campana: filas.filter((f) => !f.campana).length };
+  if (filas.length === 0) return { eventos: eventos.length, filas: 0, ...diagnostico };
 
   // ⚠️ Se escribe por la función merge_comunicaciones y NO por el upsert de
   // PostgREST. `Prefer: resolution=merge-duplicates` REEMPLAZA la fila: como
@@ -149,7 +173,7 @@ async function sincronizarEventosBrevo({ apiKey, supabaseUrl, serviceKey, dias =
     if (!res.ok) throw new Error(`Supabase HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
   }
 
-  return { eventos: eventos.length, filas: filas.length };
+  return { eventos: eventos.length, filas: filas.length, ...diagnostico };
 }
 
 module.exports = { sincronizarEventosBrevo, filasDeEventosBrevo };

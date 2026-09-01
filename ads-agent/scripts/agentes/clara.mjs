@@ -185,13 +185,22 @@ async function main() {
   console.log('🗞️  Clara arrancando...')
 
   // 1. Chequear si ya corrió hoy
+  //
+  // ⚠️ EL `error` SE MIRA, Y SI FALLA SE FRENA (01/09/2026). Antes se descartaba, y eso
+  // convertía un fallo de Supabase en "todavía no corrí hoy": `data` viene null, la condición
+  // no se cumple, y Clara seguía de largo y PUBLICABA TODO DE NUEVO. Un error y un "no hay
+  // nada" se escribían igual, y acá el precio de confundirlos son noticias duplicadas.
   const hoy = new Date().toISOString().split('T')[0]
-  const { data: yaExiste } = await supabase
+  const { data: yaExiste, error: errHoy } = await supabase
     .from('news')
     .select('id')
     .gte('created_at', hoy + 'T00:00:00Z')
     .limit(1)
 
+  if (errHoy) {
+    console.error(`❌ No se pudo saber si Clara ya corrió hoy (${errHoy.message}). NO se publica nada: seguir a ciegas duplicaría las noticias del día.`)
+    process.exit(1)
+  }
   if (yaExiste && yaExiste.length > 0) {
     console.log('✅ Clara ya entregó noticias hoy. Saliendo.')
     return
@@ -209,11 +218,19 @@ async function main() {
   }
 
   // 2b. Deduplicar contra Supabase (últimos 14 días)
+  // ⚠️ MISMO CASO QUE ARRIBA: si esta consulta falla, `recientes` viene null, el `|| []` lo
+  // convierte en "no hay nada publicado antes" y Clara republica lo que ya publicó. El fallo
+  // es indistinguible de una lista vacía, así que se mira el error y se frena.
   const hace14dias = new Date(); hace14dias.setDate(hace14dias.getDate() - 14)
-  const { data: recientes } = await supabase
+  const { data: recientes, error: errRecientes } = await supabase
     .from('news')
     .select('fuente_url')
     .gte('created_at', hace14dias.toISOString())
+
+  if (errRecientes) {
+    console.error(`❌ No se pudo traer lo ya publicado para deduplicar (${errRecientes.message}). NO se publica nada: sin esa lista, todo entra como nuevo.`)
+    process.exit(1)
+  }
   const urlsYaVistas = new Set((recientes || []).map(r => r.fuente_url))
   const itemsNuevos = todosLosItems.filter(it => !urlsYaVistas.has(it.link))
   console.log(`   ${itemsNuevos.length} artículos nuevos (${todosLosItems.length - itemsNuevos.length} ya publicados antes)`)

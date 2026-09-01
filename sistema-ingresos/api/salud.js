@@ -544,10 +544,29 @@ const COLOR = {
 // deduplicado, asi que SIEMPRE va a dar menos. Por eso el umbral es 60%: pilla "tenemos 0 de
 // 1.353" sin gritar por el 14% de doble conteo. Un chequeo que grita en vano se empieza a
 // ignorar, que es peor que no tenerlo.
-async function saludCampanas() {
+async function saludCampanas(sync) {
   const met = {}; const puntos = []; let nivel = 'ok';
   const flujo = '📣 Campanas de Brevo';
   const que_mira = 'Que una campana enviada se pueda VER en el panel - no que se haya enviado.';
+
+  // ── ¿SE PUDIERON ATRIBUIR LOS MAILS SIN TAG? (01/09/2026) ──────────────────
+  // El Regalo 1 (lo arma Make) y el Regalo 2 (una automatizacion) salen de Brevo SIN etiqueta:
+  // su campana se deduce del asunto contra funnel_steps. Si esa deduccion falla, entran con
+  // campana:null, se caen de todos los filtros de aca abajo, y este flujo daria verde por
+  // ausencia de filas. Hasta hoy fallaba en silencio; ahora el sync lo informa y se lee aca.
+  if (sync && sync.error) {
+    nivel = peor(nivel, 'alerta');
+    puntos.push(`🟡 La sincronizacion de eventos de email fallo entera (${sync.error}). Todo lo de abajo se calcula sobre lo que ya habia guardado, no sobre lo de hoy.`);
+  } else if (sync && sync.tags_ok === false) {
+    nivel = peor(nivel, 'alerta');
+    puntos.push(`🟡 No se pudo deducir la campana de los mails que vienen sin etiqueta (${sync.tags_motivo}). Son el Regalo 1 y el Regalo 2, los dos de mas volumen: entran con campana en blanco y NO aparecen en ningun corte por campana. Un cero de esos dos hoy significa "no se pudo mirar", no "no lo abrio nadie".`);
+  }
+  if (sync && Number.isFinite(sync.sin_campana) && sync.sin_campana > 0) {
+    met.filas_sincronizadas_sin_campana = sync.sin_campana;
+    if (sync.tags_ok !== false) {
+      puntos.push(`De los mails sincronizados hoy, ${sync.sin_campana} quedaron sin campana. Si el numero crece, es que salio una pieza cuyo asunto no esta cargado en funnel_steps.`);
+    }
+  }
 
   const pasos = await sb('funnel_steps?select=nombre,brevo_tag,brevo_camp_id&brevo_camp_id=not.is.null');
   if (pasos == null) return { flujo, que_mira, nivel: 'alerta', puntos: ['No se pudo leer funnel_steps.'], met };
@@ -709,11 +728,21 @@ async function enviarPanelSalud(mode) {
   try { await snapshotBrevo(); } catch (e) { console.error('snapshotBrevo (no frena el panel):', (e && e.message) || e); }
   // Baja los eventos de email por persona (quién abrió qué) para la ficha del cliente.
   // Se cuelga de acá porque Vercel Hobby solo deja 2 crons. Best-effort igual que arriba.
-  try { await syncComunicaciones(7); } catch (e) { console.error('syncComunicaciones (no frena el panel):', (e && e.message) || e); }
+  // Se GUARDA el resultado, no se tira. Si la deducción de tags falla, los mails sin tag propio
+  // (Regalo 1 y Regalo 2, los de más volumen) entran con campana:null y se caen de todos los
+  // filtros por campaña — el panel se pondría verde porque las filas son invisibles. Lo reporta
+  // saludCampanas más abajo.
+  let sync = null;
+  try { sync = await syncComunicaciones(7); }
+  catch (e) {
+    sync = { error: (e && e.message) || String(e) };
+    console.error('syncComunicaciones (no frena el panel):', sync.error);
+  }
   const flujos = [];
   // El saldo va PRIMERO: si está en rojo, todo lo de abajo que hable de email es ruido.
   for (const fn of [saludBrevoCuenta, saludFunnel, saludRecuperacion, saludAsistente, saludPostCompra, saludSitio, saludCampanas]) {
-    try { flujos.push(await fn()); }
+    // Se le pasa el resultado del sync a todos; sólo saludCampanas lo usa.
+    try { flujos.push(await fn(sync)); }
     catch (e) { flujos.push({ flujo: fn.name, que_mira: '', nivel: 'alerta', puntos: [`Error al diagnosticar: ${e.message || e}`], met: {} }); }
   }
   const { general, subject, html } = armarHtml(flujos);
