@@ -129,7 +129,7 @@ pero con la regla de la marca: nadie sonriendo a cámara, luz cinematográfica, 
 Antes de generar una foto de persona real (ej. el instructor), revisar la memoria de imágenes
 de la landing: hubo un bug con esa foto.
 
-#### La imagen de la sección "El problema" — la que promete plata (28/08/2026)
+#### La imagen de la sección "El problema" — la que promete plata (28/08/2026 · v2 el 01/09/2026)
 
 **Qué cambia.** La imagen que estaba (credencial de prensa gastada + celular con un feed ajeno)
 contaba el problema. Jose la quiere del otro lado: **la solución, con la plata a la vista**, porque
@@ -143,11 +143,65 @@ local. Lo que promete la imagen tiene un nombre y un caso detrás.
 
 **El prompt completo — con el mensaje que lo acompaña, los rescates para cuando algo sale mal y qué
 hacer al recibir la imagen — está listo para copiar y pegar en
-`Escritorio/BOCETO-LANDING/PROMPT-CHATGPT.txt`.**
+`Escritorio/BOCETO-LANDING/PROMPT-CHATGPT.txt`.** (La v1 quedó respaldada al lado, como
+`PROMPT-CHATGPT-v1-28ago.txt.bak`.)
 
 La escena en una línea: **celular con un feed de Instagram apagado → flecha de luz índigo-cian →
 tablet encendida con el periódico propio**, y flotando sobre ella la notificación del pago. Se lee
 de izquierda a derecha como un antes y después. El resumen del prompt:
+
+> 🔴 **v2, 01/09/2026 — el lado izquierdo no decía nada, y era culpa del prompt.**
+> La imagen salió linda y Jose la aprobó, pero al mirarla contra el texto de su propia sección
+> ("Instagram y Facebook son los nuevos medios masivos") faltaba lo único que la hacía tener
+> sentido: el celular mostraba **una calle gris**. La flecha promete "de acá pasás a allá y
+> cobrás", con el "acá" vacío.
+>
+> El pedido de abajo lo causó, textual: *"una publicación con foto de una calle de ciudad en
+> blanco y negro"*. ChatGPT hizo bien lo que le pedimos.
+>
+> **Lo que lo arregla:** el celular pasa de UNA publicación a la **grilla de perfil de un medio**
+> — tres columnas apretadas, fotos de noticia, placas con bloque de titular, algún icono de
+> video. Y lo que hace que se pueda pedir sin romper el texto: **una grilla se reconoce por su
+> FORMA, no por leer los titulares**, así que van desenfocados y el único texto legible sigue
+> siendo `+ USD 300`.
+>
+> **Regla que sale de acá:** antes de mandar un prompt de imagen de sección, leer **el párrafo
+> que va al lado de la imagen** y preguntar si la escena lo cuenta. Una imagen de sección que se
+> ve bien sola puede no decir nada al lado de su texto.
+>
+> ⛔ **La grilla se INVENTA.** Jose pasó como referencia el perfil real de La Nación: no se copia
+> — marca, caras de personas públicas y tilde de verificado ajenos dentro de un anuncio pagado.
+>
+> ⛔ **Las cifras del panel de ingresos van desenfocadas.** Jose también pasó la captura de
+> Hotmart (5.442 US$ / 606 transacciones): eso son **las ventas del curso de Jose**, no lo que
+> gana un periodista con su periódico. Ponerla como "así cobrás" es una promesa de ingresos sin
+> respaldo, que es justo lo que Meta rechaza. El panel aporta la **pinta** de real (curva verde,
+> bloques de métricas); el único número legible es el 300, que tiene el testimonio de Carlos
+> detrás.
+>
+> El resumen de abajo es la v1 y quedó **desactualizado**: el `.txt` manda.
+>
+> ⚠️ **EL `.webp` DE LA LANDING NO ES IGUAL AL ORIGINAL. Lleva un parche a mano (01/09/2026).**
+> ChatGPT le puso al titular de la tablet letras inventadas: *"Rapme mepós adecinos pareb /
+> Mecanics a de Pocincion"*. Medido al tamaño real al que se muestra la imagen, eso **en celular
+> no se lee** (el titular ocupa 104×25 px) pero **en escritorio sí, entero** (310×76 px) — y
+> escritorio es el 25,7% del tráfico, además del que más engancha.
+>
+> Se resolvió tapándolo, no regenerando: **dos barras grises de maqueta** del mismo color que las
+> que ya tienen las tarjetas de abajo, `rgb(107,107,107)`, sobre un relleno del color exacto de
+> la banda, `rgb(2,8,14)`. Inclinadas **3°** (los grados que tiene la pantalla de la tablet) y con
+> un desenfoque leve para igualar la nitidez del render. Un titular en gris se lee como "es una
+> maqueta"; uno con letras inventadas se lee como error.
+>
+> 🔴 **Consecuencia: si alguien regenera el `.webp` desde `img/originales/`, vuelve el galimatías
+> y nada avisa.** El original se conserva tal como lo devolvió ChatGPT, que es para lo que está
+> esa carpeta. El parche hay que rehacerlo. Coordenadas sobre la imagen de 1672×941: relleno en
+> (770, 496) de 486×88; barra 1 en (789, 507) de 440×24; barra 2 en (783, 546) de 352×24; todo
+> rotado 3° alrededor de (1000, 537).
+>
+> **La regla general:** pedirle a ChatGPT texto legible dentro de una imagen es pelear con la
+> herramienta. Conviene pedirle la pieza **sin texto** y resolver el texto aparte — encima, o
+> como maqueta gris.
 
 ```
 Fotografía de producto de estudio, realista. NO ilustración, NO render 3D plano,
