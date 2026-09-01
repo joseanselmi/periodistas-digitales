@@ -146,6 +146,27 @@ fuente, sin restos huérfanos).
 Forzar un veredicto donde no corresponde no es sólo perder tiempo: **invita a leer como
 resultado un número que se movió por otra causa** — justo el caso de abajo.
 
+### ⛔ `checkout_clicks` y `clics_checkout` NO son la misma métrica (01/09/2026)
+
+Dos nombres casi iguales para dos cosas distintas, en la misma pantalla:
+
+| dónde | qué cuenta | v3 | v4 |
+|---|---|---|---|
+| `landing_versiones.checkout_clicks` (la foto) | **sesiones que clickearon** | 100 | 40 |
+| `v_landing_panel.clics_checkout` (el vivo) | **clics totales** | 109 | 48 |
+
+Una persona que clickea tres veces es **1** en la columna y **3** en la vista. La columna la
+venían llenando así v1 (51), v2 (48) y v3 (100); el 31/08 se le escribió a v4 el total (48) y
+quedó comparando contra v3 una mejora que no existía: **12,34% contra 9,39%, cuando con el mismo
+criterio es 10,28% contra 9,52%** — de casi 3 puntos a menos de uno, que es ruido.
+
+**Antes de comparar dos versiones, verificar que las dos columnas se hayan llenado con el mismo
+criterio.** No alcanza con que el número sea plausible: los dos lo eran.
+
+⚠️ La columna de la foto sigue el criterio de v1-v3 (**sesiones**) y no se toca. Si alguna vez se
+unifica con la vista, hay que reescribir también los veredictos de v2 y v3, que están redactados
+con esos números.
+
 ### ⛔ Un cambio que entra SIN versión no se pierde: contamina la versión abierta (31/08/2026)
 
 El 28/08 entraron los testimonios nuevos y **nadie creó la versión**. La v4 seguía abierta desde
