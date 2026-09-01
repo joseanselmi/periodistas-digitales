@@ -14,7 +14,7 @@
 // Env: HOTMART_CLIENT_ID, HOTMART_CLIENT_SECRET, HOTMART_BASIC, SUPABASE_URL,
 //      SUPABASE_SERVICE_ROLE_KEY. Opcionales: HOTMART_EXCLUDE_EMAILS (default el mail de
 //      Jose), HOTMART_ONLY_PRODUCTS (lista de ids; vacío = todos), HOTMART_RECHAZO_DIAS (3),
-//      HOTMART_DEVOLUCION_DIAS (16), HOTMART_CONTRACARGO_DIAS (120).
+//      HOTMART_DEVOLUCION_DIAS (30), HOTMART_CONTRACARGO_DIAS (120).
 
 const OAUTH_URL = 'https://api-sec-vlc.hotmart.com/security/oauth/token';
 const SALES_URL = 'https://developers.hotmart.com/payments/api/v1/sales/history';
@@ -30,8 +30,16 @@ const RECHAZO_STATUSES = ['NO_FUNDS', 'BLOCKED', 'CANCELLED', 'EXPIRED', 'OVERDU
 // en ningún campo. O sea: NO se puede preguntar "¿qué se devolvió ayer?". Hay que barrer
 // las compras de una ventana hacia atrás y mirar en qué estado quedaron.
 // De ahí salen los dos números, que miden cosas distintas:
-//   · DEVOLUCION_DIAS = 16 → la garantía del curso es de 14 días, +2 de margen para que
-//     Hotmart procese la devolución del último día. Fuera de la garantía casi no hay.
+//   · DEVOLUCION_DIAS = 30 → MEDIDO el 01/09/2026 sobre las 22 ventas del curso que traen
+//     el dato: la garantía normal es de 7 DÍAS (21 de 22), que es lo que promete la landing.
+//     La excepción son los compradores de la UNIÓN EUROPEA, que tienen 14 por el derecho de
+//     desistimiento y Hotmart se lo aplica solo (1 venta de España, 06/08/2026).
+//     Estaba en 16 con un comentario que decía "la garantía es de 14": era verdad sólo para
+//     la UE, y dejaba 2 días para que Hotmart procesara una devolución del último día.
+//     Se sube a 30 porque el margen no cuesta nada —el barrido diario mira unos días más de
+//     compras— y quedarse corto significa no enterarse NUNCA de esa venta caída: la API
+//     filtra por fecha de COMPRA y no existe "traeme lo que se devolvió ayer".
+//     ⚠️ El campo del payload se llama `warranty_date`, NO `warranty_expire_date`.
 //   · CONTRACARGO_DIAS = 120 → un contracargo NO lo limita la garantía: lo abre el banco
 //     del comprador y puede llegar meses después. Con 16 días no se vería ninguno.
 // Cuesta una llamada más por día y hoy hay 0 contracargos, pero el día que haya uno la
@@ -48,7 +56,7 @@ const EXCLUDE_EMAILS = (process.env.HOTMART_EXCLUDE_EMAILS || 'joseanselmi27@gma
 const ONLY_PRODUCTS = (process.env.HOTMART_ONLY_PRODUCTS || '')
   .split(',').map(s => s.trim()).filter(Boolean);
 const RECHAZO_DIAS  = Math.max(1, Number(process.env.HOTMART_RECHAZO_DIAS) || 3);
-const DEVOLUCION_DIAS  = Math.max(1, Number(process.env.HOTMART_DEVOLUCION_DIAS) || 16);
+const DEVOLUCION_DIAS  = Math.max(1, Number(process.env.HOTMART_DEVOLUCION_DIAS) || 30);
 const CONTRACARGO_DIAS = Math.max(1, Number(process.env.HOTMART_CONTRACARGO_DIAS) || 120);
 
 const pick = (...v) => { for (const x of v) if (x != null && x !== '') return x; return undefined; };
