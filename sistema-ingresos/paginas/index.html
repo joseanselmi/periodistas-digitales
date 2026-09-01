@@ -165,34 +165,6 @@
     }
     .location-badge strong { color: #fff; font-weight: 700; }
 
-    /* ── TICKER MEDIOS ── */
-    .ticker-wrap {
-        overflow: hidden;
-        background: rgba(255,255,255,.02);
-        border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        padding: 0;
-    }
-    .ticker-label {
-        display: flex; align-items: center; justify-content: center;
-        padding: 10px 0 6px;
-        font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-        color: var(--muted); gap: 10px;
-    }
-    .ticker-label::before, .ticker-label::after { content: ''; flex: 1; max-width: 80px; height: 1px; background: var(--border); }
-    .ticker-track-wrap { padding: 8px 0 14px; }
-    .ticker-track { display: flex; gap: 56px; width: max-content; animation: ticker 32s linear infinite; }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-    .ticker-item {
-        display: flex; align-items: center; gap: 0;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: .95rem; font-weight: 700; letter-spacing: -.01em;
-        color: rgba(255,255,255,.35); white-space: nowrap;
-        transition: color .2s;
-    }
-    .ticker-item:hover { color: rgba(255,255,255,.7); }
-    .ticker-sep { color: rgba(255,255,255,.12); margin: 0 28px; font-weight: 300; font-size: 1.1rem; }
 
     /* ── SECTIONS ── */
     .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
@@ -533,46 +505,6 @@
         </div>
     </div>
 </section>
-
-<!-- ─── TICKER MEDIOS ─── -->
-<div class="ticker-wrap">
-    <div class="ticker-label">Periodistas de estos medios ya generan ingresos con el sistema</div>
-    <div class="ticker-track-wrap">
-        <div class="ticker-track">
-            <span class="ticker-item">Clarín</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Universal</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Infobae</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Tiempo</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La Nación</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Comercio</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Reforma</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Semana</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La Tercera</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El País</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">TN</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Milenio</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Espectador</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La República</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Telemundo</span><span class="ticker-sep">/</span>
-            <!-- duplicado para loop -->
-            <span class="ticker-item">Clarín</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Universal</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Infobae</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Tiempo</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La Nación</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Comercio</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Reforma</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Semana</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La Tercera</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El País</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">TN</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Milenio</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">El Espectador</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">La República</span><span class="ticker-sep">/</span>
-            <span class="ticker-item">Telemundo</span><span class="ticker-sep">/</span>
-        </div>
-    </div>
-</div>
 
 <!-- ═══════════════════════════════════
      2. EL PROBLEMA
