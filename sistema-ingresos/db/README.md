@@ -1,7 +1,7 @@
 # `db/` — lo que vive DENTRO de Supabase, copiado al repo
 
 **Foto del 01/09/2026** del proyecto `periodistas-marketing` (`wxyimqkjlwfncvzozpjy`):
-**20 vistas** y **11 funciones**.
+**21 vistas** y **11 funciones**.
 
 ## Por qué existe esto
 
@@ -18,11 +18,14 @@ Hasta hoy las vistas y las funciones existían **sólo adentro de Supabase**: ce
 La auditoría del 18/08 encontró 14 así. Para el 01/09 ya eran 20: la deuda crecía sola, porque
 crear una vista nueva no obligaba a nada.
 
+> La 21 es `v_admin_contadores_wa`, creada ese mismo día — y ya nació con su copia acá. Ése es
+> el flujo: si se crea una vista, se agrega a este archivo en el mismo commit.
+
 ## Qué es cada archivo, y qué NO es
 
 | archivo | qué es |
 |---|---|
-| [`vistas.sql`](vistas.sql) | las 20 vistas, tal como Postgres las devuelve hoy |
+| [`vistas.sql`](vistas.sql) | las 21 vistas, tal como Postgres las devuelve hoy |
 | [`funciones.sql`](funciones.sql) | las 11 funciones (RPC, triggers y helpers de `src`) |
 
 ⚠️ **Esto es una FOTO, no la fuente.** La fuente sigue siendo la base. Estos archivos existen

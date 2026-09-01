@@ -1,6 +1,6 @@
 -- ════════════════════════════════════════════════════════════════════════════
 -- VISTAS de `periodistas-marketing` (wxyimqkjlwfncvzozpjy)
--- Foto del 01/09/2026 · 20 vistas
+-- Foto del 01/09/2026 · 21 vistas
 --
 -- ⚠️ ES UNA FOTO, NO LA FUENTE. Ver db/README.md. El texto viene de
 -- pg_get_viewdef(), que NORMALIZA el SQL: no es igual al que se escribió a mano,
@@ -16,6 +16,7 @@
 --   4. Landing                 v_landing_panel · v_clarity_semanal
 --   5. Plata (P&L)             v_ingresos_mes · v_gastos_usd · v_gastos_mensajes_mes
 --                              v_gastos_variables_mes · v_pnl_mensual
+--   6. Contadores del admin    v_admin_contadores_wa
 --
 -- ⚠️ DEPENDENCIAS — el archivo ya está EN ORDEN, cada vista aparece después de las que usa:
 -- v_pnl_mensual se apoya en v_ingresos_mes, v_gastos_variables_mes y v_gastos_usd;
@@ -825,3 +826,28 @@ CREATE OR REPLACE VIEW public.v_pnl_mensual AS
      LEFT JOIN gvm ON gvm.mes = m.mes
      LEFT JOIN pend p ON p.mes = m.mes
   ORDER BY m.mes DESC;
+
+
+-- ═══ 6. CONTADORES DEL ADMIN ════════════════════════════════════════════════
+
+-- Los contadores del inbox de WhatsApp, resueltos EN LA BASE y en UNA fila.
+-- El badge del menú del admin de Leadr —un solo número— se calculaba bajando hasta 2.000
+-- mensajes y disparando hasta 80 RPC de contexto_contacto, en CADA pantalla. Y salía mal:
+-- contaba sólo sobre las 80 conversaciones más recientes de 506, y PostgREST corta en 1.000
+-- filas así que ni siquiera veía los 1.495 mensajes.
+-- ⚠️ "Pendiente" acá = la última línea de la conversación es del cliente. Es un criterio
+-- DISTINTO del que usa el Panel de Salud para el asistente (que mira la tabla del asistente):
+-- son dos preguntas distintas y por eso dan números distintos. No unificarlas sin decidir
+-- antes cuál manda.
+CREATE OR REPLACE VIEW public.v_admin_contadores_wa AS
+ WITH ultimo_por_telefono AS (
+         SELECT DISTINCT ON (conversaciones_wa.telefono) conversaciones_wa.telefono,
+            conversaciones_wa.direccion,
+            conversaciones_wa.creado_en
+           FROM conversaciones_wa
+          ORDER BY conversaciones_wa.telefono, conversaciones_wa.creado_en DESC
+        )
+ SELECT count(*) FILTER (WHERE direccion = 'in'::text)::integer AS pendientes,
+    count(*)::integer AS conversaciones,
+    max(creado_en) AS ultimo_mensaje_en
+   FROM ultimo_por_telefono;
