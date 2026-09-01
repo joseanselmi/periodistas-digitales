@@ -109,10 +109,10 @@ const hasta = AYER
 // manda es `effective_status`, que además mira si el conjunto o la cuenta la
 // frenaron. Leer el equivocado hace decir "activo" de algo apagado.
 async function estados() {
-  const url = `${API}/act_${ACCOUNT}/campaigns?fields=name,effective_status&limit=200&access_token=${TOKEN}`
+  const url = `${API}/act_${ACCOUNT}/campaigns?fields=name,effective_status,objective&limit=200&access_token=${TOKEN}`
   const j = await (await fetch(url)).json()
   if (j.error) throw new Error(`Meta: ${j.error.message}`)
-  return new Map((j.data || []).map((c) => [c.id, { nombre: c.name, estado: c.effective_status }]))
+  return new Map((j.data || []).map((c) => [c.id, { nombre: c.name, estado: c.effective_status, objetivo: c.objective }]))
 }
 
 async function gastoDiario() {
@@ -147,9 +147,25 @@ const filas = crudas.filter((f) => f.fecha <= AYER)
 const abiertas = crudas.length - filas.length
 if (abiertas) console.log(`⏳ ${abiertas} filas del día en curso (${HOY} en ${ZONA}) descartadas: todavía no cerró\n`)
 
+// El OBJETIVO de la campana (OUTCOME_SALES / OUTCOME_LEADS / OUTCOME_ENGAGEMENT) se
+// guarda con cada fila porque es lo que separa el gasto que busca VENTAS del resto.
+// No se deduce del nombre: "CURSO Periodistas - LEADS - republicadores" empieza con
+// CURSO y no vende nada, y el nombre se puede editar en Meta sin que nadie se entere
+// aca. Lo consume `v_gastos_variables_mes`, que parte la linea de Meta Ads en dos.
 for (const f of filas) {
   const e = porId.get(f.meta_campana_id)
   f.estado = e?.estado || null
+  f.objetivo = e?.objetivo || null
+}
+
+// Una campana que Meta ya no lista deja el objetivo en null y su gasto cae en la linea
+// "sin desglosar" del panel — visible, no perdido. Se avisa para poder completarlo.
+const sinObjetivo = filas.filter((f) => !f.objetivo && f.spend_usd > 0)
+if (sinObjetivo.length) {
+  const nombres = [...new Set(sinObjetivo.map((f) => f.meta_campana))]
+  console.log(`⚠️  ${sinObjetivo.length} dias sin objetivo (Meta ya no lista la campana): ${nombres.join(', ')}`)
+  console.log(`   Su gasto va a salir como "Meta Ads · sin desglosar" en Contabilidad.
+`)
 }
 
 // Resumen por campaña, que es como se mira.
