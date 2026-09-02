@@ -185,18 +185,34 @@ async function runHotmartSync() {
       evento_hotmart: `API_SYNC:${f.status || 'SALE'}`, transaction_id: f.tx,
       src: f.src, utm_source: f.utm_source, utm_medium: f.utm_medium, utm_campaign: f.utm_campaign,
       ocurrido_en: f.ocurrido, dedup_key: `hotmart:${f.tx}`,
+      // Esta fila nace enriquecida: las dos llamadas a la API ya se hicieron acá
+      // arriba. Sin la marca, la pasada de abajo la tomaría mañana y volvería a
+      // preguntar lo mismo.
+      enriquecido_en: new Date().toISOString(),
     });
     try { out.ventas_nuevas += await sbInsert('ventas', [rec]); } catch (e) { console.error('sync venta', f.tx, e.message); }
   }
 
-  // Completar filas del webhook que aún no tengan USD.
+  // Completar las filas del webhook con lo que sólo está en la API: los datos del
+  // comprador (documento, ciudad, provincia, código postal) y, si faltara, el USD.
+  //
+  // ⚠️ LA CONDICIÓN ES `enriquecido_en`, NO `valor_usd`. Estaba colgada de
+  // `valor_usd=is.null`, y el 02/09/2026 el webhook empezó a calcular el importe
+  // solo desde `data.commissions`. Con la condición vieja, una venta nueva ya
+  // nunca entraba acá y los datos del comprador no se completaban NUNCA: un
+  // arreglo que rompía otra cosa sin hacer ruido.
+  //
+  // La marca se escribe SIEMPRE, aunque la API no devuelva nada, y por eso no se
+  // reintenta: Hotmart manda `document: ""` para muchos compradores, y sin marca
+  // esos se volverían a consultar todos los días para siempre.
   try {
-    const pend = await sbSelect('ventas?select=transaction_id,dedup_key,valor&valor_usd=is.null&limit=100000');
+    const pend = await sbSelect('ventas?select=transaction_id,dedup_key,valor&or=(valor_usd.is.null,enriquecido_en.is.null)&limit=100000');
     for (const row of pend) {
       if (!row.transaction_id) continue;
       const [buyer, usd] = await Promise.all([enrichBuyer(token, row.transaction_id), enrichUsd(token, row.transaction_id, row.valor)]);
       const extra = clean({ ...usd, ...buyer });
-      if (Object.keys(extra).length && await sbPatch('ventas', row.dedup_key, extra)) out.ventas_enriquecidas++;
+      extra.enriquecido_en = new Date().toISOString();
+      if (await sbPatch('ventas', row.dedup_key, extra)) out.ventas_enriquecidas++;
     }
   } catch (e) { console.error('sync enrich', e.message); }
 
