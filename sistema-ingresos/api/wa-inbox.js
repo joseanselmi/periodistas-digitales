@@ -160,12 +160,23 @@ function funnelBonito(f) {
   return String(f).replace(/^meta-/, '').replace(/-/g, ' ');
 }
 
+// ⚠️ EL CANAL. Estos rótulos decían "(WhatsApp)" en los Regalos 3 y 4, y es
+// falso desde el 09/08/2026: WhatsApp no manda nada automático (el número quedó
+// capado en Meta, #89) y el embudo entero pasa por EMAIL.
+//
+// Es la trampa del prefijo WA_ materializada en la única pieza que Jose lee
+// todos los días: el contador sale de los atributos WA_STAGE y WA_SENT_AT de
+// Brevo, que HOY los escriben los envíos por mail (ver api/wa-funnel.js, que es
+// el embudo de email). Ver un WA_ no significa que algo mande WhatsApp.
+//
+// Decía que a la persona se le mandó un WhatsApp que no existe — y por lo tanto
+// que lo ignoró.
 function regaloPorEstado(stage, mail5) {
   const s = Number(stage || 0);
   if (s >= 5) return 'la Oferta (el mensaje con el precio)';
   if (mail5) return 'el Regalo 5 — guía de agentes de IA (email)';
-  if (s === 4) return 'el Regalo 4 — guía de los 5 pilares (WhatsApp)';
-  if (s === 3) return 'el Regalo 3 — guía del periódico digital (WhatsApp)';
+  if (s === 4) return 'el Regalo 4 — guía de los 5 pilares (email)';
+  if (s === 3) return 'el Regalo 3 — guía del periódico digital (email)';
   return 'todavía los emails de bienvenida (Regalos 1 y 2)';
 }
 
@@ -173,8 +184,8 @@ function regaloEstimado(dias) {
   if (dias == null) return '';
   if (dias >= 9) return 'la Oferta (el mensaje con el precio)';
   if (dias >= 8) return 'el Regalo 5 — guía de agentes de IA (email)';
-  if (dias >= 7) return 'el Regalo 4 — guía de los 5 pilares (WhatsApp)';
-  if (dias >= 5) return 'el Regalo 3 — guía del periódico digital (WhatsApp)';
+  if (dias >= 7) return 'el Regalo 4 — guía de los 5 pilares (email)';
+  if (dias >= 5) return 'el Regalo 3 — guía del periódico digital (email)';
   return 'todavía los emails de bienvenida (Regalos 1 y 2)';
 }
 
