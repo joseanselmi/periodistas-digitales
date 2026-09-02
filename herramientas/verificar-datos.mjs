@@ -304,6 +304,10 @@ function chequearCeros() {
     const lineas = f.txt.split('\n');
     for (const [i, linea] of lineas.entries()) {
       const n = i + 1;
+      // Los comentarios no ejecutan nada. Sin esto la herramienta se marcaba a sí
+      // misma: el comentario que EXPLICA por qué `count ?? 0` estaba mal contiene
+      // esas tres palabras, y se reportaba como si fuera código.
+      if (/^\s*(\/\/|\*|\/\*)/.test(linea)) continue;
 
       // `count ?? 0` — un contador que no se pudo leer, contado como cero.
       //
@@ -312,8 +316,10 @@ function chequearCeros() {
       // está bien: marcarlo igual convierte esto en ruido, y una herramienta que
       // grita en falso se deja de leer a la segunda corrida.
       if (/\bcount\s*\?\?\s*0/.test(linea)) {
-        const arriba = lineas.slice(Math.max(0, i - 20), i).join('\n');
-        if (!/chequear\(|if\s*\(\s*\w*[eE]rror|\.error\b|throw\s/.test(arriba)) {
+        // La línea propia entra en la ventana: la guarda puede estar ahí mismo
+        // (`error ? null : count ?? 0`), no sólo más arriba.
+        const cerca = lineas.slice(Math.max(0, i - 20), i + 1).join('\n');
+        if (!/chequear\(|if\s*\(\s*\w*[eE]rror|\berror\s*[?&|]|\.error\b|throw\s/.test(cerca)) {
           encontrados++;
           ojo('ceros', `${f.rel}:${n} — \`count ?? 0\` sin chequear el error antes: si la consulta falla, la pantalla dice 0 y eso se lee como "no hay nada"`);
         }
