@@ -490,6 +490,30 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
   // los abandonos y las cancelaciones seguían dando 200, y por eso parecía que el webhook andaba.
   const origin = purchase.origin || data.origin || {}
 
+  // ── El importe en USD, calculado desde el propio aviso ──────────────────────
+  // Sin esto la venta entra con valor_usd y comision_usd en NULL, y vale $0 en
+  // TODOS los paneles hasta que el sync diario la rellena — o sea hasta el día
+  // siguiente a las 13:00 (hora de España). Se vio el 02/09: la pantalla de
+  // contabilidad decía "Ventas $0.00 · 1 venta" con una compra ya cobrada.
+  //
+  // El aviso trae lo necesario en `data.commissions`, y la SUMA de las comisiones
+  // es el bruto REAL que se repartió. No se usa `purchase.original_offer_price`:
+  // ese es el precio de lista de la oferta y no coincide — en la venta
+  // HP3616042463 decía 28,49 USD cuando lo repartido fueron 27,00 (3,17 de
+  // Hotmart + 23,83 de Jose).
+  //
+  // ⚠️ Ojo con la forma, porque cambia según de dónde venga: en el webhook las
+  // comisiones son { value, source, currency_value }; en la API de Sales History
+  // que usa hotmart-sync.js vienen anidadas en .commission y con currency_code.
+  // Por eso acá se leen distinto que allá, y se aceptan las dos llaves.
+  //
+  // No se pisan entre sí: hotmart-sync.js sólo rellena filas con valor_usd NULL.
+  const comisiones = Array.isArray(data.commissions) ? data.commissions : []
+  const esUsd = c => String(c.currency_value || c.currency_code || '').toUpperCase() === 'USD'
+  const delProductor = comisiones.find(c => String(c.source).toUpperCase() === 'PRODUCER' && esUsd(c))
+  const brutoUsd = comisiones.filter(esUsd).reduce((s, c) => s + Number(c.value || 0), 0)
+  const redondo = n => Math.round(n * 100) / 100
+
   const record = {
     email,
     nombre: pick(buyerRaw.name, buyerRaw.first_name && `${buyerRaw.first_name} ${buyerRaw.last_name || ''}`.trim()),
@@ -498,6 +522,10 @@ async function saveVenta({ event, email, buyerRaw, address, data, purchase, trac
     producto_id: pick(product.id),
     valor: value,
     moneda: currency,
+    // Se omiten si el aviso no trajo comisiones: mejor NULL —que el sync diario
+    // rellena— que un cero inventado, que se suma como si la venta no valiera nada.
+    valor_usd: brutoUsd > 0 ? redondo(brutoUsd) : undefined,
+    comision_usd: delProductor ? redondo(Number(delProductor.value)) : undefined,
     evento_hotmart: event,
     transaction_id: transaction,
     src: pick(tracking.source, tracking.src, origin.src),
