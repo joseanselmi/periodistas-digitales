@@ -264,10 +264,20 @@ async function enrichFromHotmart(token, transaction, valorLocal) {
   return out
 }
 
-// Filas de `ventas` que aún no tienen el monto en USD (típicamente las que cargó el
-// webhook, que solo guarda lo básico). Se enriquecen en cada corrida del sync.
+// Filas de `ventas` a las que todavía les falta algo que sólo está en la API de
+// Hotmart: el monto en USD y los datos del comprador (documento y dirección).
+//
+// ⚠️ LA CONDICIÓN ES `enriquecido_en`, NO `valor_usd`. Colgaba de `valor_usd`, y
+// el 02/09/2026 el webhook (`sistema-ingresos/api/hotmart.js`) empezó a calcular
+// el importe solo desde `data.commissions`. Con la condición vieja, una venta
+// nueva ya nunca entraba acá y los datos del comprador no se completaban NUNCA.
+//
+// ⚠️ Este archivo es una SEGUNDA COPIA de la misma lógica: la que corre de verdad
+// todos los días es `sistema-ingresos/api/_lib/hotmart-sync.js`. Ésta es la
+// versión de consola, para correrla a mano. Si se toca una, hay que tocar la
+// otra — mientras sigan siendo dos.
 async function fetchVentasSinUsd() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/ventas?select=transaction_id,dedup_key,valor&valor_usd=is.null&limit=100000`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ventas?select=transaction_id,dedup_key,valor&or=(valor_usd.is.null,enriquecido_en.is.null)&limit=100000`, {
     headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
   })
   if (!res.ok) die(`No pude leer ventas a enriquecer (HTTP ${res.status}): ${await res.text()}`)
@@ -298,8 +308,12 @@ async function enrichVentas(token) {
   for (const row of pend) {
     if (!row.transaction_id) continue
     const extra = await enrichFromHotmart(token, row.transaction_id, row.valor)
-    if (Object.keys(extra).length && !DRY_RUN) { if (await patchEnrichment(row.dedup_key, extra)) ok++ }
-    else if (Object.keys(extra).length) { console.log(`      (dry-run) ${row.transaction_id} → ${JSON.stringify(extra)}`) }
+    // La marca se escribe SIEMPRE, aunque la API no haya devuelto nada: Hotmart
+    // manda `document: ""` para muchos compradores, y sin marca esas ventas se
+    // volverían a consultar en cada corrida para siempre.
+    extra.enriquecido_en = new Date().toISOString()
+    if (!DRY_RUN) { if (await patchEnrichment(row.dedup_key, extra)) ok++ }
+    else { console.log(`      (dry-run) ${row.transaction_id} → ${JSON.stringify(extra)}`) }
   }
   if (!DRY_RUN) console.log(`   ✅ Enriquecidas ${ok}/${pend.length} ventas.`)
 }
