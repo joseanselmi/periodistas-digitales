@@ -445,7 +445,7 @@ const SIN_README_A_PROPOSITO = [
   /\/\d{4}-\d{2}-\d{2}$/,                     // carpeta fechada de contenido: la explica el padre
   /^ads-agent\/campanas\/historico\//,        // archivo: lo explica el padre
   /^ads-agent\/contenido\/carousels\/publicados\//,
-  /^ads-agent\/contenido\/carousels\/(muro|agosto)-s\d/,
+  /^ads-agent\/contenido\/carousels\/(muro|agosto|ia)-s\d/,
   /^ads-agent\/contenido\/carousels\/muro-stories$/,
   /^ads-agent\/datos\//,                      // lo generan los scripts, es borrable
   /^sistema-ingresos\/curso\/video-studio\//, // respaldo del estudio, no se edita acá

@@ -1,0 +1,17 @@
+La IA no sabe nada de tu ciudad. Y aun así te contestó con total seguridad.
+
+Ese malentendido es el que hace que la mayoría la pruebe una semana y la abandone. Le pedimos que sepa. Y no sabe: predice.
+
+Lo que hace por dentro es calcular, palabra por palabra, cuál es la continuación más probable de lo que le diste. Nada más. No consulta, no conoce tu barrio, no tiene idea de si el intendente se llama así. Arma la frase que suena más probable.
+
+Por eso pasan las dos cosas que ya te pasaron.
+
+Si le das tres palabras, te devuelve lo más genérico que existe. Lo genérico es, justamente, lo más probable.
+
+Y si le preguntas un dato que no tiene, se lo inventa con la misma seguridad con la que te dice cuál es la capital de Francia. Para ella las dos cosas son lo mismo: la continuación más probable. No te está mintiendo, porque para mentir habría que saber.
+
+Eso no la vuelve inútil. La vuelve dirigible. Todo lo que le pongas adelante cambia lo que puede predecir.
+
+Este mes vamos a ver exactamente eso: cómo dirigirla para el trabajo de todos los días, sin dejar de ser el que responde por lo que firma.
+
+¿Cuál fue la primera cosa que le pediste a una IA? La primera, no la mejor. 👇

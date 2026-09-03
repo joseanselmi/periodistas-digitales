@@ -1,5 +1,13 @@
 # Orgánico FB — serie "el periodista del muro"
 
+> ⏹️ **Esta serie terminó el 31/08/2026.** Corrió completa del 16 al 31 de agosto y
+> cerró en "qué mira un negocio antes de pagarte". Lo que sigue en la fanpage es el
+> arco de septiembre, *"IA aplicada al periodista de a pie"*, que hereda las reglas
+> de abajo (neutro, sin enlaces, sin cifras) y vive en
+> [`../contenido/carousels/ia-sept/README.md`](../contenido/carousels/ia-sept/README.md).
+> Este documento se conserva porque **las reglas del embudo siguen valiendo** y
+> porque explica de dónde salió el público.
+
 Contenido orgánico para el **segundo público** del negocio: el periodista que
 **ya publica** noticias de otros en su perfil personal de Facebook. Mismo lector
 que el anuncio `ad4-perfil`, la landing `/muro` y la guía imán.

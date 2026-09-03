@@ -16,6 +16,18 @@ orgánico. Escriben en [`../../carousels/`](../../contenido/carousels/README.md)
 - `gen-muro-agosto.mjs` — la serie "el periodista del muro", del 16 al 31 de
   agosto.
 - `gen-muro-stories.mjs` — las stories verticales que acompañan esa serie.
+- `gen-septiembre-ia.mjs` — el arco "IA aplicada al periodista de a pie"
+  (04→30/09). **Es el modelo a copiar para un mes nuevo**, por tres cosas que los
+  anteriores no tienen:
+  1. **El texto no vive adentro.** Sale de
+     [`../../contenido/carousels/ia-sept/CONTENIDO.mjs`](../../contenido/carousels/ia-sept/README.md),
+     que es lo que Jose revisa y aprueba. Acá quedan sólo las placas.
+  2. **Chequea antes de escribir.** Pasa las 8 reglas del arco (neutro, sin
+     enlaces, sin cifras de audiencia, precio sólo los viernes de venta…) y si
+     alguna falla no toca ni un archivo.
+  3. **Deja huecos a propósito.** Los días marcados `NECESITA_DATO` —prueba social
+     sin hecho verificado— no se escriben ni se programan. Antes que inventar un
+     testimonio, la fanpage se queda sin posteo ese día.
 
 Generan **borradores**. La revisión visual la hace Jose antes de que nada salga.
 

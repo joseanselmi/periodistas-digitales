@@ -9,11 +9,23 @@ agendados, no los publican en el momento.
 > varios buscan `.env.local` o `state/` relativos a esa
 > carpeta. Ejemplo: `cd ads-agent && node --env-file=.env.local scripts/programar/schedule-muro.mjs`
 
+- `schedule-septiembre.mjs` — el arco "IA aplicada al periodista de a pie"
+  (04→30/09). **Es el que se usa hoy y el modelo a copiar.** Además de leer la
+  cola y saltear lo ya programado, tiene dos cosas propias:
+  - **La lista de días no está escrita adentro.** Sale de
+    [`../../contenido/carousels/ia-sept/CONTENIDO.mjs`](../../contenido/carousels/ia-sept/README.md),
+    que es el mismo archivo que consume el generador. Un solo dueño del dato: no
+    puede pasar que el calendario programe un día que el generador no escribió.
+  - **Saltea los días marcados `NECESITA_DATO`** y los lista al final. Son los
+    posteos de prueba social sin hecho verificado: quedan como huecos visibles en
+    la cola, no como texto inventado.
+  - `--dry` hace el ensayo completo sin subir nada.
 - `schedule-muro.mjs` — la serie "el periodista del muro" (16 al 31 de agosto).
-  **Es el que se usa y el modelo a copiar:** lee primero la cola de Facebook y
-  saltea las fechas ya programadas, así se puede correr de nuevo sin duplicar
-  nada.
-Y no hay más: **es el único.** Si hace falta programar otra tanda, se copia ese.
+  Ya corrió y quedó como referencia; tiene el mes escrito adentro.
+
+Los dos son **idempotentes**: leen primero la cola de Facebook y saltean las
+fechas ya programadas, así se pueden re-correr para meter los que rebotan por el
+tope de Meta.
 
 ⚠️ Tope de Meta: **29 publicaciones programadas** a la vez, exactas. Las reglas
 del arco de contenido están en [`../../docs/ESTRATEGIA-ORGANICO.md`](../../docs/ESTRATEGIA-ORGANICO.md).

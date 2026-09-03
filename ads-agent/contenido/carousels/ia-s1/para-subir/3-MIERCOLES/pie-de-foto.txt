@@ -1,0 +1,15 @@
+Una sola línea adelante y lo que te devuelve deja de ser genérico.
+
+La línea es esta: para quién es y dónde se publica.
+
+No es un truco. Es lo mismo que harías con una persona. Si le dices a alguien "escribe sobre el aumento del agua para vecinos de una ciudad chica, que lo van a leer en el celular, en el muro, y a la mayoría le importa una sola cosa: cuánto le va a llegar", esa persona escribe otra cosa. La IA también.
+
+Fíjate qué cambia en la práctica. Sin esa línea, el texto arranca por la resolución y el número del expediente. Con esa línea, arranca por lo que le va a pasar al que lo lee. Es la misma noticia y es otro texto.
+
+Y hay un efecto de yapa: cuando le dices para quién es, deja de usar las palabras que nadie usa. "Incremento tarifario" se convierte en "te va a llegar más cara". No porque le pidieras que escriba fácil, sino porque le dijiste a quién le habla.
+
+Eso es una sola pieza del encargo, y ya te cambia el resultado. Hay tres más, y juntas son la diferencia entre pelearte con la herramienta y dirigirla. Las cuatro, con el orden y el porqué de cada una, están adentro del curso.
+
+Pero esta la puedes probar hoy. En el carrusel está la línea armada para que la copies y le cambies lo tuyo.
+
+Pruébala con la última nota que publicaste y dime qué te devolvió distinto. 👇
